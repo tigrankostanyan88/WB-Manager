@@ -1,0 +1,12 @@
+node_modules
+package-lock.json
+.clerk/
+client/.clerk/
+*.tsbuildinfo
+.turbo/
+.next/
+.vercel/
+client/.next/
+client/.turbo/
+client/.vercel/
+public/files/modules/*.mp4

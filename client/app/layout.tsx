@@ -1,0 +1,137 @@
+import './globals.css'
+import type { Metadata } from 'next'
+import { ReactNode } from 'react'
+import { ConfirmProvider } from '@/components/providers/ConfirmProvider'
+import { SettingsProvider } from '@/lib/SettingsContext'
+import { AuthProvider } from '@/lib/auth'
+import type { User } from '@/lib/auth'
+import { cookies } from 'next/headers'
+import { decodeJwt } from 'jose'
+import { prisma } from '@/lib/db'
+
+
+// Using web fonts via <link> to avoid SWC-native requirement during dev on Windows
+
+export async function generateMetadata(): Promise<Metadata> {
+  let title = 'AI Tools SaaS'
+  let icons: Metadata['icons'] = undefined
+  try {
+    const base = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
+    const origin = /^https?:\/\//.test(base) ? base.replace(/\/api\/?$/, '') : base
+    const res = await fetch(`${origin}/api/v1/settings`, { cache: 'no-store' })
+    if (res.ok) {
+      const data = await res.json()
+      if (data?.settings) {
+        if (data.settings.siteName) title = data.settings.siteName
+        if (data.settings.logo) {
+          const url = data.settings.logo.startsWith('http') 
+            ? data.settings.logo 
+            : `${origin}${data.settings.logo}`
+          icons = { icon: url }
+        }
+      }
+    }
+  } catch {}
+
+  return {
+    title,
+    description: 'Production-ready AI Tools SaaS with Next.js 14',
+    icons,
+    viewport: {
+      width: 'device-width',
+      initialScale: 1,
+      maximumScale: 1,
+    },
+  }
+}
+
+async function getSettings() {
+  try {
+    const base = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
+    const origin = /^https?:\/\//.test(base) ? base.replace(/\/api\/?$/, '') : base
+    const res = await fetch(`${origin}/api/v1/settings`, { cache: 'no-store' })
+    if (res.ok) {
+      const data = await res.json()
+      if (data?.settings) {
+        // Apply withOrigin logic here since we are on server
+        const s = data.settings
+        if (s.logo && !s.logo.startsWith('http')) {
+           s.logo = `${origin}${s.logo}`
+           // Actually, let's just ensure it is correct. 
+           // If logo starts with /images, prepend base.
+           if (s.logo.startsWith('/images/')) {
+             s.logo = `${origin}${s.logo}`
+           }
+        }
+        return s
+      }
+    }
+  } catch {}
+  return {}
+}
+
+async function getUser() {
+  try {
+    const cookieStore = cookies()
+    const token = cookieStore.get('jwt')?.value
+    if (!token) return null
+
+    const decoded = decodeJwt(token) as { id?: string; sub?: string }
+    const userId = decoded.id || decoded.sub
+    if (!userId) return null
+
+    if (!process.env.DATABASE_URL) return null
+
+    const fullUser = await prisma.user.findUnique({ where: { id: userId } })
+    if (!fullUser) return null
+    
+    // Map to Auth User interface
+    return {
+      ...fullUser,
+      createdAt: fullUser.createdAt?.toISOString(),
+      updatedAt: fullUser.updatedAt?.toISOString(),
+      // Default missing fields if schema differs
+      name: (fullUser as unknown as { name?: string }).name || '',
+      phone: (fullUser as unknown as { phone?: string }).phone || '',
+      address: (fullUser as unknown as { address?: string }).address || '',
+      role: (fullUser as unknown as { role?: string }).role || 'user',
+      avatar: (fullUser as unknown as { avatar?: string }).avatar || '',
+      isPaid: (fullUser as unknown as { isPaid?: boolean }).isPaid || false,
+      files: (fullUser as unknown as { files?: unknown[] }).files || []
+    }
+  } catch {
+    // console.error(e)
+  }
+  return null
+}
+
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const settings = await getSettings()
+  const user = await getUser()
+
+  return (
+    <html lang="hy">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        />
+      </head>
+      <body style={{ fontFamily: '"Noto Sans Armenian", Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif' }}>
+        <AuthProvider initialUser={user as User | null}>
+          <SettingsProvider initialSettings={settings}>
+            <ConfirmProvider>
+              {children}
+            </ConfirmProvider>
+          </SettingsProvider>
+        </AuthProvider>
+      </body>
+    </html>
+  )
+}

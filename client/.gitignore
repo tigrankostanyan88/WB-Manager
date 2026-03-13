@@ -1,0 +1,10 @@
+node_modules
+public/files/*.mp4
+.next/
+out/
+build/
+.env*.local
+*.tsbuildinfo
+.clerk/
+.vercel
+.turbo

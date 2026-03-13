@@ -1,0 +1,61 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <h1>Օգտատերերի կառավարում</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Անուն</th>
+                <th>Էլ․ հասցե</th>
+                <th>Հեռախոս</th>
+                <th>Դեր</th>
+                <th>Գործողություններ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(user => { %>
+                <tr>
+                    <td><%= user.id %></td>
+                    <td><%= user.name %></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.phone %></td>
+                    <td><%= user.role %></td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editUser('<%= user.id %>')">Թարմացնել</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteUser('<%= user.id %>')">Ջնջել</button>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function editUser(id) {
+        // Implement edit functionality here
+        console.log('Edit user with id:', id);
+    }
+
+    async function deleteUser(id) {
+        if (confirm('Վստա՞հ եք, որ ուզում եք ջնջել այս օգտատիրոջը։')) {
+            try {
+                const response = await fetch(`/api/v1/users/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    const data = await response.json();
+                    alert(data.message || 'Ինչ-որ սխալ տեղի ունեցավ');
+                }
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                alert('Ինչ-որ սխալ տեղի ունեցավ');
+            }
+        }
+    }
+</script>
+
+<%- include('partials/footer') %>
