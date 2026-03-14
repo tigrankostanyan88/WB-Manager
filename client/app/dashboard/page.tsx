@@ -54,7 +54,7 @@ export default function DashboardPage() {
     userSearch,
     setUserSearch,
     handleDeleteUser,
-    handleTogglePaid: handleToggleUserPaid,
+    getUserPaymentStatus,
     startEditUserModal,
     submitEditUser
   } = useUsers({ activeTab, allowed, editingUser, setEditingUser, showToast })
@@ -169,7 +169,7 @@ export default function DashboardPage() {
                     isUsersLoading={isUsersLoading}
                     userSearch={userSearch}
                     setUserSearch={setUserSearch}
-                    onTogglePaid={handleToggleUserPaid}
+                    getUserPaymentStatus={getUserPaymentStatus}
                     onEdit={startEditUserModal}
                     onDelete={handleDeleteUser}
                   />

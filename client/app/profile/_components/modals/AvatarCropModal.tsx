@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, RotateCcw, Check, ZoomIn, ZoomOut, Move } from 'lucide-react'
+import { X, Check, ZoomIn, ZoomOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface AvatarCropModalProps {
@@ -16,12 +16,9 @@ export default function AvatarCropModal({ isOpen, imageSrc, onClose, onCropCompl
   const [scale, setScale] = useState(1)
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const imageRef = useRef<HTMLImageElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const handleZoomIn = () => setScale(s => Math.min(s + 0.1, 3))
-  const handleZoomOut = () => setScale(s => Math.max(s - 0.1, 0.5))
   const handleReset = () => {
     setScale(1)
     setPosition({ x: 0, y: 0 })
@@ -30,24 +27,23 @@ export default function AvatarCropModal({ isOpen, imageSrc, onClose, onCropCompl
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
     setIsDragging(true)
-    setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y })
-  }, [position])
+  }, [])
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isDragging) return
     e.preventDefault()
-    setPosition({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y
-    })
-  }, [isDragging, dragStart])
+    setPosition(prev => ({
+      x: prev.x + e.movementX,
+      y: prev.y + e.movementY
+    }))
+  }, [isDragging])
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false)
   }, [])
 
   const getCroppedImage = useCallback(() => {
-    if (!imageRef.current || !containerRef.current) return
+    if (!imageRef.current) return
 
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
@@ -58,30 +54,25 @@ export default function AvatarCropModal({ isOpen, imageSrc, onClose, onCropCompl
     canvas.height = size
 
     const img = imageRef.current
-    const container = containerRef.current
-    const containerRect = container.getBoundingClientRect()
-    const containerSize = containerRect.width
-
-    // Calculate the source coordinates
-    const sourceSize = Math.min(img.naturalWidth, img.naturalHeight)
-    const sourceX = (img.naturalWidth - sourceSize) / 2
-    const sourceY = (img.naturalHeight - sourceSize) / 2
-
+    const naturalWidth = img.naturalWidth
+    const naturalHeight = img.naturalHeight
+    const minDimension = Math.min(naturalWidth, naturalHeight)
+    
     // Draw circular clip
     ctx.beginPath()
     ctx.arc(size / 2, size / 2, size / 2, 0, 2 * Math.PI)
     ctx.closePath()
     ctx.clip()
 
-    // Draw the image with transformations
-    const drawSize = sourceSize / scale
-    const offsetX = (size - drawSize) / 2 + position.x * (sourceSize / containerSize) / scale
-    const offsetY = (size - drawSize) / 2 + position.y * (sourceSize / containerSize) / scale
+    // Calculate position to center the crop
+    const scaledSize = minDimension * scale
+    const offsetX = (size - scaledSize) / 2 + position.x
+    const offsetY = (size - scaledSize) / 2 + position.y
 
     ctx.drawImage(
       img,
-      sourceX, sourceY, sourceSize, sourceSize,
-      offsetX, offsetY, drawSize, drawSize
+      0, 0, naturalWidth, naturalHeight,
+      offsetX, offsetY, scaledSize, scaledSize
     )
 
     canvas.toBlob((blob) => {
@@ -103,99 +94,101 @@ export default function AvatarCropModal({ isOpen, imageSrc, onClose, onCropCompl
         onClick={onClose}
       >
         <motion.div
-          initial={{ scale: 0.95, y: 20 }}
-          animate={{ scale: 1, y: 0 }}
-          exit={{ scale: 0.95, y: 20 }}
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+          className="relative w-full max-w-[400px] bg-white rounded-3xl shadow-2xl"
         >
           {/* Header */}
-          <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-            <h3 className="text-lg font-bold text-slate-900">Կտրել նկարը</h3>
-            <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100 transition-colors">
-              <X className="w-5 h-5 text-slate-500" />
+          <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-violet-50 to-white rounded-t-3xl">
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">Պրոֆիլի նկար</h3>
+              <p className="text-xs text-slate-500">Հարմարեցրեք նկարը կլոր շրջանակում</p>
+            </div>
+            <button 
+              onClick={onClose} 
+              className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center transition-colors"
+            >
+              <X className="w-5 h-5 text-slate-400" />
             </button>
           </div>
 
           {/* Crop Area */}
-          <div className="p-4">
-            <div
-              ref={containerRef}
-              className="relative w-full aspect-square bg-slate-100 rounded-xl overflow-hidden cursor-move"
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-            >
-              {/* Grid overlay */}
-              <div className="absolute inset-0 pointer-events-none z-10">
-                <div className="absolute inset-0 border-2 border-white/50 rounded-full" />
-                <div className="absolute inset-4 border border-white/30 rounded-full" />
-                <div className="absolute top-1/2 left-0 right-0 h-px bg-white/30" />
-                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/30" />
+          <div className="p-5">
+            <div className="flex flex-col items-center">
+              {/* Circular Preview */}
+              <div
+                ref={containerRef}
+                className="relative w-[220px] h-[220px] rounded-full overflow-hidden bg-slate-100 shadow-inner cursor-move ring-4 ring-violet-100"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+              >
+                <img
+                  ref={imageRef}
+                  src={imageSrc}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                  style={{
+                    transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+                    transition: isDragging ? 'none' : 'transform 0.2s ease'
+                  }}
+                  draggable={false}
+                />
+                
+                {isDragging && (
+                  <div className="absolute inset-0 bg-violet-500/10 pointer-events-none" />
+                )}
               </div>
 
-              {/* Image */}
-              <img
-                ref={imageRef}
-                src={imageSrc}
-                alt="Crop"
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{
-                  transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-                  transition: isDragging ? 'none' : 'transform 0.1s ease-out'
-                }}
-                draggable={false}
-              />
-
-              {/* Instructions */}
-              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs px-3 py-1 rounded-full pointer-events-none">
-                Քաշեք և մեծացրեք
+              {/* Zoom Controls */}
+              <div className="mt-4 w-full max-w-[220px]">
+                <div className="flex items-center gap-2">
+                  <ZoomOut className="w-4 h-4 text-slate-400 shrink-0" />
+                  <input
+                    type="range"
+                    min="50"
+                    max="300"
+                    value={Math.round(scale * 100)}
+                    onChange={(e) => setScale(Number(e.target.value) / 100)}
+                    className="flex-1 h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-violet-600 min-w-0"
+                  />
+                  <ZoomIn className="w-4 h-4 text-slate-400 shrink-0" />
+                </div>
+                <p className="text-center text-xs text-slate-400 mt-2">
+                  {Math.round(scale * 100)}% • Քաշեք նկարը տեղափոխելու համար
+                </p>
               </div>
-            </div>
-
-            {/* Controls */}
-            <div className="flex items-center justify-center gap-2 mt-4">
-              <button
-                onClick={handleZoomOut}
-                className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors"
-              >
-                <ZoomOut className="w-5 h-5 text-slate-600" />
-              </button>
-              <span className="text-sm font-medium text-slate-600 min-w-[60px] text-center">
-                {Math.round(scale * 100)}%
-              </span>
-              <button
-                onClick={handleZoomIn}
-                className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors"
-              >
-                <ZoomIn className="w-5 h-5 text-slate-600" />
-              </button>
-              <button
-                onClick={handleReset}
-                className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors ml-2"
-              >
-                <RotateCcw className="w-5 h-5 text-slate-600" />
-              </button>
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="p-4 border-t border-slate-100 flex gap-2">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              className="flex-1 rounded-xl"
-            >
-              Չեղարկել
-            </Button>
-            <Button
-              onClick={getCroppedImage}
-              className="flex-1 rounded-xl bg-violet-600 hover:bg-violet-700"
-            >
-              <Check className="w-4 h-4 mr-2" />
-              Պահպանել
-            </Button>
+          {/* Buttons - Grid layout, always visible */}
+          <div className="px-5 pb-5 pt-2">
+            <div className="grid grid-cols-3 gap-2">
+              <Button
+                variant="outline"
+                onClick={handleReset}
+                className="rounded-xl h-11 text-xs font-medium"
+              >
+                Վերականգնել
+              </Button>
+              <Button
+                variant="outline"
+                onClick={onClose}
+                className="rounded-xl h-11 text-xs font-medium"
+              >
+                Չեղարկել
+              </Button>
+              <Button
+                onClick={getCroppedImage}
+                className="rounded-xl h-11 bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs shadow-lg shadow-violet-200"
+              >
+                <Check className="w-4 h-4 mr-1" />
+                Հաստատել
+              </Button>
+            </div>
           </div>
         </motion.div>
       </motion.div>

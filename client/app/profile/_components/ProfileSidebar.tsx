@@ -6,7 +6,6 @@ import { Camera, LogOut, User as UserIcon, type LucideIcon } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { useState, useCallback } from 'react'
-import AvatarCropModal from './modals/AvatarCropModal'
 
 interface SidebarLink {
   id: string
@@ -35,7 +34,7 @@ interface ProfileSidebarProps {
   avatarPreview?: string | null
   sidebarLinks: SidebarLink[]
   onTabChange: (tab: string) => void
-  onAvatarUpload: (file: File | Blob) => void
+  onAvatarUpload: (file: File) => void
   onShowPaymentModal: () => void
   onLogout: () => void
 }
@@ -51,41 +50,18 @@ export default function ProfileSidebar({
   onShowPaymentModal,
   onLogout
 }: ProfileSidebarProps) {
-  const [cropModalOpen, setCropModalOpen] = useState(false)
-  const [selectedImage, setSelectedImage] = useState<string | null>(null)
-
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = useCallback((e: any) => {
     const file = e.target.files?.[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = () => {
-      setSelectedImage(reader.result as string)
-      setCropModalOpen(true)
+    if (file) {
+      onAvatarUpload(file)
     }
-    reader.readAsDataURL(file)
-    
-    // Reset input
     e.target.value = ''
-  }, [])
-
-  const handleCropComplete = useCallback((croppedBlob: Blob) => {
-    setCropModalOpen(false)
-    setSelectedImage(null)
-    
-    // Create a File from Blob
-    const file = new File([croppedBlob], 'avatar.jpg', { type: 'image/jpeg' })
-    onAvatarUpload(file)
   }, [onAvatarUpload])
 
-  const handleCropClose = useCallback(() => {
-    setCropModalOpen(false)
-    setSelectedImage(null)
-  }, [])
   const avatarUrl = avatarPreview || (() => {
     const u = user as unknown as { avatar?: unknown; files?: unknown } | null
     if (!u) return ''
-    
+
     const apiBase = process.env.NEXT_PUBLIC_API_URL || '/api'
     const withOrigin = (path: string) => {
       if (!path) return ''
@@ -101,11 +77,11 @@ export default function ProfileSidebar({
       }
       return path
     }
-    
+
     if (typeof u.avatar === 'string' && u.avatar) {
       return withOrigin(u.avatar)
     }
-    
+
     const files = Array.isArray(u.files) ? (u.files as unknown[]) : []
     const fileObj =
       files.find((x) => {
@@ -149,8 +125,8 @@ export default function ProfileSidebar({
                   type="file" 
                   className="hidden" 
                   accept="image/*" 
-                  onChange={handleFileSelect} 
-                  disabled={isUploadingAvatar} 
+                  onChange={handleFileChange}
+                  disabled={isUploadingAvatar}
                 />
               </label>
             </div>
@@ -164,14 +140,6 @@ export default function ProfileSidebar({
               </div>
             </div>
           </div>
-
-          {/* Crop Modal */}
-          <AvatarCropModal
-            isOpen={cropModalOpen}
-            imageSrc={selectedImage}
-            onClose={handleCropClose}
-            onCropComplete={handleCropComplete}
-          />
 
           <nav className="space-y-1">
             {sidebarLinks.map((link) =>

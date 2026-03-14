@@ -9,6 +9,7 @@ interface UsersTabProps {
   isUsersLoading: boolean
   userSearch: string
   setUserSearch: (value: string) => void
+  getUserPaymentStatus: (userId: number | string) => boolean
   onEdit: (user: User) => void
   onDelete: (id: string) => void
 }
@@ -27,6 +28,7 @@ export default function UsersTab({
   isUsersLoading,
   userSearch,
   setUserSearch,
+  getUserPaymentStatus,
   onEdit,
   onDelete
 }: UsersTabProps) {
@@ -94,11 +96,11 @@ export default function UsersTab({
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-3 py-1 rounded-full text-xs font-bold ${
-                      user.isPaid 
+                      getUserPaymentStatus(user.id || user._id || '')
                         ? 'bg-emerald-100 text-emerald-700' 
                         : 'bg-slate-100 text-slate-600'
                     }`}>
-                      {user.isPaid ? 'Վճարված' : 'Չվճարված'}
+                      {getUserPaymentStatus(user.id || user._id || '') ? 'Վճարված' : 'Չվճարված'}
                     </span>
                   </td>
                   <td className="px-4 py-4">
