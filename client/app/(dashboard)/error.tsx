@@ -10,6 +10,7 @@ export default function DashboardError({
   reset: () => void
 }) {
   useEffect(() => {
+    // Log the error to an error reporting service
     console.error('Dashboard error:', error)
   }, [error])
 

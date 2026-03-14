@@ -35,10 +35,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
-        bio: {
-            type: DataTypes.TEXT,
-            allowNull: true
-        },
         password: {
             type: DataTypes.STRING,
             allowNull: true, 
@@ -49,6 +45,11 @@ module.exports = (sequelize, DataTypes) => {
         role: {
             type: DataTypes.ENUM('user', 'admin'),
             defaultValue: 'user'
+        },
+        course_ids: {
+            type: DataTypes.JSON,
+            allowNull: true,
+            defaultValue: []
         },
         login_token: {
             type: DataTypes.STRING,

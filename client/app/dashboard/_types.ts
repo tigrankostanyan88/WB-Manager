@@ -1,7 +1,6 @@
 export type DashboardTabId =
   | 'overview'
   | 'users'
-  | 'students'
   | 'courses'
   | 'modules'
   | 'comments'
@@ -48,6 +47,8 @@ export type WorkingHoursSchedule = Record<DayKey, WorkingHoursDay>
 
 export interface SiteSettings {
   siteName: string
+  firstName: string
+  lastName: string
   phone: string
   email: string
   address: string
@@ -65,20 +66,20 @@ export interface InstructorStat {
 }
 
 export interface InstructorForm {
+  name: string
+  profession: string
   description: string
+  badgeText: string
   avatarUrl: string
   avatarFile: File | null
-  avatarName: string
-  videoUrl: string
-  videoFile: File | null
-  videoName: string
   stats: InstructorStat[]
 }
 
 export interface InstructorErrors {
+  name: boolean
+  profession: boolean
   description: boolean
   stats: boolean[]
-  video?: boolean
 }
 
 export interface ToastState {

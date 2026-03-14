@@ -1,103 +1,89 @@
-'use client'
+import { useEffect, useMemo, useState } from 'react'
+import { userService } from '@/lib/api'
+import { useConfirm } from '@/components/ConfirmProvider'
+import type { DashboardTabId, User } from '../_types'
 
-import { useState, useCallback, useEffect } from 'react'
-import type { User } from '../_types'
+type EditingUser = (User & { __editScope?: 'users' }) | null
 
-interface UseUsersProps {
-  activeTab: string
-  allowed: boolean
-  editingUser: User | null
-  setEditingUser: React.Dispatch<React.SetStateAction<User | null>>
-  showToast: (message: string, type?: 'success' | 'error' | 'info') => void
+interface EditUserForm {
+  name: string
+  email: string
+  phone: string
+  courseIds: (string | number)[]
 }
 
-export function useUsers({ activeTab, allowed, editingUser, setEditingUser, showToast }: UseUsersProps) {
+interface UseUsersParams {
+  activeTab: DashboardTabId
+  allowed: boolean
+  editingUser: EditingUser
+  setEditingUser: React.Dispatch<React.SetStateAction<EditingUser>>
+}
+
+export default function useUsers({ activeTab, allowed, editingUser, setEditingUser }: UseUsersParams) {
+  const confirm = useConfirm()
   const [users, setUsers] = useState<User[]>([])
   const [isUsersLoading, setIsUsersLoading] = useState(false)
   const [userSearch, setUserSearch] = useState('')
 
-  const fetchUsers = useCallback(async () => {
-    if (activeTab !== 'users' || !allowed) return
-    setIsUsersLoading(true)
-    try {
-      const res = await fetch('/api/users')
-      const data = await res.json()
-      setUsers(data.users || [])
-    } catch (error) {
-      console.error('Error fetching users:', error)
-    } finally {
-      setIsUsersLoading(false)
+  useEffect(() => {
+    if (!allowed) return
+    if (activeTab !== 'users') return
+    let cancelled = false
+    ;(async () => {
+      setIsUsersLoading(true)
+      try {
+        const res = await userService.getAllUsers()
+        const list = ((res.data?.users || []) as User[]).filter((u) => u.role === 'user')
+        if (!cancelled) setUsers(list)
+      } finally {
+        if (!cancelled) setIsUsersLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
     }
   }, [activeTab, allowed])
 
-  useEffect(() => {
-    fetchUsers()
-  }, [fetchUsers])
+  const filteredUsers = useMemo(() => {
+    const q = userSearch.trim().toLowerCase()
+    if (!q) return users
+    return users.filter((u) => [u.name, u.email, u.phone, u.role].join(' ').toLowerCase().includes(q))
+  }, [users, userSearch])
 
-  const handleDeleteUser = useCallback(async (id: string) => {
-    try {
-      const res = await fetch(`/api/users/${id}`, { method: 'DELETE' })
-      if (res.ok) {
-        showToast('Օգտվողը ջնջված է')
-        fetchUsers()
-      } else {
-        showToast('Սխալ է տեղի ունեցել', 'error')
-      }
-    } catch {
-      showToast('Սխալ է տեղի ունեցել', 'error')
-    }
-  }, [showToast, fetchUsers])
+  const handleDeleteUser = async (id: number | string) => {
+    const ok = await confirm({
+      title: 'Ջնջե՞լ օգտատիրոջը',
+      message: 'Գործողությունը չի վերադարձվի',
+      confirmText: 'Ջնջել',
+      cancelText: 'Չեղարկել',
+      tone: 'danger'
+    })
+    if (!ok) return
+    await userService.deleteUser(id)
+    setUsers((prev) => prev.filter((u) => u.id !== id))
+  }
 
-  const handleTogglePaid = useCallback(async (userId: string, isPaid: boolean) => {
-    try {
-      const res = await fetch(`/api/users/${userId}/paid`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isPaid })
-      })
-      if (res.ok) {
-        showToast(isPaid ? 'Վճարումը ակտիվացված է' : 'Վճարումը ապաակտիվացված է')
-        fetchUsers()
-      }
-    } catch {
-      showToast('Սխալ է տեղի ունեցել', 'error')
-    }
-  }, [showToast, fetchUsers])
+  const handleTogglePaid = async (u: User) => {
+    const currentPaid = Boolean(u.isPaid)
+    const next = !currentPaid
+    await userService.updateUser(u.id, { isPaid: next })
+    setUsers((prev) => prev.map((x) => (x.id === u.id ? { ...x, isPaid: next } : x)))
+  }
 
-  const startEditUserModal = useCallback((user: User) => {
-    setEditingUser(user)
-  }, [setEditingUser])
+  const startEditUserModal = (u: User) => {
+    setEditingUser({ ...(u as User), __editScope: 'users' })
+  }
 
-  const submitEditUser = useCallback(async (updatedUser: User) => {
-    try {
-      const res = await fetch(`/api/users/${updatedUser._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedUser)
-      })
-      if (res.ok) {
-        showToast('Օգտվողը թարմացված է')
-        setEditingUser(null)
-        fetchUsers()
-      } else {
-        showToast('Սխալ է տեղի ունեցել', 'error')
-      }
-    } catch {
-      showToast('Սխալ է տեղի ունեցել', 'error')
-    }
-  }, [showToast, setEditingUser, fetchUsers])
-
-  const filteredUsers = users.filter(user => {
-    const search = userSearch.toLowerCase()
-    return (
-      user.firstName.toLowerCase().includes(search) ||
-      user.lastName.toLowerCase().includes(search) ||
-      user.email.toLowerCase().includes(search)
-    )
-  })
+  const submitEditUser = async (data: EditUserForm) => {
+    if (!editingUser || editingUser.__editScope !== 'users') return
+    await userService.updateUser(editingUser.id, data as unknown as Record<string, unknown>)
+    setUsers((prev) => prev.map((u) => (u.id === editingUser.id ? { ...u, ...data } : u)).filter((u) => u.role === 'user'))
+    setEditingUser(null)
+  }
 
   return {
-    users: filteredUsers,
+    users,
+    filteredUsers,
     isUsersLoading,
     userSearch,
     setUserSearch,
@@ -107,3 +93,4 @@ export function useUsers({ activeTab, allowed, editingUser, setEditingUser, show
     submitEditUser
   }
 }
+

@@ -1,146 +1,202 @@
-'use client'
+import { useEffect, useState } from 'react'
+import type { FormEvent } from 'react'
+import type { DashboardTabId } from '../_types'
+import api from '@/lib/api'
 
-import { useState, useCallback, useEffect } from 'react'
-import type { Course } from '../_types'
-
-interface UseCoursesProps {
-  activeTab: string
-  showToast: (message: string, type?: 'success' | 'error' | 'info') => void
+export interface Course {
+  id: string | number
+  title: string
+  description: string
+  category?: string
+  prerequisites?: string
+  duration?: string
+  language?: string
+  price: number | string
+  discount?: number | string
+  whatToLearn?: string[]
+  modules?: unknown[]
 }
 
-export function useCourses({ activeTab, showToast }: UseCoursesProps) {
+export interface CourseModule {
+  id: string
+  title: string
+  duration: string
+}
+
+export interface CourseVideo {
+  id: string
+  file: File | null
+  preview: string
+  name: string
+  moduleId: string
+}
+
+export interface CourseForm {
+  title: string
+  description: string
+  language: string
+  category: string
+  prerequisites: string
+  duration: string
+  modulesCount: string
+  price: string
+  discount: string
+  author: string
+  whatToLearn: string[]
+  image: string | null
+  imageFile: File | null
+  modules: CourseModule[]
+  videos: CourseVideo[]
+}
+
+interface UseCoursesParams {
+  activeTab: DashboardTabId
+  showToast: (message: string, type?: 'success' | 'error') => void
+}
+
+const emptyCourseForm: CourseForm = {
+  title: '',
+  description: '',
+  language: '',
+  category: '',
+  prerequisites: '',
+  duration: '',
+  modulesCount: '',
+  price: '',
+  discount: '',
+  author: '',
+  whatToLearn: [''],
+  image: null,
+  imageFile: null,
+  modules: [],
+  videos: []
+}
+
+export default function useCourses({ activeTab, showToast }: UseCoursesParams) {
   const [showCourseForm, setShowCourseForm] = useState(false)
-  const [courseForm, setCourseForm] = useState({
-    title: '',
-    description: '',
-    price: '',
-    image: '',
-    learningPoints: [] as string[]
-  })
+  const [courseForm, setCourseForm] = useState<CourseForm>(emptyCourseForm)
   const [courses, setCourses] = useState<Course[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [cropImage, setCropImage] = useState<string | null>(null)
-  const [crop, setCrop] = useState({ x: 0, y: 0 })
-  const [zoom, setZoom] = useState(1)
+  const [editingCourseId, setEditingCourseId] = useState<string | null>(null)
 
-  const fetchCourses = useCallback(async () => {
-    if (activeTab !== 'courses') return
-    setIsLoading(true)
+  const fetchCourses = async () => {
     try {
-      const res = await fetch('/api/courses')
-      const data = await res.json()
-      setCourses(data.courses || [])
+      setIsLoading(true)
+      const res = await api.get('/api/v1/courses')
+      // Try different response structures
+      // Based on Postman screenshot: res.data.data (which is an array)
+      const coursesData = Array.isArray(res.data?.data) ? res.data.data : (res.data?.data?.courses || res.data?.courses || [])
+      console.log('Fetched courses:', coursesData, 'Response:', res.data)
+      setCourses(Array.isArray(coursesData) ? coursesData : [])
     } catch (error) {
       console.error('Error fetching courses:', error)
+      showToast('Սխալ դասընթացները բեռնելիս', 'error')
     } finally {
       setIsLoading(false)
     }
-  }, [activeTab])
+  }
 
   useEffect(() => {
-    fetchCourses()
-  }, [fetchCourses])
+    if (activeTab === 'courses') {
+      fetchCourses()
+    } else {
+      setShowCourseForm(false)
+    }
+  }, [activeTab])
 
-  const startNewCourse = useCallback(() => {
-    setCourseForm({ title: '', description: '', price: '', image: '', learningPoints: [] })
+  const startNewCourse = () => {
+    setCourseForm(emptyCourseForm)
+    setEditingCourseId(null)
     setShowCourseForm(true)
-  }, [])
+  }
 
-  const editCourse = useCallback((course: Course) => {
-    setCourseForm({
-      title: course.title,
-      description: course.description,
-      price: String(course.price),
-      image: course.image || '',
-      learningPoints: course.learningPoints || []
-    })
-    setShowCourseForm(true)
-  }, [])
-
-  const cancelNewCourse = useCallback(() => {
+  const cancelNewCourse = () => {
     setShowCourseForm(false)
-  }, [])
+    setEditingCourseId(null)
+    setCourseForm(emptyCourseForm)
+  }
 
-  const addLearningPoint = useCallback(() => {
-    setCourseForm(prev => ({ ...prev, learningPoints: [...prev.learningPoints, ''] }))
-  }, [])
-
-  const changeLearningPoint = useCallback((index: number, value: string) => {
-    setCourseForm(prev => {
-      const newPoints = [...prev.learningPoints]
-      newPoints[index] = value
-      return { ...prev, learningPoints: newPoints }
+  const editCourse = (course: Course) => {
+    setEditingCourseId(String(course.id))
+    const rawPrice = (course as unknown as { price?: unknown }).price
+    const rawDiscount = (course as unknown as { discount?: unknown }).discount
+    const rawWhatToLearn = (course as unknown as { whatToLearn?: unknown }).whatToLearn
+    const rawModules = (course as unknown as { modules?: unknown }).modules
+    setCourseForm({
+      ...emptyCourseForm,
+      title: course.title || '',
+      description: course.description || '',
+      language: (course as unknown as { language?: string }).language || 'ARM',
+      category: (course as unknown as { category?: string }).category || '',
+      prerequisites: (course as unknown as { prerequisites?: string }).prerequisites || '',
+      duration: (course as unknown as { duration?: string }).duration || '',
+      modulesCount: Array.isArray(rawModules) ? String(rawModules.length) : '',
+      price: rawPrice === 0 ? '0' : rawPrice ? String(rawPrice) : '',
+      discount: rawDiscount === 0 ? '0' : rawDiscount ? String(rawDiscount) : '',
+      author: (course as unknown as { author?: string }).author || '',
+      whatToLearn: Array.isArray(rawWhatToLearn) && rawWhatToLearn.length ? (rawWhatToLearn as string[]) : [''],
+      image: (course as unknown as { image?: string | null }).image ?? null,
+      imageFile: null,
+      modules: Array.isArray(course.modules)
+        ? course.modules.map((m: unknown) => {
+            const mm = m as { id?: unknown; title?: unknown; name?: unknown; duration?: unknown }
+            return {
+              id: String(mm?.id ?? ''),
+              title: String((typeof mm?.title === 'string' && mm.title) || (typeof mm?.name === 'string' && mm.name) || ''),
+              duration: String(mm?.duration ?? '')
+            }
+          })
+        : [],
+      videos: []
     })
-  }, [])
+    setShowCourseForm(true)
+  }
 
-  const removeLearningPoint = useCallback((index: number) => {
-    setCourseForm(prev => {
-      const newPoints = [...prev.learningPoints]
-      newPoints.splice(index, 1)
-      return { ...prev, learningPoints: newPoints }
+  const addLearningPoint = () => {
+    setCourseForm((prev) => ({ ...prev, whatToLearn: [...prev.whatToLearn, ''] }))
+  }
+
+  const changeLearningPoint = (index: number, value: string) => {
+    setCourseForm((prev) => {
+      const next = [...prev.whatToLearn]
+      next[index] = value
+      return { ...prev, whatToLearn: next }
     })
-  }, [])
+  }
 
-  const submitCourse = useCallback(async () => {
+  const removeLearningPoint = (index: number) => {
+    setCourseForm((prev) => ({ ...prev, whatToLearn: prev.whatToLearn.filter((_, i) => i !== index) }))
+  }
+
+  const submitCourse = async (e: FormEvent) => {
+    e.preventDefault()
     try {
-      const res = await fetch('/api/courses', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(courseForm)
-      })
-      if (res.ok) {
-        showToast('Դասընթացը ստեղծված է')
-        setShowCourseForm(false)
-        fetchCourses()
+      setIsLoading(true)
+      const payload = {
+        ...courseForm,
+        price: parseFloat(courseForm.price) || 0,
+        discount: parseFloat(courseForm.discount) || 0
+      }
+
+      if (editingCourseId) {
+        await api.patch(`/api/v1/courses/${editingCourseId}`, payload)
+        showToast('Դասընթացը թարմացվեց', 'success')
       } else {
-        showToast('Սխալ է տեղի ունեցել', 'error')
+        await api.post('/api/v1/courses', payload)
+        showToast('Դասընթացը ստեղծվեց', 'success')
       }
-    } catch {
-      showToast('Սխալ է տեղի ունեցել', 'error')
+      
+      await fetchCourses()
+      setShowCourseForm(false)
+      setEditingCourseId(null)
+      setCourseForm(emptyCourseForm)
+    } catch (error) {
+      console.error('Error saving course:', error)
+      showToast(editingCourseId ? 'Սխալ դասընթացը թարմացնելիս' : 'Սխալ դասընթացը ստեղծելիս', 'error')
+    } finally {
+      setIsLoading(false)
     }
-  }, [courseForm, showToast, fetchCourses])
-
-  const deleteCourse = useCallback(async (id: string) => {
-    try {
-      const res = await fetch(`/api/courses/${id}`, { method: 'DELETE' })
-      if (res.ok) {
-        showToast('Դասընթացը ջնջված է')
-        fetchCourses()
-      } else {
-        showToast('Սխալ է տեղի ունեցել', 'error')
-      }
-    } catch {
-      showToast('Սխալ է տեղի ունեցել', 'error')
-    }
-  }, [showToast, fetchCourses])
-
-  const onImageFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = () => {
-        setCropImage(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-    }
-  }, [])
-
-  const onCropComplete = useCallback(() => {
-    if (cropImage) {
-      setCourseForm(prev => ({ ...prev, image: cropImage }))
-    }
-  }, [cropImage])
-
-  const onCropConfirm = useCallback(() => {
-    if (cropImage) {
-      setCourseForm(prev => ({ ...prev, image: cropImage }))
-    }
-    setCropImage(null)
-  }, [cropImage])
-
-  const onCropClose = useCallback(() => {
-    setCropImage(null)
-  }, [])
+  }
 
   return {
     showCourseForm,
@@ -153,17 +209,7 @@ export function useCourses({ activeTab, showToast }: UseCoursesProps) {
     changeLearningPoint,
     removeLearningPoint,
     submitCourse,
-    deleteCourse,
     courses,
-    isLoading,
-    cropImage,
-    crop,
-    zoom,
-    setCrop,
-    setZoom,
-    onImageFileSelect,
-    onCropComplete,
-    onCropConfirm,
-    onCropClose
+    isLoading
   }
 }

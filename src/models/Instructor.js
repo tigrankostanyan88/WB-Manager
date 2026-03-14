@@ -9,16 +9,20 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     profession: {
       type: DataTypes.STRING,
       allowNull: true
     },
     avatar_url: {
       type: DataTypes.STRING,
-      allowNull: true
-    },
-    description: {
-      type: DataTypes.TEXT,
       allowNull: true
     },
     stats_json: {

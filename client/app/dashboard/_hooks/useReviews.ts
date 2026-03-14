@@ -1,62 +1,75 @@
-'use client'
+import { useEffect, useState } from 'react'
+import api from '@/lib/api'
+import { useConfirm } from '@/components/ConfirmProvider'
+import type { DashboardTabId, Review } from '../_types'
 
-import { useState, useCallback, useEffect } from 'react'
-import type { Review } from '../_types'
-
-interface UseReviewsProps {
-  activeTab: string
+interface UseReviewsParams {
+  activeTab: DashboardTabId
   allowed: boolean
 }
 
-export function useReviews({ activeTab, allowed }: UseReviewsProps) {
+export default function useReviews({ activeTab, allowed }: UseReviewsParams) {
+  const confirm = useConfirm()
   const [reviews, setReviews] = useState<Review[]>([])
   const [isReviewsLoading, setIsReviewsLoading] = useState(false)
 
-  const relativeTime = (date: string) => {
-    const now = new Date()
-    const past = new Date(date)
-    const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000)
-    
-    if (diffInSeconds < 60) return 'հիմա'
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} րոպե առաջ`
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} ժամ առաջ`
-    return `${Math.floor(diffInSeconds / 86400)} օր առաջ`
-  }
-
-  const isToday = (date: string) => {
-    const d = new Date(date)
-    const today = new Date()
-    return d.toDateString() === today.toDateString()
-  }
-
-  const fetchReviews = useCallback(async () => {
-    if (activeTab !== 'comments' || !allowed) return
-    setIsReviewsLoading(true)
-    try {
-      const res = await fetch('/api/reviews')
-      const data = await res.json()
-      setReviews(data.reviews || [])
-    } catch (error) {
-      console.error('Error fetching reviews:', error)
-    } finally {
-      setIsReviewsLoading(false)
+  useEffect(() => {
+    if (!allowed) return
+    if (activeTab !== 'comments') return
+    let cancelled = false
+    ;(async () => {
+      setIsReviewsLoading(true)
+      try {
+        const res = await api.get('/api/v1/reviews')
+        const payload = res.data as { reviews?: unknown; data?: unknown }
+        let list: unknown[] = []
+        if (Array.isArray(payload.reviews)) {
+          list = payload.reviews
+        } else if (payload.data && typeof payload.data === 'object') {
+          const inner = payload.data as { reviews?: unknown }
+          if (Array.isArray(inner.reviews)) list = inner.reviews
+        }
+        if (!cancelled) setReviews(list as Review[])
+      } finally {
+        if (!cancelled) setIsReviewsLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
     }
   }, [activeTab, allowed])
 
-  useEffect(() => {
-    fetchReviews()
-  }, [fetchReviews])
+  const relativeTime = (iso?: string) => {
+    if (!iso) return ''
+    const dt = new Date(iso)
+    const diffMs = Date.now() - dt.getTime()
+    const mins = Math.floor(diffMs / 60000)
+    if (mins < 60) return `${mins} րոպե առաջ`
+    const hrs = Math.floor(mins / 60)
+    if (hrs < 48) return `${hrs} ժամ առաջ`
+    const days = Math.floor(hrs / 24)
+    return `${days} օր առաջ`
+  }
 
-  const handleDeleteReview = useCallback(async (id: string) => {
-    try {
-      const res = await fetch(`/api/reviews/${id}`, { method: 'DELETE' })
-      if (res.ok) {
-        fetchReviews()
-      }
-    } catch (error) {
-      console.error('Error deleting review:', error)
-    }
-  }, [fetchReviews])
+  const isToday = (iso?: string) => {
+    if (!iso) return false
+    const d = new Date(iso)
+    const n = new Date()
+    return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate()
+  }
+
+  const handleDeleteReview = async (id: number | string) => {
+    const ok = await confirm({
+      title: 'Ջնջե՞լ մեկնաբանությունը',
+      message: 'Գործողությունը չի վերադարձվի',
+      confirmText: 'Ջնջել',
+      cancelText: 'Չեղարկել',
+      tone: 'danger'
+    })
+    if (!ok) return
+    await api.delete(`/api/v1/reviews/${id}`)
+    setReviews((prev) => prev.filter((r) => String(r.id) !== String(id)))
+  }
 
   return { reviews, isReviewsLoading, relativeTime, isToday, handleDeleteReview }
 }

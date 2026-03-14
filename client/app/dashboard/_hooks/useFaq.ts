@@ -1,99 +1,97 @@
-'use client'
+import { useEffect, useState } from 'react'
+import api from '@/lib/api'
+import { useConfirm } from '@/components/ConfirmProvider'
+import type { DashboardTabId, FAQ } from '../_types'
 
-import { useState, useCallback, useEffect } from 'react'
-import type { Faq } from '../_types'
-
-interface UseFaqProps {
-  activeTab: string
+interface UseFaqParams {
+  activeTab: DashboardTabId
   allowed: boolean
 }
 
-export function useFaq({ activeTab, allowed }: UseFaqProps) {
-  const [faqs, setFaqs] = useState<Faq[]>([])
-  const [faqForm, setFaqForm] = useState({ question: '', answer: '' })
+export default function useFaq({ activeTab, allowed }: UseFaqParams) {
+  const confirm = useConfirm()
+  const [faqs, setFaqs] = useState<FAQ[]>([])
+  const [faqForm, setFaqForm] = useState({ title: '', text: '' })
   const [isFaqLoading, setIsFaqLoading] = useState(false)
   const [isFaqSubmitting, setIsFaqSubmitting] = useState(false)
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [editForm, setEditForm] = useState({ question: '', answer: '' })
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editForm, setEditForm] = useState({ title: '', text: '' })
   const [isFaqUpdating, setIsFaqUpdating] = useState(false)
 
-  const fetchFaqs = useCallback(async () => {
-    if (activeTab !== 'faq' || !allowed) return
-    setIsFaqLoading(true)
-    try {
-      const res = await fetch('/api/faqs')
-      const data = await res.json()
-      setFaqs(data.faqs || [])
-    } catch (error) {
-      console.error('Error fetching FAQs:', error)
-    } finally {
-      setIsFaqLoading(false)
+  useEffect(() => {
+    if (!allowed) return
+    if (activeTab !== 'faq') return
+    let cancelled = false
+    ;(async () => {
+      setIsFaqLoading(true)
+      try {
+        const res = await api.get('/api/v1/faq')
+        const data = res.data as { faqs?: unknown }
+        const list = Array.isArray(data.faqs) ? (data.faqs as FAQ[]) : []
+        if (!cancelled) setFaqs(list)
+      } finally {
+        if (!cancelled) setIsFaqLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
     }
   }, [activeTab, allowed])
 
-  useEffect(() => {
-    fetchFaqs()
-  }, [fetchFaqs])
-
-  const submitFaq = useCallback(async () => {
+  const submitFaq = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!faqForm.title.trim() || !faqForm.text.trim()) return
     setIsFaqSubmitting(true)
     try {
-      const res = await fetch('/api/faqs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(faqForm)
-      })
-      if (res.ok) {
-        setFaqForm({ question: '', answer: '' })
-        fetchFaqs()
-      }
-    } catch (error) {
-      console.error('Error submitting FAQ:', error)
+      const res = await api.post('/api/v1/faq', { title: faqForm.title.trim(), text: faqForm.text.trim() })
+      const created = (res.data as { item?: unknown }).item as FAQ | undefined
+      if (created) setFaqs([created, ...faqs])
+      setFaqForm({ title: '', text: '' })
     } finally {
       setIsFaqSubmitting(false)
     }
-  }, [faqForm, fetchFaqs])
+  }
 
-  const startEdit = useCallback((faq: Faq) => {
-    setEditingId(faq._id)
-    setEditForm({ question: faq.question, answer: faq.answer })
-  }, [])
+  const startEdit = (f: FAQ) => {
+    setEditingId(f.id)
+    setEditForm({ title: f.question, text: f.answer })
+  }
 
-  const cancelEdit = useCallback(() => {
+  const cancelEdit = () => {
     setEditingId(null)
-    setEditForm({ question: '', answer: '' })
-  }, [])
+    setEditForm({ title: '', text: '' })
+  }
 
-  const updateFaq = useCallback(async () => {
-    if (!editingId) return
+  const updateFaq = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingId || !editForm.title.trim() || !editForm.text.trim()) return
     setIsFaqUpdating(true)
     try {
-      const res = await fetch(`/api/faqs/${editingId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editForm)
-      })
-      if (res.ok) {
-        cancelEdit()
-        fetchFaqs()
+      const res = await api.put(`/api/v1/faq/${editingId}`, { title: editForm.title.trim(), text: editForm.text.trim() })
+      const updated = (res.data as { item?: unknown }).item as FAQ | undefined
+      if (updated) {
+        setFaqs(faqs.map((f) => (f.id === editingId ? { id: updated.id, question: updated.question, answer: updated.answer } : f)))
+      } else {
+        setFaqs(faqs.map((f) => (f.id === editingId ? { ...f, question: editForm.title, answer: editForm.text } : f)))
       }
-    } catch (error) {
-      console.error('Error updating FAQ:', error)
+      cancelEdit()
     } finally {
       setIsFaqUpdating(false)
     }
-  }, [editingId, editForm, fetchFaqs, cancelEdit])
+  }
 
-  const deleteFaq = useCallback(async (id: string) => {
-    try {
-      const res = await fetch(`/api/faqs/${id}`, { method: 'DELETE' })
-      if (res.ok) {
-        fetchFaqs()
-      }
-    } catch (error) {
-      console.error('Error deleting FAQ:', error)
-    }
-  }, [fetchFaqs])
+  const deleteFaq = async (id: number) => {
+    const ok = await confirm({
+      title: 'Ջնջե՞լ հարցը',
+      message: 'Գործողությունը չի վերադարձվի',
+      confirmText: 'Ջնջել',
+      cancelText: 'Չեղարկել',
+      tone: 'danger'
+    })
+    if (!ok) return
+    await api.delete(`/api/v1/faq/${id}`)
+    setFaqs(faqs.filter((f) => f.id !== id))
+  }
 
   return {
     faqs,
