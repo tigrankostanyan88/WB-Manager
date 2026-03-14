@@ -27,8 +27,8 @@ export default function CommentsTab({
         </div>
       ) : reviews.length > 0 ? (
         <div className="grid gap-4">
-          {reviews.map((review) => (
-            <div key={review._id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+          {reviews.map((review, index) => (
+            <div key={review._id || `review-${index}`} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2">

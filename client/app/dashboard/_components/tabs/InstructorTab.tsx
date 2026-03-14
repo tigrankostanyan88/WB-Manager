@@ -1,7 +1,9 @@
 'use client'
 
-import { Save, Camera, TrendingUp, Clock, HeadphonesIcon, Users } from 'lucide-react'
+import { Save, Camera, TrendingUp, Clock, HeadphonesIcon, Users, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 
 interface InstructorStat {
   value: string
@@ -43,6 +45,13 @@ const statLabels = [
   { label: 'Անհատական աջակցություն', icon: 'support' }
 ]
 
+const statConfig = [
+  { label: 'Հաջողակ ուսանողներ', icon: Users, color: 'text-violet-500', bg: 'bg-violet-50' },
+  { label: 'Շրջանառություն', icon: TrendingUp, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+  { label: 'Փորձ', icon: Clock, color: 'text-orange-500', bg: 'bg-orange-50' },
+  { label: 'Աջակցություն', icon: HeadphonesIcon, color: 'text-blue-500', bg: 'bg-blue-50' }
+]
+
 const getIcon = (iconType: string) => {
   switch (iconType) {
     case 'users':
@@ -72,12 +81,12 @@ export default function InstructorTab({
   onSubmit
 }: InstructorTabProps) {
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <form onSubmit={onSubmit} className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-slate-900">Մենթոր</h2>
+        <h2 className="text-lg font-semibold text-slate-900">Մենթոր</h2>
         <Button 
           type="submit" 
-          className="rounded-xl bg-violet-600 hover:bg-violet-700"
+          className="rounded-lg bg-violet-600 hover:bg-violet-700"
           disabled={isInstructorLoading}
         >
           <Save className="w-4 h-4 mr-2" />
@@ -90,132 +99,145 @@ export default function InstructorTab({
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600" />
         </div>
       ) : (
-        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-            {/* Left side - Photo */}
-            <div className="relative bg-gradient-to-br from-slate-100 to-slate-200 p-8 flex items-center justify-center min-h-[500px]">
-              <div className="relative w-full max-w-sm">
+        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-0">
+            {/* Photo Section */}
+            <div className="bg-slate-50 p-6 flex flex-col">
+              <div className="relative flex-1 min-h-[380px] flex items-center justify-center">
                 {instructorForm.avatarUrl ? (
-                  <div className="relative rounded-3xl overflow-hidden shadow-2xl">
+                  <div className="relative w-full h-full rounded-xl overflow-hidden shadow-lg">
                     <img
                       src={instructorForm.avatarUrl}
                       alt="Մենթոր"
-                      className="w-full aspect-[3/4] object-cover"
+                      className="w-full h-full object-cover"
                     />
-                    {/* Name overlay at bottom - simplified since we have separate fields */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6 pt-20">
-                      <p className="text-white text-xl font-bold">
-                        {instructorForm.name || 'Անուն Ազգանուն'}
-                      </p>
-                      <p className="text-white/80 text-sm">
-                        {instructorForm.profession || 'Մասնագիտություն'}
-                      </p>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <p className="text-white font-semibold text-lg">{instructorForm.name || 'Անուն'}</p>
+                      <p className="text-white/80 text-sm">{instructorForm.profession || 'Մասնագիտություն'}</p>
                     </div>
                   </div>
                 ) : (
-                  <div className="w-full aspect-[3/4] rounded-3xl bg-slate-200 flex flex-col items-center justify-center border-2 border-dashed border-slate-300">
-                    <Camera className="w-12 h-12 text-slate-400 mb-4" />
-                    <p className="text-slate-500 text-sm">Բեռնել նկար</p>
-                    <p className="text-slate-400 text-xs mt-1">400x500px կամ 3:4 հարաբերակցություն</p>
-                  </div>
+                  <label className="w-full h-full rounded-xl border-2 border-dashed border-slate-300 bg-white flex flex-col items-center justify-center cursor-pointer hover:border-violet-400 hover:bg-violet-50/50 transition-all group">
+                    <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-3 group-hover:bg-violet-100 transition-colors">
+                      <User className="w-10 h-10 text-slate-400 group-hover:text-violet-500 transition-colors" />
+                    </div>
+                    <span className="text-sm text-slate-600 font-medium">Ավելացնել նկար</span>
+                    <span className="text-xs text-slate-400 mt-1">3:4 հարաբերակցություն</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={onAvatarFileSelect}
+                      className="hidden"
+                    />
+                  </label>
                 )}
                 
-                {/* Upload button */}
-                <label className="absolute top-4 right-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={onAvatarFileSelect}
-                    className="hidden"
-                  />
-                  <Camera className="w-5 h-5 text-slate-600" />
-                </label>
+                {instructorForm.avatarUrl && (
+                  <label className="absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur rounded-full shadow-md flex items-center justify-center cursor-pointer hover:bg-white transition-colors">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={onAvatarFileSelect}
+                      className="hidden"
+                    />
+                    <Camera className="w-5 h-5 text-slate-600" />
+                  </label>
+                )}
               </div>
             </div>
 
-            {/* Right side - Stats */}
-            <div className="p-8 lg:p-12 flex flex-col justify-center">
+            {/* Form Section */}
+            <div className="p-6 space-y-5">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 px-4 py-2 rounded-full text-sm font-medium w-fit mb-6">
-                <span className="w-2 h-2 bg-violet-500 rounded-full"></span>
-                <input
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-violet-500" />
+                <Input
                   type="text"
                   value={instructorForm.badgeText}
                   onChange={(e) => onBadgeTextChange(e.target.value)}
                   placeholder="Վերադարձված մենթորություն"
-                  className="bg-transparent border-none outline-none focus:ring-0 text-violet-700 placeholder-violet-400 w-full"
+                  className="w-auto flex-1 max-w-[200px] border-0 bg-transparent p-0 text-sm font-medium text-violet-700 placeholder:text-violet-400 focus-visible:ring-0"
                 />
               </div>
 
               {/* Title */}
-              <input
-                type="text"
-                value={instructorForm.title}
-                onChange={(e) => onTitleChange(e.target.value)}
-                placeholder="Սովորեք Ուայլդբերիի Մասնագետից"
-                className="w-full text-3xl lg:text-4xl font-black text-slate-900 placeholder-slate-300 border-none outline-none focus:ring-0 p-0 mb-2"
-              />
+              <div>
+                <Input
+                  type="text"
+                  value={instructorForm.title}
+                  onChange={(e) => onTitleChange(e.target.value)}
+                  placeholder="Սովորեք Ուայլդբերիի Մասնագետից"
+                  className="text-2xl font-bold text-slate-900 placeholder:text-slate-300 border-0 p-0 h-auto focus-visible:ring-0"
+                />
+              </div>
 
-              {/* Name and Profession fields below title */}
-              <div className="mb-4 space-y-2">
-                <input
-                  type="text"
-                  value={instructorForm.name}
-                  onChange={(e) => onNameChange(e.target.value)}
-                  placeholder="Անուն Ազգանուն"
-                  className={`w-full text-lg font-semibold text-slate-700 placeholder-slate-400 border-b border-slate-200 focus:border-violet-500 outline-none focus:ring-0 py-1 transition-colors ${
-                    instructorErrors.name ? 'border-red-300' : ''
-                  }`}
-                />
-                <input
-                  type="text"
-                  value={instructorForm.profession}
-                  onChange={(e) => onProfessionChange(e.target.value)}
-                  placeholder="Մասնագիտություն"
-                  className={`w-full text-sm text-slate-500 placeholder-slate-400 border-b border-slate-200 focus:border-violet-500 outline-none focus:ring-0 py-1 transition-colors ${
-                    instructorErrors.profession ? 'border-red-300' : ''
-                  }`}
-                />
+              {/* Name & Profession */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-slate-500">Անուն Ազգանուն</Label>
+                  <Input
+                    type="text"
+                    value={instructorForm.name}
+                    onChange={(e) => onNameChange(e.target.value)}
+                    placeholder="Անուն"
+                    className={instructorErrors.name ? 'border-red-300' : ''}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-slate-500">Մասնագիտություն</Label>
+                  <Input
+                    type="text"
+                    value={instructorForm.profession}
+                    onChange={(e) => onProfessionChange(e.target.value)}
+                    placeholder="Մասնագիտություն"
+                    className={instructorErrors.profession ? 'border-red-300' : ''}
+                  />
+                </div>
               </div>
 
               {/* Description */}
-              <div className="mb-8">
+              <div className="space-y-1.5">
+                <Label className="text-xs text-slate-500">Նկարագրություն</Label>
                 <textarea
                   value={instructorForm.description}
                   onChange={(e) => onDescriptionChange(e.target.value)}
-                  placeholder="Ես մեխ սովորեցնել մարդկանց, ես խնդրում եմ իմական գործական...&#10;Որպես Wildberries-ի..."
+                  placeholder="Մենթորի մասին..."
                   rows={3}
-                  className={`w-full px-4 py-3 bg-slate-50 border rounded-xl text-slate-600 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-violet-500/20 resize-none ${
+                  className={`w-full px-3 py-2 bg-white border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-violet-500/20 ${
                     instructorErrors.description ? 'border-red-300' : 'border-slate-200'
                   }`}
                 />
-                {instructorErrors.description && (
-                  <p className="text-red-500 text-xs mt-1">Լրացրեք նկարագրությունը</p>
-                )}
               </div>
 
-              {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-4">
-                {statLabels.map((stat, index) => (
-                  <div 
-                    key={index}
-                    className={`bg-slate-50 rounded-2xl p-4 border transition-colors ${
-                      instructorErrors.stats[index] ? 'border-red-300' : 'border-slate-100 hover:border-violet-200'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      {getIcon(stat.icon)}
-                    </div>
-                    <input
-                      type="text"
-                      value={instructorForm.stats?.[index]?.value || ''}
-                      onChange={(e) => onStatValueChange(index, e.target.value)}
-                      placeholder={index === 0 ? '500+' : index === 1 ? '120M+' : index === 2 ? '5 տարի' : '24/7'}
-                      className="w-full bg-transparent text-2xl font-bold text-slate-900 placeholder-slate-300 border-none outline-none focus:ring-0 p-0"
-                    />
-                    <p className="text-xs text-slate-500 mt-1">{stat.label}</p>
-                  </div>
-                ))}
+              {/* Stats */}
+              <div className="space-y-1.5">
+                <Label className="text-xs text-slate-500">Վիճակագրություն</Label>
+                <div className="grid grid-cols-4 gap-3">
+                  {statConfig.map((stat, index) => {
+                    const Icon = stat.icon
+                    return (
+                      <div 
+                        key={index}
+                        className={`p-3 rounded-xl border ${
+                          instructorErrors.stats[index] ? 'border-red-300 bg-red-50' : 'border-slate-100 bg-slate-50'
+                        }`}
+                      >
+                        <div className={`w-8 h-8 rounded-lg ${stat.bg} flex items-center justify-center mb-2`}>
+                          <Icon className={`w-4 h-4 ${stat.color}`} />
+                        </div>
+                        <Input
+                          type="text"
+                          value={instructorForm.stats?.[index]?.value || ''}
+                          onChange={(e) => onStatValueChange(index, e.target.value)}
+                          placeholder={index === 0 ? '500+' : index === 1 ? '120M+' : index === 2 ? '5տ' : '24/7'}
+                          className="border-0 p-0 h-auto text-lg font-bold text-slate-900 placeholder:text-slate-300 focus-visible:ring-0"
+                        />
+                        <p className="text-[10px] text-slate-500 leading-tight mt-1">{stat.label}</p>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             </div>
           </div>
@@ -224,3 +246,4 @@ export default function InstructorTab({
     </form>
   )
 }
+

@@ -9,9 +9,10 @@ import type { DashboardTabId, FAQ } from '../_types'
 interface UseFaqParams {
   activeTab: DashboardTabId
   allowed: boolean
+  showToast: (message: string, type?: 'success' | 'error') => void
 }
 
-export default function useFaq({ activeTab, allowed }: UseFaqParams) {
+export default function useFaq({ activeTab, allowed, showToast }: UseFaqParams) {
   const confirm = useConfirm()
   const [faqs, setFaqs] = useState<FAQ[]>([])
   const [faqForm, setFaqForm] = useState({ title: '', text: '' })
@@ -43,7 +44,14 @@ export default function useFaq({ activeTab, allowed }: UseFaqParams) {
 
   const submitFaq = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!faqForm.title.trim() || !faqForm.text.trim()) return
+    if (!faqForm.title.trim()) {
+      showToast('Լրացրեք հարցը', 'error')
+      return
+    }
+    if (!faqForm.text.trim()) {
+      showToast('Լրացրեք պատասխանը', 'error')
+      return
+    }
     setIsFaqSubmitting(true)
     try {
       const res = await api.post('/api/v1/faq', { title: faqForm.title.trim(), text: faqForm.text.trim() })
@@ -67,7 +75,15 @@ export default function useFaq({ activeTab, allowed }: UseFaqParams) {
 
   const updateFaq = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!editingId || !editForm.title.trim() || !editForm.text.trim()) return
+    if (!editForm.title.trim()) {
+      showToast('Լրացրեք հարցը', 'error')
+      return
+    }
+    if (!editForm.text.trim()) {
+      showToast('Լրացրեք պատասխանը', 'error')
+      return
+    }
+    if (!editingId) return
     setIsFaqUpdating(true)
     try {
       const res = await api.put(`/api/v1/faq/${editingId}`, { title: editForm.title.trim(), text: editForm.text.trim() })

@@ -5,6 +5,14 @@ const Files = require('../controllers/File');
 const { getVideoDurationInSeconds } = require('get-video-duration');
 const repo = require('../repositories/modules');
 
+// Helper to format seconds to HH:MM:SS
+function formatDuration(totalSeconds) {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
 // Validation helper
 const requireString = (value, label) => {
   const v = String(value ?? '').trim();
@@ -155,6 +163,11 @@ module.exports = {
         result.table.sort = (maxSort || 0) + 1;
 
         await repo.createFile(result.table, t);
+
+        // Calculate and update module total duration
+        const allFiles = await repo.findFiles(id, 'modules', t);
+        const totalDurationSeconds = allFiles.reduce((sum, f) => sum + (f.duration || 0), 0) + result.table.duration;
+        await repo.update(module, { duration: formatDuration(totalDurationSeconds) }, t);
       } else {
         throw new AppError(Object.values(result.message || {}).join(' ') || 'File upload failed', 400);
       }

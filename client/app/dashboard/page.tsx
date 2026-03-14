@@ -58,7 +58,7 @@ export default function DashboardPage() {
   } = useUsers({ activeTab, allowed, editingUser, setEditingUser })
   const { reviews, isReviewsLoading, relativeTime: reviewsRelativeTime, isToday, handleDeleteReview } = useReviews({ activeTab, allowed })
   const { faqs, faqForm, setFaqForm, isFaqLoading, isFaqSubmitting, editingId, editForm, setEditForm, isFaqUpdating, submitFaq, startEdit, cancelEdit, updateFaq, deleteFaq } =
-    useFaq({ activeTab, allowed })
+    useFaq({ activeTab, allowed, showToast })
   const { siteSettings, setSiteSettings, workingHoursSchedule, setWorkingHoursSchedule, isSettingsLoading, saveSettings } = useSettings({
     activeTab,
     allowed,

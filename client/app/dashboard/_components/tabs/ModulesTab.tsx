@@ -88,6 +88,19 @@ function formatDuration(duration: string): string {
   return duration
 }
 
+// Helper function to convert duration to minutes
+function durationToMinutes(duration: string): number {
+  if (!duration) return 0
+  const parts = duration.split(':').map(Number)
+  if (parts.length === 2) {
+    return parts[0] + parts[1] / 60
+  }
+  if (parts.length === 3) {
+    return parts[0] * 60 + parts[1] + parts[2] / 60
+  }
+  return 0
+}
+
 // Helper function to get video count from module
 function getVideoCount(module: ModuleItem): number {
   return module.files?.filter(f => f.name_used === 'module_video').length || 0
@@ -327,7 +340,7 @@ export default function ModulesTab({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {allModules.map((module) => {
             const videoCount = getVideoCount(module)
-            const durationMinutes = durationToMinutes(module.duration)
+            const totalDurationMinutes = getTotalVideoDuration(module)
             const courseName = courses.find(c => c.id === module.courseId)?.title || 'Unknown course'
             
             return (
@@ -372,7 +385,7 @@ export default function ModulesTab({
                       </div>
                       <div className="flex flex-col">
                         <span className="text-xs text-slate-400">Տևողություն</span>
-                        <span className="text-sm font-semibold">{formatMinutes(durationMinutes)}</span>
+                        <span className="text-sm font-semibold">{formatMinutes(totalDurationMinutes)}</span>
                       </div>
                     </div>
                   </div>

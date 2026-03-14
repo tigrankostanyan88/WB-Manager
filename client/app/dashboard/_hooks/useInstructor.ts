@@ -113,10 +113,13 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
       setIsInstructorLoading(true)
       try {
         const res = await api.get('/api/v1/instructor')
+        console.log('Instructor API response:', res.data)
         const payload = res.data as { instructors?: unknown }
         const list = Array.isArray(payload.instructors) ? payload.instructors : []
+        console.log('Instructor list:', list)
         const first = list[0]
         const data = first && typeof first === 'object' ? (first as Record<string, unknown>) : {}
+        console.log('First instructor data:', data)
 
         let statsArr: unknown[] = []
         const statsJson = data.stats_json
@@ -142,10 +145,20 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
           : [...defaultStats]
 
         if (!cancelled) {
-          const rawAvatar = typeof data.avatar_url === 'string' ? data.avatar_url : ''
+          // Debug: log all possible avatar-related fields
+          console.log('DEBUG - All data fields:', Object.keys(data))
+          console.log('DEBUG - avatar_url:', data.avatar_url)
+          console.log('DEBUG - files:', data.files)
+          
+          // DEBUG: Always use hardcoded test image for now
+          const rawAvatar = '/images/instructors/large/26bb2cffb8d9f89f66ce033a6b4c3d476df8d8ee.png'
+          console.log('DEBUG - Using hardcoded avatar:', rawAvatar)
+          
           const fixedAvatar = fixLarge(rawAvatar)
           const finalAvatar = withOrigin(fixedAvatar) || ''
-          console.log('DEBUG avatar_url:', { rawAvatar, fixedAvatar, finalAvatar, data })
+          
+          console.log('DEBUG - Final avatar URL:', finalAvatar)
+          
           setInstructorForm({
             title: typeof data.title === 'string' ? data.title : 'Սովորեք Ուայլդբերիի Մասնագետից',
             name: typeof data.name === 'string' ? data.name : '',

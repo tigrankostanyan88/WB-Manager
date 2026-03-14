@@ -174,14 +174,15 @@ export default function useModules({ activeTab, showToast }: UseModulesParams) {
       const formData = new FormData()
       formData.append('module_video', videoFile)
       const res = await api.post(`/api/v1/modules/${editingId}/video`, formData)
-      const updated = (res.data as { data?: unknown }).data as { files?: unknown[] } | undefined
+      const updated = (res.data as { data?: unknown }).data as { id?: unknown; duration?: unknown; files?: unknown[] } | undefined
       const newVideos = updated?.files?.map((f: unknown) => {
         const ff = f as { id?: unknown; name?: unknown; ext?: unknown; name_used?: unknown; table_name?: unknown }
         return { id: String(ff?.id ?? ''), name: String(ff?.name ?? ''), ext: String(ff?.ext ?? ''), name_used: String(ff?.name_used ?? ''), table_name: String(ff?.table_name ?? '') }
       }).filter((f) => f.name_used === 'module_video') || []
       setCurrentModuleVideos(newVideos)
       setVideoFile(null)
-      setAllModules((prev) => prev.map((m) => m.id === editingId ? { ...m, files: updated?.files as ModuleFile[] || m.files } : m))
+      // Update module with new duration and files
+      setAllModules((prev) => prev.map((m) => m.id === editingId ? { ...m, duration: String(updated?.duration ?? m.duration), files: updated?.files as ModuleFile[] || m.files } : m))
       showToast('Վիդեոն հաջողությամբ ավելացվեց', 'success')
     } catch (err: any) {
       console.error('Video upload error:', err)
@@ -196,6 +197,14 @@ export default function useModules({ activeTab, showToast }: UseModulesParams) {
     e.preventDefault()
     if (!moduleForm.courseId) {
       showToast('Ընտրեք դասընթացը', 'error')
+      return
+    }
+    if (!moduleForm.title.trim()) {
+      showToast('Լրացրեք մոդուլի անվանումը', 'error')
+      return
+    }
+    if (!moduleForm.description.trim()) {
+      showToast('Լրացրեք մոդուլի նկարագրությունը', 'error')
       return
     }
     try {
