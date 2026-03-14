@@ -62,6 +62,7 @@ export default function usePayments({ activeTab, allowed }: UsePaymentsParams) {
         ])
         
         if (!cancelled) {
+          console.log('DEBUG - Payments response:', paymentsRes)
           setPayments(paymentsRes?.payments || [])
           setUsers((usersRes.data?.users || []).filter((u: User) => u.role === 'user'))
           // Handle different response formats: coursesRes.courses or coursesRes.data.courses or just coursesRes

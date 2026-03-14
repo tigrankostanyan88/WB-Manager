@@ -129,6 +129,35 @@ export default function PaymentsTab({
         </button>
       </div>
 
+      {/* Summary Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-gradient-to-r from-violet-500 to-violet-600 rounded-2xl p-5 text-white">
+          <p className="text-violet-100 text-sm font-medium">Ընդհանուր գումար</p>
+          <p className="text-2xl font-bold mt-1">
+            {payments.reduce((sum, p) => sum + parseFloat(p.amount.toString()), 0).toLocaleString()} դրամ
+          </p>
+          <p className="text-violet-200 text-xs mt-1">{payments.length} վճարում</p>
+        </div>
+        <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white">
+          <p className="text-emerald-100 text-sm font-medium">Վճարված</p>
+          <p className="text-2xl font-bold mt-1">
+            {payments.filter(p => p.status === 'success').reduce((sum, p) => sum + parseFloat(p.amount.toString()), 0).toLocaleString()} դրամ
+          </p>
+          <p className="text-emerald-200 text-xs mt-1">
+            {payments.filter(p => p.status === 'success').length} վճարում
+          </p>
+        </div>
+        <div className="bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl p-5 text-white">
+          <p className="text-amber-100 text-sm font-medium">Սպասման մեջ</p>
+          <p className="text-2xl font-bold mt-1">
+            {payments.filter(p => p.status === 'pending').reduce((sum, p) => sum + parseFloat(p.amount.toString()), 0).toLocaleString()} դրամ
+          </p>
+          <p className="text-amber-200 text-xs mt-1">
+            {payments.filter(p => p.status === 'pending').length} վճարում
+          </p>
+        </div>
+      </div>
+
       {/* Create Payment Form */}
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
@@ -242,12 +271,12 @@ export default function PaymentsTab({
         <table className="w-full">
           <thead className="bg-slate-50 border-b border-slate-200">
             <tr>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Օգտատեր</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Դասընթաց</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Գումար</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Եղանակ</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Կարգավիճակ</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Ամսաթիվ</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700 w-48">Օգտատեր</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700 w-56">Դասընթաց</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700 w-28">Գումար</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700 w-28">Եղանակ</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700 w-40">Կարգավիճակ</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700 w-28">Ամսաթիվ</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200">
@@ -266,8 +295,10 @@ export default function PaymentsTab({
                       </span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-slate-700">
-                    {payment.course?.title || `Դասընթաց #${payment.course_id}`}
+                  <td className="px-4 py-3 text-slate-700 max-w-56" title={payment.course?.title || `Դասընթաց #${payment.course_id}`}>
+                    <div className="truncate">
+                      {payment.course?.title || `Դասընթաց #${payment.course_id}`}
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     <span className="font-medium text-slate-900">
@@ -278,10 +309,10 @@ export default function PaymentsTab({
                     {getPaymentMethodText(payment.payment_method)}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 min-w-36">
                       <div className="flex items-center gap-2">
                         {getStatusIcon(payment.status)}
-                        <span className={`text-sm ${
+                        <span className={`text-sm font-medium ${
                           payment.status === 'success' ? 'text-emerald-600' :
                           payment.status === 'pending' ? 'text-amber-600' :
                           'text-red-600'
@@ -290,33 +321,20 @@ export default function PaymentsTab({
                         </span>
                       </div>
                       {onUpdateStatus && (
-                        <div className="flex items-center gap-3 mt-2">
-                          <button
-                            onClick={() => handleStatusUpdate(payment.id, 'success')}
-                            disabled={updatingId === payment.id}
-                            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                              payment.status === 'success'
-                                ? 'bg-emerald-100 text-emerald-700 border-2 border-emerald-500'
-                                : 'bg-slate-100 text-slate-600 border-2 border-transparent hover:bg-slate-200'
-                            } ${updatingId === payment.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          >
-                            ✓ Վճարված
-                          </button>
-                          <button
-                            onClick={() => handleStatusUpdate(payment.id, 'pending')}
-                            disabled={updatingId === payment.id}
-                            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                              payment.status === 'pending'
-                                ? 'bg-amber-100 text-amber-700 border-2 border-amber-500'
-                                : 'bg-slate-100 text-slate-600 border-2 border-transparent hover:bg-slate-200'
-                            } ${updatingId === payment.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          >
-                            ○ Սպասում
-                          </button>
-                          {updatingId === payment.id && (
-                            <div className="w-4 h-4 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin" />
-                          )}
-                        </div>
+                        <select
+                          value={payment.status}
+                          onChange={(e) => handleStatusUpdate(payment.id, e.target.value as 'pending' | 'success' | 'failed')}
+                          disabled={updatingId === payment.id}
+                          className={`mt-1 px-2 py-1 text-xs rounded-lg border focus:outline-none focus:ring-2 cursor-pointer ${
+                            payment.status === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-700 focus:ring-emerald-500' :
+                            payment.status === 'pending' ? 'bg-amber-50 border-amber-200 text-amber-700 focus:ring-amber-500' :
+                            'bg-red-50 border-red-200 text-red-700 focus:ring-red-500'
+                          } ${updatingId === payment.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          <option value="pending">Սպասում</option>
+                          <option value="success">Վճարված</option>
+                          <option value="failed">Մերժված</option>
+                        </select>
                       )}
                     </div>
                   </td>

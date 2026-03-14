@@ -5,8 +5,8 @@ class PaymentRepository {
     async findAll(options = {}) {
         return await Payment.findAll({
             include: [
-                { model: User, attributes: ['id', 'firstName', 'lastName', 'email'] },
-                { model: Course, attributes: ['id', 'title', 'price'] }
+                { model: User, as: 'user', attributes: ['id', 'name', 'email'] },
+                { model: Course, as: 'course', attributes: ['id', 'title', 'price'] }
             ],
             order: [['createdAt', 'DESC']],
             ...options
@@ -16,8 +16,8 @@ class PaymentRepository {
     async findById(id, options = {}) {
         return await Payment.findByPk(id, {
             include: [
-                { model: User, attributes: ['id', 'firstName', 'lastName', 'email'] },
-                { model: Course, attributes: ['id', 'title', 'price'] }
+                { model: User, as: 'user', attributes: ['id', 'name', 'email'] },
+                { model: Course, as: 'course', attributes: ['id', 'title', 'price'] }
             ],
             ...options
         });

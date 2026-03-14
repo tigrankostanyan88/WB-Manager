@@ -69,5 +69,14 @@ if (DB.models.StudentCourse) {
   DB.models.StudentCourse.belongsTo(DB.models.Course, { as: 'course', foreignKey: 'course_id' });
 }
 
+// Payment relationships
+if (DB.models.Payment) {
+  DB.models.User.hasMany(DB.models.Payment, { as: 'payments', foreignKey: 'user_id' });
+  DB.models.Payment.belongsTo(DB.models.User, { as: 'user', foreignKey: 'user_id' });
+  
+  DB.models.Course.hasMany(DB.models.Payment, { as: 'payments', foreignKey: 'course_id' });
+  DB.models.Payment.belongsTo(DB.models.Course, { as: 'course', foreignKey: 'course_id' });
+}
+
 module.exports = DB;
 
