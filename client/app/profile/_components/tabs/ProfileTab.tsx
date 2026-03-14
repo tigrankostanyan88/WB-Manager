@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Award, BookOpen, CheckCircle2, ChevronRight, Clock, Mail, MapPin, Phone, PlayCircle, Shield, Trophy, TrendingUp } from 'lucide-react'
+import { Award, BookOpen, ChevronRight, Clock, Mail, MapPin, Phone, PlayCircle, Shield, Trophy, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -46,15 +46,7 @@ interface ProfileTabProps {
   user: ProfileUser
   stats: StatsData | null
   isLoadingData: boolean
-  myReview: ReviewData | null
-  reviewForm: { rating: number; comment: string }
-  isReviewSubmitting: boolean
   myCourses: CourseItem[]
-  onEditReview: () => void
-  onSubmitReviewUpdate: (e: React.FormEvent) => void
-  onSubmitReviewCreate: (e: React.FormEvent) => void
-  onReviewRatingChange: (rating: number) => void
-  onReviewCommentChange: (comment: string) => void
   onViewAllCourses: () => void
 }
 
@@ -62,15 +54,7 @@ export default function ProfileTab({
   user,
   stats,
   isLoadingData,
-  myReview,
-  reviewForm,
-  isReviewSubmitting,
   myCourses,
-  onEditReview,
-  onSubmitReviewUpdate,
-  onSubmitReviewCreate,
-  onReviewRatingChange,
-  onReviewCommentChange,
   onViewAllCourses
 }: ProfileTabProps) {
   return (
@@ -121,102 +105,6 @@ export default function ProfileTab({
       </div>
 
       <div className="space-y-5">
-        {user?.role === 'user' && (
-          <Card className="shadow-xl rounded-2xl bg-white overflow-hidden">
-            <CardContent className="p-7 space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-black text-slate-900">Իմ մեկնաբանությունը</h3>
-                {myReview && (
-                  <Button variant="outline" className="rounded-xl" onClick={onEditReview}>
-                    Թարմացնել
-                  </Button>
-                )}
-              </div>
-              {myReview ? (
-                <div className="space-y-3">
-                  <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-lg w-fit">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Գրված է</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <i key={i} className={`${i < myReview.rating ? 'text-yellow-500' : 'text-slate-300'} ${i < myReview.rating ? 'fa-solid' : 'fa-regular'} fa-star text-xl select-none`} />
-                    ))}
-                  </div>
-                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="flex items-start gap-3">
-                      <i className="fa-solid fa-quote-left text-slate-300 mt-1" />
-                      <p className="text-sm font-medium text-slate-700 leading-relaxed">{myReview.comment}</p>
-                    </div>
-                  </div>
-                  <form onSubmit={onSubmitReviewUpdate} className="space-y-3">
-                    <div className="flex items-center gap-1.5">
-                      {Array.from({ length: 5 }).map((_, idx) => {
-                        const selected = idx < reviewForm.rating
-                        return (
-                          <button
-                            key={`update-star-${idx}`}
-                            type="button"
-                            onClick={() => onReviewRatingChange(idx + 1)}
-                            className="w-7 h-7 flex items-center justify-center"
-                            aria-label={`Գնահատական ${idx + 1}`}
-                          >
-                            <i className={`${selected ? 'text-yellow-500' : 'text-slate-300'} ${selected ? 'fa-solid' : 'fa-regular'} fa-star text-2xl leading-none`} />
-                          </button>
-                        )
-                      })}
-                      <span className="text-[11px] font-bold text-slate-500 ml-2">({reviewForm.rating}/5)</span>
-                    </div>
-                    <textarea
-                      value={reviewForm.comment}
-                      onChange={(e) => onReviewCommentChange(e.target.value)}
-                      rows={3}
-                      placeholder="Թարմացնել մեկնաբանությունը"
-                      maxLength={200}
-                      className="w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 resize-y"
-                    />
-                    <div className="flex justify-end">
-                      <Button type="submit" disabled={isReviewSubmitting} className="rounded-xl bg-slate-900 hover:bg-slate-800">
-                        {isReviewSubmitting ? 'Պահպանվում է…' : 'Պահպանել'}
-                      </Button>
-                    </div>
-                  </form>
-                </div>
-              ) : (
-                <form onSubmit={onSubmitReviewCreate} className="space-y-3">
-                  <div className="flex items-center gap-1.5">
-                    {Array.from({ length: 5 }).map((_, idx) => (
-                      <button
-                        key={`edit-star-${idx}`}
-                        type="button"
-                        onClick={() => onReviewRatingChange(idx + 1)}
-                        className="w-7 h-7 flex items-center justify-center"
-                        aria-label={`Գնահատական ${idx + 1}`}
-                      >
-                        <i className={`${idx < reviewForm.rating ? 'text-yellow-500' : 'text-slate-300'} ${idx < reviewForm.rating ? 'fa-solid' : 'fa-regular'} fa-star text-2xl leading-none`} />
-                      </button>
-                    ))}
-                    <span className="text-[11px] font-bold text-slate-500 ml-2">({reviewForm.rating}/5)</span>
-                  </div>
-                  <textarea
-                    value={reviewForm.comment}
-                    onChange={(e) => onReviewCommentChange(e.target.value)}
-                    rows={3}
-                    placeholder="Գրեք ձեր կարծիքը"
-                    maxLength={200}
-                    className="w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 resize-y"
-                  />
-                  <div className="flex justify-end">
-                    <Button type="submit" disabled={isReviewSubmitting} className="rounded-xl bg-slate-900 hover:bg-slate-800">
-                      {isReviewSubmitting ? 'Պահպանվում է…' : 'Ավելացնել'}
-                    </Button>
-                  </div>
-                </form>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
         <div className="flex items-center justify-between px-1">
           <h3 className="text-2xl font-black text-slate-900 tracking-tight">Իմ դասընթացները</h3>
           <button onClick={onViewAllCourses} className="text-xs font-black text-violet-600 hover:text-violet-700 transition-colors flex items-center gap-1.5 group">

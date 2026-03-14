@@ -127,3 +127,21 @@ exports.updatePaymentStatus = async (req, res) => {
         });
     }
 };
+
+// Get current user's payments
+exports.getMyPayments = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const payments = await paymentService.getPaymentsByUserId(userId);
+        res.status(200).json({
+            success: true,
+            payments
+        });
+    } catch (error) {
+        console.error('Get my payments error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to fetch payments'
+        });
+    }
+};

@@ -20,4 +20,7 @@ router.delete('/:id', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), ctrls.
 // Update payment status (admin toggle)
 router.patch('/:id/status', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), ctrls.payment.updatePaymentStatus);
 
+// Get current user's payments (user only)
+router.get('/my-payments', ctrls.auth.protect, ctrls.payment.getMyPayments);
+
 module.exports = router;

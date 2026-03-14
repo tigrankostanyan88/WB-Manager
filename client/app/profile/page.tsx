@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
-import { User as UserIcon, Settings, LayoutDashboard, Wallet, type LucideIcon } from 'lucide-react'
+import { User as UserIcon, Settings, LayoutDashboard, Wallet, MessageSquare, type LucideIcon } from 'lucide-react'
  
 import { useState, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
@@ -18,6 +18,7 @@ import ProfileTab from './_components/tabs/ProfileTab'
 import CoursesTab from './_components/tabs/CoursesTab'
 import PaymentsTab from './_components/tabs/PaymentsTab'
 import SettingsTab from './_components/tabs/SettingsTab'
+import CommentsTab from './_components/tabs/CommentsTab'
 import { useProfileData } from './_hooks/useProfileData'
 import type { ProfileUser } from './_hooks/useProfileData'
 import { useProfileSettings } from './_hooks/useProfileSettings'
@@ -64,7 +65,7 @@ export default function ProfilePage() {
   const { user: authUser, isLoaded, isLoggedIn, logout, setUser: setAuthUser } = useAuth()
   const router = useRouter()
 
-  const { user, setUser, isLoadingData, myReview, setMyReview, myCourses, stats } = useProfileData({ authUser: authUser as unknown as ProfileUser | null, isLoaded, logout })
+  const { user, setUser, isLoadingData, myReview, setMyReview, myCourses, myPayments, stats } = useProfileData({ authUser: authUser as unknown as ProfileUser | null, isLoaded, logout })
 
   useEffect(() => {
     // If we have a user (even optimistically), we stay on the page.
@@ -128,6 +129,7 @@ export default function ProfilePage() {
 
   const sidebarLinks: SidebarLink[] = [
     { id: 'profile', label: 'Պրոֆիլ', icon: UserIcon },
+    { id: 'comments', label: 'Մեկնաբանություններ', icon: MessageSquare },
     { id: 'payments', label: 'Վճարումներ', icon: Wallet },
     { id: 'settings', label: 'Կարգավորումներ', icon: Settings },
   ]
@@ -158,28 +160,34 @@ export default function ProfilePage() {
           />
 
           <div className="space-y-6">
-            <ProBanner user={currentUser as any} onShowPaymentModal={() => setShowPaymentModal(true)} />
+            <ProBanner user={currentUser as any} myPayments={myPayments} onShowPaymentModal={() => setShowPaymentModal(true)} />
 
             <AnimatePresence mode="wait">
               {activeTab === 'profile' && (
-                <ProfileTab user={currentUser as any}
+                <ProfileTab
+                  user={currentUser as any}
                   stats={stats}
                   isLoadingData={isLoadingData}
-                  myReview={myReview}
-                  reviewForm={reviewForm}
-                  isReviewSubmitting={isReviewSubmitting}
                   myCourses={myCourses}
-                  onEditReview={handleEditReview}
-                  onSubmitReviewUpdate={handleSubmitReviewUpdate}
-                  onSubmitReviewCreate={handleSubmitReviewCreate}
-                  onReviewRatingChange={(rating) => setReviewForm({ ...reviewForm, rating })}
-                  onReviewCommentChange={(comment) => setReviewForm({ ...reviewForm, comment })}
                   onViewAllCourses={handleViewAllCourses}
                 />
               )}
 
               {activeTab === 'courses' && (
                 <CoursesTab isLoadingData={isLoadingData} myCourses={myCourses} />
+              )}
+
+              {activeTab === 'comments' && (
+                <CommentsTab
+                  myReview={myReview}
+                  reviewForm={reviewForm}
+                  isReviewSubmitting={isReviewSubmitting}
+                  onEditReview={handleEditReview}
+                  onSubmitReviewUpdate={handleSubmitReviewUpdate}
+                  onSubmitReviewCreate={handleSubmitReviewCreate}
+                  onReviewRatingChange={(rating) => setReviewForm({ ...reviewForm, rating })}
+                  onReviewCommentChange={(comment) => setReviewForm({ ...reviewForm, comment })}
+                />
               )}
 
               {activeTab === 'payments' && (

@@ -295,10 +295,13 @@ export default function PaymentsTab({
                       </span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-slate-700 max-w-56" title={payment.course?.title || `Դասընթաց #${payment.course_id}`}>
-                    <div className="truncate">
+                  <td className="px-4 py-3 text-slate-700">
+                    <span 
+                      className="block truncate max-w-56" 
+                      title={payment.course?.title || `Դասընթաց #${payment.course_id}`}
+                    >
                       {payment.course?.title || `Դասընթաց #${payment.course_id}`}
-                    </div>
+                    </span>
                   </td>
                   <td className="px-4 py-3">
                     <span className="font-medium text-slate-900">
