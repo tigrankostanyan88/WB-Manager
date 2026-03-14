@@ -39,35 +39,25 @@ export default function SettingsTab({ user, isUpdating, onSubmit, onShowPassword
         
         <form onSubmit={onSubmit} className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {[
+            {[ 
               { id: 'name', label: 'Անուն', val: user.name, icon: UserIcon, placeholder: 'Ձեր անունը', type: 'text' },
               { id: 'email', label: 'Էլ. փոստ', val: user.email, icon: Mail, placeholder: 'example@email.com', type: 'email' },
               { id: 'phone', label: 'Հեռախոսահամար', val: user.phone, icon: Phone, placeholder: '+374 XX XXX XXX', type: 'tel' },
-              { id: 'address', label: 'Հասցե', val: user.address, icon: MapPin, placeholder: 'Ձեր հասցեն', type: 'text', isTextArea: true },
+              { id: 'address', label: 'Հասցե', val: user.address, icon: MapPin, placeholder: 'Ձեր հասցեն', type: 'text' },
             ].map((field) => (
-              <div key={field.id} className={`${field.isTextArea ? 'md:col-span-2' : ''}`}>
+              <div key={field.id}>
                 <label className="block text-sm font-bold text-slate-700 mb-2">{field.label}</label>
                 <div className="relative group">
-                  <div className={cn('absolute left-0 top-0 w-14 flex items-center justify-center text-slate-400 group-focus-within:text-violet-600 transition-colors', field.isTextArea ? 'h-14' : 'bottom-0')}>
+                  <div className={cn('absolute left-0 top-0 w-14 flex items-center justify-center text-slate-400 group-focus-within:text-violet-600 transition-colors bottom-0')}>
                     <field.icon className="w-5 h-5" />
                   </div>
-                  {field.isTextArea ? (
-                    <textarea
-                      name={field.id}
-                      defaultValue={field.val}
-                      placeholder={field.placeholder}
-                      rows={3}
-                      className="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl pl-14 pr-6 py-4 text-base font-bold text-slate-900 focus:bg-white focus:border-violet-500 focus:shadow-[0_10px_40px_-10px_rgba(124,58,237,0.1)] outline-none transition-all duration-300 resize-none"
-                    />
-                  ) : (
-                    <input
-                      name={field.id}
-                      type={field.type || 'text'}
-                      defaultValue={field.val}
-                      placeholder={field.placeholder}
-                      className="w-full h-16 bg-slate-50 border-2 border-slate-200 rounded-2xl pl-14 pr-6 text-base font-bold text-slate-900 focus:bg-white focus:border-violet-500 focus:shadow-[0_10px_40px_-10px_rgba(124,58,237,0.1)] outline-none transition-all duration-300"
-                    />
-                  )}
+                  <input
+                    name={field.id}
+                    type={field.type || 'text'}
+                    defaultValue={field.val}
+                    placeholder={field.placeholder}
+                    className="w-full h-16 bg-slate-50 border-2 border-slate-200 rounded-2xl pl-14 pr-6 text-base font-bold text-slate-900 focus:bg-white focus:border-violet-500 focus:shadow-[0_10px_40px_-10px_rgba(124,58,237,0.1)] outline-none transition-all duration-300"
+                  />
                 </div>
               </div>
             ))}

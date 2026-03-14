@@ -32,11 +32,15 @@ export default function EditUserModal({ user, open, onClose, onSubmit }: EditUse
 
   useEffect(() => {
     if (!user) return
+    // Backend returns course_ids (snake_case), map to courseIds (camelCase)
+    const courseIdsFromBackend = (user as unknown as { course_ids?: (string | number)[]; courseIds?: (string | number)[] }).course_ids 
+      || (user as unknown as { courseIds?: (string | number)[] }).courseIds 
+      || []
     setForm({
       name: String(user.name || ''),
       email: String(user.email || ''),
       phone: String(user.phone || ''),
-      courseIds: (user as unknown as { courseIds?: (string | number)[] }).courseIds || []
+      courseIds: courseIdsFromBackend
     })
   }, [user])
 

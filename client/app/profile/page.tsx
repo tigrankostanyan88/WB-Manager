@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
-import { User as UserIcon, Settings, LayoutDashboard, Wallet, MessageSquare, type LucideIcon } from 'lucide-react'
+import { User as UserIcon, Settings, LayoutDashboard, Wallet, MessageSquare, FileText, type LucideIcon } from 'lucide-react'
  
 import { useState, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
@@ -19,10 +19,12 @@ import CoursesTab from './_components/tabs/CoursesTab'
 import PaymentsTab from './_components/tabs/PaymentsTab'
 import SettingsTab from './_components/tabs/SettingsTab'
 import CommentsTab from './_components/tabs/CommentsTab'
+import PersonalDataTab from './_components/tabs/PersonalDataTab'
 import { useProfileData } from './_hooks/useProfileData'
 import type { ProfileUser } from './_hooks/useProfileData'
 import { useProfileSettings } from './_hooks/useProfileSettings'
 import { useReviews } from './_hooks/useReviews'
+import api from '@/lib/api'
 
 interface SidebarLink {
   id: string
@@ -82,6 +84,8 @@ export default function ProfilePage() {
     passwordConfirm: ''
   })
   
+  const [totalCoursesCount, setTotalCoursesCount] = useState(0)
+  
   // Data States - now fetched from useProfileData hook
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
@@ -111,6 +115,20 @@ export default function ProfilePage() {
     showToast
   })
 
+  // Fetch total courses count for points calculation
+  useEffect(() => {
+    const fetchTotalCourses = async () => {
+      try {
+        const res = await api.get('/api/v1/courses')
+        const coursesData = Array.isArray(res.data?.data) ? res.data.data : (res.data?.data?.courses || res.data?.courses || [])
+        setTotalCoursesCount(coursesData.length)
+      } catch {
+        setTotalCoursesCount(0)
+      }
+    }
+    fetchTotalCourses()
+  }, [])
+
   const handleViewAllCourses = () => {
     setActiveTab('courses')
   }
@@ -129,6 +147,7 @@ export default function ProfilePage() {
 
   const sidebarLinks: SidebarLink[] = [
     { id: 'profile', label: 'Պրոֆիլ', icon: UserIcon },
+    { id: 'personal', label: 'Անձնական տվյալներ', icon: FileText },
     { id: 'comments', label: 'Մեկնաբանություններ', icon: MessageSquare },
     { id: 'payments', label: 'Վճարումներ', icon: Wallet },
     { id: 'settings', label: 'Կարգավորումներ', icon: Settings },
@@ -170,6 +189,15 @@ export default function ProfilePage() {
                   isLoadingData={isLoadingData}
                   myCourses={myCourses}
                   onViewAllCourses={handleViewAllCourses}
+                />
+              )}
+
+              {activeTab === 'personal' && (
+                <PersonalDataTab 
+                  user={currentUser as any} 
+                  myCoursesCount={myCourses?.length || 0}
+                  totalCoursesCount={totalCoursesCount}
+                  isLoadingData={isLoadingData}
                 />
               )}
 

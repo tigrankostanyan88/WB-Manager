@@ -23,9 +23,15 @@ interface ProBannerProps {
 }
 
 export default function ProBanner({ myPayments = [], onShowPaymentModal }: ProBannerProps) {
+  // DEBUG: Log what we receive
+  console.log('[ProBanner] myPayments:', myPayments)
+  console.log('[ProBanner] myPayments length:', myPayments?.length)
+  
   const successfulPayments = myPayments.filter(p => p.status === 'success')
   const pendingPayments = myPayments.filter(p => p.status === 'pending')
   const failedPayments = myPayments.filter(p => p.status === 'failed')
+
+  console.log('[ProBanner] successful:', successfulPayments.length, 'pending:', pendingPayments.length, 'failed:', failedPayments.length)
 
   const totalCourses = myPayments.length
 

@@ -174,32 +174,6 @@ export default function ProfileTab({
         </div>
       </div>
 
-      <div className="space-y-4 mb-20">
-        <h3 className="text-2xl font-black text-slate-900 tracking-tight px-1">Անձնական տվյալներ</h3>
-        <Card className="shadow-xl shadow-slate-200/20 rounded-2xl bg-white overflow-hidden">
-          <CardContent className="p-7">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
-              {[
-                { label: 'Էլ. հասցե', val: user.email, icon: Mail, color: 'text-blue-500', bg: 'bg-blue-50' },
-                { label: 'Հեռախոս', val: user.phone, icon: Phone, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-                { label: 'Հասցե', val: user.address, icon: MapPin, color: 'text-orange-500', bg: 'bg-orange-50' },
-                { label: 'Կարգավիճակ', val: user.role === 'admin' ? 'Ադմինիստրատոր' : 'Ուսանող', icon: Shield, color: 'text-violet-500', bg: 'bg-violet-50' },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-4 group">
-                  <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110', item.bg)}>
-                    <item.icon className={cn('w-4.5 h-4.5', item.color)} />
-                  </div>
-                  <div className="space-y-0.5">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">{item.label}</p>
-                    <p className="text-[13px] font-bold text-slate-900 truncate max-w-[200px]">{item.val || 'Նշված չէ'}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       <div className="space-y-4">
         <h4 className="text-xl font-black text-slate-900 px-2">Դասընթացների վճարումներ</h4>
         <Card className="shadow-sm rounded-2xl bg-white overflow-hidden border border-slate-50">
