@@ -93,17 +93,11 @@ function getVideoCount(module: ModuleItem): number {
   return module.files?.filter(f => f.name_used === 'module_video').length || 0
 }
 
-// Helper function to convert duration to minutes
-function durationToMinutes(duration: string): number {
-  if (!duration) return 0
-  const parts = duration.split(':').map(Number)
-  if (parts.length === 2) {
-    return parts[0] + parts[1] / 60
-  }
-  if (parts.length === 3) {
-    return parts[0] * 60 + parts[1] + parts[2] / 60
-  }
-  return 0
+// Helper function to get total video duration in a module
+function getTotalVideoDuration(module: ModuleItem): number {
+  // For now, use the module's duration field which represents total content duration
+  // In the future, this could calculate from individual video file durations if available
+  return durationToMinutes(module.duration)
 }
 
 // Helper function to format minutes to hours and minutes
