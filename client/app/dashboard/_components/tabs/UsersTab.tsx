@@ -9,7 +9,6 @@ interface UsersTabProps {
   isUsersLoading: boolean
   userSearch: string
   setUserSearch: (value: string) => void
-  onTogglePaid: (userId: string, isPaid: boolean) => void
   onEdit: (user: User) => void
   onDelete: (id: string) => void
 }
@@ -28,7 +27,6 @@ export default function UsersTab({
   isUsersLoading,
   userSearch,
   setUserSearch,
-  onTogglePaid,
   onEdit,
   onDelete
 }: UsersTabProps) {
@@ -95,16 +93,13 @@ export default function UsersTab({
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <button
-                      onClick={() => onTogglePaid(String(user._id), Boolean(user.isPaid))}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        user.isPaid ? 'bg-emerald-500' : 'bg-slate-200'
-                      }`}
-                    >
-                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        user.isPaid ? 'translate-x-6' : 'translate-x-1'
-                      }`} />
-                    </button>
+                    <span className={`inline-flex px-3 py-1 rounded-full text-xs font-bold ${
+                      user.isPaid 
+                        ? 'bg-emerald-100 text-emerald-700' 
+                        : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {user.isPaid ? 'Վճարված' : 'Չվճարված'}
+                    </span>
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex justify-end gap-2">

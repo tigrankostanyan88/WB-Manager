@@ -67,8 +67,16 @@ export function useProfileSettings({
     }
   }
 
-  const handleAvatarUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+  const handleAvatarUpload = async (eOrFile: ChangeEvent<HTMLInputElement> | File | Blob) => {
+    // Handle both ChangeEvent (from input) and File/Blob (from crop modal)
+    let file: File | Blob | undefined
+    
+    if (eOrFile instanceof File || eOrFile instanceof Blob) {
+      file = eOrFile
+    } else {
+      file = eOrFile.target.files?.[0]
+    }
+    
     if (!file) return
 
     const previewUrl = URL.createObjectURL(file)

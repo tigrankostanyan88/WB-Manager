@@ -5,6 +5,8 @@ import { motion } from 'framer-motion'
 import { Camera, LogOut, User as UserIcon, type LucideIcon } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { useState, useCallback } from 'react'
+import AvatarCropModal from './modals/AvatarCropModal'
 
 interface SidebarLink {
   id: string
@@ -33,7 +35,7 @@ interface ProfileSidebarProps {
   avatarPreview?: string | null
   sidebarLinks: SidebarLink[]
   onTabChange: (tab: string) => void
-  onAvatarUpload: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onAvatarUpload: (file: File | Blob) => void
   onShowPaymentModal: () => void
   onLogout: () => void
 }
@@ -49,6 +51,37 @@ export default function ProfileSidebar({
   onShowPaymentModal,
   onLogout
 }: ProfileSidebarProps) {
+  const [cropModalOpen, setCropModalOpen] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      setSelectedImage(reader.result as string)
+      setCropModalOpen(true)
+    }
+    reader.readAsDataURL(file)
+    
+    // Reset input
+    e.target.value = ''
+  }, [])
+
+  const handleCropComplete = useCallback((croppedBlob: Blob) => {
+    setCropModalOpen(false)
+    setSelectedImage(null)
+    
+    // Create a File from Blob
+    const file = new File([croppedBlob], 'avatar.jpg', { type: 'image/jpeg' })
+    onAvatarUpload(file)
+  }, [onAvatarUpload])
+
+  const handleCropClose = useCallback(() => {
+    setCropModalOpen(false)
+    setSelectedImage(null)
+  }, [])
   const avatarUrl = avatarPreview || (() => {
     const u = user as unknown as { avatar?: unknown; files?: unknown } | null
     if (!u) return ''
@@ -112,7 +145,13 @@ export default function ProfileSidebar({
               </div>
               <label className="absolute -bottom-1 -right-1 w-9 h-9 rounded-xl bg-white shadow-lg flex items-center justify-center text-slate-400 hover:text-[#FF0000] transition-all border border-slate-100 cursor-pointer z-20">
                 <Camera className="w-4.5 h-4.5" />
-                <input type="file" className="hidden" accept="image/*" onChange={onAvatarUpload} disabled={isUploadingAvatar} />
+                <input 
+                  type="file" 
+                  className="hidden" 
+                  accept="image/*" 
+                  onChange={handleFileSelect} 
+                  disabled={isUploadingAvatar} 
+                />
               </label>
             </div>
             <div className="mt-6 space-y-1.5">
@@ -125,6 +164,14 @@ export default function ProfileSidebar({
               </div>
             </div>
           </div>
+
+          {/* Crop Modal */}
+          <AvatarCropModal
+            isOpen={cropModalOpen}
+            imageSrc={selectedImage}
+            onClose={handleCropClose}
+            onCropComplete={handleCropComplete}
+          />
 
           <nav className="space-y-1">
             {sidebarLinks.map((link) =>

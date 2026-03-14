@@ -5,6 +5,14 @@ import { userService } from '@/lib/api'
 import { useConfirm } from '@/components/ConfirmProvider'
 import type { DashboardTabId, User } from '../_types'
 
+interface Payment {
+  id: number
+  user_id: number
+  course_id: number
+  amount: number
+  status: 'pending' | 'success' | 'failed'
+}
+
 type EditingUser = (User & { __editScope?: 'users' }) | null
 
 interface EditUserForm {
@@ -25,6 +33,7 @@ interface UseUsersParams {
 export default function useUsers({ activeTab, allowed, editingUser, setEditingUser, showToast }: UseUsersParams) {
   const confirm = useConfirm()
   const [users, setUsers] = useState<User[]>([])
+  const [payments, setPayments] = useState<Payment[]>([])
   const [isUsersLoading, setIsUsersLoading] = useState(false)
   const [userSearch, setUserSearch] = useState('')
 
@@ -35,9 +44,17 @@ export default function useUsers({ activeTab, allowed, editingUser, setEditingUs
     ;(async () => {
       setIsUsersLoading(true)
       try {
-        const res = await userService.getAllUsers()
-        const list = ((res.data?.users || []) as User[]).filter((u) => u.role === 'user')
-        if (!cancelled) setUsers(list)
+        // Fetch users and payments in parallel
+        const [usersRes, paymentsRes] = await Promise.all([
+          userService.getAllUsers(),
+          fetch('/api/v1/payments').then(r => r.json()).catch(() => ({ payments: [] }))
+        ])
+        const list = ((usersRes.data?.users || []) as User[]).filter((u) => u.role === 'user')
+        const paymentsList = (paymentsRes.payments || paymentsRes.data || []) as Payment[]
+        if (!cancelled) {
+          setUsers(list)
+          setPayments(paymentsList)
+        }
       } finally {
         if (!cancelled) setIsUsersLoading(false)
       }
@@ -46,6 +63,14 @@ export default function useUsers({ activeTab, allowed, editingUser, setEditingUs
       cancelled = true
     }
   }, [activeTab, allowed])
+
+  // Check if user has successful payment
+  const getUserPaymentStatus = (userId: number | string) => {
+    const userPayments = payments.filter(p => 
+      String(p.user_id) === String(userId) && p.status === 'success'
+    )
+    return userPayments.length > 0
+  }
 
   const filteredUsers = useMemo(() => {
     const q = userSearch.trim().toLowerCase()
@@ -95,7 +120,7 @@ export default function useUsers({ activeTab, allowed, editingUser, setEditingUs
     userSearch,
     setUserSearch,
     handleDeleteUser,
-    handleTogglePaid,
+    getUserPaymentStatus,
     startEditUserModal,
     submitEditUser
   }

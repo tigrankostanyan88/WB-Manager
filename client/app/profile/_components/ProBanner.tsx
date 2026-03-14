@@ -17,13 +17,22 @@ interface Payment {
 }
 
 interface ProBannerProps {
-  user?: { role?: string; name?: string }
+  user?: { 
+    role?: string 
+    name?: string
+    course_ids?: (string | number)[]
+    courseIds?: (string | number)[]
+  }
   myPayments?: Payment[]
   totalCoursesCount?: number
   onShowPaymentModal: () => void
 }
 
-export default function ProBanner({ myPayments = [], totalCoursesCount = 0, onShowPaymentModal }: ProBannerProps) {
+export default function ProBanner({ user, myPayments = [], totalCoursesCount = 0, onShowPaymentModal }: ProBannerProps) {
+  // Check if user has courses via course_ids (from user object)
+  const userCourseIds = user?.course_ids || user?.courseIds || []
+  const hasRegisteredCourses = userCourseIds.length > 0
+  
   const successfulPayments = myPayments.filter(p => p.status === 'success')
   const pendingPayments = myPayments.filter(p => p.status === 'pending')
   const failedPayments = myPayments.filter(p => p.status === 'failed')
@@ -32,8 +41,32 @@ export default function ProBanner({ myPayments = [], totalCoursesCount = 0, onSh
 
   // Check if user has paid for ALL available courses
   const allCoursesPaid = totalCoursesCount > 0 && successfulPayments.length === totalCoursesCount
+  
+  // If user has registered courses via course_ids but no payments data yet, show welcome
+  const showWelcomeFromCourses = hasRegisteredCourses && totalCourses === 0
 
-  if (totalCourses === 0) {
+  // If user has registered courses via course_ids, show welcome message
+  if (showWelcomeFromCourses) {
+    return (
+      <div className="rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-700 p-6 text-white shadow-xl">
+        <div className="flex items-center gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20">
+            <Trophy className="h-7 w-7 text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-bold">Դուք ունեք գրանցված դասընթացներ!</h3>
+            <p className="text-sm text-white/80">Մաղթում ենք հաջող ուսման ընթացք</p>
+          </div>
+          <span className="shrink-0 rounded-full bg-white px-4 py-2 text-sm font-bold text-violet-600">
+            {userCourseIds.length} դասընթաց
+          </span>
+        </div>
+      </div>
+    )
+  }
+
+  // If no courses at all (no payments, no course_ids)
+  if (totalCourses === 0 && !hasRegisteredCourses) {
     return (
       <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 p-6 text-white shadow-xl">
         <div className="flex items-center gap-4">
@@ -44,28 +77,6 @@ export default function ProBanner({ myPayments = [], totalCoursesCount = 0, onSh
             <h3 className="text-lg font-bold">Դասընթացներ չկան</h3>
             <p className="text-sm text-slate-400">Դուք դեռ չեք գնել որևէ դասընթաց</p>
           </div>
-        </div>
-      </div>
-    )
-  }
-
-  // If ALL courses are paid - show completion message without buy button
-  if (allCoursesPaid) {
-    return (
-      <div className="rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-700 p-6 text-white shadow-xl">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20">
-            <Trophy className="h-7 w-7 text-white" />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-bold">Շնորհավորում ենք!</h3>
-            <p className="text-sm text-white/80">
-              Դուք գնել եք բոլոր {totalCoursesCount} դասընթացները
-            </p>
-          </div>
-          <span className="shrink-0 rounded-full bg-white px-4 py-2 text-sm font-bold text-emerald-600">
-            Բոլորը գնված են
-          </span>
         </div>
       </div>
     )
