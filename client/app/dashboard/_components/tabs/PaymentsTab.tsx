@@ -17,6 +17,7 @@ interface PaymentsTabProps {
     amount: number
     paymentMethod: 'idram' | 'ameria' | 'acba'
   }) => Promise<void>
+  onUpdateStatus?: (id: number, status: 'pending' | 'success' | 'failed') => Promise<void>
 }
 
 export default function PaymentsTab({
@@ -25,13 +26,27 @@ export default function PaymentsTab({
   courses,
   isLoading,
   isSubmitting,
-  onCreatePayment
+  onCreatePayment,
+  onUpdateStatus
 }: PaymentsTabProps) {
   const [selectedUser, setSelectedUser] = useState<string>('')
   const [selectedCourse, setSelectedCourse] = useState<string>('')
   const [amount, setAmount] = useState<string>('')
   const [paymentMethod, setPaymentMethod] = useState<'idram' | 'ameria' | 'acba'>('idram')
   const [showForm, setShowForm] = useState(false)
+  const [updatingId, setUpdatingId] = useState<number | null>(null)
+
+  const handleStatusUpdate = async (id: number, newStatus: 'pending' | 'success' | 'failed') => {
+    if (!onUpdateStatus) return
+    setUpdatingId(id)
+    try {
+      await onUpdateStatus(id, newStatus)
+    } catch (error) {
+      console.error('Failed to update status:', error)
+    } finally {
+      setUpdatingId(null)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -263,15 +278,46 @@ export default function PaymentsTab({
                     {getPaymentMethodText(payment.payment_method)}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(payment.status)}
-                      <span className={`text-sm ${
-                        payment.status === 'success' ? 'text-emerald-600' :
-                        payment.status === 'pending' ? 'text-amber-600' :
-                        'text-red-600'
-                      }`}>
-                        {getStatusText(payment.status)}
-                      </span>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        {getStatusIcon(payment.status)}
+                        <span className={`text-sm ${
+                          payment.status === 'success' ? 'text-emerald-600' :
+                          payment.status === 'pending' ? 'text-amber-600' :
+                          'text-red-600'
+                        }`}>
+                          {getStatusText(payment.status)}
+                        </span>
+                      </div>
+                      {onUpdateStatus && (
+                        <div className="flex items-center gap-3 mt-2">
+                          <button
+                            onClick={() => handleStatusUpdate(payment.id, 'success')}
+                            disabled={updatingId === payment.id}
+                            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                              payment.status === 'success'
+                                ? 'bg-emerald-100 text-emerald-700 border-2 border-emerald-500'
+                                : 'bg-slate-100 text-slate-600 border-2 border-transparent hover:bg-slate-200'
+                            } ${updatingId === payment.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          >
+                            ✓ Վճարված
+                          </button>
+                          <button
+                            onClick={() => handleStatusUpdate(payment.id, 'pending')}
+                            disabled={updatingId === payment.id}
+                            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                              payment.status === 'pending'
+                                ? 'bg-amber-100 text-amber-700 border-2 border-amber-500'
+                                : 'bg-slate-100 text-slate-600 border-2 border-transparent hover:bg-slate-200'
+                            } ${updatingId === payment.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          >
+                            ○ Սպասում
+                          </button>
+                          {updatingId === payment.id && (
+                            <div className="w-4 h-4 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin" />
+                          )}
+                        </div>
+                      )}
                     </div>
                   </td>
                   <td className="px-4 py-3 text-sm text-slate-500">

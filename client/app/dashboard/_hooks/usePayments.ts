@@ -159,6 +159,35 @@ export default function usePayments({ activeTab, allowed }: UsePaymentsParams) {
     }
   }
 
+  const updatePaymentStatus = async (id: number, status: 'pending' | 'success' | 'failed') => {
+    try {
+      const response = await fetch(`/api/v1/payments/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      })
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Failed to update payment status: ${response.status} - ${errorText}`)
+      }
+      
+      const result = await response.json()
+      
+      // Update the payment in the list
+      if (result.payment) {
+        setPayments(prev => prev.map(p => 
+          p.id === id ? result.payment : p
+        ))
+      }
+      
+      return result
+    } catch (error) {
+      console.error('Error updating payment status:', error)
+      throw error
+    }
+  }
+
   return {
     payments,
     users,
@@ -166,6 +195,7 @@ export default function usePayments({ activeTab, allowed }: UsePaymentsParams) {
     isLoading,
     isSubmitting,
     createPayment,
-    verifyPayment
+    verifyPayment,
+    updatePaymentStatus
   }
 }

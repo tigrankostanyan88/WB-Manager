@@ -17,4 +17,7 @@ router.post('/:orderId/verify', ctrls.auth.protect, ctrls.auth.restrictTo('admin
 // Delete payment
 router.delete('/:id', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), ctrls.payment.deletePayment);
 
+// Update payment status (admin toggle)
+router.patch('/:id/status', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), ctrls.payment.updatePaymentStatus);
+
 module.exports = router;

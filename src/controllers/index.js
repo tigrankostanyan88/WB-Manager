@@ -20,7 +20,8 @@ module.exports = {
         getPaymentById: payment.getPaymentById,
         createPayment: payment.createPayment,
         verifyPayment: payment.verifyPayment,
-        deletePayment: payment.deletePayment
+        deletePayment: payment.deletePayment,
+        updatePaymentStatus: payment.updatePaymentStatus
     },
     settings: require('./settings'),
     review: require('./review'),

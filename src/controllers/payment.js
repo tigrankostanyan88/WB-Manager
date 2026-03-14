@@ -98,3 +98,32 @@ exports.deletePayment = async (req, res) => {
         });
     }
 };
+
+// Update payment status (admin toggle)
+exports.updatePaymentStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        
+        if (!status || !['pending', 'success', 'failed'].includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid status value'
+            });
+        }
+        
+        const payment = await paymentService.updatePaymentStatus(id, status);
+        res.status(200).json({
+            success: true,
+            message: 'Payment status updated successfully',
+            payment
+        });
+    } catch (error) {
+        console.error('Update payment status error:', error);
+        const statusCode = error.message.includes('not found') ? 404 : 500;
+        res.status(statusCode).json({
+            success: false,
+            message: error.message || 'Failed to update payment status'
+        });
+    }
+};

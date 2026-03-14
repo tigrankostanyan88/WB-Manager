@@ -79,7 +79,7 @@ export default function DashboardPage() {
     activeTab,
     showToast
   })
-  const { payments, users: paymentUsers, courses: paymentCourses, isLoading: isPaymentsLoading, isSubmitting: isPaymentsSubmitting, createPayment } = usePayments({
+  const { payments, users: paymentUsers, courses: paymentCourses, isLoading: isPaymentsLoading, isSubmitting: isPaymentsSubmitting, createPayment, updatePaymentStatus } = usePayments({
     activeTab,
     allowed
   })
@@ -191,6 +191,7 @@ export default function DashboardPage() {
                     isLoading={isPaymentsLoading}
                     isSubmitting={isPaymentsSubmitting}
                     onCreatePayment={createPayment}
+                    onUpdateStatus={updatePaymentStatus}
                   />
                 </motion.div>
               )}

@@ -107,6 +107,42 @@ class PaymentService {
         const deleted = await paymentRepository.delete(id);
         return deleted;
     }
+
+    async updatePaymentStatus(id, status) {
+        const payment = await paymentRepository.findById(id);
+        if (!payment) {
+            throw new AppError('Payment not found');
+        }
+
+        const updateData = {
+            status: status
+        };
+
+        // If marking as success, also set paid_at and grant access
+        if (status === 'success') {
+            updateData.paid_at = new Date();
+            
+            // Grant course access to user
+            const user = await paymentRepository.findUserById(payment.user_id);
+            if (user) {
+                let currentGroups = [];
+                try {
+                    currentGroups = JSON.parse(user.groups || '[]');
+                } catch (e) {
+                    currentGroups = [];
+                }
+
+                const courseId = payment.course_id.toString();
+                if (!currentGroups.includes(courseId)) {
+                    currentGroups.push(courseId);
+                    await paymentRepository.updateUserGroups(payment.user_id, currentGroups);
+                }
+            }
+        }
+
+        await paymentRepository.update(id, updateData);
+        return await paymentRepository.findById(id);
+    }
 }
 
 module.exports = new PaymentService();
