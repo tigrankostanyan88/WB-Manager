@@ -65,11 +65,10 @@ export default function useUsers({ activeTab, allowed, editingUser, setEditingUs
     setUsers((prev) => prev.filter((u) => u.id !== id))
   }
 
-  const handleTogglePaid = async (u: User) => {
-    const currentPaid = Boolean(u.isPaid)
-    const next = !currentPaid
-    await userService.updateUser(u.id, { isPaid: next })
-    setUsers((prev) => prev.map((x) => (x.id === u.id ? { ...x, isPaid: next } : x)))
+  const handleTogglePaid = async (userId: string | number, currentIsPaid: boolean) => {
+    const next = !currentIsPaid
+    await userService.updateUser(userId, { isPaid: next })
+    setUsers((prev) => prev.map((x) => (x.id === userId ? { ...x, isPaid: next } : x)))
   }
 
   const startEditUserModal = (u: User) => {

@@ -15,6 +15,7 @@ DB.models = {
   Instructor: require('./Instructor')(connect, Sequelize.DataTypes),
   StudentCourse: require('./StudentCourse')(connect, Sequelize.DataTypes),
   BankCard: require('./BankCard')(connect, Sequelize.DataTypes),
+  Payment: require('./Payment')(connect, Sequelize.DataTypes),
 };
 
 DB.models.User.hasMany(DB.models.File,   { foreignKey: 'row_id', as: 'files', constraints: false, scope: { table_name: 'users' } });

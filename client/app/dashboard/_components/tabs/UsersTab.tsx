@@ -84,7 +84,7 @@ export default function UsersTab({
                     </div>
                   </td>
                   <td className="px-4 py-4">
-                    <p className="font-medium text-slate-900">{user.firstName} {user.lastName}</p>
+                    <p className="font-medium text-slate-900">{user.name}</p>
                   </td>
                   <td className="px-4 py-4 text-slate-600">{user.email}</td>
                   <td className="px-6 py-4">
@@ -96,7 +96,7 @@ export default function UsersTab({
                   </td>
                   <td className="px-6 py-4">
                     <button
-                      onClick={() => onTogglePaid(user._id, !user.isPaid)}
+                      onClick={() => onTogglePaid(String(user._id), Boolean(user.isPaid))}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                         user.isPaid ? 'bg-emerald-500' : 'bg-slate-200'
                       }`}
