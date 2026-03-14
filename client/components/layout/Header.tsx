@@ -37,10 +37,7 @@ export default function Header({ forceWhiteBackground = false }: { forceWhiteBac
     <>
       <header 
         className={cn(
-          "fixed top-0 left-0 right-0 z-50",
-          shouldBeSolid
-            ? "bg-white shadow-sm border-b border-slate-100 py-3"
-            : "py-5"
+          "fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b border-slate-100 py-3"
         )}
       >
         <div className="container px-4 md:px-6">

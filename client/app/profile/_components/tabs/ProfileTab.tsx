@@ -82,31 +82,36 @@ export default function ProfileTab({
       transition={{ duration: 0.25 }}
       className="space-y-6"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'Ընթացիկ դասեր', val: stats?.currentLessons || '0/0', icon: Clock, color: 'text-orange-600', bg: 'bg-orange-50' },
-          { label: 'Առաջընթաց', val: `${stats?.progress || 0}%`, icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-50' },
-          { label: 'Միավորներ', val: stats?.points?.toLocaleString() || '0', icon: Trophy, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          { label: 'Սերտիֆիկատ', val: stats?.certificates || '0', icon: Award, color: 'text-blue-600', bg: 'bg-blue-50' },
+          { label: 'Ընթացիկ դասեր', val: stats?.currentLessons || '0/0', icon: Clock, color: 'text-orange-600', bg: 'bg-orange-50', borderColor: 'border-orange-100' },
+          { label: 'Առաջընթաց', val: `${stats?.progress || 0}%`, icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-50', borderColor: 'border-violet-100' },
+          { label: 'Միավորներ', val: stats?.points?.toLocaleString() || '0', icon: Trophy, color: 'text-emerald-600', bg: 'bg-emerald-50', borderColor: 'border-emerald-100' },
+          { label: 'Սերտիֆիկատ', val: stats?.certificates || '0', icon: Award, color: 'text-blue-600', bg: 'bg-blue-50', borderColor: 'border-blue-100' },
         ].map((stat, i) => (
-          <motion.div key={i} whileHover={{ y: -4, scale: 1.01 }} transition={{ duration: 0.2 }}>
-            <Card className="shadow-sm rounded-2xl bg-white overflow-hidden group transition-all h-full">
+          <motion.div 
+            key={i} 
+            whileHover={{ y: -4, scale: 1.02 }} 
+            transition={{ duration: 0.2 }}
+            className="group"
+          >
+            <Card className={`${stat.bg} ${stat.borderColor} border-2 shadow-sm rounded-2xl overflow-hidden group-hover:shadow-lg transition-all duration-300 h-full`}>
               {isLoadingData ? (
                 <CardContent className="p-5 flex items-center gap-3.5 animate-pulse">
-                  <div className="w-10 h-10 rounded-lg bg-slate-50" />
+                  <div className="w-12 h-12 rounded-xl bg-white/50" />
                   <div className="space-y-1.5">
-                    <div className="h-1.5 w-12 bg-slate-50 rounded" />
-                    <div className="h-3 w-10 bg-slate-50 rounded" />
+                    <div className="h-1.5 w-12 bg-white/50 rounded" />
+                    <div className="h-3 w-10 bg-white/50 rounded" />
                   </div>
                 </CardContent>
               ) : (
                 <CardContent className="p-5 flex items-center gap-3.5">
-                  <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110', stat.bg)}>
-                    <stat.icon className={cn('w-5 h-5', stat.color)} />
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${stat.bg} border border-white`}>
+                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
                   </div>
                   <div>
-                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-0.5">{stat.label}</p>
-                    <p className="text-lg font-black text-slate-900">{stat.val}</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">{stat.label}</p>
+                    <p className="text-2xl font-black text-slate-900">{stat.val}</p>
                   </div>
                 </CardContent>
               )}

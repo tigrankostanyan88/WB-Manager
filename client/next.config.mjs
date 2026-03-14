@@ -19,7 +19,7 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/user/:path*',
+        source: '/api/v1/user/:path*',
         destination: `${apiOrigin}/api/user/:path*`
       },
       {

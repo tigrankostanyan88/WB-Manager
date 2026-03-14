@@ -34,20 +34,20 @@ export default function CoursesTab({ isLoadingData, myCourses }: CoursesTabProps
       className="space-y-8"
     >
       <div className="flex items-center justify-between px-2">
-        <h3 className="text-4xl font-black text-slate-900 tracking-tight">Իմ դասընթացները</h3>
-        <div className="flex items-center gap-3 text-sm font-black text-slate-500 bg-white px-6 py-3 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-50">
-          <BookOpen className="w-5 h-5 text-violet-600" />
-          <span>{myCourses.length} ԴԱՍԸՆԹԱՑ</span>
-        </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {isLoadingData ? (
           [1, 2].map((i) => <div key={i} className="h-64 bg-white rounded-2xl animate-pulse" />)
         ) : myCourses.length > 0 ? (
           myCourses.map((course) => (
-            <Link key={course.id} href={`/course-details/${course.id}`} className="block group">
-              <Card className="shadow-xl shadow-slate-200/50 rounded-2xl bg-white overflow-hidden group hover:shadow-2xl hover:shadow-violet-200/50 transition-all duration-700 border border-slate-100/50">
-                <CardContent className="p-10">
+            <Link
+              key={course.id}
+              href={`/courses/${course.id}`}
+              className="group block"
+            >
+              <Card className="h-full bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border-0 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                <div className="h-2 bg-gradient-to-r from-violet-500 to-indigo-600" />
+                <CardContent className="p-8">
                   <div className="flex justify-between items-start mb-8">
                     <div className="flex flex-col gap-2">
                       <span className={cn('px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border shadow-sm w-fit', course.color, course.borderColor)}>
@@ -86,8 +86,17 @@ export default function CoursesTab({ isLoadingData, myCourses }: CoursesTabProps
             </Link>
           ))
         ) : (
-          <div className="col-span-2 py-12 text-center bg-white rounded-2xl border border-dashed border-slate-200">
-            <p className="text-slate-400 font-bold">Դուք դեռ չունեք գրանցված դասընթացներ</p>
+          <div className="col-span-full text-center py-20 bg-white rounded-3xl shadow-lg shadow-slate-200/50">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center mx-auto mb-6">
+              <BookOpen className="w-12 h-12 text-slate-400" />
+            </div>
+            <h3 className="text-xl font-black text-slate-900 mb-2">Դեռ չկան դասընթացներ</h3>
+            <p className="text-slate-500 mb-6">Սկսեք սովորել մեր դասընթացներից</p>
+            <Link href="/courses">
+              <Button className="bg-violet-600 hover:bg-violet-700 text-white rounded-xl px-8 h-12 font-bold">
+                Դիտել դասընթացները
+              </Button>
+            </Link>
           </div>
         )}
       </div>
