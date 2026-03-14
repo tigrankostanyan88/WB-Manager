@@ -1,7 +1,8 @@
 'use client'
 
-import { Search, Edit, Trash2 } from 'lucide-react'
+import { Search, Edit, Trash2, User as UserIcon } from 'lucide-react'
 import type { User } from '../../_types'
+import { withOrigin } from '../../_utils/image'
 
 interface UsersTabProps {
   users: User[]
@@ -11,6 +12,15 @@ interface UsersTabProps {
   onTogglePaid: (userId: string, isPaid: boolean) => void
   onEdit: (user: User) => void
   onDelete: (id: string) => void
+}
+
+// Helper to get user avatar URL
+function getUserAvatarUrl(user: User): string | null {
+  if (!user.files || user.files.length === 0) return null
+  const avatarFile = user.files.find((f: any) => f?.name_used === 'user_img')
+  if (!avatarFile) return null
+  const path = `/images/users/large/${avatarFile.name}${avatarFile.ext}`
+  return withOrigin(path) || null
 }
 
 export default function UsersTab({
@@ -47,20 +57,36 @@ export default function UsersTab({
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-medium text-slate-700">Անուն</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-slate-700">Էլ. փոստ</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-slate-700">Դեր</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-slate-700">Վճարում</th>
-                <th className="px-6 py-4 text-right text-sm font-medium text-slate-700">Գործողություններ</th>
+                <th className="px-4 py-4 text-left text-sm font-medium text-slate-700">Նկար</th>
+                <th className="px-4 py-4 text-left text-sm font-medium text-slate-700">Անուն</th>
+                <th className="px-4 py-4 text-left text-sm font-medium text-slate-700">Էլ. փոստ</th>
+                <th className="px-4 py-4 text-left text-sm font-medium text-slate-700">Դեր</th>
+                <th className="px-4 py-4 text-left text-sm font-medium text-slate-700">Վճարում</th>
+                <th className="px-4 py-4 text-right text-sm font-medium text-slate-700">Գործողություններ</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {users.map((user) => (
+              {users.map((user) => {
+                const avatarUrl = getUserAvatarUrl(user)
+                return (
                 <tr key={user._id} className="hover:bg-slate-50">
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-4">
+                    <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center">
+                      {avatarUrl ? (
+                        <img 
+                          src={avatarUrl} 
+                          alt={`${user.firstName} ${user.lastName}`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <UserIcon className="w-5 h-5 text-slate-400" />
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-4 py-4">
                     <p className="font-medium text-slate-900">{user.firstName} {user.lastName}</p>
                   </td>
-                  <td className="px-6 py-4 text-slate-600">{user.email}</td>
+                  <td className="px-4 py-4 text-slate-600">{user.email}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 rounded-lg text-xs font-medium ${
                       user.role === 'admin' ? 'bg-violet-100 text-violet-700' : 'bg-slate-100 text-slate-700'
@@ -80,7 +106,7 @@ export default function UsersTab({
                       }`} />
                     </button>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-4">
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={() => onEdit(user)}
@@ -97,7 +123,7 @@ export default function UsersTab({
                     </div>
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>

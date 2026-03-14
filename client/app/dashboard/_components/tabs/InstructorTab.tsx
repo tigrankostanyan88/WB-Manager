@@ -100,7 +100,7 @@ export default function InstructorTab({
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-0">
+          <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-0">
             {/* Photo Section */}
             <div className="bg-slate-50 p-6 flex flex-col">
               <div className="relative flex-1 min-h-[380px] flex items-center justify-center">
