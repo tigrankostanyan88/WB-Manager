@@ -11,9 +11,11 @@ interface InstructorStat {
 
 interface InstructorTabProps {
   instructorForm: {
+    title: string
     name: string
     profession: string
     description: string
+    badgeText: string
     avatarUrl: string
     stats: InstructorStat[]
   }
@@ -25,9 +27,11 @@ interface InstructorTabProps {
   }
   isInstructorLoading: boolean
   onAvatarFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onTitleChange: (value: string) => void
   onNameChange: (value: string) => void
   onProfessionChange: (value: string) => void
   onDescriptionChange: (value: string) => void
+  onBadgeTextChange: (value: string) => void
   onStatValueChange: (index: number, value: string) => void
   onSubmit: (e: React.FormEvent) => void
 }
@@ -59,9 +63,11 @@ export default function InstructorTab({
   instructorErrors,
   isInstructorLoading,
   onAvatarFileSelect,
+  onTitleChange,
   onNameChange,
   onProfessionChange,
   onDescriptionChange,
+  onBadgeTextChange,
   onStatValueChange,
   onSubmit
 }: InstructorTabProps) {
@@ -96,26 +102,14 @@ export default function InstructorTab({
                       alt="Մենթոր"
                       className="w-full aspect-[3/4] object-cover"
                     />
-                    {/* Name overlay at bottom */}
+                    {/* Name overlay at bottom - simplified since we have separate fields */}
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6 pt-20">
-                      <input
-                        type="text"
-                        value={instructorForm.name}
-                        onChange={(e) => onNameChange(e.target.value)}
-                        placeholder="Անուն Ազգանուն"
-                        className={`w-full bg-transparent text-white text-xl font-bold placeholder-white/50 border-none outline-none focus:ring-0 ${
-                          instructorErrors.name ? 'placeholder-red-300' : ''
-                        }`}
-                      />
-                      <input
-                        type="text"
-                        value={instructorForm.profession}
-                        onChange={(e) => onProfessionChange(e.target.value)}
-                        placeholder="Wildberries Expert & Founder"
-                        className={`w-full bg-transparent text-white/80 text-sm placeholder-white/40 border-none outline-none focus:ring-0 mt-1 ${
-                          instructorErrors.profession ? 'placeholder-red-300' : ''
-                        }`}
-                      />
+                      <p className="text-white text-xl font-bold">
+                        {instructorForm.name || 'Անուն Ազգանուն'}
+                      </p>
+                      <p className="text-white/80 text-sm">
+                        {instructorForm.profession || 'Մասնագիտություն'}
+                      </p>
                     </div>
                   </div>
                 ) : (
@@ -144,13 +138,45 @@ export default function InstructorTab({
               {/* Badge */}
               <div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 px-4 py-2 rounded-full text-sm font-medium w-fit mb-6">
                 <span className="w-2 h-2 bg-violet-500 rounded-full"></span>
-                Վերադարձված մենթորություն
+                <input
+                  type="text"
+                  value={instructorForm.badgeText}
+                  onChange={(e) => onBadgeTextChange(e.target.value)}
+                  placeholder="Վերադարձված մենթորություն"
+                  className="bg-transparent border-none outline-none focus:ring-0 text-violet-700 placeholder-violet-400 w-full"
+                />
               </div>
 
               {/* Title */}
-              <h3 className="text-3xl lg:text-4xl font-black text-slate-900 mb-4">
-                <span className="text-violet-600">Սովորեք</span> Ուայլդբերիի<br />Մասնագետից
-              </h3>
+              <input
+                type="text"
+                value={instructorForm.title}
+                onChange={(e) => onTitleChange(e.target.value)}
+                placeholder="Սովորեք Ուայլդբերիի Մասնագետից"
+                className="w-full text-3xl lg:text-4xl font-black text-slate-900 placeholder-slate-300 border-none outline-none focus:ring-0 p-0 mb-2"
+              />
+
+              {/* Name and Profession fields below title */}
+              <div className="mb-4 space-y-2">
+                <input
+                  type="text"
+                  value={instructorForm.name}
+                  onChange={(e) => onNameChange(e.target.value)}
+                  placeholder="Անուն Ազգանուն"
+                  className={`w-full text-lg font-semibold text-slate-700 placeholder-slate-400 border-b border-slate-200 focus:border-violet-500 outline-none focus:ring-0 py-1 transition-colors ${
+                    instructorErrors.name ? 'border-red-300' : ''
+                  }`}
+                />
+                <input
+                  type="text"
+                  value={instructorForm.profession}
+                  onChange={(e) => onProfessionChange(e.target.value)}
+                  placeholder="Մասնագիտություն"
+                  className={`w-full text-sm text-slate-500 placeholder-slate-400 border-b border-slate-200 focus:border-violet-500 outline-none focus:ring-0 py-1 transition-colors ${
+                    instructorErrors.profession ? 'border-red-300' : ''
+                  }`}
+                />
+              </div>
 
               {/* Description */}
               <div className="mb-8">

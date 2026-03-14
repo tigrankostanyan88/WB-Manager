@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useMemo, useState } from 'react'
 import api from '@/lib/api'
 import { useSettings as useGlobalSettings } from '@/lib/SettingsContext'

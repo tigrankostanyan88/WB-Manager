@@ -1,3 +1,5 @@
+'use client'
+
 import { ConfirmProvider } from '@/components/ConfirmProvider'
 
 export default function DashboardLayout({

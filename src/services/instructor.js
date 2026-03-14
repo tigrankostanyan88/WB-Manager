@@ -52,6 +52,11 @@ module.exports = {
       }
 
       await instructor.createFile(image.table);
+      
+      // Construct avatar_url from the saved file path
+      // File is saved at: ./public/images/instructors/large/{name}.{ext}
+      const avatarUrl = `/images/instructors/large/${image.table.name}.${image.table.ext}`;
+      await repo.update(instructor, { avatar_url: avatarUrl });
     }
     return repo.findOne({ includeFiles: true });
   },

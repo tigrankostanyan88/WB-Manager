@@ -28,7 +28,9 @@ module.exports = {
         exclude: ['createdAt', 'updatedAt']
       },
       order: [['id', 'DESC']],
-      include
+      include,
+      raw: true,
+      nest: true
     });
   },
 

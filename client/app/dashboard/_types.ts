@@ -66,6 +66,7 @@ export interface InstructorStat {
 }
 
 export interface InstructorForm {
+  title: string
   name: string
   profession: string
   description: string

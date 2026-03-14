@@ -7,27 +7,27 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false
     },
     title: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false
     },
     description: {
       type: DataTypes.TEXT,
-      allowNull: true
+      allowNull: false
     },
     profession: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false
     },
     avatar_url: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false
     },
     stats_json: {
       type: DataTypes.TEXT,
-      allowNull: true
+      allowNull: false
     }
   }, {
     tableName: 'instructors',

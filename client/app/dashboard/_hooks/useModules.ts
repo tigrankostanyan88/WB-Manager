@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import type { DashboardTabId } from '../_types'
 import api from '@/lib/api'
@@ -213,24 +215,54 @@ export default function useModules({ activeTab, showToast }: UseModulesParams) {
         
         setAllModules(parseModules(modulesData))
         showToast('Մոդուլը հաջողությամբ թարմացվեց', 'success')
+        setModuleForm(emptyForm)
+        setShowModuleForm(false)
+        setEditingId(null)
       } else {
-        await api.post('/api/v1/modules', {
+        // Create new module and get the created module data
+        const res = await api.post('/api/v1/modules', {
           title: moduleForm.title,
           duration: moduleForm.duration,
           description: moduleForm.description,
           courseId: Number(moduleForm.courseId)
         })
-        const modulesRes = await api.get('/api/v1/modules')
-        const modulesData = Array.isArray(modulesRes.data?.data)
-          ? modulesRes.data.data
-          : modulesRes.data?.data?.modules || modulesRes.data?.modules || []
-        setAllModules(parseModules(modulesData))
-        showToast('Մոդուլը հաջողությամբ ավելացվեց', 'success')
+        
+        // Get the newly created module
+        const newModuleData = res.data?.data || res.data?.module || res.data
+        const newModule = newModuleData ? mapModule(newModuleData) : null
+        
+        if (newModule && newModule.id) {
+          // Add new module to list
+          setAllModules((prev) => [newModule, ...prev])
+          
+          // Switch to edit mode for the new module to allow video upload
+          setEditingId(newModule.id)
+          setModuleForm({
+            title: newModule.title,
+            duration: newModule.duration,
+            description: newModule.description,
+            courseId: newModule.courseId
+          })
+          
+          // Load any existing videos (should be empty for new module)
+          const videos = getModuleVideos(newModule)
+          setCurrentModuleVideos(videos)
+          setVideoFile(null)
+          
+          showToast('Մոդուլը ստեղծվեց։ Այժմ կարող եք վիդեո ավելացնել։', 'success')
+        } else {
+          // Fallback: refresh list and close form
+          const modulesRes = await api.get('/api/v1/modules')
+          const modulesData = Array.isArray(modulesRes.data?.data)
+            ? modulesRes.data.data
+            : modulesRes.data?.data?.modules || modulesRes.data?.modules || []
+          setAllModules(parseModules(modulesData))
+          setModuleForm(emptyForm)
+          setShowModuleForm(false)
+          setEditingId(null)
+          showToast('Մոդուլը հաջողությամբ ավելացվեց', 'success')
+        }
       }
-
-      setModuleForm(emptyForm)
-      setShowModuleForm(false)
-      setEditingId(null)
     } catch {
       showToast(editingId ? 'Սխալ մոդուլը թարմացնելիս' : 'Սխալ մոդուլ ավելացնելիս', 'error')
     } finally {

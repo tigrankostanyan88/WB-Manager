@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import { userService } from '@/lib/api'
 import api from '@/lib/api'

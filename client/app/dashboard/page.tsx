@@ -3,11 +3,11 @@
 import { useMemo, useState } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { AnimatePresence } from 'framer-motion'
 import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users } from 'lucide-react'
 import DashboardHeader from '@/app/dashboard/_components/DashboardHeader'
 import DashboardSidebar from '@/app/dashboard/_components/DashboardSidebar'
 import CropModal from '@/app/dashboard/_components/CropModal'
+import { AnimatePresence, motion } from 'framer-motion'
 import DashboardToast from '@/app/dashboard/_components/DashboardToast'
 import EditUserModal from '@/app/dashboard/_components/EditUserModal'
 import CommentsTab from '@/app/dashboard/_components/tabs/CommentsTab'
@@ -59,8 +59,6 @@ export default function DashboardPage() {
   const { reviews, isReviewsLoading, relativeTime: reviewsRelativeTime, isToday, handleDeleteReview } = useReviews({ activeTab, allowed })
   const { faqs, faqForm, setFaqForm, isFaqLoading, isFaqSubmitting, editingId, editForm, setEditForm, isFaqUpdating, submitFaq, startEdit, cancelEdit, updateFaq, deleteFaq } =
     useFaq({ activeTab, allowed })
-  const { instructorForm, instructorErrors, isInstructorLoading, onAvatarFile, onNameChange, onProfessionChange, onDescriptionChange, onStatValueChange, saveInstructor, instructorCropModalOpen, instructorCropImage, instructorCrop, instructorZoom, setInstructorCrop, setInstructorZoom, onInstructorCropComplete, closeInstructorCropModal, confirmInstructorCrop } =
-    useInstructor({ activeTab, allowed, showToast })
   const { siteSettings, setSiteSettings, workingHoursSchedule, setWorkingHoursSchedule, isSettingsLoading, saveSettings } = useSettings({
     activeTab,
     allowed,
@@ -69,7 +67,9 @@ export default function DashboardPage() {
   const { cropImage, cropModalOpen, crop, zoom, setCrop, setZoom, onCropComplete, onLogoFileSelect, createCroppedImage, closeCrop } = useCrop({
     setSiteSettings
   })
-  const { showCourseForm, courseForm, setCourseForm, startNewCourse, editCourse, cancelNewCourse, addLearningPoint, changeLearningPoint, removeLearningPoint, submitCourse, courses, isLoading: isCoursesLoading } = useCourses({
+  const { instructorForm, instructorErrors, isInstructorLoading, onAvatarFile, onTitleChange, onNameChange, onProfessionChange, onDescriptionChange, onBadgeTextChange, onStatValueChange, saveInstructor, cropModalOpen: instructorCropModalOpen, cropImage: instructorCropImage, crop: instructorCrop, zoom: instructorZoom, setCrop: setInstructorCrop, setZoom: setInstructorZoom, onCropComplete: onInstructorCropComplete, closeCropModal: closeInstructorCropModal, confirmCrop: confirmInstructorCrop } =
+    useInstructor({ activeTab, allowed, showToast })
+  const { showCourseForm, courseForm, setCourseForm, startNewCourse, editCourse, cancelNewCourse, addLearningPoint, changeLearningPoint, removeLearningPoint, submitCourse, deleteCourse, courses, isLoading: isCoursesLoading, getCourseFirstVideoUrl } = useCourses({
     activeTab,
     showToast
   })
@@ -136,122 +136,185 @@ export default function DashboardPage() {
           <DashboardSidebar menuItems={menuItems} activeTab={activeTab} onTabChange={setActiveTab} />
 
           <div className="space-y-6">
-            <DashboardHeader
-              activeTab={activeTab}
-              userSearch={userSearch}
-              setUserSearch={setUserSearch}
-            />
-
             <AnimatePresence mode="wait">
               {activeTab === 'overview' && (
-                <OverviewTab stats={stats} recentStudents={recentStudents} isRecentLoading={isRecentLoading} relativeTime={overviewRelativeTime} />
+                <motion.div
+                  key="overview"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <OverviewTab stats={stats} recentStudents={recentStudents} isRecentLoading={isRecentLoading} relativeTime={overviewRelativeTime} />
+                </motion.div>
               )}
 
               {activeTab === 'users' && (
-                <UsersTab
-                  users={users}
-                  isUsersLoading={isUsersLoading}
-                  userSearch={userSearch}
-                  setUserSearch={setUserSearch}
-                  onTogglePaid={handleToggleUserPaid}
-                  onEdit={startEditUserModal}
-                  onDelete={handleDeleteUser}
-                />
+                <motion.div
+                  key="users"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <UsersTab
+                    users={users}
+                    isUsersLoading={isUsersLoading}
+                    userSearch={userSearch}
+                    setUserSearch={setUserSearch}
+                    onTogglePaid={handleToggleUserPaid}
+                    onEdit={startEditUserModal}
+                    onDelete={handleDeleteUser}
+                  />
+                </motion.div>
               )}
 
               {activeTab === 'courses' && (
-                <CoursesTab
-                showCourseForm={showCourseForm}
-                courseForm={courseForm}
-                setCourseForm={setCourseForm}
-                startNewCourse={startNewCourse}
-                onEditCourse={editCourse}
-                cancelNewCourse={cancelNewCourse}
-                addLearningPoint={addLearningPoint}
-                changeLearningPoint={changeLearningPoint}
-                removeLearningPoint={removeLearningPoint}
-                submitCourse={submitCourse}
-                courses={courses}
-                isLoading={isCoursesLoading}
-              />
+                <motion.div
+                  key="courses"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <CoursesTab
+                    showCourseForm={showCourseForm}
+                    courseForm={courseForm}
+                    setCourseForm={setCourseForm}
+                    startNewCourse={startNewCourse}
+                    onEditCourse={editCourse}
+                    onDeleteCourse={deleteCourse}
+                    cancelNewCourse={cancelNewCourse}
+                    addLearningPoint={addLearningPoint}
+                    changeLearningPoint={changeLearningPoint}
+                    removeLearningPoint={removeLearningPoint}
+                    submitCourse={submitCourse}
+                    courses={courses}
+                    isLoading={isCoursesLoading}
+                    getCourseFirstVideoUrl={getCourseFirstVideoUrl}
+                  />
+                </motion.div>
               )}
+
               {activeTab === 'modules' && (
-                <ModulesTab
-                  showModuleForm={showModuleForm}
-                  moduleForm={moduleForm}
-                  setModuleForm={setModuleForm}
-                  allModules={allModules}
-                  courses={moduleCourses}
-                  isLoading={isModulesLoading}
-                  editingId={editingModuleId}
-                  startNewModule={startNewModule}
-                  editModule={editModule}
-                  cancelNewModule={cancelNewModule}
-                  submitModule={submitModule}
-                  deleteModule={deleteModule}
-                  videoFile={videoFile}
-                  isUploadingVideo={isUploadingVideo}
-                  currentModuleVideos={currentModuleVideos}
-                  deleteModuleVideo={deleteModuleVideo}
-                  handleVideoFileChange={handleVideoFileChange}
-                  uploadModuleVideo={uploadModuleVideo}
-                  getVideoUrl={getVideoUrl}
-                />
+                <motion.div
+                  key="modules"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ModulesTab
+                    showModuleForm={showModuleForm}
+                    moduleForm={moduleForm}
+                    setModuleForm={setModuleForm}
+                    allModules={allModules}
+                    courses={moduleCourses}
+                    isLoading={isModulesLoading}
+                    editingId={editingModuleId}
+                    startNewModule={startNewModule}
+                    editModule={editModule}
+                    cancelNewModule={cancelNewModule}
+                    submitModule={submitModule}
+                    deleteModule={deleteModule}
+                    videoFile={videoFile}
+                    isUploadingVideo={isUploadingVideo}
+                    currentModuleVideos={currentModuleVideos}
+                    deleteModuleVideo={deleteModuleVideo}
+                    handleVideoFileChange={handleVideoFileChange}
+                    uploadModuleVideo={uploadModuleVideo}
+                    getVideoUrl={getVideoUrl}
+                  />
+                </motion.div>
               )}
 
               {activeTab === 'comments' && (
-                <CommentsTab
-                  reviews={reviews}
-                  isReviewsLoading={isReviewsLoading}
-                  relativeTime={reviewsRelativeTime}
-                  isToday={isToday}
-                  onDeleteReview={handleDeleteReview}
-                />
+                <motion.div
+                  key="comments"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <CommentsTab
+                    reviews={reviews}
+                    isReviewsLoading={isReviewsLoading}
+                    relativeTime={reviewsRelativeTime}
+                    isToday={isToday}
+                    onDeleteReview={handleDeleteReview}
+                  />
+                </motion.div>
               )}
 
-          {activeTab === 'instructor' && (
-            <InstructorTab
-              instructorForm={instructorForm}
-              instructorErrors={instructorErrors}
-              isInstructorLoading={isInstructorLoading}
-              onAvatarFileSelect={onAvatarFile}
-              onNameChange={onNameChange}
-              onProfessionChange={onProfessionChange}
-              onDescriptionChange={onDescriptionChange}
-              onStatValueChange={onStatValueChange}
-              onSubmit={saveInstructor}
-            />
-          )}
+              {activeTab === 'instructor' && (
+                <motion.div
+                  key="instructor"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <InstructorTab
+                    instructorForm={instructorForm}
+                    instructorErrors={instructorErrors}
+                    isInstructorLoading={isInstructorLoading}
+                    onAvatarFileSelect={onAvatarFile}
+                    onTitleChange={onTitleChange}
+                    onNameChange={onNameChange}
+                    onProfessionChange={onProfessionChange}
+                    onDescriptionChange={onDescriptionChange}
+                    onBadgeTextChange={onBadgeTextChange}
+                    onStatValueChange={onStatValueChange}
+                    onSubmit={saveInstructor}
+                  />
+                </motion.div>
+              )}
 
               {activeTab === 'faq' && (
-                <FaqTab
-                  faqs={faqs}
-                  faqForm={faqForm}
-                  setFaqForm={setFaqForm}
-                  isFaqLoading={isFaqLoading}
-                  isFaqSubmitting={isFaqSubmitting}
-                  editingId={editingId}
-                  editForm={editForm}
-                  setEditForm={setEditForm}
-                  isFaqUpdating={isFaqUpdating}
-                  submitFaq={submitFaq}
-                  startEdit={startEdit}
-                  cancelEdit={cancelEdit}
-                  updateFaq={updateFaq}
-                  deleteFaq={deleteFaq}
-                />
+                <motion.div
+                  key="faq"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <FaqTab
+                    faqs={faqs}
+                    faqForm={faqForm}
+                    setFaqForm={setFaqForm}
+                    isFaqLoading={isFaqLoading}
+                    isFaqSubmitting={isFaqSubmitting}
+                    editingId={editingId}
+                    editForm={editForm}
+                    setEditForm={setEditForm}
+                    isFaqUpdating={isFaqUpdating}
+                    submitFaq={submitFaq}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    updateFaq={updateFaq}
+                    deleteFaq={deleteFaq}
+                  />
+                </motion.div>
               )}
 
               {activeTab === 'settings' && (
-                <SettingsTab
-                  siteSettings={siteSettings}
-                  setSiteSettings={setSiteSettings}
-                  workingHoursSchedule={workingHoursSchedule}
-                  setWorkingHoursSchedule={setWorkingHoursSchedule}
-                  isSettingsLoading={isSettingsLoading}
-                  saveSettings={saveSettings}
-                  onLogoFileSelect={onLogoFileSelect}
-                />
+                <motion.div
+                  key="settings"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <SettingsTab
+                    siteSettings={siteSettings}
+                    setSiteSettings={setSiteSettings}
+                    workingHoursSchedule={workingHoursSchedule}
+                    setWorkingHoursSchedule={setWorkingHoursSchedule}
+                    isSettingsLoading={isSettingsLoading}
+                    saveSettings={saveSettings}
+                    onLogoFileSelect={onLogoFileSelect}
+                  />
+                </motion.div>
               )}
             </AnimatePresence>
           </div>

@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         moduleId: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         }
     }, {
         tableName: 'lessons'

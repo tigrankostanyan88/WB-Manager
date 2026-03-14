@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useMemo, useState } from 'react'
 import { userService } from '@/lib/api'
 import { useConfirm } from '@/components/ConfirmProvider'

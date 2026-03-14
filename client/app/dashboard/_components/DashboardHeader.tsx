@@ -13,7 +13,7 @@ export default function DashboardHeader({ activeTab, userSearch, setUserSearch }
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
       <div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Բարի գալուստ, Aram</h1>
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Բարի գալուստ</h1>
         <p className="text-slate-500 font-medium mt-1">Ահա թե ինչ է կատարվում ձեր կայքում այսօր</p>
       </div>
       <div className="flex items-center gap-3">

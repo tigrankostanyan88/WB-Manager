@@ -50,6 +50,27 @@ module.exports = (sequelize, DataTypes) => {
                     .filter(Boolean);
                 this.setDataValue('whatToLearn', JSON.stringify(cleaned));
             }
+        },
+        prerequisites: {
+            type: DataTypes.TEXT('long'),
+            allowNull: true,
+            get() {
+                const raw = this.getDataValue('prerequisites');
+                if (!raw) return [];
+                try {
+                    const parsed = JSON.parse(raw);
+                    return Array.isArray(parsed) ? parsed : [];
+                } catch {
+                    return [];
+                }
+            },
+            set(value) {
+                const arr = Array.isArray(value) ? value : [];
+                const cleaned = arr
+                    .map(v => String(v || '').trim())
+                    .filter(Boolean);
+                this.setDataValue('prerequisites', JSON.stringify(cleaned));
+            }
         }
     }, {
         tableName: 'courses'

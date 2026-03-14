@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState, useCallback } from 'react'
 import api from '@/lib/api'
 import type { Area, Point } from 'react-easy-crop'
@@ -69,6 +71,7 @@ const defaultStats = [
 export default function useInstructor({ activeTab, allowed, showToast }: UseInstructorParams) {
   const [isInstructorLoading, setIsInstructorLoading] = useState(false)
   const [instructorForm, setInstructorForm] = useState<InstructorForm>({
+    title: 'Սովորեք Ուայլդբերիի Մասնագետից',
     name: '',
     profession: '',
     description: '',
@@ -139,12 +142,17 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
           : [...defaultStats]
 
         if (!cancelled) {
+          const rawAvatar = typeof data.avatar_url === 'string' ? data.avatar_url : ''
+          const fixedAvatar = fixLarge(rawAvatar)
+          const finalAvatar = withOrigin(fixedAvatar) || ''
+          console.log('DEBUG avatar_url:', { rawAvatar, fixedAvatar, finalAvatar, data })
           setInstructorForm({
+            title: typeof data.title === 'string' ? data.title : 'Սովորեք Ուայլդբերիի Մասնագետից',
             name: typeof data.name === 'string' ? data.name : '',
             profession: typeof data.profession === 'string' ? data.profession : '',
             description: typeof data.description === 'string' ? data.description : '',
             badgeText: typeof data.badge_text === 'string' ? data.badge_text : 'Վերադարձված մենթորություն',
-            avatarUrl: withOrigin(fixLarge(typeof data.avatar_url === 'string' ? data.avatar_url : '')) || '',
+            avatarUrl: finalAvatar,
             avatarFile: null,
             stats: normalizedStats
           })
@@ -191,6 +199,10 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
     } catch {
       showToast('Նկարի կտրման սխալ', 'error')
     }
+  }
+
+  const onTitleChange = (value: string) => {
+    setInstructorForm((prev) => ({ ...prev, title: value }))
   }
 
   const onNameChange = (value: string) => {
@@ -264,9 +276,11 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
       setInstructorErrors({ name: false, profession: false, description: false, stats: [false, false, false, false] })
       
       const fd = new FormData()
+      fd.append('title', instructorForm.title || '')
       fd.append('name', instructorForm.name || '')
       fd.append('profession', instructorForm.profession || '')
       fd.append('description', instructorForm.description || '')
+      fd.append('badge_text', instructorForm.badgeText || '')
       fd.append('stats_json', JSON.stringify(instructorForm.stats))
       
       if (instructorForm.avatarFile) {
@@ -287,6 +301,7 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
     instructorErrors,
     isInstructorLoading,
     onAvatarFile,
+    onTitleChange,
     onNameChange,
     onProfessionChange,
     onDescriptionChange,

@@ -1,10 +1,28 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { DashboardTabId } from '../_types'
 import api from '@/lib/api'
 
+export interface CourseFile {
+  id: string
+  name: string
+  ext: string
+  name_used?: string
+  table_name?: string
+}
+
+export interface CourseModuleWithVideos {
+  id: string
+  title: string
+  duration?: string
+  files?: CourseFile[]
+}
+
 export interface Course {
   id: string | number
+  _id?: string
   title: string
   description: string
   category?: string
@@ -14,7 +32,8 @@ export interface Course {
   price: number | string
   discount?: number | string
   whatToLearn?: string[]
-  modules?: unknown[]
+  modules?: CourseModuleWithVideos[]
+  image?: string
 }
 
 export interface CourseModule {
@@ -198,6 +217,38 @@ export default function useCourses({ activeTab, showToast }: UseCoursesParams) {
     }
   }
 
+  const deleteCourse = async (id: string) => {
+    try {
+      setIsLoading(true)
+      await api.delete(`/api/v1/courses/${id}`)
+      showToast('Դասընթացը ջնջվեց', 'success')
+      await fetchCourses()
+    } catch (error) {
+      console.error('Error deleting course:', error)
+      showToast('Սխալ դասընթացը ջնջելիս', 'error')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Helper function to get first video thumbnail from course
+  const getCourseFirstVideoUrl = (course: Course): string | null => {
+    if (!course.modules || course.modules.length === 0) return null
+    
+    // Get first module
+    const firstModule = course.modules[0]
+    if (!firstModule.files || firstModule.files.length === 0) return null
+    
+    // Get first video file from module
+    const videoFile = firstModule.files.find(f => f.name_used === 'module_video')
+    if (!videoFile) return null
+    
+    // Build video URL
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || ''
+    const origin = /^https?:\/\//i.test(apiBase) ? apiBase.replace(/\/api.*$/, '') : ''
+    return `${origin}/files/modules/${videoFile.name}${videoFile.ext}`
+  }
+
   return {
     showCourseForm,
     courseForm,
@@ -209,7 +260,9 @@ export default function useCourses({ activeTab, showToast }: UseCoursesParams) {
     changeLearningPoint,
     removeLearningPoint,
     submitCourse,
+    deleteCourse,
     courses,
-    isLoading
+    isLoading,
+    getCourseFirstVideoUrl
   }
 }
