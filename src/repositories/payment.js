@@ -46,6 +46,17 @@ class PaymentRepository {
         return await payment.update(data);
     }
 
+    async findByUserId(userId, options = {}) {
+        return await Payment.findAll({
+            where: { user_id: userId },
+            include: [
+                { model: Course, as: 'course', attributes: ['id', 'title', 'price'] }
+            ],
+            order: [['createdAt', 'DESC']],
+            ...options
+        });
+    }
+
     async delete(id) {
         const payment = await Payment.findByPk(id);
         if (!payment) return false;

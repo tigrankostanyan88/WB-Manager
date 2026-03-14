@@ -53,11 +53,40 @@ module.exports = {
   getMyCourses: async (userId) => {
     if (!userId) throw new AppError('Պետք է մուտք գործել', 401);
 
+    // Get enrollments from student_courses table
     const enrollments = await repo.findAllByUser(userId);
+    
+    // Also get user's course_ids from user table
+    const user = await repo.findUserById(userId);
+    let courseIdsFromUser = [];
+    if (user && user.course_ids && Array.isArray(user.course_ids)) {
+      courseIdsFromUser = user.course_ids;
+    }
+    
+    // Get courses that are in user's course_ids but not in student_courses
+    const enrolledCourseIds = enrollments.map(e => e.course_id);
+    const missingCourseIds = courseIdsFromUser.filter(id => !enrolledCourseIds.includes(id));
+    
+    // Fetch missing courses and add them as virtual enrollments
+    const additionalEnrollments = [];
+    for (const courseId of missingCourseIds) {
+      const course = await repo.findCourseById(courseId);
+      if (course) {
+        additionalEnrollments.push({
+          course_id: courseId,
+          user_id: userId,
+          status: 'active',
+          course: course
+        });
+      }
+    }
+    
+    // Combine both sources
+    const allEnrollments = [...enrollments, ...additionalEnrollments];
 
     return {
-      enrollments,
-      count: enrollments.length
+      enrollments: allEnrollments,
+      count: allEnrollments.length
     };
   },
 

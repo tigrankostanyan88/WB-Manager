@@ -19,9 +19,10 @@ interface UseUsersParams {
   allowed: boolean
   editingUser: EditingUser
   setEditingUser: React.Dispatch<React.SetStateAction<EditingUser>>
+  showToast?: (message: string, type?: 'success' | 'error') => void
 }
 
-export default function useUsers({ activeTab, allowed, editingUser, setEditingUser }: UseUsersParams) {
+export default function useUsers({ activeTab, allowed, editingUser, setEditingUser, showToast }: UseUsersParams) {
   const confirm = useConfirm()
   const [users, setUsers] = useState<User[]>([])
   const [isUsersLoading, setIsUsersLoading] = useState(false)
@@ -77,9 +78,14 @@ export default function useUsers({ activeTab, allowed, editingUser, setEditingUs
 
   const submitEditUser = async (data: EditUserForm) => {
     if (!editingUser || editingUser.__editScope !== 'users') return
-    await userService.updateUser(editingUser.id, data as unknown as Record<string, unknown>)
-    setUsers((prev) => prev.map((u) => (u.id === editingUser.id ? { ...u, ...data } : u)).filter((u) => u.role === 'user'))
-    setEditingUser(null)
+    try {
+      await userService.updateUser(editingUser.id, data as unknown as Record<string, unknown>)
+      setUsers((prev) => prev.map((u) => (u.id === editingUser.id ? { ...u, ...data } : u)).filter((u) => u.role === 'user'))
+      setEditingUser(null)
+      showToast?.('Օգտատերը հաջողությամբ թարմացվել է', 'success')
+    } catch (error) {
+      showToast?.('Օգտատիրոջ թարմացման ժամանակ սխալ է տեղի ունեցել', 'error')
+    }
   }
 
   return {

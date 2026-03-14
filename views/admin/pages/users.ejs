@@ -189,6 +189,12 @@
                                 <input type="checkbox" class="form-check-input" id="editUserIsPaid">
                                 <label class="form-check-label" for="editUserIsPaid">Վճարված է (PRO)</label>
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label">Դասընթացների մուտք</label>
+                                <div id="coursesList" class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                    <div class="text-muted">Բեռնում...</div>
+                                </div>
+                            </div>
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -199,5 +205,114 @@
             </div>
         </div>
         <%- include('../parts/scripts.ejs') %>
+        <script>
+            // Store all courses and current user's course_ids
+            let allCourses = [];
+            let currentUserId = null;
+
+            // Fetch all courses on page load
+            async function fetchCourses() {
+                try {
+                    const response = await axios.get('/api/v1/courses');
+                    allCourses = response.data.data || [];
+                } catch (error) {
+                    console.error('Error fetching courses:', error);
+                    allCourses = [];
+                }
+            }
+
+            // Load courses into the modal with checkboxes
+            function loadCoursesIntoModal(userCourseIds = []) {
+                const container = document.getElementById('coursesList');
+                if (allCourses.length === 0) {
+                    container.innerHTML = '<div class="text-muted">Դասընթացներ չկան</div>';
+                    return;
+                }
+
+                const courseIds = Array.isArray(userCourseIds) ? userCourseIds.map(String) : [];
+                
+                container.innerHTML = allCourses.map(course => {
+                    const isChecked = courseIds.includes(String(course.id));
+                    return `
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" value="${course.id}" id="course_${course.id}" ${isChecked ? 'checked' : ''}>
+                            <label class="form-check-label" for="course_${course.id}">
+                                ${course.title}
+                            </label>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Handle modal open - load user data and courses
+            document.getElementById('editUserRoleModal').addEventListener('show.bs.modal', async function(event) {
+                const button = event.relatedTarget;
+                currentUserId = button.getAttribute('data-user-id');
+                const userName = button.getAttribute('data-user-name');
+                const userEmail = button.getAttribute('data-user-email');
+                const userRole = button.getAttribute('data-user-role');
+                const userIsPaid = button.getAttribute('data-user-is-paid') === 'true';
+
+                // Set basic user info
+                document.getElementById('editUserId').value = currentUserId;
+                document.getElementById('editUserName').value = userName || '';
+                document.getElementById('editUserEmail').value = userEmail || '';
+                document.getElementById('editUserRole').value = userRole || 'user';
+                document.getElementById('editUserIsPaid').checked = userIsPaid;
+
+                // Show loading
+                document.getElementById('coursesList').innerHTML = '<div class="text-muted">Բեռնում...</div>';
+
+                // Fetch user's course_ids from user data (passed via data attribute or fetch)
+                let userCourseIds = [];
+                try {
+                    const response = await axios.get(`/api/v1/users/${currentUserId}`);
+                    if (response.data && response.data.user) {
+                        userCourseIds = response.data.user.course_ids || [];
+                    }
+                } catch (error) {
+                    console.log('Could not fetch user details, using empty course_ids');
+                }
+
+                // Load courses with user's selections
+                loadCoursesIntoModal(userCourseIds);
+            });
+
+            // Handle save button click
+            document.getElementById('saveUserRoleBtn').addEventListener('click', async function() {
+                const userId = document.getElementById('editUserId').value;
+                const role = document.getElementById('editUserRole').value;
+                const isPaid = document.getElementById('editUserIsPaid').checked;
+
+                // Get selected courses
+                const selectedCourses = [];
+                document.querySelectorAll('#coursesList input[type="checkbox"]:checked').forEach(checkbox => {
+                    selectedCourses.push(parseInt(checkbox.value, 10));
+                });
+
+                try {
+                    const response = await axios.patch(`/api/v1/users/${userId}`, {
+                        role: role,
+                        isPaid: isPaid,
+                        course_ids: selectedCourses
+                    });
+
+                    if (response.data.status === 'success') {
+                        // Close modal and reload page
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserRoleModal'));
+                        modal.hide();
+                        window.location.reload();
+                    } else {
+                        alert('Սխալ է տեղի ունեցել։ Խնդրում ենք փորձել կրկին։');
+                    }
+                } catch (error) {
+                    console.error('Error updating user:', error);
+                    alert('Սխալ է տեղի ունեցել։ Խնդրում ենք փորձել կրկին։');
+                }
+            });
+
+            // Fetch courses on page load
+            fetchCourses();
+        </script>
     </body>
 </html>

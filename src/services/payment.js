@@ -98,6 +98,10 @@ class PaymentService {
         return await paymentRepository.findById(payment.id);
     }
 
+    async getPaymentsByUserId(userId) {
+        return await paymentRepository.findByUserId(userId);
+    }
+
     async deletePayment(id) {
         const payment = await paymentRepository.findById(id);
         if (!payment) {

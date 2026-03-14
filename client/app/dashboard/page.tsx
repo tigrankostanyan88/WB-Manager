@@ -4,11 +4,11 @@ import { useMemo, useState } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 import DashboardHeader from '@/app/dashboard/_components/DashboardHeader'
 import DashboardSidebar from '@/app/dashboard/_components/DashboardSidebar'
 import CropModal from '@/app/dashboard/_components/CropModal'
-import { AnimatePresence, motion } from 'framer-motion'
-import DashboardToast from '@/app/dashboard/_components/DashboardToast'
+import { NotificationContainer, useNotification } from '@/app/dashboard/_components/Notification'
 import EditUserModal from '@/app/dashboard/_components/EditUserModal'
 import CommentsTab from '@/app/dashboard/_components/tabs/CommentsTab'
 import CoursesTab from '@/app/dashboard/_components/tabs/CoursesTab'
@@ -31,18 +31,17 @@ import useReviews from '@/app/dashboard/_hooks/useReviews'
 import useSettings from '@/app/dashboard/_hooks/useSettings'
 import useUsers from '@/app/dashboard/_hooks/useUsers'
 import type { DashboardMenuItem } from '@/app/dashboard/_components/DashboardSidebar'
-import type { DashboardTabId, ToastState, User } from '@/app/dashboard/_types'
+import type { DashboardTabId, User } from '@/app/dashboard/_types'
 
 type EditingUser = (User & { __editScope?: 'users' }) | null
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<DashboardTabId>('overview')
-  const [toast, setToast] = useState<ToastState | null>(null)
+  const { notifications, showNotification, removeNotification } = useNotification()
   const [editingUser, setEditingUser] = useState<EditingUser>(null)
 
-  const showToast = (message: string, type: ToastState['type'] = 'success') => {
-    setToast({ message, type })
-    window.setTimeout(() => setToast(null), 3000)
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    showNotification(message, type)
   }
 
   const { isAuthLoading, allowed } = useAuth()
@@ -50,6 +49,7 @@ export default function DashboardPage() {
   const { recentStudents, isRecentLoading, statCounts, relativeTime: overviewRelativeTime } = useOverview({ activeTab, allowed })
   const {
     users,
+    filteredUsers,
     isUsersLoading,
     userSearch,
     setUserSearch,
@@ -57,7 +57,7 @@ export default function DashboardPage() {
     handleTogglePaid: handleToggleUserPaid,
     startEditUserModal,
     submitEditUser
-  } = useUsers({ activeTab, allowed, editingUser, setEditingUser })
+  } = useUsers({ activeTab, allowed, editingUser, setEditingUser, showToast })
   const { reviews, isReviewsLoading, relativeTime: reviewsRelativeTime, isToday, handleDeleteReview } = useReviews({ activeTab, allowed })
   const { faqs, faqForm, setFaqForm, isFaqLoading, isFaqSubmitting, editingId, editForm, setEditForm, isFaqUpdating, submitFaq, startEdit, cancelEdit, updateFaq, deleteFaq } =
     useFaq({ activeTab, allowed, showToast })
@@ -165,7 +165,7 @@ export default function DashboardPage() {
                   transition={{ duration: 0.2 }}
                 >
                   <UsersTab
-                    users={users}
+                    users={filteredUsers}
                     isUsersLoading={isUsersLoading}
                     userSearch={userSearch}
                     setUserSearch={setUserSearch}
@@ -379,7 +379,7 @@ export default function DashboardPage() {
         onConfirm={confirmInstructorCrop}
       />
 
-      <DashboardToast toast={toast} onClose={() => setToast(null)} />
+      <NotificationContainer notifications={notifications} onRemove={removeNotification} />
 
       <Footer />
     </div>

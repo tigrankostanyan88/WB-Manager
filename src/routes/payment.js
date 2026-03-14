@@ -3,7 +3,7 @@ const router = express.Router();
 const ctrls = require('../controllers');
 
 // Get all payments
-router.get('/', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), ctrls.payment.getPayments);
+router.get('/', ctrls.auth.protect, ctrls.payment.getPayments);
 
 // Get payment by ID
 router.get('/:id', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), ctrls.payment.getPaymentById);

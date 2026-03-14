@@ -22,6 +22,12 @@ async function listPaged(page = 1, limit = 20, search = '', role = 'all', exclud
   return { users: rows, total: count };
 }
 
+async function getUserById(id) {
+  const user = await repo.findById(id);
+  if (!user) throw new AppError('Օգտատերը չի գտնվել:', 404);
+  return user;
+}
+
 async function countByRole(role) {
   return repo.count({ where: { role } });
 }
@@ -50,6 +56,37 @@ async function updateUser(id, body, files) {
   for (let key in body) {
       if (key !== 'isPaid') { 
           user[key] = body[key];
+      }
+  }
+
+  // Handle course_ids array - add or remove course IDs
+  // Support both snake_case (course_ids) and camelCase (courseIds) from frontend
+  const courseIdsFromBody = body.course_ids !== undefined ? body.course_ids : body.courseIds;
+  
+  if (courseIdsFromBody !== undefined) {
+      let currentCourseIds = [];
+      if (user.course_ids && Array.isArray(user.course_ids)) {
+          currentCourseIds = [...user.course_ids];
+      }
+      
+      // If course_id to add
+      if (body.add_course_id) {
+          const courseId = parseInt(body.add_course_id, 10);
+          if (!currentCourseIds.includes(courseId)) {
+              currentCourseIds.push(courseId);
+          }
+          user.course_ids = currentCourseIds;
+      }
+      
+      // If course_id to remove
+      if (body.remove_course_id) {
+          const courseId = parseInt(body.remove_course_id, 10);
+          user.course_ids = currentCourseIds.filter(id => id !== courseId);
+      }
+      
+      // If full course_ids array provided (from either course_ids or courseIds)
+      if (courseIdsFromBody && Array.isArray(courseIdsFromBody)) {
+          user.course_ids = courseIdsFromBody.map(id => typeof id === 'string' ? parseInt(id, 10) : id);
       }
   }
 
@@ -152,6 +189,7 @@ async function resetGroups(userId) {
 module.exports = {
   getAll,
   listPaged,
+  getUserById,
   countByRole,
   updateUser,
   updateMe,

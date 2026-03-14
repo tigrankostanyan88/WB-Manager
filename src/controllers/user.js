@@ -34,6 +34,32 @@ exports.getMe = catchAsync(async (req, res, next) => {
     });
 });
 
+// GET SINGLE USER BY ID
+exports.getUserById = async (req, res, next) => {
+    try {
+        const user = await userService.getUserById(req.params.id);
+        const userData = user.toJSON ? user.toJSON() : user;
+        
+        // Remove sensitive fields
+        delete userData.password;
+        delete userData.passwordConfirm;
+        
+        if (userData.files && userData.files.length > 0) {
+            const f = userData.files.find((x) => x.name_used === 'user_img') || userData.files[0];
+            if (f && f.name && f.ext) {
+                userData.avatar = `/images/${f.table_name || 'users'}/large/${f.name}.${f.ext}`;
+            }
+        }
+        
+        res.status(200).json({
+            status: 'success',
+            user: userData
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
 // UPDATE USER 
 exports.updateUser = async (req, res, next) => {
     try {

@@ -9,6 +9,7 @@ module.exports = {
     user: {
         getUsers: user.getUsers,
         getMe: user.getMe,
+        getUserById: user.getUserById,
         updateUser: user.updateUser,
         updateMe: user.updateMe,
         deleteUser: user.deleteUser,

@@ -54,7 +54,7 @@ module.exports = {
       limit,
       offset,
       order: [['createdAt', 'DESC']],
-      attributes: ['id', 'name', 'email', 'role', 'isPaid', 'createdAt']
+      attributes: ['id', 'name', 'email', 'role', 'isPaid', 'createdAt', 'course_ids']
     });
   }
 };

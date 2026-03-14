@@ -12,6 +12,7 @@ router.post('/resetPassword/:token', ctrls.auth.resetPassword);
 // Protected routes - require valid JWT
 router.get('/', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), ctrls.user.getUsers);
 router.get('/me', ctrls.auth.protect, ctrls.user.getMe);
+router.get('/:id', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), ctrls.user.getUserById);
 router.patch('/updateMyPassword', ctrls.auth.protect, ctrls.auth.updatePassword);
 router.patch('/updateme', ctrls.auth.protect, ctrls.user.updateMe);
 router.delete('/avatar', ctrls.auth.protect, ctrls.user.deleteAvatar);
