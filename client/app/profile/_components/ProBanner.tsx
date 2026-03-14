@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { CheckCircle2, Clock, AlertCircle, Lock, BookOpen, Plus } from 'lucide-react'
+import { CheckCircle2, Clock, AlertCircle, Lock, Trophy } from 'lucide-react'
 
 interface Payment {
   id: string
@@ -19,21 +19,19 @@ interface Payment {
 interface ProBannerProps {
   user?: { role?: string; name?: string }
   myPayments?: Payment[]
+  totalCoursesCount?: number
   onShowPaymentModal: () => void
 }
 
-export default function ProBanner({ myPayments = [], onShowPaymentModal }: ProBannerProps) {
-  // DEBUG: Log what we receive
-  console.log('[ProBanner] myPayments:', myPayments)
-  console.log('[ProBanner] myPayments length:', myPayments?.length)
-  
+export default function ProBanner({ myPayments = [], totalCoursesCount = 0, onShowPaymentModal }: ProBannerProps) {
   const successfulPayments = myPayments.filter(p => p.status === 'success')
   const pendingPayments = myPayments.filter(p => p.status === 'pending')
   const failedPayments = myPayments.filter(p => p.status === 'failed')
 
-  console.log('[ProBanner] successful:', successfulPayments.length, 'pending:', pendingPayments.length, 'failed:', failedPayments.length)
-
   const totalCourses = myPayments.length
+
+  // Check if user has paid for ALL available courses
+  const allCoursesPaid = totalCoursesCount > 0 && successfulPayments.length === totalCoursesCount
 
   if (totalCourses === 0) {
     return (
@@ -44,15 +42,30 @@ export default function ProBanner({ myPayments = [], onShowPaymentModal }: ProBa
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-bold">Դասընթացներ չկան</h3>
-            <p className="text-sm text-slate-400">Գնեք դասընթաց՝ սովորելու համար</p>
+            <p className="text-sm text-slate-400">Դուք դեռ չեք գնել որևէ դասընթաց</p>
           </div>
-          <Button
-            onClick={onShowPaymentModal}
-            className="h-11 rounded-xl bg-white px-6 text-sm font-bold text-slate-900 hover:bg-slate-100"
-          >
-            <BookOpen className="mr-2 h-4 w-4" />
-            Գնել
-          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // If ALL courses are paid - show completion message without buy button
+  if (allCoursesPaid) {
+    return (
+      <div className="rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-700 p-6 text-white shadow-xl">
+        <div className="flex items-center gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20">
+            <Trophy className="h-7 w-7 text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-bold">Շնորհավորում ենք!</h3>
+            <p className="text-sm text-white/80">
+              Դուք գնել եք բոլոր {totalCoursesCount} դասընթացները
+            </p>
+          </div>
+          <span className="shrink-0 rounded-full bg-white px-4 py-2 text-sm font-bold text-emerald-600">
+            Բոլորը գնված են
+          </span>
         </div>
       </div>
     )
@@ -60,6 +73,21 @@ export default function ProBanner({ myPayments = [], onShowPaymentModal }: ProBa
 
   return (
     <div className="space-y-4">
+      {/* Welcome Message - Show when user has registered courses */}
+      {successfulPayments.length > 0 && (
+        <div className="rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-700 p-6 text-white shadow-xl">
+          <div className="flex items-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20">
+              <Trophy className="h-7 w-7 text-white" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold">Դուք ունեք գրանցված դասընթացներ!</h3>
+              <p className="text-sm text-white/80">Մաղթում ենք հաջող ուսման ընթացք</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Section Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -68,14 +96,6 @@ export default function ProBanner({ myPayments = [], onShowPaymentModal }: ProBa
             {successfulPayments.length} ակտիվ • {pendingPayments.length} սպասում • {failedPayments.length} սխալ
           </p>
         </div>
-        <Button
-          onClick={onShowPaymentModal}
-          variant="outline"
-          className="h-9 rounded-lg border-slate-200 text-sm font-bold"
-        >
-          <Plus className="mr-1 h-4 w-4" />
-          Նոր դասընթաց
-        </Button>
       </div>
 
       {/* Course Status Cards */}

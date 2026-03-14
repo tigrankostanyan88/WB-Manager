@@ -179,7 +179,7 @@ export default function ProfilePage() {
           />
 
           <div className="space-y-6">
-            <ProBanner user={currentUser as any} myPayments={myPayments} onShowPaymentModal={() => setShowPaymentModal(true)} />
+            <ProBanner user={currentUser as any} myPayments={myPayments} totalCoursesCount={totalCoursesCount} onShowPaymentModal={() => setShowPaymentModal(true)} />
 
             <AnimatePresence mode="wait">
               {activeTab === 'profile' && (
