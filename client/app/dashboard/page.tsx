@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users } from 'lucide-react'
+import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard } from 'lucide-react'
 import DashboardHeader from '@/app/dashboard/_components/DashboardHeader'
 import DashboardSidebar from '@/app/dashboard/_components/DashboardSidebar'
 import CropModal from '@/app/dashboard/_components/CropModal'
@@ -16,6 +16,7 @@ import FaqTab from '@/app/dashboard/_components/tabs/FaqTab'
 import InstructorTab from '@/app/dashboard/_components/tabs/InstructorTab'
 import ModulesTab from '@/app/dashboard/_components/tabs/ModulesTab'
 import OverviewTab from '@/app/dashboard/_components/tabs/OverviewTab'
+import PaymentsTab from '@/app/dashboard/_components/tabs/PaymentsTab'
 import SettingsTab from '@/app/dashboard/_components/tabs/SettingsTab'
 import UsersTab from '@/app/dashboard/_components/tabs/UsersTab'
 import useAuth from '@/app/dashboard/_hooks/useAuth'
@@ -25,6 +26,7 @@ import useFaq from '@/app/dashboard/_hooks/useFaq'
 import useInstructor from '@/app/dashboard/_hooks/useInstructor'
 import useModules from '@/app/dashboard/_hooks/useModules'
 import useOverview from '@/app/dashboard/_hooks/useOverview'
+import usePayments from '@/app/dashboard/_hooks/usePayments'
 import useReviews from '@/app/dashboard/_hooks/useReviews'
 import useSettings from '@/app/dashboard/_hooks/useSettings'
 import useUsers from '@/app/dashboard/_hooks/useUsers'
@@ -77,10 +79,15 @@ export default function DashboardPage() {
     activeTab,
     showToast
   })
+  const { payments, users: paymentUsers, courses: paymentCourses, isLoading: isPaymentsLoading, isSubmitting: isPaymentsSubmitting, createPayment } = usePayments({
+    activeTab,
+    allowed
+  })
   const menuItems = useMemo<DashboardMenuItem[]>(
     () => [
       { id: 'overview', label: 'Վահանակ', icon: LayoutDashboard },
       { id: 'users', label: 'Օգտվողներ', icon: Users },
+      { id: 'payments', label: 'Վճարումներ', icon: CreditCard },
       { id: 'courses', label: 'Դասընթացներ', icon: BookOpen },
       { id: 'modules', label: 'Մոդուլներ', icon: Layers },
       { id: 'comments', label: 'Մեկնաբանություններ', icon: MessageSquare },
@@ -165,6 +172,25 @@ export default function DashboardPage() {
                     onTogglePaid={handleToggleUserPaid}
                     onEdit={startEditUserModal}
                     onDelete={handleDeleteUser}
+                  />
+                </motion.div>
+              )}
+
+              {activeTab === 'payments' && (
+                <motion.div
+                  key="payments"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <PaymentsTab
+                    payments={payments}
+                    users={paymentUsers}
+                    courses={paymentCourses}
+                    isLoading={isPaymentsLoading}
+                    isSubmitting={isPaymentsSubmitting}
+                    onCreatePayment={createPayment}
                   />
                 </motion.div>
               )}

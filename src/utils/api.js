@@ -13,6 +13,7 @@ module.exports = api = (app) => {
             ['/api/v1/student-courses', routes.studentCourse, 'studentCourse'],
             ['/api/v1/settings', routes.settings, 'settings'],
             ['/api/v1/bank-cards', routes.bankCard, 'bankCard'],
+            ['/api/v1/payments', routes.payment, 'payment'],
         ];
         for (const [path, router, name] of regs) {
             if (typeof router !== 'function') {

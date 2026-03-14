@@ -35,6 +35,13 @@ export const userService = {
   getAllUsers: (params?: Record<string, unknown>) => api.get('/api/v1/users', { params }),
   updateUser: (id: number | string, data: Record<string, unknown>) => api.patch(`/api/v1/users/${id}`, data),
   deleteUser: (id: number | string) => api.delete(`/api/v1/users/${id}`),
+
+  // 4. Payment APIs
+  getPayments: () => api.get('/api/v1/payments'),
+  createPayment: (data: { user_id: number | string; course_id: number | string; amount: number; payment_method: string }) => 
+    api.post('/api/v1/payments', data),
+  verifyPayment: (orderId: string, status?: 'success' | 'failed', transaction_id?: string) => 
+    api.post(`/api/v1/payments/${orderId}/verify`, { status, transaction_id }),
 };
 
 export default api;

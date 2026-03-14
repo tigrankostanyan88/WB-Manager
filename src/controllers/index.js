@@ -1,6 +1,7 @@
 const user = require('./user')
+const payment = require('./payment')
 
-module.exports.controllers = {
+module.exports = {
     // security
     error: require('./error'),
     auth: require('./auth'),
@@ -13,6 +14,13 @@ module.exports.controllers = {
         deleteUser: user.deleteUser,
         deleteAvatar: user.deleteAvatar,
         resetGroups: user.resetGroups
+    },
+    payment: {
+        getPayments: payment.getPayments,
+        getPaymentById: payment.getPaymentById,
+        createPayment: payment.createPayment,
+        verifyPayment: payment.verifyPayment,
+        deletePayment: payment.deletePayment
     },
     settings: require('./settings'),
     review: require('./review'),

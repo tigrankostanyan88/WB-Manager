@@ -9,4 +9,5 @@ module.exports = routes = {
     modules: require('./modules'),
     studentCourse: require('./studentCourse'),
     bankCard: require('./bankCard'),
+    payment: require('./payment'),
 };

@@ -25,9 +25,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             defaultValue: 0
         },
-        moduleId: {
+        module_id: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            allowNull: false
         }
     }, {
         tableName: 'lessons'
