@@ -55,7 +55,7 @@ export interface CourseForm {
   description: string
   language: string
   category: string
-  prerequisites: string
+  prerequisites: string[]
   duration: string
   modulesCount: string
   price: string
@@ -78,7 +78,7 @@ const emptyCourseForm: CourseForm = {
   description: '',
   language: '',
   category: '',
-  prerequisites: '',
+  prerequisites: [],
   duration: '',
   modulesCount: '',
   price: '',
@@ -147,7 +147,7 @@ export default function useCourses({ activeTab, showToast }: UseCoursesParams) {
       description: course.description || '',
       language: (course as unknown as { language?: string }).language || 'ARM',
       category: (course as unknown as { category?: string }).category || '',
-      prerequisites: (course as unknown as { prerequisites?: string }).prerequisites || '',
+      prerequisites: (course as unknown as { prerequisites?: string[] }).prerequisites || [],
       duration: (course as unknown as { duration?: string }).duration || '',
       modulesCount: Array.isArray(rawModules) ? String(rawModules.length) : '',
       price: rawPrice === 0 ? '0' : rawPrice ? String(rawPrice) : '',

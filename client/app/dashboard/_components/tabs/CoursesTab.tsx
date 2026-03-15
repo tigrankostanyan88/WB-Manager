@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import type { Course } from '../../_hooks/useCourses'
 
-import { useConfirm } from '@/components/ConfirmProvider'
+import { ConfirmProvider, useConfirm } from '@/components/providers/ConfirmProvider'
 
 interface CoursesTabProps {
   showCourseForm: boolean
@@ -28,24 +28,26 @@ interface CoursesTabProps {
     price: string
     language: string
     discount: string
-    image: string
+    image: string | null
     prerequisites: string[]
     whatToLearn: string[]
   }
   setCourseForm: React.Dispatch<React.SetStateAction<any>>
   startNewCourse: () => void
-  onEditCourse: (course: Course) => void
-  onDeleteCourse: (id: string) => Promise<void>
+  editCourse: (course: Course) => void
+  deleteCourse: (id: string) => Promise<void>
   cancelNewCourse: () => void
-  submitCourse: () => void
+  submitCourse: (e: React.FormEvent) => Promise<void>
   courses: Course[]
   isLoading: boolean
   onImageFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
+  addLearningPoint: () => void
+  changeLearningPoint: (index: number, value: string) => void
+  removeLearningPoint: (index: number) => void
   getCourseFirstVideoUrl: (course: Course) => string | null
 }
 
 const categories = [
-  'Սկսնակ',
   'Միջին մակարդակ',
   'Առաջադեմ',
   'Մասնագիտական'
@@ -62,8 +64,8 @@ export default function CoursesTab({
   courseForm,
   setCourseForm,
   startNewCourse,
-  onEditCourse,
-  onDeleteCourse,
+  editCourse,
+  deleteCourse,
   cancelNewCourse,
   submitCourse,
   courses,
@@ -85,7 +87,7 @@ export default function CoursesTab({
     })
     
     if (confirmed) {
-      await onDeleteCourse(course._id || String(course.id))
+      await deleteCourse(course._id || String(course.id))
     }
   }
 
@@ -449,7 +451,7 @@ export default function CoursesTab({
                 {/* Action Buttons */}
                 <div className="flex gap-2 mt-4">
                   <button
-                    onClick={() => onEditCourse(course)}
+                    onClick={() => editCourse(course)}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-slate-50 text-slate-700 font-medium rounded-xl hover:bg-violet-50 hover:text-violet-700 transition-colors"
                   >
                     <Edit className="w-4 h-4" />

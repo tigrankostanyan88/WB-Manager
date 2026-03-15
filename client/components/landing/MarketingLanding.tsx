@@ -3,7 +3,7 @@
 // client/components/MarketingLanding.tsx
 
 import { useState } from 'react'
-import { useSettings } from '@/lib/SettingsContext'
+import { useSettings } from '@/context/SettingsContext' // moved from lib
 import { useInstructor } from '@/hooks/useInstructor'
 import { useVideoPlayer } from '@/hooks/useVideoPlayer'
 import RegistrationModal from '@/components/modals/RegistrationModal'

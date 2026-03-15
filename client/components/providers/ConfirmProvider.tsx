@@ -93,14 +93,14 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
                     onClick={() => close(false)}
                     className="flex-1 bg-slate-50 text-slate-500 hover:bg-slate-100 rounded-xl h-12 font-black"
                   >
-                    {state.cancelText || 'Չեղարկել'}
+                    {state.cancelText}
                   </Button>
                   <Button
                     type="button"
                     onClick={() => close(true)}
                     className={`flex-1 rounded-xl h-12 font-black ${styles.button}`}
                   >
-                    {state.confirmText || 'Հաստատել'}
+                    {state.confirmText}
                   </Button>
                 </div>
               </div>
@@ -117,5 +117,5 @@ export function useConfirm() {
   if (!ctx) {
     throw new Error('useConfirm must be used within ConfirmProvider')
   }
-  return ctx
+  return ctx.confirm
 }

@@ -161,7 +161,12 @@ export function LearnSection() {
               >
                 <div className="bg-white rounded-[2rem] p-5 sm:p-6 shadow-xl shadow-slate-200/40 border border-slate-100 relative z-10 transition-transform hover:-translate-y-1 duration-300">
                   <div
-                    className={`absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-12 h-12 sm:w-14 sm:h-14 bg-${step.color}-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-lg shadow-${step.color}-200 rotate-[-6deg] group-hover:rotate-0 transition-transform`}
+                    className={`absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-lg rotate-[-6deg] group-hover:rotate-0 transition-transform ring-2 ring-white z-30 ${
+                      step.color === 'violet' ? 'bg-violet-500 shadow-violet-300/50' :
+                      step.color === 'blue' ? 'bg-blue-500 shadow-blue-300/50' :
+                      step.color === 'orange' ? 'bg-orange-500 shadow-orange-300/50' :
+                      'bg-slate-500 shadow-slate-300/50'
+                    }`}
                   >
                     {step.number}
                   </div>

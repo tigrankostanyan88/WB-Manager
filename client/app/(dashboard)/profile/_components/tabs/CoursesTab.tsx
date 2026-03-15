@@ -6,21 +6,11 @@ import { BookOpen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-
-interface Course {
-  id: string
-  title: string
-  desc: string
-  status: string
-  progress: number
-  color?: string
-  borderColor?: string
-  [key: string]: unknown
-}
+import type { UserCourse } from '../../_hooks/useProfileData'
 
 interface CoursesTabProps {
   isLoadingData: boolean
-  myCourses: Course[]
+  myCourses: UserCourse[]
 }
 
 export default function CoursesTab({ isLoadingData, myCourses }: CoursesTabProps) {

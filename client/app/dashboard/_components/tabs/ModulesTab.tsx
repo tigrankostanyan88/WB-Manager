@@ -134,7 +134,7 @@ interface ModulesTabProps {
   startNewModule: () => void
   editModule: (module: ModuleItem) => void
   cancelNewModule: () => void
-  submitModule: () => void
+  submitModule: (e: React.FormEvent) => Promise<void>
   deleteModule: (id: string) => void
   videoFile: File | null
   isUploadingVideo: boolean
@@ -143,7 +143,7 @@ interface ModulesTabProps {
   handleVideoFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   uploadModuleVideo: () => void
   getVideoUrl: (file: ModuleFile) => string
-  reorderVideos: (moduleId: string, videoIds: string[]) => void
+  reorderVideos?: (moduleId: string, videoIds: string[]) => void
 }
 
 export default function ModulesTab({

@@ -1,8 +1,8 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
+import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
 import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import DashboardHeader from '@/app/dashboard/_components/DashboardHeader'
@@ -209,8 +209,8 @@ export default function DashboardPage() {
                     courseForm={courseForm}
                     setCourseForm={setCourseForm}
                     startNewCourse={startNewCourse}
-                    onEditCourse={editCourse}
-                    onDeleteCourse={deleteCourse}
+                    editCourse={editCourse}
+                    deleteCourse={deleteCourse}
                     cancelNewCourse={cancelNewCourse}
                     addLearningPoint={addLearningPoint}
                     changeLearningPoint={changeLearningPoint}

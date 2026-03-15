@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import api from '@/lib/api'
-import { useConfirm } from '@/components/ConfirmProvider'
+import { useConfirm } from '@/components/providers/ConfirmProvider'
 import type { DashboardTabId, FAQ } from '../_types'
 
 interface UseFaqParams {

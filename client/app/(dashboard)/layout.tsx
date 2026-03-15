@@ -1,11 +1,7 @@
-'use client'
-
-import { ReactNode } from 'react'
-
-export default function DashboardLayout({ children }: { children: ReactNode }) {
-  return (
-    <div className="min-h-screen">
-      {children}
-    </div>
-  )
+export default function DashboardGroupLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return children;
 }

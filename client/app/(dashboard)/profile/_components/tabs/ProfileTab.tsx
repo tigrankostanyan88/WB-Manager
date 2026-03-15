@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import React from 'react'
+import type { UserCourse } from '../../_hooks/useProfileData'
 
 interface ProfileUser {
   role?: string
@@ -30,23 +31,11 @@ interface ReviewData {
   [key: string]: unknown
 }
 
-interface CourseItem {
-  id: string
-  title: string
-  desc: string
-  status: string
-  lessons?: number
-  progress: number
-  color?: string
-  borderColor?: string
-  [key: string]: unknown
-}
-
 interface ProfileTabProps {
   user: ProfileUser
   stats: StatsData | null
   isLoadingData: boolean
-  myCourses: CourseItem[]
+  myCourses: UserCourse[]
   onViewAllCourses: () => void
 }
 

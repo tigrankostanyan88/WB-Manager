@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useSettings } from '@/lib/SettingsContext'
+import { useSettings } from '@/context/SettingsContext' // moved from lib
 
 export default function Footer() {
   const { settings } = useSettings()

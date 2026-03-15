@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react'
 import { userService } from '@/lib/api'
 
 export interface User {
@@ -21,104 +21,96 @@ interface AuthContextType {
   isLoggedIn: boolean
   logout: () => Promise<void>
   setUser: (user: User | null) => void
+  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export function AuthProvider({ children, initialUser = null }: { children: ReactNode; initialUser?: User | null }) {
-  const [user, setUser] = useState<User | null>(initialUser)
-  const [isLoaded, setIsLoaded] = useState(!!initialUser)
-
-  useEffect(() => {
-    // Always fetch user from server, no localStorage for security
-    if (!initialUser) {
-      fetchUser()
-    } else {
-      setIsLoaded(true)
-      fetchUser()
-    }
-
-    const onAuthUpdated = (evt: Event) => {
-      const u = (evt as CustomEvent<{ user?: User }>).detail?.user
-      if (u) setUser(u)
-      else fetchUser()
-    }
-    window.addEventListener('auth:updated', onAuthUpdated as EventListener)
-    return () => {
-      window.removeEventListener('auth:updated', onAuthUpdated as EventListener)
-    }
-  }, [])
-
-  const buildAvatar = (u: User | null) => {
-    if (!u) return u
-    if (u.avatar && typeof u.avatar === 'string') return u
-    if (Array.isArray(u.files) && u.files.length) {
-      const typedFiles = u.files as Array<{ name_used?: string; name?: string; ext?: string; table_name?: string }>
-      const f = typedFiles.find((x) => x.name_used === 'user_img') || typedFiles[0]
-      if (f?.name && f?.ext) {
-        const path = `/images/${f.table_name || 'users'}/large/${f.name}.${f.ext}`
-        const apiBase = process.env.NEXT_PUBLIC_API_URL || '/api'
-        const withOrigin = (p: string) => {
-          if (/^https?:\/\//i.test(apiBase)) {
-            const origin = apiBase.replace(/\/api.*$/, '')
-            return `${origin}${p}`
-          }
-          const prefix = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase
-          return `${prefix}${p}`
-        }
-        return { ...u, avatar: withOrigin(path) }
+function buildAvatar(user: User | null): string {
+  if (!user) return ''
+  if (user.avatar) return user.avatar
+  if (user.files && Array.isArray(user.files) && user.files.length > 0) {
+    const avatarFile = user.files.find((f: unknown) => {
+      if (!f || typeof f !== 'object') return false
+      const file = f as Record<string, unknown>
+      return file.name_used === 'user_img'
+    })
+    if (avatarFile && typeof avatarFile === 'object') {
+      const f = avatarFile as Record<string, unknown>
+      if (typeof f.name === 'string' && typeof f.ext === 'string') {
+        const table = typeof f.table_name === 'string' && f.table_name ? f.table_name : 'users'
+        return `/api/images/${table}/large/${f.name}.${f.ext}`
       }
     }
-    return u
   }
+  return ''
+}
 
-  const fetchUser = async () => {
+export function AuthProvider({ children, initialUser = null }: { children: ReactNode; initialUser?: User | null }) {
+  const [user, setUserState] = useState<User | null>(initialUser)
+  const [isLoaded, setIsLoaded] = useState(!!initialUser)
+
+  const fetchUser = useCallback(async () => {
     try {
       const res = await userService.getMe()
       const u = res.data.user
-      const userWithAvatar = buildAvatar(u)
-      setUser(userWithAvatar)
+      const userWithAvatar = { ...u, avatar: buildAvatar(u) }
+      setUserState(userWithAvatar)
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number } }).response?.status
-      // Only clear user on 401 (unauthorized) or if we truly don't have a user at all
       if (status === 401) {
-        setUser(null)
+        setUserState(null)
       }
     } finally {
       setIsLoaded(true)
     }
-  }
+  }, [])
+
+  const refreshUser = useCallback(async () => {
+    await fetchUser()
+  }, [fetchUser])
+
+  const setUser = useCallback((u: User | null) => {
+    if (u && !u.avatar) {
+      u = { ...u, avatar: buildAvatar(u) }
+    }
+    setUserState(u)
+  }, [])
 
   useEffect(() => {
     if (!initialUser) {
       fetchUser()
     } else {
       setIsLoaded(true)
-      fetchUser()
     }
 
     const onAuthUpdated = (evt: Event) => {
       const u = (evt as CustomEvent<{ user?: User }>).detail?.user
-      if (u) setUser(u)
-      else fetchUser()
+      if (u) {
+        const userWithAvatar = { ...u, avatar: buildAvatar(u) }
+        setUserState(userWithAvatar)
+        setIsLoaded(true)
+      } else {
+        fetchUser()
+      }
     }
     window.addEventListener('auth:updated', onAuthUpdated as EventListener)
     return () => {
       window.removeEventListener('auth:updated', onAuthUpdated as EventListener)
     }
-  }, [])
+  }, [initialUser, fetchUser])
 
   const logout = async () => {
     try {
       await fetch('/api/v1/users/logout', { method: 'POST' })
     } catch {}
     document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
-    setUser(null)
+    setUserState(null)
     window.location.href = '/'
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoaded, isLoggedIn: !!user, logout, setUser }}>
+    <AuthContext.Provider value={{ user, isLoaded, isLoggedIn: !!user, logout, setUser, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )

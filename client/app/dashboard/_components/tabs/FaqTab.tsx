@@ -5,19 +5,19 @@ import type { Faq } from '../../_types'
 
 interface FaqTabProps {
   faqs: Faq[]
-  faqForm: { question: string; answer: string }
-  setFaqForm: React.Dispatch<React.SetStateAction<{ question: string; answer: string }>>
+  faqForm: { title: string; text: string }
+  setFaqForm: React.Dispatch<React.SetStateAction<{ title: string; text: string }>>
   isFaqLoading: boolean
   isFaqSubmitting: boolean
-  editingId: string | null
-  editForm: { question: string; answer: string }
-  setEditForm: React.Dispatch<React.SetStateAction<{ question: string; answer: string }>>
+  editingId: number | null
+  editForm: { title: string; text: string }
+  setEditForm: React.Dispatch<React.SetStateAction<{ title: string; text: string }>>
   isFaqUpdating: boolean
-  submitFaq: () => void
+  submitFaq: (e: React.FormEvent) => Promise<void>
   startEdit: (faq: Faq) => void
   cancelEdit: () => void
-  updateFaq: () => void
-  deleteFaq: (id: string) => void
+  updateFaq: (e: React.FormEvent) => Promise<void>
+  deleteFaq: (id: number) => void
 }
 
 export default function FaqTab({
@@ -46,14 +46,14 @@ export default function FaqTab({
           <input
             type="text"
             placeholder="Հարց"
-            value={faqForm.question}
-            onChange={(e) => setFaqForm(prev => ({ ...prev, question: e.target.value }))}
+            value={faqForm.title}
+            onChange={(e) => setFaqForm(prev => ({ ...prev, title: e.target.value }))}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
           />
           <textarea
             placeholder="Պատասխան"
-            value={faqForm.answer}
-            onChange={(e) => setFaqForm(prev => ({ ...prev, answer: e.target.value }))}
+            value={faqForm.text}
+            onChange={(e) => setFaqForm(prev => ({ ...prev, text: e.target.value }))}
             rows={3}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
           />
@@ -80,13 +80,13 @@ export default function FaqTab({
                 <div className="space-y-4">
                   <input
                     type="text"
-                    value={editForm.question}
-                    onChange={(e) => setEditForm(prev => ({ ...prev, question: e.target.value }))}
+                    value={editForm.title}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                   />
                   <textarea
-                    value={editForm.answer}
-                    onChange={(e) => setEditForm(prev => ({ ...prev, answer: e.target.value }))}
+                    value={editForm.text}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, text: e.target.value }))}
                     rows={3}
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                   />
@@ -111,8 +111,8 @@ export default function FaqTab({
               ) : (
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="font-semibold text-slate-900">{faq.question}</h3>
-                    <p className="text-slate-600 mt-2">{faq.answer}</p>
+                    <h3 className="font-semibold text-slate-900">{faq.title}</h3>
+                    <p className="text-slate-600 mt-2">{faq.text}</p>
                   </div>
                   <div className="flex gap-2">
                     <button

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import type { DashboardTabId } from '../_types'
 import api from '@/lib/api'
-import { useConfirm } from '@/components/ConfirmProvider'
+import { useConfirm } from '@/components/providers/ConfirmProvider'
 
 export interface ModuleFile {
   id: string

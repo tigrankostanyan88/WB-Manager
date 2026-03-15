@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { X, CheckCircle, Loader2, Mail, Phone, MapPin, User as UserIcon, Lock, Chrome, ArrowLeft, KeyRound } from 'lucide-react'
+import { useState } from 'react'
+import { X, CheckCircle, Loader2, Mail, Phone, MapPin, User as UserIcon, Lock, Chrome } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { User } from '@/lib/auth'
@@ -12,40 +12,10 @@ interface RegistrationModalProps {
 }
 
 export default function RegistrationModal({ isOpen, onClose }: RegistrationModalProps) {
-  // Reset state when modal opens/closes
-  useEffect(() => {
-    if (!isOpen) {
-      setIsLoading(false)
-      setIsSuccess(false)
-      setError(null)
-      setMode('signin')
-      setForgotEmail('')
-      setForgotPassword('')
-      setForgotPasswordConfirm('')
-      setForgotSuccess(false)
-      setFormData({ name: '', email: '', phone: '', address: '', password: '' })
-    }
-  }, [isOpen])
-
-  // Handle Escape key to close modal
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose()
-      }
-    }
-    window.addEventListener('keydown', handleEscape)
-    return () => window.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
-
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [mode, setMode] = useState<'signup' | 'signin' | 'forgot'>('signin')
-  const [forgotEmail, setForgotEmail] = useState('')
-  const [forgotPassword, setForgotPassword] = useState('')
-  const [forgotPasswordConfirm, setForgotPasswordConfirm] = useState('')
-  const [forgotSuccess, setForgotSuccess] = useState(false)
+  const [mode, setMode] = useState<'signup' | 'signin'>('signin')
 
   const [formData, setFormData] = useState({
     name: '',
@@ -55,14 +25,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
     password: ''
   })
 
-  const resetToSignin = () => {
-    setMode('signin')
-    setForgotEmail('')
-    setForgotPassword('')
-    setForgotPasswordConfirm('')
-    setForgotSuccess(false)
-    setError(null)
-  }
+  if (!isOpen) return null
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -74,17 +37,12 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
     setError(null)
     
     try {
-      const endpoint = mode === 'signup' ? 'http://localhost:3300/api/v1/users/signUp' : 'http://localhost:3300/api/v1/users/signIn'
+      const endpoint = mode === 'signup' ? '/api/v1/users/signUp' : '/api/v1/users/signIn'
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-        credentials: 'include'
+        body: JSON.stringify(formData)
       })
-
-      // Debug logging
-      console.log('Request sent:', { endpoint, body: formData })
-      console.log('Response:', { status: response.status, statusText: response.statusText, ok: response.ok })
 
       const contentType = response.headers.get('content-type') || ''
       let data: unknown = null
@@ -104,12 +62,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
           data && typeof data === 'object' && typeof (data as { message?: unknown }).message === 'string'
             ? String((data as { message?: unknown }).message)
             : ''
-        const isHtml = rawText.trim().startsWith('<') || rawText.includes('<!DOCTYPE') || rawText.includes('<html')
-        const cleanError = isHtml ? '' : rawText.slice(0, 200) // Truncate long non-HTML errors too
-        // Debug logging
-        console.log('Login error:', { status: response.status, contentType, msgFromJson, rawText: rawText.slice(0, 200), isHtml })
-        const defaultError = mode === 'signup' ? 'Գրանցման սխալ' : 'Սխալ էլ․ հասցե կամ գաղտնաբառ'
-        const msg = msgFromJson || cleanError || defaultError
+        const msg = msgFromJson || rawText || 'Գրանցման սխալ'
         throw new Error(msg)
       }
 
@@ -134,52 +87,6 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
     }
   }
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError(null)
-    
-    try {
-      const response = await fetch('http://localhost:3300/api/v1/users/forgotPassword', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: forgotEmail })
-      })
-
-      const contentType = response.headers.get('content-type') || ''
-      let data: unknown = null
-      let rawText = ''
-      if (contentType.includes('application/json')) {
-        try {
-          data = (await response.json()) as unknown
-        } catch {
-          rawText = await response.text()
-        }
-      } else {
-        rawText = await response.text()
-      }
-
-      if (!response.ok) {
-        const msgFromJson =
-          data && typeof data === 'object' && typeof (data as { message?: unknown }).message === 'string'
-            ? String((data as { message?: unknown }).message)
-            : ''
-        const isHtml = rawText.trim().startsWith('<') || rawText.includes('<!DOCTYPE') || rawText.includes('<html')
-        const cleanError = isHtml ? '' : rawText.slice(0, 200)
-        // Debug logging
-        console.log('Forgot password error:', { status: response.status, contentType, msgFromJson, rawText: rawText.slice(0, 100) })
-        const msg = msgFromJson || cleanError || `Սխալ կոդ ${response.status}`
-        throw new Error(msg)
-      }
-
-      setForgotSuccess(true)
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Սխալ է տեղի ունեցել')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   const handleGoogleLogin = async () => {
     setIsLoading(true)
     setError(null)
@@ -196,8 +103,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
       const response = await fetch('/api/v1/users/googleAuth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(googleData),
-        credentials: 'include'
+        body: JSON.stringify(googleData)
       })
 
       const contentType = response.headers.get('content-type') || ''
@@ -217,10 +123,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
           data && typeof data === 'object' && typeof (data as { message?: unknown }).message === 'string'
             ? String((data as { message?: unknown }).message)
             : ''
-        const isHtml = rawText.trim().startsWith('<') || rawText.includes('<!DOCTYPE') || rawText.includes('<html')
-        const cleanError = isHtml ? '' : rawText.slice(0, 200)
-        const msg = msgFromJson || cleanError || 'Google-ով մուտքի սխալ'
-        throw new Error(msg)
+        throw new Error(msgFromJson || rawText || 'Google-ով մուտքի սխալ')
       }
 
       if (data && typeof data === 'object' && typeof (data as { token?: unknown }).token === 'string') {
@@ -242,16 +145,14 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
     }
   }
 
-  if (!isOpen) return null
-
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-2 overflow-y-auto">
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm" 
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity" 
           onClick={onClose}
         />
         
@@ -259,89 +160,52 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8"
+          className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden transform transition-all max-h-[90vh] overflow-y-auto no-scrollbar"
         >
+          {/* Decorative background */}
+          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-600">
+            <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_120%,rgba(255,255,255,0.8),transparent)]"></div>
+          </div>
+          
           <button 
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 transition-colors"
+            className="absolute top-4 right-4 z-10 p-2.5 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all hover:rotate-90"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <div className="text-center mb-8">
-            {/* Simple circle logo */}
-            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xl mb-4">
-              WB
+          <div className="relative px-4 sm:px-8 pt-8 pb-8">
+            {/* Success Animation or Logo */}
+            <div className="mx-auto w-24 h-24 bg-white rounded-2xl shadow-2xl flex items-center justify-center mb-6 relative z-10 border-4 border-slate-50">
+               {isSuccess ? (
+                 <motion.div
+                   initial={{ scale: 0 }}
+                   animate={{ scale: 1 }}
+                   transition={{ type: "spring", stiffness: 200, damping: 10 }}
+                 >
+                   <CheckCircle className="w-12 h-12 text-emerald-500" />
+                 </motion.div>
+               ) : (
+                 <div className="w-12 h-12 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-inner">
+                   WB
+                 </div>
+               )}
             </div>
-            <h2 className="text-2xl font-bold text-slate-900">
-              {mode === 'signup' ? 'Սկսեք հիմա' : 'Մուտք գործել'}
-            </h2>
-          </div>
 
-          <div className="space-y-6">
-            {!isSuccess && mode === 'forgot' && (
-              <div className="space-y-5">
-                {forgotSuccess ? (
-                  <div className="text-center space-y-4">
-                    <CheckCircle className="w-12 h-12 text-emerald-500 mx-auto" />
-                    <p className="text-slate-600">Հղումն ուղարկված է ձեր էլ. հասցեին</p>
-                    <button
-                      onClick={resetToSignin}
-                      className="text-violet-600 hover:text-violet-700 font-medium text-sm"
-                    >
-                      Վերադառնալ մուտքի էջ
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleForgotPassword} className="space-y-4">
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-slate-600">Էլ. հասցե</label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <input 
-                          required
-                          type="email" 
-                          value={forgotEmail}
-                          onChange={(e) => setForgotEmail(e.target.value)}
-                          placeholder="example@gmail.com"
-                          className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none transition-all text-sm"
-                        />
-                      </div>
-                    </div>
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">
+                {isSuccess ? 'Գրանցումը հաջողվեց' : mode === 'signup' ? 'Սկսեք հիմա' : 'Բարի գալուստ'}
+              </h2>
+              <p className="text-slate-500 text-base max-w-[340px] mx-auto leading-relaxed">
+                {isSuccess 
+                  ? 'Մուտքը կատարվում է, խնդրում ենք սպասել...' 
+                  : mode === 'signup' 
+                    ? 'Լրացրեք տվյալները՝ դասընթացին միանալու համար' 
+                    : 'Մուտք գործեք ձեր հաշիվ'}
+              </p>
+            </div>
 
-                    {error && (
-                      <motion.p 
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-red-500 text-sm text-center"
-                      >
-                        {error}
-                      </motion.p>
-                    )}
-
-                    <Button 
-                      disabled={isLoading}
-                      className="w-full py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-all font-semibold text-sm"
-                    >
-                      {isLoading ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        'Ուղարկել հղում'
-                      )}
-                    </Button>
-
-                    <button
-                      type="button"
-                      onClick={resetToSignin}
-                      className="w-full text-slate-500 hover:text-slate-700 font-medium text-sm transition-all"
-                    >
-                      Վերադառնալ
-                    </button>
-                  </form>
-                )}
-              </div>
-            )}
-              {!isSuccess && mode !== 'forgot' && (
+            {!isSuccess && (
               <div className="space-y-6">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   {mode === 'signup' && (
@@ -379,13 +243,29 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
                           </div>
                         </div>
                       </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Հասցե</label>
+                        <div className="relative">
+                          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input 
+                            required
+                            name="address"
+                            value={formData.address}
+                            onChange={handleInputChange}
+                            type="text" 
+                            placeholder="ք. Երևան, Աբովյան 1"
+                            className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
+                          />
+                        </div>
+                      </div>
                     </>
                   )}
 
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-600">Էլ. հասցե</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Էլ. հասցե</label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <input 
                         required
                         name="email"
@@ -393,15 +273,15 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
                         onChange={handleInputChange}
                         type="email" 
                         placeholder="example@gmail.com"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none transition-all text-sm"
+                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-600">Գաղտնաբառ</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Գաղտնաբառ</label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <input 
                         required
                         name="password"
@@ -409,7 +289,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
                         onChange={handleInputChange}
                         type="password" 
                         placeholder="••••••••"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none transition-all text-sm"
+                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
                       />
                     </div>
                   </div>
@@ -418,7 +298,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
                     <motion.p 
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="text-red-500 text-sm text-center"
+                      className="text-red-500 text-sm font-medium text-center bg-red-50 py-2.5 rounded-xl border border-red-100"
                     >
                       {error}
                     </motion.p>
@@ -426,43 +306,40 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
 
                   <Button 
                     disabled={isLoading}
-                    className="w-full py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-all font-semibold text-sm"
+                    className="w-full py-7 rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-200 transition-all font-bold text-lg active:scale-[0.98] flex items-center justify-center gap-2"
                   >
                     {isLoading ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <Loader2 className="w-5 h-5 animate-spin" />
                     ) : (
                       mode === 'signup' ? 'Ստեղծել հաշիվ' : 'Մուտք գործել'
                     )}
                   </Button>
                 </form>
 
-                {mode === 'signin' ? (
-                  <div className="flex items-center justify-between text-sm">
-                    <button
-                      type="button"
-                      onClick={() => { setMode('forgot'); setError(null); }}
-                      className="text-slate-500 hover:text-slate-700 transition-colors"
-                    >
-                      Մոռացել եմ գաղտնաբառը
-                    </button>
-                    <button 
-                      onClick={() => setMode('signup')}
-                      className="text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      Գրանցվել
-                    </button>
-                  </div>
-                ) : (
-                  <p className="text-center text-slate-500 text-sm">
-                    Արդեն ունե՞ք հաշիվ {' '}
-                    <button 
-                      onClick={() => setMode('signin')}
-                      className="text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      Մուտք
-                    </button>
-                  </p>
-                )}
+                <div className="relative flex items-center gap-4 py-2">
+                  <div className="h-px flex-1 bg-slate-100"></div>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">կամ</span>
+                  <div className="h-px flex-1 bg-slate-100"></div>
+                </div>
+
+                <button 
+                  onClick={handleGoogleLogin}
+                  disabled={isLoading}
+                  className="w-full py-3.5 rounded-2xl bg-white border-2 border-slate-100 text-slate-700 hover:bg-slate-50 hover:border-slate-200 transition-all font-bold flex items-center justify-center gap-3 active:scale-[0.98] shadow-sm"
+                >
+                  <Chrome className="w-5 h-5 text-violet-600" />
+                  Շարունակել Google-ով
+                </button>
+
+                <p className="text-center text-slate-500 text-sm font-medium">
+                  {mode === 'signup' ? 'Արդեն ունե՞ք հաշիվ' : 'Դեռ չունե՞ք հաշիվ'} {' '}
+                  <button 
+                    onClick={() => setMode(mode === 'signup' ? 'signin' : 'signup')}
+                    className="text-violet-600 hover:text-violet-700 font-bold underline underline-offset-4 decoration-2 decoration-violet-100 hover:decoration-violet-200 transition-all"
+                  >
+                    {mode === 'signup' ? 'Մուտք' : 'Գրանցվել'}
+                  </button>
+                </p>
               </div>
             )}
           </div>

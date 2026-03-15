@@ -2,7 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { ReactNode } from 'react'
 import { ConfirmProvider } from '@/components/providers/ConfirmProvider'
-import { SettingsProvider } from '@/lib/SettingsContext'
+import { SettingsProvider, useSettings } from '@/context/SettingsContext' // moved from lib
 import { AuthProvider } from '@/lib/auth'
 import type { User } from '@/lib/auth'
 import { cookies } from 'next/headers'

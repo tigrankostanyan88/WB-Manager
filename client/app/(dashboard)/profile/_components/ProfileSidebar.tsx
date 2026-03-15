@@ -67,13 +67,8 @@ export default function ProfileSidebar({
       if (!path) return ''
       if (/^https?:\/\//i.test(path)) return path // Already has origin
       if (/^\/[^/]/.test(path)) {
-        // Relative path starting with /, add origin
-        if (/^https?:\/\//i.test(apiBase)) {
-          const origin = apiBase.replace(/\/api.*$/, '')
-          return `${origin}${path}`
-        }
-        const prefix = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase
-        return `${prefix}${path}`
+        // Relative path starting with /, add origin with :3300 port
+        return `http://localhost:3300${path}`
       }
       return path
     }

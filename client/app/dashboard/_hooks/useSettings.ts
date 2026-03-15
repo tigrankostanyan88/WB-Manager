@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import api from '@/lib/api'
-import { useSettings as useGlobalSettings } from '@/lib/SettingsContext'
+import { useSettings as useGlobalSettings } from '@/context/SettingsContext' // moved from lib
 import type { DashboardTabId, DayKey, SiteSettings, WorkingHoursSchedule } from '../_types'
 import { fixLarge, withOrigin } from '../_utils/image'
 

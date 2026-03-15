@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { userService } from '@/lib/api'
-import { useConfirm } from '@/components/ConfirmProvider'
+import { useConfirm } from '@/components/providers/ConfirmProvider'
 import type { DashboardTabId, User } from '../_types'
 
 interface Payment {

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { TOOLS } from '@/config/tools'
-import { Chat } from './ui'
+import { Chat } from './_components/ui' // moved here
 
 export default function ToolPage({ params }: { params: { tool: string } }) {
   const tool = TOOLS.find(t => t.id === params.tool)

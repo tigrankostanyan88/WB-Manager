@@ -107,12 +107,15 @@ export default function HeaderActions({ onOpenModal, mobile, onMobileLinkClick }
             Պրոֆիլ
           </Link>
           {(!user?.isPaid && user?.role !== 'student') && (
-            <Link 
-              href="/course"
-              className="w-full bg-slate-900 text-white text-center py-2 px-4 rounded-xl font-medium inline-block"
+            <Button 
+              onClick={() => {
+                onOpenModal()
+                onMobileLinkClick?.()
+              }}
+              className="w-full bg-slate-900"
             >
-              Դասընթացներ
-            </Link>
+              Գրանցվել
+            </Button>
           )}
         </div>
       )
@@ -120,12 +123,15 @@ export default function HeaderActions({ onOpenModal, mobile, onMobileLinkClick }
 
     return (
       <div className="flex flex-col gap-4">
-        <Link 
-          href="/course"
-          className="w-full bg-slate-900 text-white text-center py-2 px-4 rounded-xl font-medium inline-block"
+        <Button 
+          onClick={() => {
+            onOpenModal()
+            onMobileLinkClick?.()
+          }}
+          className="w-full bg-slate-900"
         >
-          Դասընթացներ
-        </Link>
+          Գրանցվել
+        </Button>
         <button 
           onClick={() => {
             onOpenModal()
@@ -170,12 +176,12 @@ export default function HeaderActions({ onOpenModal, mobile, onMobileLinkClick }
           </div>
         </div>
         {(!user?.isPaid && user?.role !== 'student') && (
-          <Link  
-            href="/course"
-            className="rounded-full bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all hover:scale-105 px-6 py-2 font-medium inline-flex items-center"
+          <Button  
+            onClick={onOpenModal}
+            className="rounded-full bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all hover:scale-105 px-6"
           >
-            Դասընթացներ
-          </Link>
+            Գրանցվել
+          </Button>
         )}
       </>
     )
@@ -190,12 +196,12 @@ export default function HeaderActions({ onOpenModal, mobile, onMobileLinkClick }
         Մուտք
       </button>
       
-      <Link  
-        href="/course"
-        className="rounded-full bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all hover:scale-105 px-6 py-2 font-medium inline-flex items-center"
+      <Button  
+        onClick={onOpenModal}
+        className="rounded-full bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all hover:scale-105 px-6"
       >
-        Դասընթացներ
-      </Link>
+        Գրանցվել
+      </Button>
     </>
   )
 }
