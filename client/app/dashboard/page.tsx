@@ -3,13 +3,14 @@
 import { useMemo, useState } from 'react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard } from 'lucide-react'
+import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard, Building2 } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import DashboardHeader from '@/app/dashboard/_components/DashboardHeader'
 import DashboardSidebar from '@/app/dashboard/_components/DashboardSidebar'
 import CropModal from '@/app/dashboard/_components/CropModal'
 import { NotificationContainer, useNotification } from '@/app/dashboard/_components/Notification'
 import EditUserModal from '@/app/dashboard/_components/EditUserModal'
+import BankCardsTab from '@/app/dashboard/_components/tabs/BankCardsTab'
 import CommentsTab from '@/app/dashboard/_components/tabs/CommentsTab'
 import CoursesTab from '@/app/dashboard/_components/tabs/CoursesTab'
 import FaqTab from '@/app/dashboard/_components/tabs/FaqTab'
@@ -88,6 +89,7 @@ export default function DashboardPage() {
       { id: 'overview', label: 'Վահանակ', icon: LayoutDashboard },
       { id: 'users', label: 'Օգտվողներ', icon: Users },
       { id: 'payments', label: 'Վճարումներ', icon: CreditCard },
+      { id: 'bank-cards', label: 'Բանկային քարտեր', icon: Building2 },
       { id: 'courses', label: 'Դասընթացներ', icon: BookOpen },
       { id: 'modules', label: 'Մոդուլներ', icon: Layers },
       { id: 'comments', label: 'Մեկնաբանություններ', icon: MessageSquare },
@@ -193,6 +195,18 @@ export default function DashboardPage() {
                     onCreatePayment={createPayment}
                     onUpdateStatus={updatePaymentStatus}
                   />
+                </motion.div>
+              )}
+
+              {activeTab === 'bank-cards' && (
+                <motion.div
+                  key="bank-cards"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <BankCardsTab />
                 </motion.div>
               )}
 

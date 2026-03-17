@@ -8,6 +8,7 @@ export type DashboardTabId =
   | 'faq'
   | 'settings'
   | 'payments'
+  | 'bank-cards'
 
 export interface User {
   id: number | string
