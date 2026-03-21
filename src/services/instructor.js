@@ -26,8 +26,17 @@ module.exports = {
       instructor = await repo.create(body);
       wasCreated = true;
     } else {
-      // Update existing instructor
-      await repo.update(instructor, body);
+      // Update existing instructor - preserve avatar_url if not provided in body
+      // If no new avatar file and avatar_url is missing/null in body, keep existing
+      const existingAvatarUrl = instructor.avatar_url;
+      const updateBody = { ...body };
+      
+      // If avatar_url is null/undefined/empty in body but exists on instructor, preserve it
+      if ((!updateBody.avatar_url && existingAvatarUrl) || updateBody.avatar_url === null || updateBody.avatar_url === undefined) {
+        updateBody.avatar_url = existingAvatarUrl;
+      }
+      
+      await repo.update(instructor, updateBody);
     }
 
     // Refetch to get fresh data with files

@@ -75,8 +75,8 @@ export default function FaqTab({
       ) : faqs.length > 0 ? (
         <div className="grid gap-4">
           {faqs.map((faq) => (
-            <div key={faq._id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-              {editingId === faq._id ? (
+            <div key={faq.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+              {editingId === faq.id ? (
                 <div className="space-y-4">
                   <input
                     type="text"
@@ -111,8 +111,8 @@ export default function FaqTab({
               ) : (
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="font-semibold text-slate-900">{faq.title}</h3>
-                    <p className="text-slate-600 mt-2">{faq.text}</p>
+                    <h3 className="font-semibold text-slate-900">{faq.question}</h3>
+                    <p className="text-slate-600 mt-2">{faq.answer}</p>
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -122,7 +122,7 @@ export default function FaqTab({
                       <Edit className="w-4 h-4 text-slate-500" />
                     </button>
                     <button
-                      onClick={() => deleteFaq(faq._id)}
+                      onClick={() => deleteFaq(faq.id)}
                       className="p-2 hover:bg-red-50 rounded-lg transition-colors"
                     >
                       <Trash2 className="w-4 h-4 text-red-500" />

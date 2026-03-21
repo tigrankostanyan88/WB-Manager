@@ -19,6 +19,9 @@ interface OverviewTabProps {
 export default function OverviewTab({ stats, recentStudents, isRecentLoading, relativeTime }: OverviewTabProps) {
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-slate-900">Ավելացված տվյալներ</h2>
+      </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => {
           const Icon = stat.icon

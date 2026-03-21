@@ -296,8 +296,17 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
       fd.append('badge_text', instructorForm.badgeText || '')
       fd.append('stats_json', JSON.stringify(instructorForm.stats))
       
+      // Send new avatar file if selected, otherwise send existing avatarUrl
       if (instructorForm.avatarFile) {
         fd.append('avatar', instructorForm.avatarFile)
+      } else if (instructorForm.avatarUrl) {
+        // Extract path from full URL if needed
+        const avatarPath = instructorForm.avatarUrl.includes('/images/') 
+          ? instructorForm.avatarUrl.split('/images/')[1] 
+            ? '/images/' + instructorForm.avatarUrl.split('/images/')[1]
+            : instructorForm.avatarUrl
+          : instructorForm.avatarUrl
+        fd.append('avatar_url', avatarPath)
       }
 
       await api.post('/api/v1/instructor', fd)

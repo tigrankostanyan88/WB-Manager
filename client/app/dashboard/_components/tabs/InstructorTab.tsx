@@ -89,18 +89,17 @@ export default function InstructorTab({
           className="rounded-lg bg-violet-600 hover:bg-violet-700"
           disabled={isInstructorLoading}
         >
-          <Save className="w-4 h-4 mr-2" />
+          {isInstructorLoading ? (
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+          ) : (
+            <Save className="w-4 h-4 mr-2" />
+          )}
           Պահպանել
         </Button>
       </div>
 
-      {isInstructorLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600" />
-        </div>
-      ) : (
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-0">
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-0">
             {/* Photo Section */}
             <div className="bg-slate-50 p-6 flex flex-col">
               <div className="relative flex-1 min-h-[380px] flex items-center justify-center">
@@ -242,8 +241,6 @@ export default function InstructorTab({
             </div>
           </div>
         </div>
-      )}
-    </form>
+      </form>
   )
 }
-

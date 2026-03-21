@@ -15,9 +15,10 @@ export default function DashboardToast({ toast, onClose }: DashboardToastProps) 
     <AnimatePresence>
       {toast && (
         <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
           onClick={onClose}
           className={cn(
             'fixed top-5 right-5 z-[200] max-w-[520px] px-4 py-2 rounded-xl shadow-lg flex items-center gap-2 border backdrop-blur-sm cursor-pointer active:scale-95 transition',

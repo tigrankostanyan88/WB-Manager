@@ -141,8 +141,10 @@ export default function DashboardPage() {
       <Header />
 
       <main className="container max-w-[1400px] px-4 md:px-8 pt-24 pb-32">
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 mt-[80px]">
-          <DashboardSidebar menuItems={menuItems} activeTab={activeTab} onTabChange={setActiveTab} />
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 mt-[120px] items-start">
+          <div className="lg:sticky lg:top-24">
+            <DashboardSidebar menuItems={menuItems} activeTab={activeTab} onTabChange={setActiveTab} />
+          </div>
 
           <div className="space-y-6">
             <AnimatePresence mode="wait">
@@ -211,30 +213,22 @@ export default function DashboardPage() {
               )}
 
               {activeTab === 'courses' && (
-                <motion.div
-                  key="courses"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <CoursesTab
-                    showCourseForm={showCourseForm}
-                    courseForm={courseForm}
-                    setCourseForm={setCourseForm}
-                    startNewCourse={startNewCourse}
-                    editCourse={editCourse}
-                    deleteCourse={deleteCourse}
-                    cancelNewCourse={cancelNewCourse}
-                    addLearningPoint={addLearningPoint}
-                    changeLearningPoint={changeLearningPoint}
-                    removeLearningPoint={removeLearningPoint}
-                    submitCourse={submitCourse}
-                    courses={courses}
-                    isLoading={isCoursesLoading}
-                    getCourseFirstVideoUrl={getCourseFirstVideoUrl}
-                  />
-                </motion.div>
+                <CoursesTab
+                  showCourseForm={showCourseForm}
+                  courseForm={courseForm}
+                  setCourseForm={setCourseForm}
+                  startNewCourse={startNewCourse}
+                  editCourse={editCourse}
+                  deleteCourse={deleteCourse}
+                  cancelNewCourse={cancelNewCourse}
+                  addLearningPoint={addLearningPoint}
+                  changeLearningPoint={changeLearningPoint}
+                  removeLearningPoint={removeLearningPoint}
+                  submitCourse={submitCourse}
+                  courses={courses}
+                  isLoading={isCoursesLoading}
+                  getCourseFirstVideoUrl={getCourseFirstVideoUrl}
+                />
               )}
 
               {activeTab === 'modules' && (

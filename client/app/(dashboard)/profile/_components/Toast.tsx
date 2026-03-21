@@ -19,9 +19,9 @@ export default function Toast({ toast, onClose }: ToastProps) {
     <AnimatePresence>
       {toast && (
         <motion.button
-          initial={{ opacity: 0, y: -20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -10, scale: 0.98 }}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
           onClick={onClose}
           className={cn(
             'fixed top-6 right-6 z-[200] px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 backdrop-blur-xl border cursor-pointer active:scale-95 transition-all',

@@ -147,7 +147,7 @@ export default function CoursesTab({
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
         <h3 className="text-xl font-semibold text-slate-900 mb-6">Նոր դասընթաց</h3>
         
-        <div className="space-y-6 max-w-3xl">
+        <div className="space-y-6 w-full">
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">

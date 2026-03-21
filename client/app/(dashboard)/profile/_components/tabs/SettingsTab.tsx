@@ -5,7 +5,7 @@ import { Mail, MapPin, Phone, Shield, User as UserIcon, Save } from 'lucide-reac
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import React from 'react'
+import React, { useState } from 'react'
 
 interface SettingsUser {
   name: string
@@ -23,6 +23,24 @@ interface SettingsTabProps {
 }
 
 export default function SettingsTab({ user, isUpdating, onSubmit, onShowPasswordModal }: SettingsTabProps) {
+  const [formData, setFormData] = useState({
+    name: user.name || '',
+    email: user.email || '',
+    phone: user.phone || '',
+    address: user.address || '',
+  })
+
+  const handleChange = (id: string, value: string) => {
+    setFormData(prev => ({ ...prev, [id]: value }))
+  }
+
+  const fields = [
+    { id: 'name', label: 'Անուն', val: formData.name, icon: UserIcon, placeholder: 'Ձեր անունը', type: 'text' },
+    { id: 'email', label: 'Էլ. փոստ', val: formData.email, icon: Mail, placeholder: 'example@email.com', type: 'email' },
+    { id: 'phone', label: 'Հեռախոսահամար', val: formData.phone, icon: Phone, placeholder: '+374 XX XXX XXX', type: 'tel' },
+    { id: 'address', label: 'Հասցե', val: formData.address, icon: MapPin, placeholder: 'Ձեր հասցեն', type: 'text' },
+  ]
+
   return (
     <motion.div
       key="settings"
@@ -39,12 +57,7 @@ export default function SettingsTab({ user, isUpdating, onSubmit, onShowPassword
         
         <form onSubmit={onSubmit} className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {[ 
-              { id: 'name', label: 'Անուն', val: user.name, icon: UserIcon, placeholder: 'Ձեր անունը', type: 'text' },
-              { id: 'email', label: 'Էլ. փոստ', val: user.email, icon: Mail, placeholder: 'example@email.com', type: 'email' },
-              { id: 'phone', label: 'Հեռախոսահամար', val: user.phone, icon: Phone, placeholder: '+374 XX XXX XXX', type: 'tel' },
-              { id: 'address', label: 'Հասցե', val: user.address, icon: MapPin, placeholder: 'Ձեր հասցեն', type: 'text' },
-            ].map((field) => (
+            {fields.map((field) => (
               <div key={field.id}>
                 <label className="block text-sm font-bold text-slate-700 mb-2">{field.label}</label>
                 <div className="relative group">
@@ -54,7 +67,8 @@ export default function SettingsTab({ user, isUpdating, onSubmit, onShowPassword
                   <input
                     name={field.id}
                     type={field.type || 'text'}
-                    defaultValue={field.val}
+                    value={field.val}
+                    onChange={(e) => handleChange(field.id, e.target.value)}
                     placeholder={field.placeholder}
                     className="w-full h-16 bg-slate-50 border-2 border-slate-200 rounded-2xl pl-14 pr-6 text-base font-bold text-slate-900 focus:bg-white focus:border-violet-500 focus:shadow-[0_10px_40px_-10px_rgba(124,58,237,0.1)] outline-none transition-all duration-300"
                   />
