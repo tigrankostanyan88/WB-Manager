@@ -1,5 +1,6 @@
 const user = require('./user')
 const payment = require('./payment')
+const file = require('./files')
 
 module.exports = {
     // security
@@ -24,6 +25,12 @@ module.exports = {
         deletePayment: payment.deletePayment,
         updatePaymentStatus: payment.updatePaymentStatus,
         getMyPayments: payment.getMyPayments
+    },
+    file: {
+        getFiles: file.getFiles,
+        getFileById: file.getFileById,
+        updateFile: file.updateFile,
+        deleteFile: file.deleteFile
     },
     settings: require('./settings'),
     review: require('./review'),

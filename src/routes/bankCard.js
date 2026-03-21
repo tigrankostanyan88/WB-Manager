@@ -10,7 +10,7 @@ router.get('/all', catchAsync(ctrls.bankCard.getBankCards));
 router.post('/', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), catchAsync(ctrls.bankCard.createBankCard));
 
 // Admin: Update bank card
-router.patch('/:id', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), catchAsync(ctrls.bankCard.updateBankCard));
+router.put('/:id', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), catchAsync(ctrls.bankCard.updateBankCard));
 
 // Admin: Delete bank card
 router.delete('/:id', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), catchAsync(ctrls.bankCard.deleteBankCard));

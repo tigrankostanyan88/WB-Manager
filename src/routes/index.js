@@ -10,4 +10,5 @@ module.exports = routes = {
     studentCourse: require('./studentCourse'),
     bankCard: require('./bankCard'),
     payment: require('./payment'),
+    file: require('./file'),
 };

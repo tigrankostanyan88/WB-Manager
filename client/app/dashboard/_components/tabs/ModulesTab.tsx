@@ -1,6 +1,6 @@
 'use client'
 
-import { Plus, Edit, Trash2, Play, X, Upload, Film, Video, Clock, BookOpen } from 'lucide-react'
+import { Plus, Edit, Trash2, Play, X, Upload, Film, Video, Clock, BookOpen, Check } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import type { ModuleItem, ModuleFile, CourseOption } from '../../_hooks/useModules'
 
@@ -140,6 +140,7 @@ interface ModulesTabProps {
   isUploadingVideo: boolean
   currentModuleVideos: ModuleFile[]
   deleteModuleVideo: (videoId: string) => void
+  updateModuleVideo: (videoId: string, title: string) => void
   handleVideoFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   uploadModuleVideo: () => void
   getVideoUrl: (file: ModuleFile) => string
@@ -163,11 +164,14 @@ export default function ModulesTab({
   isUploadingVideo,
   currentModuleVideos,
   deleteModuleVideo,
+  updateModuleVideo,
   handleVideoFileChange,
   uploadModuleVideo,
   getVideoUrl
 }: ModulesTabProps) {
   const [playingVideo, setPlayingVideo] = useState<string | null>(null)
+  const [editingVideoId, setEditingVideoId] = useState<string | null>(null)
+  const [editingVideoTitle, setEditingVideoTitle] = useState('')
   console.log('ModulesTab rendering, playingVideo:', playingVideo)
   
   if (showModuleForm) {
@@ -200,15 +204,6 @@ export default function ModulesTab({
               className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Նկարագրություն</label>
-            <textarea
-              value={moduleForm.description}
-              onChange={(e) => setModuleForm((prev: any) => ({ ...prev, description: e.target.value }))}
-              rows={3}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
-            />
-          </div>
           {/* Video Section - Show message when creating new module, show upload when editing */}
           {editingId ? (
             <div className="border-t border-slate-200 pt-6 mt-6">
@@ -227,13 +222,79 @@ export default function ModulesTab({
                       
                       {/* Video Info */}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-700 truncate">
-                          Վիդեո {index + 1}
-                        </p>
-                        <p className="text-xs text-slate-500 truncate">
-                          {video.name}{video.ext}
-                        </p>
+                        {editingVideoId === video.id ? (
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={editingVideoTitle}
+                              onChange={(e) => setEditingVideoTitle(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  updateModuleVideo(video.id, editingVideoTitle)
+                                  setEditingVideoId(null)
+                                }
+                                if (e.key === 'Escape') {
+                                  setEditingVideoId(null)
+                                  setEditingVideoTitle('')
+                                }
+                              }}
+                              className="flex-1 px-2 py-1 text-sm border border-violet-300 rounded focus:outline-none focus:ring-2 focus:ring-violet-500"
+                              autoFocus
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                updateModuleVideo(video.id, editingVideoTitle)
+                                setEditingVideoId(null)
+                              }}
+                              disabled={isUploadingVideo}
+                              className="p-1 hover:bg-violet-100 text-violet-600 rounded transition-colors"
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingVideoId(null)
+                                setEditingVideoTitle('')
+                              }}
+                              className="p-1 hover:bg-slate-200 text-slate-500 rounded transition-colors"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div
+                            className="cursor-pointer group/title"
+                            onClick={() => {
+                              setEditingVideoId(video.id)
+                              setEditingVideoTitle(video.title || `Վիդեո ${index + 1}`)
+                            }}
+                          >
+                            <p className="text-sm font-medium text-slate-700 truncate group-hover/title:text-violet-600 transition-colors">
+                              {video.title || `Վիդեո ${index + 1}`}
+                            </p>
+                            <p className="text-xs text-slate-500 truncate">
+                              {video.name}{video.ext}
+                            </p>
+                          </div>
+                        )}
                       </div>
+                      
+                      {/* Edit Button */}
+                      {editingVideoId !== video.id && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingVideoId(video.id)
+                            setEditingVideoTitle(video.title || `Վիդեո ${index + 1}`)
+                          }}
+                          disabled={isUploadingVideo}
+                          className="p-2 hover:bg-violet-100 text-slate-400 hover:text-violet-600 rounded-lg transition-colors"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                      )}
                       
                       {/* Delete Button */}
                       <button

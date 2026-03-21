@@ -97,6 +97,7 @@ export default function useCourses({ activeTab, showToast }: UseCoursesParams) {
   const [courses, setCourses] = useState<Course[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [editingCourseId, setEditingCourseId] = useState<string | null>(null)
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null)
 
   const fetchCourses = async () => {
     try {
@@ -132,11 +133,13 @@ export default function useCourses({ activeTab, showToast }: UseCoursesParams) {
   const cancelNewCourse = () => {
     setShowCourseForm(false)
     setEditingCourseId(null)
+    setEditingCourse(null)
     setCourseForm(emptyCourseForm)
   }
 
   const editCourse = (course: Course) => {
     setEditingCourseId(String(course.id))
+    setEditingCourse(course)
     const rawPrice = (course as unknown as { price?: unknown }).price
     const rawDiscount = (course as unknown as { discount?: unknown }).discount
     const rawWhatToLearn = (course as unknown as { whatToLearn?: unknown }).whatToLearn
@@ -208,6 +211,7 @@ export default function useCourses({ activeTab, showToast }: UseCoursesParams) {
       await fetchCourses()
       setShowCourseForm(false)
       setEditingCourseId(null)
+      setEditingCourse(null)
       setCourseForm(emptyCourseForm)
     } catch (error) {
       console.error('Error saving course:', error)
@@ -263,6 +267,8 @@ export default function useCourses({ activeTab, showToast }: UseCoursesParams) {
     deleteCourse,
     courses,
     isLoading,
-    getCourseFirstVideoUrl
+    getCourseFirstVideoUrl,
+    editingCourseId,
+    editingCourse
   }
 }

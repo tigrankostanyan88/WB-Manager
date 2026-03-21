@@ -1,9 +1,6 @@
 'use client'
 
-// CoursesTab Component - Manages course listing and course creation/editing form
-// Includes: Course list view, Add/Edit course form with prerequisites and learning outcomes
-
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { 
   Plus, 
   Edit, 
@@ -13,11 +10,177 @@ import {
   BookOpen,
   Clock,
   Tag,
-  Video
+  Video,
+  Camera
 } from 'lucide-react'
 import type { Course } from '../../_hooks/useCourses'
 
 import { ConfirmProvider, useConfirm } from '@/components/providers/ConfirmProvider'
+
+// Video thumbnail component using video element with frame seek
+function VideoThumbnail({ videoUrl, className }: { videoUrl: string; className?: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [frameReady, setFrameReady] = useState(false)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    video.onloadedmetadata = () => {
+      const seekTime = Math.min(35, video.duration || 35)
+      video.currentTime = seekTime
+    }
+
+    video.onseeked = () => {
+      video.pause()
+      setFrameReady(true)
+    }
+
+    // Force load
+    video.load()
+  }, [videoUrl])
+
+  return (
+    <video
+      ref={videoRef}
+      src={videoUrl}
+      className={className}
+      preload="metadata"
+      muted
+      playsInline
+      style={{
+        objectFit: 'cover',
+        opacity: frameReady ? 1 : 0,
+        transition: 'opacity 0.3s ease'
+      }}
+    />
+  )
+}
+
+// Video Frame Selector Component - Allows selecting a frame from video as thumbnail
+interface VideoFrameSelectorProps {
+  videoUrl: string
+  onFrameCapture: (imageDataUrl: string) => void
+  onClose: () => void
+  isOpen: boolean
+}
+
+function VideoFrameSelector({ videoUrl, onFrameCapture, onClose, isOpen }: VideoFrameSelectorProps) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || !isOpen) return
+
+    video.onloadedmetadata = () => {
+      setDuration(video.duration)
+      setCurrentTime(Math.min(5, video.duration / 2))
+      video.currentTime = Math.min(5, video.duration / 2)
+      setIsReady(true)
+    }
+
+    video.ontimeupdate = () => {
+      setCurrentTime(video.currentTime)
+    }
+
+    video.load()
+  }, [videoUrl, isOpen])
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = parseFloat(e.target.value)
+    setCurrentTime(time)
+    if (videoRef.current) {
+      videoRef.current.currentTime = time
+    }
+  }
+
+  const captureFrame = () => {
+    const video = videoRef.current
+    const canvas = canvasRef.current
+    if (!video || !canvas) return
+
+    canvas.width = video.videoWidth || 1280
+    canvas.height = video.videoHeight || 720
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9)
+    onFrameCapture(dataUrl)
+    onClose()
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-5">
+      <div className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-slate-900">Ընտրեք կադր դասընթացի պատկերի համար</h3>
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100">
+            <X className="w-5 h-5 text-slate-500" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-6">
+          {/* Video Player */}
+          <div className="relative aspect-video bg-slate-900 rounded-xl overflow-hidden">
+            <video
+              ref={videoRef}
+              src={videoUrl}
+              className="w-full h-full"
+              preload="metadata"
+              controls
+            />
+          </div>
+
+          {/* Time Seeker */}
+          <div className="space-y-3">
+            <div className="flex justify-between text-sm text-slate-600">
+              <span>Ժամանակ: {currentTime.toFixed(1)} վ</span>
+              <span>Տևողություն: {duration.toFixed(1)} վ</span>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={duration || 100}
+              step={0.1}
+              value={currentTime}
+              onChange={handleSeek}
+              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-violet-600"
+            />
+            <p className="text-xs text-slate-500">
+              Տեղափոխեք սլայդերը կադր ընտրելու համար
+            </p>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 justify-end pt-2">
+            <button
+              onClick={onClose}
+              className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-colors"
+            >
+              Չեղարկել
+            </button>
+            <button
+              onClick={captureFrame}
+              disabled={!isReady}
+              className="px-6 py-2.5 bg-violet-600 text-white font-medium rounded-xl hover:bg-violet-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              <Camera className="w-4 h-4" />
+              Ընտրել այս կադրը
+            </button>
+          </div>
+        </div>
+      </div>
+      <canvas ref={canvasRef} className="hidden" />
+    </div>
+  )
+}
 
 interface CoursesTabProps {
   showCourseForm: boolean
@@ -40,11 +203,12 @@ interface CoursesTabProps {
   submitCourse: (e: React.FormEvent) => Promise<void>
   courses: Course[]
   isLoading: boolean
-  onImageFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onImageFileSelect?: (e: React.ChangeEvent<HTMLInputElement>) => void
   addLearningPoint: () => void
   changeLearningPoint: (index: number, value: string) => void
   removeLearningPoint: (index: number) => void
   getCourseFirstVideoUrl: (course: Course) => string | null
+  editingCourse?: Course | null
 }
 
 const categories = [
@@ -71,10 +235,12 @@ export default function CoursesTab({
   courses,
   isLoading,
   onImageFileSelect,
-  getCourseFirstVideoUrl
+  getCourseFirstVideoUrl,
+  editingCourse
 }: CoursesTabProps) {
   const [activeTab, setActiveTab] = useState<'basic' | 'content' | 'pricing'>('basic')
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [videoFrameSelectorOpen, setVideoFrameSelectorOpen] = useState(false)
   const confirm = useConfirm()
 
   const handleDelete = async (course: Course) => {
@@ -96,7 +262,7 @@ export default function CoursesTab({
     if (file) {
       const url = URL.createObjectURL(file)
       setImagePreview(url)
-      onImageFileSelect(e)
+      onImageFileSelect?.(e)
     }
   }, [onImageFileSelect])
 
@@ -142,10 +308,59 @@ export default function CoursesTab({
     }))
   }
 
+  // Helper function to convert data URL to File object
+  const dataUrlToFile = useCallback((dataUrl: string, filename: string): File => {
+    const arr = dataUrl.split(',')
+    const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/jpeg'
+    const bstr = atob(arr[1])
+    let n = bstr.length
+    const u8arr = new Uint8Array(n)
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new File([u8arr], filename, { type: mime })
+  }, [])
+
+  // Handle video frame capture and set as course image
+  const handleFrameCapture = useCallback((imageDataUrl: string) => {
+    setImagePreview(imageDataUrl)
+    const file = dataUrlToFile(imageDataUrl, `course_thumbnail_${Date.now()}.jpg`)
+    
+    // Create a synthetic event to match the expected onImageFileSelect signature
+    const syntheticEvent = {
+      target: {
+        files: [file]
+      }
+    } as unknown as React.ChangeEvent<HTMLInputElement>
+    
+    onImageFileSelect?.(syntheticEvent)
+    
+    // Also update courseForm.image directly
+    setCourseForm((prev: any) => ({
+      ...prev,
+      image: imageDataUrl
+    }))
+  }, [dataUrlToFile, onImageFileSelect, setCourseForm])
+
+  // Get video URL for the editing course
+  const editingCourseVideoUrl = useMemo(() => {
+    console.log('[DEBUG] editingCourse:', editingCourse)
+    console.log('[DEBUG] editingCourse?.modules:', editingCourse?.modules)
+    if (!editingCourse) return null
+    const url = getCourseFirstVideoUrl(editingCourse)
+    console.log('[DEBUG] editingCourseVideoUrl:', url)
+    return url
+  }, [editingCourse, getCourseFirstVideoUrl])
+
   if (showCourseForm) {
+    const isEditing = Boolean(editingCourse)
+    console.log('[DEBUG] isEditing:', isEditing, 'editingCourseVideoUrl:', editingCourseVideoUrl)
+    
     return (
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <h3 className="text-xl font-semibold text-slate-900 mb-6">Նոր դասընթաց</h3>
+        <h3 className="text-xl font-semibold text-slate-900 mb-6">
+          {isEditing ? 'Փոփոխել դասընթացը' : 'Նոր դասընթաց'}
+        </h3>
         
         <div className="space-y-6 w-full">
           {/* Title */}
@@ -158,7 +373,7 @@ export default function CoursesTab({
               value={courseForm.title}
               onChange={(e) => setCourseForm((prev: any) => ({ ...prev, title: e.target.value }))}
               placeholder="Օրինակ՝ Wildberries-ում շահութաբեր ապրանք գտնելու մեթոդներ"
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
             />
           </div>
 
@@ -171,7 +386,7 @@ export default function CoursesTab({
               <select
                 value={courseForm.category}
                 onChange={(e) => setCourseForm((prev: any) => ({ ...prev, category: e.target.value }))}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
               >
                 <option value="">Ընտրեք կատեգորիան</option>
                 {categories.map(cat => (
@@ -187,7 +402,7 @@ export default function CoursesTab({
               <select
                 value={courseForm.language}
                 onChange={(e) => setCourseForm((prev: any) => ({ ...prev, language: e.target.value }))}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
               >
                 <option value="">Ընտրեք լեզուն</option>
                 {languages.map(lang => (
@@ -208,7 +423,7 @@ export default function CoursesTab({
                 value={courseForm.price}
                 onChange={(e) => setCourseForm((prev: any) => ({ ...prev, price: e.target.value }))}
                 placeholder="180000"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
               />
             </div>
 
@@ -223,7 +438,7 @@ export default function CoursesTab({
                 placeholder="15"
                 min="0"
                 max="100"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
               />
             </div>
           </div>
@@ -238,8 +453,71 @@ export default function CoursesTab({
               onChange={(e) => setCourseForm((prev: any) => ({ ...prev, description: e.target.value }))}
               placeholder="Դասընթացի մանրամասն նկարագրությունը..."
               rows={4}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 resize-none transition-all"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 resize-none transition-colors"
             />
+          </div>
+
+          {/* Course Thumbnail / Image */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-3">
+              Դասընթացի պատկեր
+            </label>
+            <div className="space-y-4">
+              {/* Image Preview */}
+              {(imagePreview || courseForm.image) && (
+                <div className="relative aspect-video w-full max-w-md rounded-xl overflow-hidden bg-slate-100">
+                  <img
+                    src={imagePreview || courseForm.image || ''}
+                    alt="Course thumbnail"
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setImagePreview(null)
+                      setCourseForm((prev: any) => ({ ...prev, image: null }))
+                    }}
+                    className="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full hover:bg-red-50 hover:text-red-500 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+              
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-3">
+                {/* File Upload Button */}
+                <label className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-slate-700 font-medium rounded-xl hover:bg-violet-50 hover:text-violet-700 transition-colors cursor-pointer border border-slate-200">
+                  <Plus className="w-4 h-4" />
+                  Վերբեռնել նկար
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </label>
+                
+                {/* Video Frame Selector Button - Only show if editing and has video */}
+                {isEditing && editingCourseVideoUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setVideoFrameSelectorOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-violet-50 text-violet-700 font-medium rounded-xl hover:bg-violet-100 transition-colors border border-violet-200"
+                  >
+                    <Camera className="w-4 h-4" />
+                    Ընտրել վիդեոյի կադր
+                  </button>
+                )}
+              </div>
+              
+              <p className="text-xs text-slate-500">
+                {isEditing && editingCourseVideoUrl 
+                  ? 'Վերբեռնեք նկար կամ ընտրեք կադր առաջին վիդեոյից'
+                  : 'Վերբեռնեք դասընթացի պատկերը (առաջարկվող չափս՝ 1280x720)'
+                }
+              </p>
+            </div>
           </div>
 
           {/* Prerequisites */}
@@ -255,7 +533,7 @@ export default function CoursesTab({
                     value={prereq}
                     onChange={(e) => updatePrerequisite(index, e.target.value)}
                     placeholder={`Պահանջվող գիտելիք ${index + 1}`}
-                    className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                    className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
                   />
                   <button
                     type="button"
@@ -290,7 +568,7 @@ export default function CoursesTab({
                     value={item}
                     onChange={(e) => updateLearningItem(index, e.target.value)}
                     placeholder={`Ուսումնառության արդյունք ${index + 1}`}
-                    className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                    className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
                   />
                   <button
                     type="button"
@@ -317,7 +595,7 @@ export default function CoursesTab({
             <button
               type="button"
               onClick={cancelNewCourse}
-              className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-colors"
+              className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl"
             >
               Չեղարկել
             </button>
@@ -330,6 +608,14 @@ export default function CoursesTab({
             </button>
           </div>
         </div>
+
+        {/* Video Frame Selector Modal */}
+        <VideoFrameSelector
+          isOpen={videoFrameSelectorOpen}
+          videoUrl={editingCourseVideoUrl || ''}
+          onFrameCapture={handleFrameCapture}
+          onClose={() => setVideoFrameSelectorOpen(false)}
+        />
       </div>
     )
   }
@@ -367,17 +653,9 @@ export default function CoursesTab({
                   const videoUrl = getCourseFirstVideoUrl(course)
                   if (videoUrl) {
                     return (
-                      <video
-                        src={videoUrl}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        preload="metadata"
-                        muted
-                        playsInline
-                        onLoadedMetadata={(e) => {
-                          const video = e.currentTarget
-                          const seekTime = Math.min(45, video.duration / 2 || 0)
-                          if (seekTime > 0) video.currentTime = seekTime
-                        }}
+                      <VideoThumbnail 
+                        videoUrl={videoUrl}
+                        className="w-full h-full transition-transform duration-500 group-hover:scale-105"
                       />
                     )
                   }

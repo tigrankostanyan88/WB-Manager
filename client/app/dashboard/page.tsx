@@ -71,11 +71,11 @@ export default function DashboardPage() {
   })
   const { instructorForm, instructorErrors, isInstructorLoading, onAvatarFile, onTitleChange, onNameChange, onProfessionChange, onDescriptionChange, onBadgeTextChange, onStatValueChange, saveInstructor, cropModalOpen: instructorCropModalOpen, cropImage: instructorCropImage, crop: instructorCrop, zoom: instructorZoom, setCrop: setInstructorCrop, setZoom: setInstructorZoom, onCropComplete: onInstructorCropComplete, closeCropModal: closeInstructorCropModal, confirmCrop: confirmInstructorCrop } =
     useInstructor({ activeTab, allowed, showToast })
-  const { showCourseForm, courseForm, setCourseForm, startNewCourse, editCourse, cancelNewCourse, addLearningPoint, changeLearningPoint, removeLearningPoint, submitCourse, deleteCourse, courses, isLoading: isCoursesLoading, getCourseFirstVideoUrl } = useCourses({
+  const { showCourseForm, courseForm, setCourseForm, startNewCourse, editCourse, cancelNewCourse, addLearningPoint, changeLearningPoint, removeLearningPoint, submitCourse, deleteCourse, courses, isLoading: isCoursesLoading, getCourseFirstVideoUrl, editingCourse } = useCourses({
     activeTab,
     showToast
   })
-  const { showModuleForm, moduleForm, setModuleForm, allModules, courses: moduleCourses, isLoading: isModulesLoading, editingId: editingModuleId, startNewModule, editModule, cancelNewModule, submitModule, deleteModule, videoFile, isUploadingVideo, currentModuleVideos, deleteModuleVideo, handleVideoFileChange, uploadModuleVideo, getVideoUrl } = useModules({
+  const { showModuleForm, moduleForm, setModuleForm, allModules, courses: moduleCourses, isLoading: isModulesLoading, editingId: editingModuleId, startNewModule, editModule, cancelNewModule, submitModule, deleteModule, videoFile, isUploadingVideo, currentModuleVideos, deleteModuleVideo, updateModuleVideo, handleVideoFileChange, uploadModuleVideo, getVideoUrl } = useModules({
     activeTab,
     showToast
   })
@@ -194,6 +194,7 @@ export default function DashboardPage() {
                   courses={courses}
                   isLoading={isCoursesLoading}
                   getCourseFirstVideoUrl={getCourseFirstVideoUrl}
+                  editingCourse={editingCourse}
                 />
               )}
 
@@ -215,6 +216,7 @@ export default function DashboardPage() {
                     isUploadingVideo={isUploadingVideo}
                     currentModuleVideos={currentModuleVideos}
                     deleteModuleVideo={deleteModuleVideo}
+                    updateModuleVideo={updateModuleVideo}
                     handleVideoFileChange={handleVideoFileChange}
                     uploadModuleVideo={uploadModuleVideo}
                     getVideoUrl={getVideoUrl}

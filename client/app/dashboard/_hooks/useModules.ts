@@ -9,6 +9,7 @@ export interface ModuleFile {
   id: string
   name: string
   ext: string
+  title?: string
   name_used?: string
   table_name?: string
 }
@@ -50,8 +51,8 @@ const mapModule = (m: unknown): ModuleItem => {
     description: String(mm?.description ?? ''),
     courseId: String(mm?.course_id ?? mm?.courseId ?? ''),
     files: Array.isArray(mm?.files) ? mm.files.map((f: unknown) => {
-      const ff = f as { id?: unknown; name?: unknown; ext?: unknown; name_used?: unknown; table_name?: unknown }
-      return { id: String(ff?.id ?? ''), name: String(ff?.name ?? ''), ext: String(ff?.ext ?? ''), name_used: String(ff?.name_used ?? ''), table_name: String(ff?.table_name ?? '') }
+      const ff = f as { id?: unknown; name?: unknown; ext?: unknown; title?: unknown; name_used?: unknown; table_name?: unknown }
+      return { id: String(ff?.id ?? ''), name: String(ff?.name ?? ''), ext: String(ff?.ext ?? ''), title: String(ff?.title ?? ''), name_used: String(ff?.name_used ?? ''), table_name: String(ff?.table_name ?? '') }
     }) : []
   }
 }
@@ -290,12 +291,26 @@ export default function useModules({ activeTab, showToast }: UseModulesParams) {
     if (!ok) return
     try {
       setIsUploadingVideo(true)
-      await api.delete(`/api/v1/modules/${editingId}/video/${fileId}`)
+      await api.delete(`/api/v1/files/${fileId}`)
       setCurrentModuleVideos((prev) => prev.filter((v) => v.id !== fileId))
       setAllModules((prev) => prev.map((m) => m.id === editingId ? { ...m, files: m.files?.filter((f) => f.id !== fileId) } : m))
       showToast('Վիդեոն ջնջվեց', 'success')
     } catch {
       showToast('Սխալ վիդեոն ջնջելիս', 'error')
+    } finally {
+      setIsUploadingVideo(false)
+    }
+  }
+
+  const updateModuleVideo = async (fileId: string, title: string) => {
+    try {
+      setIsUploadingVideo(true)
+      await api.patch(`/api/v1/files/${fileId}`, { title })
+      setCurrentModuleVideos((prev) => prev.map((v) => v.id === fileId ? { ...v, title } : v))
+      setAllModules((prev) => prev.map((m) => m.id === editingId ? { ...m, files: m.files?.map((f) => f.id === fileId ? { ...f, title } : f) } : m))
+      showToast('Վիդեոյի անվանումը թարմացվեց', 'success')
+    } catch {
+      showToast('Սխալ վիդեոյի անվանումը թարմացնելիս', 'error')
     } finally {
       setIsUploadingVideo(false)
     }
@@ -340,6 +355,7 @@ export default function useModules({ activeTab, showToast }: UseModulesParams) {
     isUploadingVideo,
     currentModuleVideos,
     deleteModuleVideo,
+    updateModuleVideo,
     handleVideoFileChange,
     uploadModuleVideo,
     getVideoUrl
