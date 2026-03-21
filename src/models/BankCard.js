@@ -18,10 +18,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: true
         }
     }, {
-        tableName: 'bank_cards',
-        timestamps: true,
-        createdAt: 'created_at',
-        updatedAt: 'updated_at'
+        tableName: 'bank_cards'
     });
 
     return BankCard;

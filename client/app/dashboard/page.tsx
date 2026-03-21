@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard, Building2 } from 'lucide-react'
-import { AnimatePresence, motion } from 'framer-motion'
 import DashboardHeader from '@/app/dashboard/_components/DashboardHeader'
 import DashboardSidebar from '@/app/dashboard/_components/DashboardSidebar'
 import CropModal from '@/app/dashboard/_components/CropModal'
@@ -147,27 +146,11 @@ export default function DashboardPage() {
           </div>
 
           <div className="space-y-6">
-            <AnimatePresence mode="wait">
               {activeTab === 'overview' && (
-                <motion.div
-                  key="overview"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
                   <OverviewTab stats={stats} recentStudents={recentStudents} isRecentLoading={isRecentLoading} relativeTime={overviewRelativeTime} />
-                </motion.div>
               )}
 
               {activeTab === 'users' && (
-                <motion.div
-                  key="users"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
                   <UsersTab
                     users={filteredUsers}
                     isUsersLoading={isUsersLoading}
@@ -177,17 +160,9 @@ export default function DashboardPage() {
                     onEdit={startEditUserModal}
                     onDelete={handleDeleteUser}
                   />
-                </motion.div>
               )}
 
               {activeTab === 'payments' && (
-                <motion.div
-                  key="payments"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
                   <PaymentsTab
                     payments={payments}
                     users={paymentUsers}
@@ -197,19 +172,10 @@ export default function DashboardPage() {
                     onCreatePayment={createPayment}
                     onUpdateStatus={updatePaymentStatus}
                   />
-                </motion.div>
               )}
 
               {activeTab === 'bank-cards' && (
-                <motion.div
-                  key="bank-cards"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
                   <BankCardsTab />
-                </motion.div>
               )}
 
               {activeTab === 'courses' && (
@@ -232,13 +198,6 @@ export default function DashboardPage() {
               )}
 
               {activeTab === 'modules' && (
-                <motion.div
-                  key="modules"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
                   <ModulesTab
                     showModuleForm={showModuleForm}
                     moduleForm={moduleForm}
@@ -260,17 +219,9 @@ export default function DashboardPage() {
                     uploadModuleVideo={uploadModuleVideo}
                     getVideoUrl={getVideoUrl}
                   />
-                </motion.div>
               )}
 
               {activeTab === 'comments' && (
-                <motion.div
-                  key="comments"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
                   <CommentsTab
                     reviews={reviews}
                     isReviewsLoading={isReviewsLoading}
@@ -278,17 +229,9 @@ export default function DashboardPage() {
                     isToday={isToday}
                     onDeleteReview={handleDeleteReview}
                   />
-                </motion.div>
               )}
 
               {activeTab === 'instructor' && (
-                <motion.div
-                  key="instructor"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
                   <InstructorTab
                     instructorForm={instructorForm}
                     instructorErrors={instructorErrors}
@@ -302,17 +245,9 @@ export default function DashboardPage() {
                     onStatValueChange={onStatValueChange}
                     onSubmit={saveInstructor}
                   />
-                </motion.div>
               )}
 
               {activeTab === 'faq' && (
-                <motion.div
-                  key="faq"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
                   <FaqTab
                     faqs={faqs}
                     faqForm={faqForm}
@@ -329,17 +264,9 @@ export default function DashboardPage() {
                     updateFaq={updateFaq}
                     deleteFaq={deleteFaq}
                   />
-                </motion.div>
               )}
 
               {activeTab === 'settings' && (
-                <motion.div
-                  key="settings"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
                   <SettingsTab
                     siteSettings={siteSettings}
                     setSiteSettings={setSiteSettings}
@@ -349,9 +276,7 @@ export default function DashboardPage() {
                     saveSettings={saveSettings}
                     onLogoFileSelect={onLogoFileSelect}
                   />
-                </motion.div>
               )}
-            </AnimatePresence>
           </div>
         </div>
       </main>

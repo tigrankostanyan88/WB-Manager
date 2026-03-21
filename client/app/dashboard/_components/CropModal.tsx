@@ -21,7 +21,7 @@ export default function CropModal({ open, cropImage, crop, zoom, setCrop, setZoo
   if (!open || !cropImage) return null
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[600px]">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <h3 className="text-lg font-black text-slate-900">Խմբագրել նկարը</h3>

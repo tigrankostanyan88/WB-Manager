@@ -32,4 +32,5 @@ module.exports = {
     courses: require('./courses'),
     modules: require('./modules'),
     studentCourse: require('./studentCourse'),
+    bankCard: require('./bankCard'),
 };

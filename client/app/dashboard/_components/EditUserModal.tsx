@@ -81,7 +81,7 @@ export default function EditUserModal({ user, open, onClose, onSubmit }: EditUse
             <X className="w-5 h-5 text-slate-500" />
           </button>
         </div>
-        <form onSubmit={submit} className="p-6 space-y-4">
+        <form onSubmit={submit} className="p-6 space-y-4 overflow-y-auto flex-1">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
               value={form.name}
