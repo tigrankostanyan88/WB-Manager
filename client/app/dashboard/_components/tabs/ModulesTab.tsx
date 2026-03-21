@@ -23,6 +23,11 @@ function VideoThumbnail({ videoUrl, onClick }: { videoUrl: string; onClick: () =
         preload="metadata"
         muted
         playsInline
+        onClick={(e) => {
+          e.stopPropagation()
+          console.log('Video element clicked, URL:', videoUrl)
+          onClick()
+        }}
         onLoadedMetadata={(e) => {
           const video = e.currentTarget
           const seekTime = Math.min(45, video.duration / 2 || 0)
@@ -64,8 +69,17 @@ function VideoPlayerModal({ videoUrl, onClose }: { videoUrl: string; onClose: ()
           src={videoUrl}
           controls
           autoPlay
+          playsInline
+          crossOrigin="anonymous"
+          preload="auto"
           className="w-full aspect-video"
-          onError={(e) => console.error('Video error:', e)}
+          key={videoUrl}
+          onError={(e) => {
+            console.error('Video error:', e)
+            const target = e.target as HTMLVideoElement
+            console.error('Video error code:', target.error?.code)
+            console.error('Video error message:', target.error?.message)
+          }}
         />
       </div>
     </div>
@@ -424,9 +438,6 @@ export default function ModulesTab({
                   <h3 className="font-bold text-lg text-slate-900 line-clamp-1 group-hover:text-violet-700 transition-colors">
                     {module.title}
                   </h3>
-                  <p className="text-sm text-slate-500 mt-2 line-clamp-2 leading-relaxed">
-                    {module.description || 'Նկարագրություն չկա'}
-                  </p>
                   
                   {/* Stats Row */}
                   <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">

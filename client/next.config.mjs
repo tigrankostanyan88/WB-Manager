@@ -29,6 +29,14 @@ const nextConfig = {
       {
         source: '/api/images/:path*',
         destination: `${apiOrigin}/api/images/:path*`
+      },
+      {
+        source: '/files/:path*',
+        destination: `${apiOrigin}/files/:path*`
+      },
+      {
+        source: '/images/:path*',
+        destination: `${apiOrigin}/images/:path*`
       }
     ]
   }

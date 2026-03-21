@@ -18,7 +18,6 @@ export interface ModuleItem {
   id: string
   title: string
   duration: string
-  description: string
   courseId: string
   files?: ModuleFile[]
 }
@@ -26,7 +25,6 @@ export interface ModuleItem {
 export interface ModuleForm {
   title: string
   duration: string
-  description: string
   courseId: string
 }
 
@@ -40,15 +38,14 @@ export interface CourseOption {
   title: string
 }
 
-const emptyForm: ModuleForm = { title: '', duration: '', description: '', courseId: '' }
+const emptyForm: ModuleForm = { title: '', duration: '', courseId: '' }
 
 const mapModule = (m: unknown): ModuleItem => {
-  const mm = m as { id?: unknown; title?: unknown; duration?: unknown; description?: unknown; course_id?: unknown; courseId?: unknown; files?: unknown[] }
+  const mm = m as { id?: unknown; title?: unknown; duration?: unknown; course_id?: unknown; courseId?: unknown; files?: unknown[] }
   return {
     id: String(mm?.id ?? ''),
     title: String(mm?.title ?? ''),
     duration: String(mm?.duration ?? ''),
-    description: String(mm?.description ?? ''),
     courseId: String(mm?.course_id ?? mm?.courseId ?? ''),
     files: Array.isArray(mm?.files) ? mm.files.map((f: unknown) => {
       const ff = f as { id?: unknown; name?: unknown; ext?: unknown; title?: unknown; name_used?: unknown; table_name?: unknown }
@@ -147,7 +144,6 @@ export default function useModules({ activeTab, showToast }: UseModulesParams) {
     setModuleForm({
       title: module.title,
       duration: module.duration,
-      description: module.description,
       courseId: module.courseId
     })
     const videos = getModuleVideos(module)
@@ -204,10 +200,6 @@ export default function useModules({ activeTab, showToast }: UseModulesParams) {
       showToast('Լրացրեք մոդուլի անվանումը', 'error')
       return
     }
-    if (!moduleForm.description.trim()) {
-      showToast('Լրացրեք մոդուլի նկարագրությունը', 'error')
-      return
-    }
     try {
       setIsLoading(true)
 
@@ -215,7 +207,6 @@ export default function useModules({ activeTab, showToast }: UseModulesParams) {
         await api.patch(`/api/v1/modules/${editingId}`, {
           title: moduleForm.title.trim(),
           duration: moduleForm.duration.trim(),
-          description: moduleForm.description.trim(),
           courseId: moduleForm.courseId
         })
         const modulesRes = await api.get('/api/v1/modules')
@@ -233,7 +224,6 @@ export default function useModules({ activeTab, showToast }: UseModulesParams) {
         const res = await api.post('/api/v1/modules', {
           title: moduleForm.title,
           duration: moduleForm.duration,
-          description: moduleForm.description,
           courseId: Number(moduleForm.courseId)
         })
         
@@ -250,7 +240,6 @@ export default function useModules({ activeTab, showToast }: UseModulesParams) {
           setModuleForm({
             title: newModule.title,
             duration: newModule.duration,
-            description: newModule.description,
             courseId: newModule.courseId
           })
           
