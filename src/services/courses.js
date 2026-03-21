@@ -145,6 +145,23 @@ module.exports = {
     const t = await db.con.transaction();
     try {
       await repo.update(course, update, t);
+
+      // Handle course image upload/replacement
+      const filePayload = files?.course_img || files?.image || files?.cover;
+      if (filePayload && filePayload.name && filePayload.mimetype) {
+        const modelForFiles = {
+          id: course.id,
+          files: [],
+          constructor: { name: 'courses' }
+        };
+        const img = await new Files(modelForFiles, filePayload).replace('course_img');
+        if (img.status !== 'success') {
+          const msg = typeof img.message === 'object' ? Object.values(img.message).join(' ') : img.message;
+          throw new AppError(msg, 400);
+        }
+        await repo.createFile(img.table, t);
+      }
+
       await t.commit();
       return course;
     } catch (err) {
