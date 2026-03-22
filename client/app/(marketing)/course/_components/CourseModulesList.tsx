@@ -3,7 +3,7 @@
 import { Lock, Play, FileText, X } from 'lucide-react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import VideoThumbnail from './VideoThumbnail'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export interface VideoItem {
@@ -31,6 +31,40 @@ interface CourseModulesListProps {
 
 export default function CourseModulesList({ modules }: CourseModulesListProps) {
   const [playingVideo, setPlayingVideo] = useState<VideoItem | null>(null)
+  const [openModule, setOpenModule] = useState<string | undefined>(undefined)
+
+  // Listen for START COURSE click
+  useEffect(() => {
+    const checkAndPlay = () => {
+      const videoId = window.localStorage.getItem('playVideoId')
+      if (videoId) {
+        // Find and play the video
+        for (let i = 0; i < modules.length; i++) {
+          const module = modules[i]
+          const video = module.videos.find(v => String(v.id) === videoId && !v.isLocked && v.videoUrl)
+          if (video) {
+            setOpenModule(`module-${i}`)
+            setPlayingVideo(video)
+            window.localStorage.removeItem('playVideoId')
+            break
+          }
+        }
+      }
+    }
+
+    // Check immediately and also set up storage event listener
+    checkAndPlay()
+    window.addEventListener('storage', checkAndPlay)
+    
+    // Custom event for same-tab communication
+    const handleCustomEvent = () => checkAndPlay()
+    window.addEventListener('startCourse', handleCustomEvent)
+    
+    return () => {
+      window.removeEventListener('storage', checkAndPlay)
+      window.removeEventListener('startCourse', handleCustomEvent)
+    }
+  }, [modules])
 
   const handleVideoClick = (video: VideoItem) => {
     if (video.isLocked || !video.videoUrl) return
@@ -41,7 +75,7 @@ export default function CourseModulesList({ modules }: CourseModulesListProps) {
     <div className="space-y-4">
       <h2 className="text-2xl font-black text-slate-900">Դասընթացի բովանդակությունը</h2>
       
-      <Accordion type="single" collapsible className="space-y-3 w-full">
+      <Accordion type="single" collapsible value={openModule} onValueChange={setOpenModule} className="space-y-3 w-full">
         {modules.map((module, moduleIndex) => (
           <AccordionItem 
             key={module.id || moduleIndex} 

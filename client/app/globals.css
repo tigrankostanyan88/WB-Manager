@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-
+* {
+  transition: all .4s ease-in-out;
+}
 html {
   scroll-behavior: smooth;
   scrollbar-gutter: stable;

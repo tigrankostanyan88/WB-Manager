@@ -66,6 +66,7 @@ interface CourseData {
   reviewsCount?: number
   studentsCount?: number
   updatedAt?: string
+  image?: string
 }
 
 export default function CourseDetailsPage() {
@@ -207,7 +208,6 @@ export default function CourseDetailsPage() {
             <p className="text-slate-500 font-medium">Բեռնվում է...</p>
           </div>
         </div>
-        <Footer />
       </div>
     )
   }
@@ -223,6 +223,25 @@ export default function CourseDetailsPage() {
     )
   }
 
+  // Find first video for preview
+  const getFirstVideoUrl = () => {
+    if (!course.modules) return null
+    for (const m of course.modules) {
+      const mm = m as { files?: unknown[] }
+      const files = Array.isArray(mm.files) ? mm.files : []
+      for (const f of files) {
+        const ff = f as { name?: string; ext?: string; name_used?: string }
+        const isVideo = ff.name_used === 'module_video' || 
+          (ff.ext && ['mp4', 'webm', 'mov'].includes(String(ff.ext).toLowerCase()))
+        if (isVideo && ff.name && ff.ext) {
+          return buildVideoUrl(ff.name, ff.ext)
+        }
+      }
+    }
+    return null
+  }
+  const previewVideoUrl = getFirstVideoUrl()
+
   const courseHero: CourseHeroData = {
     title: course.title,
     description: course.description,
@@ -231,7 +250,9 @@ export default function CourseDetailsPage() {
     studentsLabel: `${course.studentsCount || 0} ուսանող`,
     author: course.author || 'WB-Manager Team',
     updatedAt: course.updatedAt ? new Date(course.updatedAt).toLocaleDateString('hy-AM', { year: 'numeric', month: 'long' }) : 'Հունվար 2024',
-    language: course.language === 'ARM' ? 'Հայերեն' : course.language || 'Հայերեն'
+    language: course.language === 'ARM' ? 'Հայերեն' : course.language || 'Հայերեն',
+    image: course.image,
+    previewVideoUrl: previewVideoUrl
   }
 
   const learn = course.whatToLearn || [
@@ -317,16 +338,44 @@ export default function CourseDetailsPage() {
   const totalVideos = courseModules.reduce((sum, module) => sum + (module.videos?.length || 0), 0)
   const videosText = totalVideos > 0 ? `${totalVideos} վիդեոդաս` : '12 դասընթաց'
 
+  // Find first available video for "Start Course"
+  const getFirstVideo = () => {
+    for (const module of courseModules) {
+      for (const video of module.videos) {
+        if (!video.isLocked && video.videoUrl) {
+          return video
+        }
+      }
+    }
+    return null
+  }
+
+  const handleStartCourse = () => {
+    const firstVideo = getFirstVideo()
+    if (firstVideo) {
+      // Scroll to modules section
+      const modulesSection = document.getElementById('course-modules')
+      if (modulesSection) {
+        modulesSection.scrollIntoView({ behavior: 'smooth' })
+      }
+      // Store the video to play and dispatch event for same-tab communication
+      window.localStorage.setItem('playVideoId', String(firstVideo.id))
+      window.dispatchEvent(new Event('startCourse'))
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Header forceWhiteBackground />
-      <CourseHero course={courseHero} />
+      <CourseHero course={courseHero} onStartCourse={handleStartCourse} />
 
       <main className="container max-w-[1200px] mx-auto px-4 md:px-6 pt-16 pb-10 relative">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           <div className="lg:w-2/3 space-y-10">
             <WhatYouLearn learn={learn} />
-            <CourseModulesList modules={courseModules} />
+            <div id="course-modules">
+              <CourseModulesList modules={courseModules} />
+            </div>
             <CourseRequirements requirements={requirements} />
             <CourseDescription />
             <CourseInstructors instructor={instructor ? {...instructor, coursesText: videosText} : null} />
@@ -335,8 +384,6 @@ export default function CourseDetailsPage() {
           <CourseSidebar price={price} originalPrice={originalPrice} discount={discount} includes={includes} modules={course.modules} isEnrolled={hasAccess} />
         </div>
       </main>
-
-      <Footer />
     </div>
   )
 }

@@ -18,7 +18,7 @@ import type { Course } from '../../_hooks/useCourses'
 import { ConfirmProvider, useConfirm } from '@/components/providers/ConfirmProvider'
 
 // Video thumbnail component using video element with frame seek
-function VideoThumbnail({ videoUrl, className }: { videoUrl: string; className?: string }) {
+function VideoThumbnail({ videoUrl, timestamp, className }: { videoUrl: string; timestamp?: number; className?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [frameReady, setFrameReady] = useState(false)
 
@@ -27,7 +27,10 @@ function VideoThumbnail({ videoUrl, className }: { videoUrl: string; className?:
     if (!video) return
 
     video.onloadedmetadata = () => {
-      const seekTime = Math.min(35, video.duration || 35)
+      // Use provided timestamp, or default to 35 seconds or half duration
+      const seekTime = timestamp !== undefined 
+        ? Math.min(timestamp, video.duration || timestamp)
+        : Math.min(35, video.duration || 35)
       video.currentTime = seekTime
     }
 
@@ -38,7 +41,7 @@ function VideoThumbnail({ videoUrl, className }: { videoUrl: string; className?:
 
     // Force load
     video.load()
-  }, [videoUrl])
+  }, [videoUrl, timestamp])
 
   return (
     <video
@@ -60,7 +63,7 @@ function VideoThumbnail({ videoUrl, className }: { videoUrl: string; className?:
 // Video Frame Selector Component - Allows selecting a frame from video as thumbnail
 interface VideoFrameSelectorProps {
   videoUrl: string
-  onFrameCapture: (imageDataUrl: string) => void
+  onFrameCapture: (imageDataUrl: string, timestamp: number) => void
   onClose: () => void
   isOpen: boolean
 }
@@ -71,6 +74,7 @@ function VideoFrameSelector({ videoUrl, onFrameCapture, onClose, isOpen }: Video
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [isReady, setIsReady] = useState(false)
+  const [isSeeking, setIsSeeking] = useState(false)
 
   useEffect(() => {
     const video = videoRef.current
@@ -78,9 +82,18 @@ function VideoFrameSelector({ videoUrl, onFrameCapture, onClose, isOpen }: Video
 
     video.onloadedmetadata = () => {
       setDuration(video.duration)
-      setCurrentTime(Math.min(5, video.duration / 2))
-      video.currentTime = Math.min(5, video.duration / 2)
+      const initialTime = Math.min(5, video.duration / 2)
+      setCurrentTime(initialTime)
+      video.currentTime = initialTime
       setIsReady(true)
+    }
+
+    video.onseeking = () => {
+      setIsSeeking(true)
+    }
+
+    video.onseeked = () => {
+      setIsSeeking(false)
     }
 
     video.ontimeupdate = () => {
@@ -101,7 +114,10 @@ function VideoFrameSelector({ videoUrl, onFrameCapture, onClose, isOpen }: Video
   const captureFrame = () => {
     const video = videoRef.current
     const canvas = canvasRef.current
-    if (!video || !canvas) return
+    if (!video || !canvas || isSeeking) return
+
+    // Pause video to ensure frame is stable
+    video.pause()
 
     canvas.width = video.videoWidth || 1280
     canvas.height = video.videoHeight || 720
@@ -110,7 +126,7 @@ function VideoFrameSelector({ videoUrl, onFrameCapture, onClose, isOpen }: Video
 
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
     const dataUrl = canvas.toDataURL('image/jpeg', 0.9)
-    onFrameCapture(dataUrl)
+    onFrameCapture(dataUrl, currentTime)
     onClose()
   }
 
@@ -168,7 +184,7 @@ function VideoFrameSelector({ videoUrl, onFrameCapture, onClose, isOpen }: Video
             </button>
             <button
               onClick={captureFrame}
-              disabled={!isReady}
+              disabled={!isReady || isSeeking}
               className="px-6 py-2.5 bg-violet-600 text-white font-medium rounded-xl hover:bg-violet-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               <Camera className="w-4 h-4" />
@@ -192,6 +208,8 @@ interface CoursesTabProps {
     language: string
     discount: string
     image: string | null
+    imageFile?: File | null
+    thumbnail_time?: string | null
     prerequisites: string[]
     whatToLearn: string[]
   }
@@ -321,26 +339,16 @@ export default function CoursesTab({
     return new File([u8arr], filename, { type: mime })
   }, [])
 
-  // Handle video frame capture and set as course image
-  const handleFrameCapture = useCallback((imageDataUrl: string) => {
+  // Handle video frame capture - only save timestamp in thumbnail_time
+  const handleFrameCapture = useCallback((imageDataUrl: string, timestamp: number) => {
     setImagePreview(imageDataUrl)
-    const file = dataUrlToFile(imageDataUrl, `course_thumbnail_${Date.now()}.jpg`)
     
-    // Create a synthetic event to match the expected onImageFileSelect signature
-    const syntheticEvent = {
-      target: {
-        files: [file]
-      }
-    } as unknown as React.ChangeEvent<HTMLInputElement>
-    
-    onImageFileSelect?.(syntheticEvent)
-    
-    // Also update courseForm.image directly
+    // Only save the timestamp in thumbnail_time field
     setCourseForm((prev: any) => ({
       ...prev,
-      image: imageDataUrl
+      thumbnail_time: timestamp
     }))
-  }, [dataUrlToFile, onImageFileSelect, setCourseForm])
+  }, [setCourseForm])
 
   // Get video URL for the editing course
   const editingCourseVideoUrl = useMemo(() => {
@@ -486,18 +494,6 @@ export default function CoursesTab({
               
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3">
-                {/* File Upload Button */}
-                <label className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-slate-700 font-medium rounded-xl hover:bg-violet-50 hover:text-violet-700 transition-colors cursor-pointer border border-slate-200">
-                  <Plus className="w-4 h-4" />
-                  Վերբեռնել նկար
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
-                </label>
-                
                 {/* Video Frame Selector Button - Only show if editing and has video */}
                 {isEditing && editingCourseVideoUrl && (
                   <button
@@ -527,7 +523,7 @@ export default function CoursesTab({
             </label>
             <div className="space-y-2">
               {(courseForm.prerequisites || []).map((prereq: string, index: number) => (
-                <div key={`prereq-${index}-${prereq.slice(0, 5)}`} className="flex gap-2">
+                <div key={`prereq-${index}`} className="flex gap-2">
                   <input
                     type="text"
                     value={prereq}
@@ -562,7 +558,7 @@ export default function CoursesTab({
             </label>
             <div className="space-y-2">
               {(courseForm.whatToLearn || []).map((item: string, index: number) => (
-                <div key={`learn-${index}-${item.slice(0, 5)}`} className="flex gap-2">
+                <div key={`learn-${index}`} className="flex gap-2">
                   <input
                     type="text"
                     value={item}
@@ -651,10 +647,12 @@ export default function CoursesTab({
               <div className="relative aspect-video bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
                 {(() => {
                   const videoUrl = getCourseFirstVideoUrl(course)
+                  const thumbnailTime = (course as unknown as { thumbnail_time?: number }).thumbnail_time
                   if (videoUrl) {
                     return (
                       <VideoThumbnail 
                         videoUrl={videoUrl}
+                        timestamp={thumbnailTime}
                         className="w-full h-full transition-transform duration-500 group-hover:scale-105"
                       />
                     )

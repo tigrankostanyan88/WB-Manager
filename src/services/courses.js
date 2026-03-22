@@ -128,7 +128,7 @@ module.exports = {
 
   // Update course
   updateCourse: async (id, body, files, db) => {
-    const { title, description, price, discount, category, whatToLearn, language } = body;
+    const { title, description, price, discount, category, whatToLearn, prerequisites, language, thumbnail_time } = body;
 
     const course = await repo.findById(id);
     if (!course) throw new AppError('Course not found', 404);
@@ -140,7 +140,25 @@ module.exports = {
     if (discount !== undefined) update.discount = parseDecimal(discount, 'Զեղչ');
     if (category !== undefined) update.category = requireString(category, 'Կատեգորիա');
     if (whatToLearn !== undefined) update.whatToLearn = normalizeWhatToLearn(whatToLearn);
+    if (prerequisites !== undefined) {
+      let arr = prerequisites;
+      if (typeof arr === 'string') {
+        try {
+          arr = JSON.parse(arr);
+        } catch {
+          throw new AppError('"prerequisites" պետք է լինի զանգված', 400);
+        }
+      }
+      if (!Array.isArray(arr)) throw new AppError('"prerequisites" պետք է լինի զանգված', 400);
+      update.prerequisites = arr.map(v => String(v || '').trim()).filter(Boolean);
+    }
     if (language !== undefined) update.language = String(language ?? '').trim() || null;
+    if (thumbnail_time !== undefined) {
+      const timeValue = parseFloat(thumbnail_time);
+      if (!isNaN(timeValue) && timeValue >= 0) {
+        update.thumbnail_time = timeValue;
+      }
+    }
 
     const t = await db.con.transaction();
     try {

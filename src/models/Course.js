@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        thumbnail_time: {
+            type: DataTypes.FLOAT,
+            allowNull: true
+        },
         description: {
             type: DataTypes.TEXT,
             allowNull: false

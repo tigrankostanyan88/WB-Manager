@@ -64,6 +64,7 @@ export interface CourseForm {
   whatToLearn: string[]
   image: string | null
   imageFile: File | null
+  thumbnail_time: number | null
   modules: CourseModule[]
   videos: CourseVideo[]
 }
@@ -87,6 +88,7 @@ const emptyCourseForm: CourseForm = {
   whatToLearn: [''],
   image: null,
   imageFile: null,
+  thumbnail_time: null,
   modules: [],
   videos: []
 }
@@ -144,6 +146,7 @@ export default function useCourses({ activeTab, showToast }: UseCoursesParams) {
     const rawDiscount = (course as unknown as { discount?: unknown }).discount
     const rawWhatToLearn = (course as unknown as { whatToLearn?: unknown }).whatToLearn
     const rawModules = (course as unknown as { modules?: unknown }).modules
+    const rawThumbnailTime = (course as unknown as { thumbnail_time?: number }).thumbnail_time
     setCourseForm({
       ...emptyCourseForm,
       title: course.title || '',
@@ -159,6 +162,7 @@ export default function useCourses({ activeTab, showToast }: UseCoursesParams) {
       whatToLearn: Array.isArray(rawWhatToLearn) && rawWhatToLearn.length ? (rawWhatToLearn as string[]) : [''],
       image: (course as unknown as { image?: string | null }).image ?? null,
       imageFile: null,
+      thumbnail_time: rawThumbnailTime ?? null,
       modules: Array.isArray(course.modules)
         ? course.modules.map((m: unknown) => {
             const mm = m as { id?: unknown; title?: unknown; name?: unknown; duration?: unknown }
@@ -194,17 +198,47 @@ export default function useCourses({ activeTab, showToast }: UseCoursesParams) {
     e.preventDefault()
     try {
       setIsLoading(true)
-      const payload = {
-        ...courseForm,
-        price: parseFloat(courseForm.price) || 0,
-        discount: parseFloat(courseForm.discount) || 0
+
+      // Prepare FormData for file upload support
+      const formData = new FormData()
+      formData.append('title', courseForm.title)
+      formData.append('description', courseForm.description)
+      formData.append('price', String(parseFloat(courseForm.price) || 0))
+      formData.append('discount', String(parseFloat(courseForm.discount) || 0))
+      formData.append('category', courseForm.category)
+      formData.append('language', courseForm.language || 'ARM')
+
+      // Append whatToLearn as JSON array
+      const whatToLearn = courseForm.whatToLearn.filter(Boolean)
+      formData.append('whatToLearn', JSON.stringify(whatToLearn))
+
+      // Append prerequisites as JSON array
+      const prerequisites = courseForm.prerequisites.filter(Boolean)
+      formData.append('prerequisites', JSON.stringify(prerequisites))
+
+      // Append image file if present
+      if (courseForm.imageFile) {
+        formData.append('course_img', courseForm.imageFile)
+      }
+
+      // Append thumbnail_time if present (video frame timestamp)
+      if (courseForm.thumbnail_time !== null) {
+        formData.append('thumbnail_time', String(courseForm.thumbnail_time))
       }
 
       if (editingCourseId) {
-        await api.patch(`/api/v1/courses/${editingCourseId}`, payload)
+        console.log('DEBUG: Updating course', editingCourseId, 'with formData:')
+        for (const [key, value] of formData.entries()) {
+          console.log(`  ${key}:`, value instanceof File ? `File(${value.name})` : value)
+        }
+        await api.patch(`/api/v1/courses/${editingCourseId}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
         showToast('Դասընթացը թարմացվեց', 'success')
       } else {
-        await api.post('/api/v1/courses', payload)
+        await api.post('/api/v1/courses', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
         showToast('Դասընթացը ստեղծվեց', 'success')
       }
       

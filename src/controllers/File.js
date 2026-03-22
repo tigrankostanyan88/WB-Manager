@@ -188,6 +188,15 @@ module.exports = class File {
     _getAllowedLimits(table, name) {
         const names = [
             {
+                table: "courses",
+                files: [{
+                    name: "course_img",
+                    count: 1,
+                    types: ["jpeg", "png", "webp", "svg"],
+                    dimensions: { large: [1280, 720], small: [640, 360] },
+                }],
+            },
+            {
                 table: "instructors",
                 files: [{
                     name: "instructor_img",
