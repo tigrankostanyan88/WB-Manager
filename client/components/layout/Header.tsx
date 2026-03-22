@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
+import CourseRegistrationModal from '@/components/modals/CourseRegistrationModal'
 import RegistrationModal from '@/components/modals/RegistrationModal'
 import { cn } from '@/lib/utils'
 import { useSettings } from '@/context/SettingsContext' // moved from lib
@@ -11,7 +12,8 @@ import HeaderActions from './HeaderActions'
 export default function Header({ forceWhiteBackground = false }: { forceWhiteBackground?: boolean }) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isCourseModalOpen, setIsCourseModalOpen] = useState(false)
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const { settings } = useSettings()
 
   useEffect(() => {
@@ -76,7 +78,10 @@ export default function Header({ forceWhiteBackground = false }: { forceWhiteBac
 
             {/* Actions */}
             <div className="hidden md:flex items-center gap-4">
-              <HeaderActions onOpenModal={() => setIsModalOpen(true)} />
+              <HeaderActions 
+                onOpenLoginModal={() => setIsLoginModalOpen(true)} 
+                onOpenCourseModal={() => setIsCourseModalOpen(true)} 
+              />
             </div>
 
             {/* Mobile Menu Toggle */}
@@ -106,14 +111,16 @@ export default function Header({ forceWhiteBackground = false }: { forceWhiteBac
                   <hr className="border-slate-50" />
                   <HeaderActions 
                     mobile 
-                    onOpenModal={() => setIsModalOpen(true)} 
+                    onOpenLoginModal={() => setIsLoginModalOpen(true)} 
+                    onOpenCourseModal={() => setIsCourseModalOpen(true)} 
                     onMobileLinkClick={() => setIsMobileMenuOpen(false)}
                   />
                 </nav>
               </div>
             )}
       </header>
-      <RegistrationModal isOpen={isModalOpen}  onClose={() => setIsModalOpen(false)} />
+      <CourseRegistrationModal isOpen={isCourseModalOpen} onClose={() => setIsCourseModalOpen(false)} />
+      <RegistrationModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </>
   )
 }

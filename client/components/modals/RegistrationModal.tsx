@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, CheckCircle, Loader2, Mail, Phone, MapPin, User as UserIcon, Lock, Chrome } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -200,7 +200,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
                 {isSuccess 
                   ? 'Մուտքը կատարվում է, խնդրում ենք սպասել...' 
                   : mode === 'signup' 
-                    ? 'Լրացրեք տվյալները՝ դասընթացին միանալու համար' 
+                    ? 'Լրացրեք տվյալները՝ հաշիվ ստեղծելու համար' 
                     : 'Մուտք գործեք ձեր հաշիվ'}
               </p>
             </div>
@@ -262,37 +262,42 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
                     </>
                   )}
 
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Էլ. հասցե</label>
-                    <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input 
-                        required
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        type="email" 
-                        placeholder="example@gmail.com"
-                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
-                      />
-                    </div>
-                  </div>
+                  {/* Email and Password only for signin/signup modes */}
+                  {mode !== 'courseRegister' && (
+                    <>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Էլ. հասցե</label>
+                        <div className="relative">
+                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input 
+                            required
+                            name="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            type="email" 
+                            placeholder="example@gmail.com"
+                            className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
+                          />
+                        </div>
+                      </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Գաղտնաբառ</label>
-                    <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input 
-                        required
-                        name="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        type="password" 
-                        placeholder="••••••••"
-                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
-                      />
-                    </div>
-                  </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Գաղտնաբառ</label>
+                        <div className="relative">
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input 
+                            required
+                            name="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            type="password" 
+                            placeholder="••••••••"
+                            className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
 
                   {error && (
                     <motion.p 

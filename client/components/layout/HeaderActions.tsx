@@ -7,12 +7,13 @@ import { User as UserIcon } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 
 interface HeaderActionsProps {
-  onOpenModal: () => void
+  onOpenLoginModal: () => void
+  onOpenCourseModal: () => void
   mobile?: boolean
   onMobileLinkClick?: () => void
 }
 
-export default function HeaderActions({ onOpenModal, mobile, onMobileLinkClick }: HeaderActionsProps) {
+export default function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onMobileLinkClick }: HeaderActionsProps) {
   const { user, isLoggedIn, isLoaded } = useAuth()
   const [avatarOverride, setAvatarOverride] = useState<string>('')
 
@@ -109,7 +110,7 @@ export default function HeaderActions({ onOpenModal, mobile, onMobileLinkClick }
           {(!user?.isPaid && user?.role !== 'student') && (
             <Button 
               onClick={() => {
-                onOpenModal()
+                onOpenCourseModal()
                 onMobileLinkClick?.()
               }}
               className="w-full bg-slate-900"
@@ -125,7 +126,7 @@ export default function HeaderActions({ onOpenModal, mobile, onMobileLinkClick }
       <div className="flex flex-col gap-4">
         <Button 
           onClick={() => {
-            onOpenModal()
+            onOpenCourseModal()
             onMobileLinkClick?.()
           }}
           className="w-full bg-slate-900"
@@ -134,7 +135,7 @@ export default function HeaderActions({ onOpenModal, mobile, onMobileLinkClick }
         </Button>
         <button 
           onClick={() => {
-            onOpenModal()
+            onOpenLoginModal()
             onMobileLinkClick?.()
           }}
           className="text-center text-slate-600 font-bold py-2"
@@ -177,7 +178,7 @@ export default function HeaderActions({ onOpenModal, mobile, onMobileLinkClick }
         </div>
         {(!user?.isPaid && user?.role !== 'student') && (
           <Button  
-            onClick={onOpenModal}
+            onClick={onOpenCourseModal}
             className="rounded-full bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all hover:scale-105 px-6"
           >
             Գրանցվել
@@ -190,14 +191,14 @@ export default function HeaderActions({ onOpenModal, mobile, onMobileLinkClick }
   return (
     <>
       <button 
-        onClick={onOpenModal}
+        onClick={onOpenLoginModal}
         className="text-slate-600 hover:text-violet-600 font-semibold text-sm px-4 py-2 transition-colors"
       >
         Մուտք
       </button>
       
       <Button  
-        onClick={onOpenModal}
+        onClick={onOpenCourseModal}
         className="rounded-full bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all hover:scale-105 px-6"
       >
         Գրանցվել
