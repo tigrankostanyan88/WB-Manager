@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Award, BookOpen, ChevronRight, Clock, CreditCard, Mail, MapPin, Phone, PlayCircle, Shield, Trophy, TrendingUp } from 'lucide-react'
+import { Award, BookOpen, BookOpenCheck, ChevronRight, Clock, CreditCard, Mail, MapPin, Phone, PlayCircle, Shield, Trophy, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -14,6 +14,7 @@ interface ProfileUser {
   email: string
   phone: string
   address: string
+  course_ids?: string[]
 }
 
 interface StatsData {
@@ -50,12 +51,13 @@ export default function ProfileTab({
       transition={{ duration: 0.25 }}
       className="space-y-6"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         {[
           { label: 'Ընթացիկ դասեր', val: stats?.currentLessons || '0/0', icon: Clock, color: 'text-orange-600', bg: 'bg-orange-50', borderColor: 'border-orange-100' },
           { label: 'Առաջընթաց', val: `${stats?.progress || 0}%`, icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-50', borderColor: 'border-violet-100' },
           { label: 'Միավորներ', val: stats?.points?.toLocaleString() || '0', icon: Trophy, color: 'text-emerald-600', bg: 'bg-emerald-50', borderColor: 'border-emerald-100' },
           { label: 'Սերտիֆիկատ', val: stats?.certificates || '0', icon: Award, color: 'text-blue-600', bg: 'bg-blue-50', borderColor: 'border-blue-100' },
+          { label: 'Գրանցված եմ', val: user.course_ids?.length || 0, icon: BookOpenCheck, color: 'text-pink-600', bg: 'bg-pink-50', borderColor: 'border-pink-100' },
         ].map((stat, i) => (
           <motion.div 
             key={i} 
@@ -220,41 +222,6 @@ export default function ProfileTab({
               ))
             ) : (
               <div className="p-10 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">Վճարումներ չկան</div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex items-center justify-between px-2">
-          <h4 className="text-xl font-black text-slate-900">Իմ դասընթացները (ID-ներով)</h4>
-          <span className="text-xs font-bold text-slate-400">Կուրսի ID | Կուրսի անուն</span>
-        </div>
-        <Card className="shadow-sm rounded-2xl bg-white overflow-hidden border border-slate-50">
-          <CardContent className="p-0">
-            {myCourses.map((course) => (
-              <div key={course.id} className="flex items-center justify-between p-6 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 group">
-                <div className="flex items-center gap-4">
-                  <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110', 'bg-violet-100 text-violet-600')}>
-                    <BookOpen className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-slate-900">{course.title}</p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono text-slate-400">ID: {course.id}</span>
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                      <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Վճարված է</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-black text-slate-900">{course.progress}%</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Առաջընթաց</p>
-                </div>
-              </div>
-            ))}
-            {myCourses.length === 0 && (
-              <div className="p-10 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">Դասընթացներ չկան</div>
             )}
           </CardContent>
         </Card>

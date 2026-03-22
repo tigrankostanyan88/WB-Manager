@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard, Building2 } from 'lucide-react'
+import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard, Building2, GraduationCap } from 'lucide-react'
 import DashboardHeader from '@/app/dashboard/_components/DashboardHeader'
 import DashboardSidebar from '@/app/dashboard/_components/DashboardSidebar'
 import CropModal from '@/app/dashboard/_components/CropModal'
@@ -19,6 +19,7 @@ import OverviewTab from '@/app/dashboard/_components/tabs/OverviewTab'
 import PaymentsTab from '@/app/dashboard/_components/tabs/PaymentsTab'
 import SettingsTab from '@/app/dashboard/_components/tabs/SettingsTab'
 import UsersTab from '@/app/dashboard/_components/tabs/UsersTab'
+import EnrollmentsTab from '@/app/dashboard/_components/tabs/EnrollmentsTab'
 import useAuth from '@/app/dashboard/_hooks/useAuth'
 import useCrop from '@/app/dashboard/_hooks/useCrop'
 import useCourses from '@/app/dashboard/_hooks/useCourses'
@@ -30,6 +31,7 @@ import usePayments from '@/app/dashboard/_hooks/usePayments'
 import useReviews from '@/app/dashboard/_hooks/useReviews'
 import useSettings from '@/app/dashboard/_hooks/useSettings'
 import useUsers from '@/app/dashboard/_hooks/useUsers'
+import { useEnrollments } from '@/app/dashboard/_hooks/useEnrollments'
 import type { DashboardMenuItem } from '@/app/dashboard/_components/DashboardSidebar'
 import type { DashboardTabId, User } from '@/app/dashboard/_types'
 
@@ -83,10 +85,15 @@ export default function DashboardPage() {
     activeTab,
     allowed
   })
+  const { enrollments, courses: enrollmentCourses, enrollmentsByCourse, isLoading: isEnrollmentsLoading, selectedCourse, setSelectedCourse, searchTerm: enrollmentSearchTerm, setSearchTerm: setEnrollmentSearchTerm, revokeAccess } = useEnrollments({
+    activeTab,
+    allowed
+  })
   const menuItems = useMemo<DashboardMenuItem[]>(
     () => [
       { id: 'overview', label: 'Վահանակ', icon: LayoutDashboard },
       { id: 'users', label: 'Օգտվողներ', icon: Users },
+      { id: 'enrollments', label: 'Գրանցումներ', icon: GraduationCap },
       { id: 'payments', label: 'Վճարումներ', icon: CreditCard },
       { id: 'bank-cards', label: 'Բանկային քարտեր', icon: Building2 },
       { id: 'courses', label: 'Դասընթացներ', icon: BookOpen },
@@ -159,6 +166,20 @@ export default function DashboardPage() {
                     getUserPaymentStatus={getUserPaymentStatus}
                     onEdit={startEditUserModal}
                     onDelete={handleDeleteUser}
+                  />
+              )}
+
+              {activeTab === 'enrollments' && (
+                  <EnrollmentsTab
+                    enrollments={enrollments}
+                    courses={enrollmentCourses}
+                    enrollmentsByCourse={enrollmentsByCourse}
+                    isLoading={isEnrollmentsLoading}
+                    selectedCourse={selectedCourse}
+                    setSelectedCourse={setSelectedCourse}
+                    searchTerm={enrollmentSearchTerm}
+                    setSearchTerm={setEnrollmentSearchTerm}
+                    revokeAccess={revokeAccess}
                   />
               )}
 

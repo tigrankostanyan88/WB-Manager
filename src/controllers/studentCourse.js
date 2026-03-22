@@ -45,6 +45,17 @@ module.exports = {
     });
   }),
 
+  // Get all enrollments (admin only)
+  getAllEnrollments: catchAsync(async (req, res, next) => {
+    const result = await service.getAllEnrollments();
+
+    res.status(200).json({
+      status: 'success',
+      count: result.count,
+      data: result.enrollments
+    });
+  }),
+
   // Revoke access (admin only)
   revokeAccess: catchAsync(async (req, res, next) => {
     await service.revokeAccess(req.body);

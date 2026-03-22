@@ -145,7 +145,7 @@ export default function ProfilePage() {
     )
   }
 
-  const sidebarLinks: SidebarLink[] = [
+  const allSidebarLinks: SidebarLink[] = [
     { id: 'profile', label: 'Պրոֆիլ', icon: UserIcon },
     { id: 'courses', label: 'Իմ դասընթացները', icon: BookOpen, count: myCourses?.length || 0 },
     { id: 'personal', label: 'Անձնական տվյալներ', icon: FileText },
@@ -154,9 +154,15 @@ export default function ProfilePage() {
     { id: 'settings', label: 'Կարգավորումներ', icon: Settings },
   ]
 
-  if (currentUser?.role === 'admin') {
-    sidebarLinks.splice(1, 0, { id: 'dashboard', label: 'Վահանակ', icon: LayoutDashboard, href: '/dashboard' })
-  }
+  // Build sidebar links based on role
+  const sidebarLinks: SidebarLink[] = currentUser?.role === 'admin' 
+    ? [
+        { id: 'profile', label: 'Պրոֆիլ', icon: UserIcon },
+        { id: 'dashboard', label: 'Վահանակ', icon: LayoutDashboard, href: '/dashboard' },
+        { id: 'personal', label: 'Անձնական տվյալներ', icon: FileText },
+        { id: 'settings', label: 'Կարգավորումներ', icon: Settings },
+      ]
+    : allSidebarLinks
 
   return (
     <div className="min-h-screen bg-slate-50/50 ">
@@ -180,7 +186,9 @@ export default function ProfilePage() {
           />
 
           <div className="space-y-6 min-h-[850px]">
-            <ProBanner user={currentUser as any} myPayments={myPayments} totalCoursesCount={totalCoursesCount} onShowPaymentModal={() => setShowPaymentModal(true)} />
+            {currentUser?.role !== 'admin' && (
+              <ProBanner user={currentUser as any} myPayments={myPayments} totalCoursesCount={totalCoursesCount} onShowPaymentModal={() => setShowPaymentModal(true)} />
+            )}
 
             <AnimatePresence mode="wait">
               {activeTab === 'profile' && (

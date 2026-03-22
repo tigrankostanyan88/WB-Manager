@@ -57,12 +57,15 @@ export default function EditUserModal({ user, open, onClose, onSubmit }: EditUse
   }, [open])
 
   const toggleCourse = (courseId: string | number) => {
-    setForm((f) => ({
-      ...f,
-      courseIds: f.courseIds.includes(courseId)
-        ? f.courseIds.filter((id) => id !== courseId)
-        : [...f.courseIds, courseId]
-    }))
+    setForm((f) => {
+      const currentIds = Array.isArray(f.courseIds) ? f.courseIds : []
+      return {
+        ...f,
+        courseIds: currentIds.includes(courseId)
+          ? currentIds.filter((id) => id !== courseId)
+          : [...currentIds, courseId]
+      }
+    })
   }
 
   const submit = async (e: React.FormEvent) => {

@@ -48,6 +48,25 @@ module.exports = {
     return enrollment.update(data);
   },
 
+  // Find all enrollments with user and course data
+  findAll: async () => {
+    return StudentCourse.findAll({
+      include: [
+        {
+          model: User,
+          as: 'student',
+          attributes: ['id', 'name', 'email', 'phone', 'role']
+        },
+        {
+          model: Course,
+          as: 'course',
+          attributes: ['id', 'title', 'description']
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+  },
+
   // Find user by ID
   findUserById: async (id) => {
     return User.findByPk(id);

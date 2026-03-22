@@ -100,6 +100,16 @@ module.exports = {
     };
   },
 
+  // Get all enrollments
+  getAllEnrollments: async () => {
+    const enrollments = await repo.findAll();
+
+    return {
+      enrollments,
+      count: enrollments.length
+    };
+  },
+
   // Revoke access
   revokeAccess: async (body) => {
     const { userId, courseId } = body;

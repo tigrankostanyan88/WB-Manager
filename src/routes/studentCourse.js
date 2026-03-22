@@ -10,6 +10,9 @@ router.get('/access/:courseId', ctrls.auth.protect, ctrls.studentCourse.checkAcc
 // Get my courses (student)
 router.get('/my-courses', ctrls.auth.protect, ctrls.studentCourse.getMyCourses);
 
+// Get all enrollments (admin only)
+router.get('/', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), ctrls.studentCourse.getAllEnrollments);
+
 // Get students for a course (admin only)
 router.get('/course-students/:courseId', ctrls.auth.protect, ctrls.auth.restrictTo('admin'), ctrls.studentCourse.getCourseStudents);
 

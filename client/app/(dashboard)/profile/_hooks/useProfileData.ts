@@ -23,6 +23,7 @@ export interface ProfileUser {
 
 export interface Payment {
   id: string
+  user_id?: string
   amount: number
   status: 'pending' | 'success' | 'failed'
   course_id?: string
@@ -109,22 +110,20 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
     return maybeReview as ReviewData
   }
 
-  const transformEnrollmentsToCourses = (enrollments: any[]): UserCourse[] => {
-    if (!Array.isArray(enrollments)) return []
-    return enrollments.map((enrollment: any) => {
-      const course = enrollment.course || {}
+  const transformCourses = (courses: any[]): UserCourse[] => {
+    if (!Array.isArray(courses)) return []
+    return courses.map((course: any) => {
       // Calculate progress from modules if available, otherwise default to 0
       let progress = 0
       if (course.modules && Array.isArray(course.modules) && course.modules.length > 0) {
-        // Calculate based on completed modules count
         const completedModules = course.modules.filter((m: any) => m.isCompleted || m.completed).length
         progress = Math.round((completedModules / course.modules.length) * 100)
       }
       return {
-        id: String(course.id || enrollment.id),
+        id: String(course.id),
         title: course.title || 'Անհայտ դասընթաց',
         desc: course.description || '',
-        status: enrollment.status === 'active' ? 'Ակտիվ' : 'Ավարտված',
+        status: progress > 0 ? 'Ակտիվ' : 'Նոր',
         lessons: course.modules?.length || course.lessons_count || course.lessons || 0,
         progress: progress,
         color: 'bg-violet-50 text-violet-600',
@@ -185,7 +184,7 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
           console.log('[Profile] Courses fetch error:', err?.response?.status || err.message)
           return { data: { data: [] } }
         }),
-        api.get('/api/v1/payments/my-payments').catch((err) => {
+        api.get('/api/v1/payments').catch((err) => {
           console.log('[Profile] Payments fetch error:', err?.response?.status || err.message)
           return { data: { payments: [] } }
         })
@@ -199,20 +198,29 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
       setUser(buildAvatar(nextUser))
       setMyReview(extractMyReview(reviewRes))
 
-      // Process courses data - API returns { status, count, data: enrollments }
-      let enrollments: any[] = []
-      const coursesData = coursesRes.data as any
-      if (Array.isArray(coursesData?.data)) {
-        enrollments = coursesData.data
-      }
-      console.log('[Profile] Extracted enrollments:', enrollments.length, 'items')
+      // Get user's course_ids and fetch courses directly
+      const courseIds = nextUser.course_ids || []
       
-      const transformedCourses = transformEnrollmentsToCourses(enrollments)
+      // Fetch courses by IDs from course_ids
+      const courses: any[] = []
+      for (const courseId of courseIds) {
+        try {
+          const courseRes = await api.get(`/api/v1/courses/${courseId}`)
+          if (courseRes.data?.data || courseRes.data) {
+            courses.push(courseRes.data?.data || courseRes.data)
+          }
+        } catch (err) {
+          console.log(`[Profile] Failed to fetch course ${courseId}:`, err)
+        }
+      }
+      
+      console.log('[Profile] Fetched courses from course_ids:', courses.length, 'items')
+      const transformedCourses = transformCourses(courses)
       console.log('[Profile] Transformed courses:', transformedCourses)
       setMyCourses(transformedCourses)
       setStats(calculateStats(transformedCourses))
 
-      // Process payments data - handle multiple response formats
+      // Process payments data - filter by current user_id from all payments
       let payments: Payment[] = []
       const paymentsData = paymentsRes.data as any
       if (Array.isArray(paymentsData?.payments)) {
@@ -222,8 +230,13 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
       } else if (Array.isArray(paymentsData?.data)) {
         payments = paymentsData.data
       }
-      console.log('[Profile] Extracted payments:', payments)
-      setMyPayments(payments)
+      
+      // Filter payments by current user_id
+      const currentUserId = String(nextUser.id)
+      const userPayments = payments.filter((p: Payment) => String(p.user_id) === currentUserId)
+      console.log('[Profile] All payments:', payments.length, 'User payments:', userPayments.length)
+      
+      setMyPayments(userPayments)
     } catch (err: any) {
       console.error('[Profile] Error fetching profile data:', err)
       // Handle 401 unauthorized - clear user and redirect will happen in page component

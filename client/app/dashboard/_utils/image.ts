@@ -12,14 +12,13 @@ export const fixLarge = (p?: string) => {
 export const withOrigin = (p?: string) => {
   if (!p || typeof p !== 'string') return p
   if (p.startsWith('/images/')) {
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || '/api'
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || ''
+    if (!apiBase) return p
     if (/^https?:\/\//i.test(apiBase)) {
       const origin = apiBase.replace(/\/api.*$/, '')
       return `${origin}${p}`
-    } else {
-      const prefix = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase
-      return `${prefix}${p}`
     }
+    return p
   }
   return p
 }

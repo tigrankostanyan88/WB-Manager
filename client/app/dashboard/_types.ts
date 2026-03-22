@@ -9,6 +9,7 @@ export type DashboardTabId =
   | 'settings'
   | 'payments'
   | 'bank-cards'
+  | 'enrollments'
 
 export interface User {
   id: number | string
