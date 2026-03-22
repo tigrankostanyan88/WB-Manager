@@ -2,12 +2,12 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Award, BookOpen, ChevronRight, Clock, Mail, MapPin, Phone, PlayCircle, Shield, Trophy, TrendingUp } from 'lucide-react'
+import { Award, BookOpen, ChevronRight, Clock, CreditCard, Mail, MapPin, Phone, PlayCircle, Shield, Trophy, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import React from 'react'
-import type { UserCourse } from '../../_hooks/useProfileData'
+import type { UserCourse, Payment } from '../../_hooks/useProfileData'
 
 interface ProfileUser {
   role?: string
@@ -24,18 +24,12 @@ interface StatsData {
   [key: string]: unknown
 }
 
-interface ReviewData {
-  id: string
-  rating: number
-  comment: string
-  [key: string]: unknown
-}
-
 interface ProfileTabProps {
   user: ProfileUser
   stats: StatsData | null
   isLoadingData: boolean
   myCourses: UserCourse[]
+  myPayments: Payment[]
   onViewAllCourses: () => void
 }
 
@@ -44,6 +38,7 @@ export default function ProfileTab({
   stats,
   isLoadingData,
   myCourses,
+  myPayments,
   onViewAllCourses
 }: ProfileTabProps) {
   return (
@@ -164,31 +159,102 @@ export default function ProfileTab({
       </div>
 
       <div className="space-y-4">
-        <h4 className="text-xl font-black text-slate-900 px-2">Դասընթացների վճարումներ</h4>
+        <div className="flex items-center justify-between px-2">
+          <h4 className="text-xl font-black text-slate-900">Իմ վճարումները</h4>
+          <span className="text-xs font-bold text-slate-400">Վճարման ID | Կուրսի ID</span>
+        </div>
+        <Card className="shadow-sm rounded-2xl bg-white overflow-hidden border border-slate-50">
+          <CardContent className="p-0">
+            {isLoadingData ? (
+              [1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center justify-between p-6 border-b border-slate-50 last:border-0 animate-pulse">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-100" />
+                    <div className="space-y-2">
+                      <div className="h-4 w-32 bg-slate-100 rounded" />
+                      <div className="h-3 w-24 bg-slate-100 rounded" />
+                    </div>
+                  </div>
+                  <div className="text-right space-y-2">
+                    <div className="h-4 w-20 bg-slate-100 rounded" />
+                    <div className="h-3 w-16 bg-slate-100 rounded" />
+                  </div>
+                </div>
+              ))
+            ) : myPayments.length > 0 ? (
+              myPayments.map((payment) => (
+                <div key={payment.id} className="flex items-center justify-between p-6 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 group">
+                  <div className="flex items-center gap-4">
+                    <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110', 
+                      payment.status === 'success' ? 'bg-emerald-100 text-emerald-600' : 
+                      payment.status === 'pending' ? 'bg-amber-100 text-amber-600' : 'bg-red-100 text-red-600'
+                    )}>
+                      <CreditCard className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-900">{payment.course?.title || 'Դասընթաց'}</p>
+                      <div className="flex items-center gap-2 text-[10px] font-medium text-slate-400">
+                        <span className="font-mono">Վճ.ID: {payment.id}</span>
+                        <span className="text-slate-300">|</span>
+                        <span className="font-mono">Կուրս.ID: {payment.course_id || '—'}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-black text-slate-900">{payment.amount?.toLocaleString()} ֏</p>
+                    <div className="flex items-center gap-1.5 justify-end">
+                      <div className={cn('w-1.5 h-1.5 rounded-full animate-pulse',
+                        payment.status === 'success' ? 'bg-emerald-500' : 
+                        payment.status === 'pending' ? 'bg-amber-500' : 'bg-red-500'
+                      )}></div>
+                      <span className={cn('text-[10px] font-black uppercase tracking-widest',
+                        payment.status === 'success' ? 'text-emerald-600' : 
+                        payment.status === 'pending' ? 'text-amber-600' : 'text-red-600'
+                      )}>
+                        {payment.status === 'success' ? 'Հաստատված' : 
+                         payment.status === 'pending' ? 'Սպասում' : 'Մերժված'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-10 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">Վճարումներ չկան</div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-2">
+          <h4 className="text-xl font-black text-slate-900">Իմ դասընթացները (ID-ներով)</h4>
+          <span className="text-xs font-bold text-slate-400">Կուրսի ID | Կուրսի անուն</span>
+        </div>
         <Card className="shadow-sm rounded-2xl bg-white overflow-hidden border border-slate-50">
           <CardContent className="p-0">
             {myCourses.map((course) => (
               <div key={course.id} className="flex items-center justify-between p-6 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 group">
                 <div className="flex items-center gap-4">
-                  <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110', 'bg-slate-100 text-slate-600')}>
+                  <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110', 'bg-violet-100 text-violet-600')}>
                     <BookOpen className="w-5 h-5" />
                   </div>
                   <div>
                     <p className="font-bold text-slate-900">{course.title}</p>
                     <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-mono text-slate-400">ID: {course.id}</span>
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
                       <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Վճարված է</span>
                     </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-black text-slate-900">Ակտիվ</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Հավերժ մուտք</p>
+                  <p className="font-black text-slate-900">{course.progress}%</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Առաջընթաց</p>
                 </div>
               </div>
             ))}
             {myCourses.length === 0 && (
-              <div className="p-10 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">Վճարված դասընթացներ չկան</div>
+              <div className="p-10 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">Դասընթացներ չկան</div>
             )}
           </CardContent>
         </Card>

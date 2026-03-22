@@ -7,8 +7,6 @@ const api = axios.create({
 
 // No localStorage token - using httpOnly cookies only for security
 api.interceptors.request.use((config) => {
-  // Cookies are automatically sent with withCredentials: true
-  // No need to manually set Authorization header
   if (config.data instanceof FormData) {
     if (config.headers && 'Content-Type' in config.headers) {
       delete (config.headers as any)['Content-Type'];

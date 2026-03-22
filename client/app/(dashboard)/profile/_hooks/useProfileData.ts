@@ -18,6 +18,7 @@ export interface ProfileUser {
   avatar?: string
   files?: UserFile[]
   isPaid?: boolean
+  course_ids?: string[]
 }
 
 export interface Payment {
@@ -191,20 +192,37 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
       ])
 
       console.log('[Profile] User response:', userRes.data)
-      console.log('[Profile] Courses response:', coursesRes.data)
+      console.log('[Profile] Courses raw response:', coursesRes.data)
+      console.log('[Profile] Payments raw response:', paymentsRes.data)
 
       const nextUser = (userRes.data as { user: ProfileUser }).user
       setUser(buildAvatar(nextUser))
       setMyReview(extractMyReview(reviewRes))
 
-      // Process courses data
-      const enrollments = (coursesRes.data as any)?.data || []
+      // Process courses data - API returns { status, count, data: enrollments }
+      let enrollments: any[] = []
+      const coursesData = coursesRes.data as any
+      if (Array.isArray(coursesData?.data)) {
+        enrollments = coursesData.data
+      }
+      console.log('[Profile] Extracted enrollments:', enrollments.length, 'items')
+      
       const transformedCourses = transformEnrollmentsToCourses(enrollments)
+      console.log('[Profile] Transformed courses:', transformedCourses)
       setMyCourses(transformedCourses)
       setStats(calculateStats(transformedCourses))
 
-      // Process payments data
-      const payments = (paymentsRes.data as any)?.payments || []
+      // Process payments data - handle multiple response formats
+      let payments: Payment[] = []
+      const paymentsData = paymentsRes.data as any
+      if (Array.isArray(paymentsData?.payments)) {
+        payments = paymentsData.payments
+      } else if (Array.isArray(paymentsData?.data?.payments)) {
+        payments = paymentsData.data.payments
+      } else if (Array.isArray(paymentsData?.data)) {
+        payments = paymentsData.data
+      }
+      console.log('[Profile] Extracted payments:', payments)
       setMyPayments(payments)
     } catch (err: any) {
       console.error('[Profile] Error fetching profile data:', err)

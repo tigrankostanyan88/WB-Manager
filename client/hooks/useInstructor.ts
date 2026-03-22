@@ -2,7 +2,7 @@
 
 // client/hooks/useInstructor.ts
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import api from '@/lib/api'
 import type { Instructor, InstructorStat, InstructorApiResponse } from '@/types/instructor'
 
@@ -11,6 +11,9 @@ interface UseInstructorReturn {
   loading: boolean
   error: Error | null
 }
+
+// Prevent re-fetch on Fast Refresh
+const isFirstRender = { current: true }
 
 function fixLargePath(path?: string): string | undefined {
   if (!path || typeof path !== 'string') return path
@@ -42,8 +45,12 @@ export function useInstructor(): UseInstructorReturn {
   const [instructor, setInstructor] = useState<Instructor>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
+  const hasFetched = useRef(false)
 
   useEffect(() => {
+    // Skip if already fetched (Fast Refresh protection)
+    if (hasFetched.current) return
+    
     let cancelled = false
 
     const fetchInstructor = async () => {
@@ -84,6 +91,7 @@ export function useInstructor(): UseInstructorReturn {
       } finally {
         if (!cancelled) {
           setLoading(false)
+          hasFetched.current = true
         }
       }
     }

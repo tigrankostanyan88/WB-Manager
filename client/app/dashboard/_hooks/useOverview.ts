@@ -50,7 +50,10 @@ export default function useOverview({ activeTab, allowed }: UseOverviewParams) {
 
         const studentsCount = allUsers.filter((u) => u.role === 'student').length
         const activeUsersCount = allUsers.filter((u) => u.role === 'user').length
-        const coursesCount = 2
+        
+        const resCourses = await api.get('/api/v1/courses')
+        const coursesData = Array.isArray(resCourses.data?.data) ? resCourses.data.data : (resCourses.data?.data?.courses || resCourses.data?.courses || [])
+        const coursesCount = Array.isArray(coursesData) ? coursesData.length : 0
 
         const resReviews = await api.get('/api/v1/reviews')
         const payload = resReviews.data as { reviews?: unknown; data?: unknown }

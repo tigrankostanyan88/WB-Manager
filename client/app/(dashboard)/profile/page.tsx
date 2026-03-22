@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
-import { User as UserIcon, Settings, LayoutDashboard, Wallet, MessageSquare, FileText, type LucideIcon } from 'lucide-react'
+import { User as UserIcon, Settings, LayoutDashboard, Wallet, MessageSquare, FileText, BookOpen, type LucideIcon } from 'lucide-react'
  
 import { useState, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
@@ -147,6 +147,7 @@ export default function ProfilePage() {
 
   const sidebarLinks: SidebarLink[] = [
     { id: 'profile', label: 'Պրոֆիլ', icon: UserIcon },
+    { id: 'courses', label: 'Իմ դասընթացները', icon: BookOpen, count: myCourses?.length || 0 },
     { id: 'personal', label: 'Անձնական տվյալներ', icon: FileText },
     { id: 'comments', label: 'Մեկնաբանություններ', icon: MessageSquare },
     { id: 'payments', label: 'Վճարումներ', icon: Wallet },
@@ -188,6 +189,7 @@ export default function ProfilePage() {
                   stats={stats}
                   isLoadingData={isLoadingData}
                   myCourses={myCourses}
+                  myPayments={myPayments}
                   onViewAllCourses={handleViewAllCourses}
                 />
               )}

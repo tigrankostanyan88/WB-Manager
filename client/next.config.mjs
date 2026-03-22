@@ -2,8 +2,7 @@
 const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
 const apiOrigin = /^https?:\/\//.test(apiBase) ? apiBase.replace(/\/api\/?$/, '') : apiBase
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: false,
+  reactStrictMode: false,
   compiler: {
     styledComponents: false,
   },

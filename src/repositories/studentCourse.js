@@ -53,8 +53,10 @@ module.exports = {
     return User.findByPk(id);
   },
 
-  // Find course by ID
+  // Find course by ID with modules
   findCourseById: async (id) => {
-    return Course.findByPk(id);
+    return Course.findByPk(id, {
+      include: [{ model: Module, as: 'modules' }]
+    })
   }
 };
