@@ -2,7 +2,9 @@
 
 // client/components/landing/CurriculumSection.tsx
 
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import CourseRegistrationModal from '@/components/modals/CourseRegistrationModal'
 import {
   FileSpreadsheet,
   ShoppingBag,
@@ -42,6 +44,8 @@ const FEATURES = [
 ] as const
 
 export function CurriculumSection() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   return (
     <section id="curriculum" className="w-full py-24 bg-slate-950 text-slate-50 relative overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
@@ -114,6 +118,7 @@ export function CurriculumSection() {
             <div className="flex justify-center md:justify-end">
               <Button
                 size="lg"
+                onClick={() => setIsModalOpen(true)}
                 className="bg-white text-slate-950 hover:bg-slate-200 rounded-full px-8 h-14 text-base font-bold shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] transition-all hover:scale-105"
               >
                 Գրանցվել հիմա
@@ -122,6 +127,7 @@ export function CurriculumSection() {
           </div>
         </div>
       </div>
+      <CourseRegistrationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </section>
   )
 }

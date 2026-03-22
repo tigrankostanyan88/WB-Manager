@@ -69,6 +69,9 @@ export function useInstructor(): UseInstructorReturn {
 
         if (!cancelled) {
           setInstructor({
+            name: row.name ?? '',
+            title: row.title ?? '',
+            profession: row.profession ?? '',
             avatarUrl: withOrigin(fixLargePath(row.avatar_url)),
             description: row.description ?? '',
             stats,
