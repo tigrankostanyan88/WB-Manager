@@ -11,6 +11,7 @@ export type DashboardTabId =
   | 'bank-cards'
   | 'enrollments'
   | 'course-registrations'
+  | 'contact-messages'
 
 export interface User {
   id: number | string
