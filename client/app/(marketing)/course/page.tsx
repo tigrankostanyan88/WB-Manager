@@ -101,7 +101,7 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      <Link href={`/course-details/${course.id}`}>
+      <Link href={`/course-details/${course.id}`} prefetch={true}>
         <div className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 hover:border-violet-200 h-full flex flex-col">
           {/* Thumbnail Container */}
           <div className="relative h-48 overflow-hidden bg-slate-900">

@@ -32,8 +32,9 @@ export default function CoursesTab({ isLoadingData, myCourses }: CoursesTabProps
           myCourses.map((course) => (
             <Link
               key={course.id}
-              href={`/courses/${course.id}`}
-              className="group block"
+              href={`/course-details/${course.id}`}
+              prefetch={true}
+              className="block group"
             >
               <Card className="h-full bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border-0 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                 <div className="h-2 bg-gradient-to-r from-violet-500 to-indigo-600" />
@@ -82,7 +83,7 @@ export default function CoursesTab({ isLoadingData, myCourses }: CoursesTabProps
             </div>
             <h3 className="text-xl font-black text-slate-900 mb-2">Դեռ չկան դասընթացներ</h3>
             <p className="text-slate-500 mb-6">Սկսեք սովորել մեր դասընթացներից</p>
-            <Link href="/courses">
+            <Link href="/courses" prefetch={true}>
               <Button className="bg-violet-600 hover:bg-violet-700 text-white rounded-xl px-8 h-12 font-bold">
                 Դիտել դասընթացները
               </Button>

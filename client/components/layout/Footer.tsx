@@ -30,25 +30,25 @@ export default function Footer() {
           <div className="space-y-4">
             <h3 className="font-bold text-slate-900">Ծրագիր</h3>
             <ul className="space-y-3 text-sm text-slate-500">
-              <li><Link href="/#curriculum" className="hover:text-violet-600 transition-colors">Ուսուցում</Link></li>
-              <li><Link href="/#mentors" className="hover:text-violet-600 transition-colors">Մենթորներ</Link></li>
-              <li><Link href="/#features" className="hover:text-violet-600 transition-colors">Առավելություններ</Link></li>
-              <li><Link href="/#impact" className="hover:text-violet-600 transition-colors">Արդյունքներ</Link></li>
+              <li><Link href="/#curriculum" prefetch={true} className="hover:text-violet-600 transition-colors">Ուսուցում</Link></li>
+              <li><Link href="/#mentors" prefetch={true} className="hover:text-violet-600 transition-colors">Մենթորներ</Link></li>
+              <li><Link href="/#features" prefetch={true} className="hover:text-violet-600 transition-colors">Առավելություններ</Link></li>
+              <li><Link href="/#impact" prefetch={true} className="hover:text-violet-600 transition-colors">Արդյունքներ</Link></li>
             </ul>
           </div>
           <div className="space-y-4">
             <h3 className="font-bold text-slate-900">Ընկերություն</h3>
             <ul className="space-y-3 text-sm text-slate-500">
-              <li><Link href="#" className="hover:text-violet-600 transition-colors">Մեր մասին</Link></li>
-              <li><Link href="#" className="hover:text-violet-600 transition-colors">Կապ</Link></li>
-              <li><Link href="/#faq" className="hover:text-violet-600 transition-colors">ՀՏՀ</Link></li>
+              <li><Link href="#" prefetch={true} className="hover:text-violet-600 transition-colors">Մեր մասին</Link></li>
+              <li><Link href="#" prefetch={true} className="hover:text-violet-600 transition-colors">Կապ</Link></li>
+              <li><Link href="/#faq" prefetch={true} className="hover:text-violet-600 transition-colors">ՀՏՀ</Link></li>
             </ul>
           </div>
           <div className="space-y-4 col-span-2 md:col-span-1">
             <h3 className="font-bold text-slate-900">Իրավական</h3>
             <ul className="space-y-3 text-sm text-slate-500">
-              <li><Link href="#" className="hover:text-violet-600 transition-colors">Գաղտնիության քաղաքականություն</Link></li>
-              <li><Link href="#" className="hover:text-violet-600 transition-colors">Օգտագործման պայմաններ</Link></li>
+              <li><Link href="#" prefetch={true} className="hover:text-violet-600 transition-colors">Գաղտնիության քաղաքականություն</Link></li>
+              <li><Link href="#" prefetch={true} className="hover:text-violet-600 transition-colors">Օգտագործման պայմաններ</Link></li>
             </ul>
           </div>
         </div>

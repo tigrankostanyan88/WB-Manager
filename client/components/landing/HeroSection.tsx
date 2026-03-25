@@ -86,7 +86,7 @@ export function HeroSection({
               >
                 Սկսել հիմա <ChevronRight className="ml-2 h-5 w-5" />
               </Button>
-              <Link href="/course" className="w-full sm:w-auto">
+              <Link href="/course" prefetch={true} className="w-full sm:w-auto">
                 <Button
                   variant="outline"
                   className="rounded-full h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-bold border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all w-full"

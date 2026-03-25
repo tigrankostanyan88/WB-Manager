@@ -126,10 +126,10 @@ export default function DashboardPage() {
 
   if (!allowed) {
     return (
-      <div className="min-h-screen bg-slate-50/50">
-        <Header />
-        <main className="container max-w-[1400px] px-4 md:px-8 pt-48 pb-32 flex justify-center">
-          <div className="w-full max-w-xl bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 text-center mt-10">
+      <div className="min-h-screen bg-slate-50/50 flex flex-col">
+        <Header forceWhiteBackground />
+        <main className="flex-1 flex items-center justify-center px-4 py-20">
+          <div className="w-full max-w-xl bg-white rounded-[2.5rem] p-10 shadow-lg border border-slate-100 text-center">
             <div className="mx-auto w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center text-red-600">
               <Shield className="w-8 h-8" />
             </div>

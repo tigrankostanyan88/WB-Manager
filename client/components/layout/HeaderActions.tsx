@@ -160,7 +160,7 @@ export default function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mob
     return (
       <>
         <div className="flex items-center gap-3">
-          <Link href="/profile" title="Պրոֆիլ">
+          <Link href="/profile" prefetch={true} title="Պրոֆիլ">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 p-[2px] shadow-lg shadow-violet-100 hover:scale-110 transition-transform active:scale-95">
               <div className="w-full h-full rounded-[10px] bg-white flex items-center justify-center overflow-hidden">
                 {avatarUrl ? (

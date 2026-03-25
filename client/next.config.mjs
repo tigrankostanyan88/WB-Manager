@@ -13,8 +13,12 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   experimental: {
-    typedRoutes: false
+    typedRoutes: false,
   },
+  // Optimize for faster navigation
+  poweredByHeader: false,
+  generateEtags: false,
+  compress: true,
   async rewrites() {
     return [
       {

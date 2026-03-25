@@ -48,7 +48,7 @@ export default function Header({ forceWhiteBackground = false }: { forceWhiteBac
         <div className="container px-4 md:px-6">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 relative z-50">
+            <Link href="/" prefetch={true} className="flex items-center gap-2 relative z-50">
               {settings.logo ? (
                 <div className="h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-violet-200">
                   <img src={settings.logo} alt="Logo" className="w-full h-full object-cover" />
@@ -69,6 +69,7 @@ export default function Header({ forceWhiteBackground = false }: { forceWhiteBac
                 <Link 
                   key={link.href} 
                   href={link.href} 
+                  prefetch={true}
                   className="text-slate-600 transition-colors hover:text-[#502899]"
                 >
                   {link.label}
@@ -101,7 +102,8 @@ export default function Header({ forceWhiteBackground = false }: { forceWhiteBac
                   {navLinks.map((link) => (
                     <Link 
                       key={link.href} 
-                      href={link.href} 
+                      href={link.href}
+                      prefetch={true}
                       className="text-slate-600 font-medium py-2"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >

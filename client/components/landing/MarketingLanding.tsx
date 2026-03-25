@@ -2,8 +2,8 @@
 
 // client/components/MarketingLanding.tsx
 
-import { useState } from 'react'
-import { useSettings } from '@/context/SettingsContext' // moved from lib
+import { useState, Suspense, lazy } from 'react'
+import { useSettings } from '@/context/SettingsContext'
 import { useInstructor } from '@/hooks/useInstructor'
 import { useVideoPlayer } from '@/hooks/useVideoPlayer'
 import RegistrationModal from '@/components/modals/RegistrationModal'
@@ -15,9 +15,20 @@ import {
   CurriculumSection,
   InstructorSection,
   FaqSection,
-  ContactSection,
-  CtaSection,
 } from '@/components/landing'
+
+// Lazy load sections below the fold
+const ReviewsSection = lazy(() => import('./ReviewsSection').then(m => ({ default: m.ReviewsSection })))
+const ContactSection = lazy(() => import('./ContactSection').then(m => ({ default: m.ContactSection })))
+const CtaSection = lazy(() => import('./CtaSection').then(m => ({ default: m.CtaSection })))
+
+function SectionLoader() {
+  return (
+    <div className="w-full py-20 flex justify-center">
+      <div className="animate-pulse h-8 w-32 bg-slate-200 rounded-full" />
+    </div>
+  )
+}
 
 export default function MarketingLanding() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -45,9 +56,14 @@ export default function MarketingLanding() {
         instructor={instructor}
         onOpenModal={handleOpenModal}
       />
+      <Suspense fallback={<SectionLoader />}>
+        <ReviewsSection />
+      </Suspense>
       <FaqSection />
-      <ContactSection settings={settings} />
-      <CtaSection onOpenModal={handleOpenModal} />
+      <Suspense fallback={<SectionLoader />}>
+        <ContactSection settings={settings} />
+        <CtaSection onOpenModal={handleOpenModal} />
+      </Suspense>
 
       {isModalOpen && (
         <RegistrationModal

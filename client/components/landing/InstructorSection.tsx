@@ -121,14 +121,14 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link href="/course" className="w-full sm:w-auto">
+              <Link href="/course" prefetch={true} className="w-full sm:w-auto">
                 <Button
                   className="h-14 rounded-full px-8 text-lg font-bold bg-slate-900 text-white hover:bg-violet-600 transition-colors shadow-xl shadow-slate-200 w-full"
                 >
                   Սկսել ուսուցումը
                 </Button>
               </Link>
-              <Link href="/#reviews" className="w-full sm:w-auto">
+              <Link href="/#reviews" prefetch={true} className="w-full sm:w-auto">
                 <Button
                   variant="outline"
                   className="h-14 rounded-full px-8 text-lg font-bold border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full"

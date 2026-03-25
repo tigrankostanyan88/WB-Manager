@@ -104,7 +104,7 @@ export default function ProfileTab({
             [1, 2].map((i) => <div key={i} className="h-56 bg-white rounded-2xl animate-pulse" />)
           ) : myCourses.length > 0 ? (
             myCourses.slice(0, 2).map((course) => (
-              <Link key={course.id} href={`/course-details/${course.id}`} className="block group">
+              <Link key={course.id} href={`/course-details/${course.id}`} prefetch={true} className="block group">
                 <Card className="shadow-xl shadow-slate-200/30 rounded-2xl bg-white overflow-hidden group hover:shadow-2xl transition-all duration-500 border border-slate-100/50">
                   <CardContent className="p-0">
                     <div className="p-7">
