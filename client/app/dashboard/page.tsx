@@ -107,7 +107,7 @@ export default function DashboardPage() {
       { id: 'users', label: 'Օգտվողներ', icon: Users },
       { id: 'enrollments', label: 'Գրանցումներ', icon: GraduationCap },
       { id: 'course-registrations', label: 'Կուրսերի գրանցումներ', icon: BookOpen },
-      { id: 'contact-messages', label: 'Կոնտակտային հաղորդագրություններ', icon: Mail },
+      { id: 'contact-messages', label: 'Կոնտակտներ', icon: Mail },
       { id: 'payments', label: 'Վճարումներ', icon: CreditCard },
       { id: 'bank-cards', label: 'Բանկային քարտեր', icon: Building2 },
       { id: 'courses', label: 'Դասընթացներ', icon: BookOpen },
