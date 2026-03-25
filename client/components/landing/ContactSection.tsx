@@ -2,13 +2,9 @@
 
 // client/components/landing/ContactSection.tsx
 
+import { useState, FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
-import {
-  CheckCircle,
-  Globe,
-  Users,
-  Zap,
-} from 'lucide-react'
+import { CheckCircle, Globe, Users, Zap, Loader2, Send, XCircle } from 'lucide-react'
 import { getWorkingHoursLabel } from '@/lib/workingHours'
 
 interface Settings {
@@ -108,6 +104,68 @@ function ContactCard({
 }
 
 export function ContactSection({ settings }: ContactSectionProps) {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  })
+  const [privacyAccepted, setPrivacyAccepted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target
+    setFormData(prev => ({ ...prev, [id]: value }))
+  }
+
+  const validateForm = () => {
+    if (!formData.name.trim()) return 'Խնդրում ենք մուտքագրել ձեր անունը'
+    if (!formData.email.trim()) return 'Խնդրում ենք մուտքագրել ձեր էլ. փոստը'
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return 'Էլ. փոստի ձևաչափը սխալ է'
+    if (!formData.subject.trim()) return 'Խնդրում ենք մուտքագրել թեման'
+    if (!formData.message.trim()) return 'Խնդրում ենք մուտքագրել հաղորդագրությունը'
+    if (!privacyAccepted) return 'Խնդրում ենք համաձայնվել գաղտնիության քաղաքականությանը'
+    return ''
+  }
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    
+    const validationError = validateForm()
+    if (validationError) {
+      setSubmitStatus('error')
+      setErrorMessage(validationError)
+      return
+    }
+
+    try {
+      setIsSubmitting(true)
+      setSubmitStatus('idle')
+      setErrorMessage('')
+
+      const response = await fetch('/api/v1/contact-info', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.message || 'Հաղորդագրությունը չի ուղարկվել')
+      }
+
+      setSubmitStatus('success')
+      setFormData({ name: '', email: '', subject: '', message: '' })
+      setPrivacyAccepted(false)
+    } catch (err) {
+      setSubmitStatus('error')
+      setErrorMessage(err instanceof Error ? err.message : 'Անհայտ սխալ է տեղի ունեցել')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <section id="contact" className="w-full py-16 md:py-24 lg:py-32 bg-gray-50">
@@ -120,7 +178,21 @@ export function ContactSection({ settings }: ContactSectionProps) {
             <p className="text-gray-500 mb-6 sm:mb-8 text-sm sm:text-base break-words">
               Լրացրեք ստորև բերված ձևը և մենք կկապնվենք ձեզ հետ 24 ժամվա ընթացքում:
             </p>
-            <form className="space-y-5">
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              {/* Status Messages */}
+              {submitStatus === 'success' && (
+                <div className="flex items-center gap-2 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700">
+                  <CheckCircle className="w-5 h-5 shrink-0" />
+                  <p className="text-sm font-medium">Ձեր հաղորդագրությունը հաջողությամբ ուղարկվեց։ Մենք շուտով կկապնվենք ձեզ հետ։</p>
+                </div>
+              )}
+              {submitStatus === 'error' && (
+                <div className="flex items-center gap-2 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700">
+                  <XCircle className="w-5 h-5 shrink-0" />
+                  <p className="text-sm font-medium">{errorMessage}</p>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <div className="space-y-2">
                   <label htmlFor="name" className="text-xs sm:text-sm font-semibold text-gray-700">
@@ -129,6 +201,9 @@ export function ContactSection({ settings }: ContactSectionProps) {
                   <input
                     type="text"
                     id="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    disabled={isSubmitting || submitStatus === 'success'}
                     className="flex h-11 sm:h-12 w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3 sm:px-4 py-2 sm:py-3 text-sm ring-offset-white file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
                     placeholder="Ձեր անունը"
                   />
@@ -140,6 +215,9 @@ export function ContactSection({ settings }: ContactSectionProps) {
                   <input
                     type="email"
                     id="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    disabled={isSubmitting || submitStatus === 'success'}
                     className="flex h-11 sm:h-12 w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3 sm:px-4 py-2 sm:py-3 text-sm ring-offset-white file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
                     placeholder="Ձեր էլ. փոստը"
                   />
@@ -152,6 +230,9 @@ export function ContactSection({ settings }: ContactSectionProps) {
                 <input
                   type="text"
                   id="subject"
+                  value={formData.subject}
+                  onChange={handleInputChange}
+                  disabled={isSubmitting || submitStatus === 'success'}
                   className="flex h-11 sm:h-12 w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3 sm:px-4 py-2 sm:py-3 text-sm ring-offset-white file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
                   placeholder="Հաղորդագրության թեման"
                 />
@@ -162,7 +243,9 @@ export function ContactSection({ settings }: ContactSectionProps) {
                 </label>
                 <textarea
                   id="message"
-                  rows={3}
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  disabled={isSubmitting || submitStatus === 'success'}
                   className="flex min-h-[100px] sm:min-h-[120px] w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3 sm:px-4 py-2 sm:py-3 text-sm ring-offset-white placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-y"
                   placeholder="Գրեք ձեր հաղորդագրությունը այստեղ..."
                 />
@@ -172,6 +255,9 @@ export function ContactSection({ settings }: ContactSectionProps) {
                   id="privacy"
                   name="privacy"
                   type="checkbox"
+                  checked={privacyAccepted}
+                  onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                  disabled={isSubmitting || submitStatus === 'success'}
                   className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary transition duration-150 ease-in-out cursor-pointer mt-0.5 sm:mt-0 shrink-0"
                 />
                 <label
@@ -185,8 +271,27 @@ export function ContactSection({ settings }: ContactSectionProps) {
                 </label>
               </div>
               <div className="pt-2">
-                <Button className="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90 text-white font-semibold text-sm sm:text-base shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 px-2 sm:px-4 whitespace-normal break-words">
-                  Ուղարկել հաղորդագրությունը
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || submitStatus === 'success'}
+                  className="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90 text-white font-semibold text-sm sm:text-base shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 px-2 sm:px-4 whitespace-normal break-words disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Ուղարկվում է...
+                    </span>
+                  ) : submitStatus === 'success' ? (
+                    <span className="flex items-center gap-2">
+                      <CheckCircle className="w-5 h-5" />
+                      Ուղարկված է
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <Send className="w-5 h-5" />
+                      Ուղարկել հաղորդագրությունը
+                    </span>
+                  )}
                 </Button>
               </div>
             </form>

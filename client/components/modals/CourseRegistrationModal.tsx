@@ -45,9 +45,11 @@ export default function CourseRegistrationModal({ isOpen, onClose }: CourseRegis
         setIsDropdownOpen(false)
       }
     }
-    document.addEventListener('mousedown', handleClickOutside)
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+  }, [isDropdownOpen])
 
   const fetchCourses = async () => {
     try {
@@ -79,16 +81,13 @@ export default function CourseRegistrationModal({ isOpen, onClose }: CourseRegis
     setError(null)
 
     try {
-      const selectedCourse = courses.find(c => String(c.id) === formData.courseId)
-
-      const response = await fetch('/api/v1/registration', {
+      const response = await fetch('/api/v1/register-course', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          course_id: parseInt(formData.courseId),
           name: formData.name,
-          email: `${formData.phone}@placeholder.com`,
-          phone: formData.phone,
-          packageType: selectedCourse?.title || 'Դասընթաց'
+          phone: formData.phone
         })
       })
 
@@ -173,56 +172,27 @@ export default function CourseRegistrationModal({ isOpen, onClose }: CourseRegis
             {!isSuccess && (
               <div className="space-y-6">
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  {/* Course Selection - Custom Dropdown */}
-                  <div className="space-y-1.5" ref={dropdownRef}>
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Դասընթաց</label>
+                  {/* Course Selection - Simple Native Select */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Դասընթաց *</label>
                     <div className="relative">
                       <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10 pointer-events-none" />
-                      
-                      {/* Custom Select Trigger */}
-                      <button
-                        type="button"
-                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      <select
+                        name="courseId"
+                        value={formData.courseId}
+                        onChange={handleInputChange}
+                        required
                         disabled={coursesLoading}
-                        className="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-slate-700 font-medium text-left flex items-center justify-between disabled:opacity-50"
+                        className="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-slate-700 font-medium appearance-none cursor-pointer disabled:opacity-50"
                       >
-                        <span className="truncate">
-                          {coursesLoading 
-                            ? 'Բեռնում...' 
-                            : selectedCourse 
-                              ? selectedCourse.title 
-                              : 'Ընտրեք դասընթացը'}
-                        </span>
-                        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                      </button>
-
-                      {/* Custom Dropdown Menu */}
-                      <AnimatePresence>
-                        {isDropdownOpen && (
-                          <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.15 }}
-                            className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-2xl shadow-2xl max-h-48 overflow-y-auto z-50"
-                            style={{ maxWidth: '100%' }}
-                          >
-                            {courses.map((course) => (
-                              <button
-                                key={course.id}
-                                type="button"
-                                onClick={() => handleCourseSelect(String(course.id), course.title)}
-                                className={`w-full px-4 py-3 text-left text-sm font-medium transition-colors hover:bg-violet-50 first:rounded-t-2xl last:rounded-b-2xl ${
-                                  formData.courseId === String(course.id) ? 'bg-violet-100 text-violet-700' : 'text-slate-700'
-                                }`}
-                                title={course.title}
-                              >
-                                <span className="block truncate">{course.title}</span>
-                              </button>
-                            ))}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                        <option value="">{coursesLoading ? 'Բեռնում...' : 'Ընտրեք դասընթացը'}</option>
+                        {courses.map((course) => (
+                          <option key={course.id} value={String(course.id)}>
+                            {course.title}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                     </div>
                   </div>
 

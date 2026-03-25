@@ -16,6 +16,8 @@ DB.models = {
   StudentCourse: require('./StudentCourse')(connect, Sequelize.DataTypes),
   BankCard: require('./BankCard')(connect, Sequelize.DataTypes),
   Payment: require('./Payment')(connect, Sequelize.DataTypes),
+  CourseRegistration: require('./CourseRegistration')(connect, Sequelize.DataTypes),
+  ContactMessage: require('./ContactMessage')(connect, Sequelize.DataTypes),
 };
 
 DB.models.User.hasMany(DB.models.File,   { foreignKey: 'row_id', as: 'files', constraints: false, scope: { table_name: 'users' } });
@@ -76,6 +78,12 @@ if (DB.models.Payment) {
   
   DB.models.Course.hasMany(DB.models.Payment, { as: 'payments', foreignKey: 'course_id' });
   DB.models.Payment.belongsTo(DB.models.Course, { as: 'course', foreignKey: 'course_id' });
+}
+
+// CourseRegistration relationships
+if (DB.models.CourseRegistration) {
+  DB.models.Course.hasMany(DB.models.CourseRegistration, { as: 'courseRegistrations', foreignKey: 'course_id' });
+  DB.models.CourseRegistration.belongsTo(DB.models.Course, { as: 'course', foreignKey: 'course_id' });
 }
 
 module.exports = DB;

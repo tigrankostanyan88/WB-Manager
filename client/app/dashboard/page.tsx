@@ -20,6 +20,7 @@ import PaymentsTab from '@/app/dashboard/_components/tabs/PaymentsTab'
 import SettingsTab from '@/app/dashboard/_components/tabs/SettingsTab'
 import UsersTab from '@/app/dashboard/_components/tabs/UsersTab'
 import EnrollmentsTab from '@/app/dashboard/_components/tabs/EnrollmentsTab'
+import CourseRegistrationsTab from '@/app/dashboard/_components/tabs/CourseRegistrationsTab'
 import useAuth from '@/app/dashboard/_hooks/useAuth'
 import useCrop from '@/app/dashboard/_hooks/useCrop'
 import useCourses from '@/app/dashboard/_hooks/useCourses'
@@ -32,6 +33,7 @@ import useReviews from '@/app/dashboard/_hooks/useReviews'
 import useSettings from '@/app/dashboard/_hooks/useSettings'
 import useUsers from '@/app/dashboard/_hooks/useUsers'
 import { useEnrollments } from '@/app/dashboard/_hooks/useEnrollments'
+import { useCourseRegistrations } from '@/app/dashboard/_hooks/useCourseRegistrations'
 import type { DashboardMenuItem } from '@/app/dashboard/_components/DashboardSidebar'
 import type { DashboardTabId, User } from '@/app/dashboard/_types'
 
@@ -89,11 +91,16 @@ export default function DashboardPage() {
     activeTab,
     allowed
   })
+  const { registrations: courseRegistrations, isLoading: isCourseRegistrationsLoading, isDeleting: isDeletingCourseRegistration, deleteRegistration: deleteCourseRegistration } = useCourseRegistrations({
+    activeTab,
+    allowed
+  })
   const menuItems = useMemo<DashboardMenuItem[]>(
     () => [
       { id: 'overview', label: 'Վահանակ', icon: LayoutDashboard },
       { id: 'users', label: 'Օգտվողներ', icon: Users },
       { id: 'enrollments', label: 'Գրանցումներ', icon: GraduationCap },
+    { id: 'course-registrations', label: 'Կուրսերի գրանցումներ', icon: BookOpen },
       { id: 'payments', label: 'Վճարումներ', icon: CreditCard },
       { id: 'bank-cards', label: 'Բանկային քարտեր', icon: Building2 },
       { id: 'courses', label: 'Դասընթացներ', icon: BookOpen },
@@ -180,6 +187,15 @@ export default function DashboardPage() {
                     searchTerm={enrollmentSearchTerm}
                     setSearchTerm={setEnrollmentSearchTerm}
                     revokeAccess={revokeAccess}
+                  />
+              )}
+
+              {activeTab === 'course-registrations' && (
+                  <CourseRegistrationsTab
+                    registrations={courseRegistrations}
+                    isLoading={isCourseRegistrationsLoading}
+                    isDeleting={isDeletingCourseRegistration}
+                    onDelete={deleteCourseRegistration}
                   />
               )}
 

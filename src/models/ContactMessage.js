@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         subject: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: false
         },
         message: {
             type: DataTypes.TEXT,

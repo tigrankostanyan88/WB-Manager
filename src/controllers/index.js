@@ -7,6 +7,8 @@ module.exports = {
     error: require('./error'),
     auth: require('./auth'),
     registration: require('./registration'),
+    courseRegistration: require('./courseRegistration'),
+    contactMessage: require('./contactMessage'),
     user: {
         getUsers: user.getUsers,
         getMe: user.getMe,

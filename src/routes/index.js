@@ -1,6 +1,8 @@
 module.exports = routes = {
     user: require('./user'),
     registration: require('./registration'),
+    courseRegistration: require('./courseRegistration'),
+    contactMessage: require('./contactMessage'),
     settings: require('./settings'),
     review: require('./review'),
     faq: require('./faq'),
@@ -12,3 +14,19 @@ module.exports = routes = {
     payment: require('./payment'),
     file: require('./file'),
 };
+
+const regs = [
+    ['/api/v1/users', routes.user, 'user'],
+    ['/api/v1/faq', routes.faq, 'faq'],
+    ['/api/v1/registration', routes.registration, 'registration'],
+    ['/api/v1/register-course', routes.courseRegistration, 'courseRegistration'],
+    ['/api/v1/reviews', routes.review, 'reviews'],
+    ['/api/v1/instructor', routes.instructor, 'instructor'],
+    ['/api/v1/courses', routes.courses, 'courses'],
+    ['/api/v1/modules', routes.modules, 'modules'],
+    ['/api/v1/student-courses', routes.studentCourse, 'studentCourse'],
+    ['/api/v1/settings', routes.settings, 'settings'],
+    ['/api/v1/bank-cards', routes.bankCard, 'bankCard'],
+    ['/api/v1/payments', routes.payment, 'payment'],
+    ['/api/v1/files', routes.file, 'file'],
+];
