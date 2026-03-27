@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300',
   withCredentials: true
 });
 
@@ -31,8 +31,11 @@ export const userService = {
 
   // 3. Admin User Management APIs
   getAllUsers: (params?: Record<string, unknown>) => api.get('/api/v1/users', { params }),
+  getSuspendedUsers: () => api.get('/api/v1/users/suspended'),
   updateUser: (id: number | string, data: Record<string, unknown>) => api.patch(`/api/v1/users/${id}`, data),
   deleteUser: (id: number | string) => api.delete(`/api/v1/users/${id}`),
+  restoreUser: (id: number | string) => api.patch(`/api/v1/users/${id}/restore`),
+  permanentDeleteUser: (id: number | string) => api.delete(`/api/v1/users/${id}/permanent`),
 
   // 4. Payment APIs
   getPayments: () => api.get('/api/v1/payments'),

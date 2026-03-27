@@ -1,6 +1,7 @@
 export type DashboardTabId =
   | 'overview'
   | 'users'
+  | 'suspended-users'
   | 'courses'
   | 'modules'
   | 'comments'
@@ -26,11 +27,13 @@ export interface User {
 
 export interface Review {
   id: number | string
+  _id?: string
   name?: string
   rating?: number
   comment?: string
   createdAt?: string
   updatedAt?: string
+  user?: User & { files?: any[] }
   [key: string]: unknown
 }
 

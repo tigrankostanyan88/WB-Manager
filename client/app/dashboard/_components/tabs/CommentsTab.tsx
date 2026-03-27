@@ -1,14 +1,24 @@
 'use client'
 
-import { Trash2 } from 'lucide-react'
+import { Trash2, User as UserIcon } from 'lucide-react'
 import type { Review } from '../../_types'
+import { withOrigin } from '../../_utils/image'
 
 interface CommentsTabProps {
   reviews: Review[]
   isReviewsLoading: boolean
   relativeTime: (date: string) => string
   isToday: (date: string) => boolean
-  onDeleteReview: (id: string) => void
+  onDeleteReview: (id: string | number) => void
+}
+
+// Helper to get user avatar URL
+function getUserAvatarUrl(user: any): string | null {
+  if (!user || !user.files || user.files.length === 0) return null
+  const avatarFile = user.files.find((f: any) => f?.name_used === 'user_img')
+  if (!avatarFile) return null
+  const path = `/images/users/large/${avatarFile.name}.${avatarFile.ext}`
+  return withOrigin(path) || null
 }
 
 export default function CommentsTab({
@@ -19,46 +29,87 @@ export default function CommentsTab({
 }: CommentsTabProps) {
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-slate-900">Մեկնաբանություններ</h2>
+      <div className="sticky top-0 bg-slate-50/80 backdrop-blur-sm z-10 pb-4 mb-2">
+        <h2 className="text-xl font-semibold text-slate-900">Մեկնաբանություններ</h2>
+      </div>
 
       {isReviewsLoading ? (
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600" />
         </div>
       ) : reviews.length > 0 ? (
-        <div className="grid gap-4">
-          {reviews.map((review, index) => (
-            <div key={review._id || `review-${index}`} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold text-slate-900">{review.name}</p>
-                    <span className="text-sm text-slate-400">{relativeTime(review.createdAt)}</span>
+        <div className="max-h-[calc(100vh-250px)] overflow-y-auto pr-2 space-y-4 custom-scrollbar">
+          {reviews.map((review, index) => {
+            const avatarUrl = getUserAvatarUrl(review.user)
+            return (
+              <div key={review._id || review.id || `review-${index}`} className="group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 p-6">
+                <div className="flex items-start gap-4">
+                  {/* Avatar Section */}
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center border-2 border-white shadow-sm">
+                      {avatarUrl ? (
+                        <img 
+                          src={avatarUrl} 
+                          alt={review.name || 'User'}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <UserIcon className="w-6 h-6 text-slate-400" />
+                      )}
+                    </div>
                   </div>
-                  <div className="flex gap-1 mt-1">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <span
-                        key={i}
-                        className={`text-lg ${i < review.rating ? 'text-yellow-400' : 'text-slate-200'}`}
+
+                  {/* Content Section */}
+                  <div className="flex-grow min-w-0">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-bold text-slate-900 text-lg leading-tight">{review.name}</p>
+                          <span className="text-xs font-medium px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full">
+                            {relativeTime(review.createdAt)}
+                          </span>
+                        </div>
+                        <div className="flex gap-0.5 mt-1.5">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <span
+                              key={i}
+                              className={`text-base ${i < (review.rating || 0) ? 'text-amber-400' : 'text-slate-200'}`}
+                            >
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <button
+                        onClick={() => onDeleteReview(review._id || review.id)}
+                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-200 opacity-0 group-hover:opacity-100"
+                        title="Ջնջել"
                       >
-                        ★
-                      </span>
-                    ))}
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                    
+                    <div className="mt-3 relative">
+                      <div className="absolute -left-2 top-0 bottom-0 w-0.5 bg-violet-100 rounded-full" />
+                      <p className="text-slate-600 leading-relaxed pl-2 italic">
+                        "{review.comment}"
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-slate-600 mt-2">{review.comment}</p>
                 </div>
-                <button
-                  onClick={() => onDeleteReview(review._id)}
-                  className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                >
-                  <Trash2 className="w-5 h-5 text-red-500" />
-                </button>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       ) : (
-        <p className="text-slate-500 text-center py-12">Մեկնաբանություններ չկան</p>
+        <div className="bg-white rounded-[2rem] border border-dashed border-slate-200 py-20 flex flex-col items-center justify-center text-center px-6">
+          <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+            <UserIcon className="w-8 h-8 text-slate-300" />
+          </div>
+          <p className="text-slate-500 font-medium">Մեկնաբանություններ չկան</p>
+          <p className="text-slate-400 text-sm mt-1">Դեռ ոչ մի մեկնաբանություն չի գրանցվել</p>
+        </div>
       )}
     </div>
   )

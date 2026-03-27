@@ -1,9 +1,9 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard, Building2, GraduationCap, Mail } from 'lucide-react'
+import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard, Building2, GraduationCap, Mail, UserX } from 'lucide-react'
 import DashboardHeader from '@/app/dashboard/_components/DashboardHeader'
 import DashboardSidebar from '@/app/dashboard/_components/DashboardSidebar'
 import CropModal from '@/app/dashboard/_components/CropModal'
@@ -19,6 +19,7 @@ import OverviewTab from '@/app/dashboard/_components/tabs/OverviewTab'
 import PaymentsTab from '@/app/dashboard/_components/tabs/PaymentsTab'
 import SettingsTab from '@/app/dashboard/_components/tabs/SettingsTab'
 import UsersTab from '@/app/dashboard/_components/tabs/UsersTab'
+import SuspendedUsersTab from '@/app/dashboard/_components/tabs/SuspendedUsersTab'
 import EnrollmentsTab from '@/app/dashboard/_components/tabs/EnrollmentsTab'
 import CourseRegistrationsTab from '@/app/dashboard/_components/tabs/CourseRegistrationsTab'
 import ContactMessagesTab from '@/app/dashboard/_components/tabs/ContactMessagesTab'
@@ -36,6 +37,7 @@ import useUsers from '@/app/dashboard/_hooks/useUsers'
 import { useEnrollments } from '@/app/dashboard/_hooks/useEnrollments'
 import { useCourseRegistrations } from '@/app/dashboard/_hooks/useCourseRegistrations'
 import { useContactMessages } from '@/app/dashboard/_hooks/useContactMessages'
+import { userService } from '@/lib/api'
 import type { DashboardMenuItem } from '@/app/dashboard/_components/DashboardSidebar'
 import type { DashboardTabId, User } from '@/app/dashboard/_types'
 
@@ -49,6 +51,65 @@ export default function DashboardPage() {
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     showNotification(message, type)
   }
+
+  // Suspended users state
+  const [suspendedUsers, setSuspendedUsers] = useState<User[]>([])
+  const [isSuspendedLoading, setIsSuspendedLoading] = useState(false)
+  const [suspendedSearch, setSuspendedSearch] = useState('')
+
+  const loadSuspendedUsers = async () => {
+    if (!allowed) return
+    setIsSuspendedLoading(true)
+    try {
+      const { data } = await userService.getSuspendedUsers()
+      setSuspendedUsers(data.users || [])
+    } catch (err) {
+      console.error('Failed to load suspended users:', err)
+      showToast('Կասեցված օգտվողների ցուցակը բեռնել չհաջողվեց', 'error')
+    } finally {
+      setIsSuspendedLoading(false)
+    }
+  }
+
+  const handleRestoreUser = async (id: number | string) => {
+    try {
+      await userService.restoreUser(id)
+      showToast('Օգտատերը հաջողությամբ վերականգնվեց', 'success')
+      loadSuspendedUsers()
+    } catch (err) {
+      console.error('Failed to restore user:', err)
+      showToast('Վերականգնումը ձախողվեց', 'error')
+    }
+  }
+
+  const handlePermanentDelete = async (id: number | string) => {
+    try {
+      await userService.permanentDeleteUser(id)
+      showToast('Օգտատերը ընդմիշտ ջնջվեց', 'success')
+      loadSuspendedUsers()
+    } catch (err) {
+      console.error('Failed to permanently delete user:', err)
+      showToast('Ջնջումը ձախողվեց', 'error')
+    }
+  }
+
+  const handleBulkDelete = async (ids: (number | string)[]) => {
+    try {
+      // Delete users one by one
+      await Promise.all(ids.map(id => userService.permanentDeleteUser(id)))
+      showToast(`${ids.length} օգտատեր ընդմիշտ ջնջվեց`, 'success')
+      loadSuspendedUsers()
+    } catch (err) {
+      console.error('Failed to bulk delete users:', err)
+      showToast('Կապակցված ջնջումը ձախողվեց', 'error')
+    }
+  }
+
+  useEffect(() => {
+    if (activeTab === 'suspended-users') {
+      loadSuspendedUsers()
+    }
+  }, [activeTab])
 
   const { isAuthLoading, allowed, user: currentUser } = useAuth()
 
@@ -105,6 +166,7 @@ export default function DashboardPage() {
     () => [
       { id: 'overview', label: 'Վահանակ', icon: LayoutDashboard },
       { id: 'users', label: 'Օգտվողներ', icon: Users },
+      { id: 'suspended-users', label: 'Կասեցվածներ', icon: UserX },
       { id: 'enrollments', label: 'Գրանցումներ', icon: GraduationCap },
       { id: 'course-registrations', label: 'Կուրսերի գրանցումներ', icon: BookOpen },
       { id: 'contact-messages', label: 'Կոնտակտներ', icon: Mail },
@@ -180,6 +242,18 @@ export default function DashboardPage() {
                     getUserPaymentStatus={getUserPaymentStatus}
                     onEdit={startEditUserModal}
                     onDelete={handleDeleteUser}
+                  />
+              )}
+
+              {activeTab === 'suspended-users' && (
+                  <SuspendedUsersTab
+                    users={suspendedUsers}
+                    isLoading={isSuspendedLoading}
+                    search={suspendedSearch}
+                    setSearch={setSuspendedSearch}
+                    onRestore={handleRestoreUser}
+                    onPermanentDelete={handlePermanentDelete}
+                    onBulkDelete={handleBulkDelete}
                   />
               )}
 

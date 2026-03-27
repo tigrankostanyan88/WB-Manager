@@ -4,6 +4,8 @@ const AppError = require('../utils/appError');
 const Files = require('../controllers/File');
 const repo = require('../repositories/user');
 const Validator = require('../utils/validation');
+const DB = require('../models');
+const { User } = DB.models;
 
 async function getAll({ excludeRoles = [] } = {}) {
   const cacheKey = USERS_ALL_KEY;
@@ -17,7 +19,6 @@ async function getAll({ excludeRoles = [] } = {}) {
 }
 
 async function listPaged(page = 1, limit = 20, search = '', role = 'all', excludeId = null) {
-  // Repository handles all Op operators (Op.ne, Op.or, Op.like)
   const { count, rows } = await repo.findPaged({ page, limit, search, role, excludeId });
   return { users: rows, total: count };
 }
@@ -177,6 +178,34 @@ async function deleteAvatar(currentUserId) {
   return user;
 }
 
+async function getSuspendedUsers() {
+  return repo.findDeleted();
+}
+
+async function restoreUser(id) {
+  const user = await repo.findById(id);
+  if (!user) throw new AppError('Օգտատերը չի գտնվել:', 404);
+  await repo.restoreUser(id);
+  await cache.del(USERS_ALL_KEY);
+  return true;
+}
+
+async function permanentDeleteUser(id) {
+  const user = await repo.findById(id);
+  if (!user) throw new AppError('Օգտատերը չի գտնվել:', 404);
+  
+  // Delete user's reviews first to avoid foreign key constraint errors
+  const { Review } = DB.models;
+  await Review.destroy({ where: { user_id: id } });
+  
+  // Permanently delete user from database
+  await User.destroy({ where: { id } });
+  
+  // Invalidate cache
+  await cache.del(USERS_ALL_KEY);
+  return true;
+}
+
 async function resetGroups(userId) {
   const user = await repo.findById(userId);
   if (!user) throw new AppError('Օգտատերը չի գտնվել:', 404);
@@ -195,5 +224,8 @@ module.exports = {
   updateMe,
   deleteUser,
   deleteAvatar,
-  resetGroups
+  resetGroups,
+  getSuspendedUsers,
+  restoreUser,
+  permanentDeleteUser
 };

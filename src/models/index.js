@@ -86,5 +86,9 @@ if (DB.models.CourseRegistration) {
   DB.models.CourseRegistration.belongsTo(DB.models.Course, { as: 'course', foreignKey: 'course_id' });
 }
 
+// Review relationships
+DB.models.Review.belongsTo(DB.models.User, { as: 'user', foreignKey: 'user_id' });
+DB.models.User.hasMany(DB.models.Review, { as: 'reviews', foreignKey: 'user_id' });
+
 module.exports = DB;
 

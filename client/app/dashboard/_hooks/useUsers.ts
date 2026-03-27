@@ -84,16 +84,14 @@ export default function useUsers({ activeTab, allowed, editingUser, setEditingUs
   }, [users, userSearch])
 
   const handleDeleteUser = async (id: number | string) => {
-    const ok = await confirm({
-      title: 'Ջնջե՞լ օգտատիրոջը',
-      message: 'Գործողությունը չի վերադարձվի',
-      confirmText: 'Ջնջել',
-      cancelText: 'Չեղարկել',
-      tone: 'danger'
-    })
-    if (!ok) return
-    await userService.deleteUser(id)
-    setUsers((prev) => prev.filter((u) => u.id !== id))
+    console.log('Deleting user with ID:', id);
+    try {
+      await userService.deleteUser(id)
+      setUsers((prev) => prev.filter((u) => u.id !== id))
+    } catch (err: any) {
+      console.error('Delete user error:', err.response?.status, err.response?.data, err.message);
+      throw err;
+    }
   }
 
   const handleTogglePaid = async (userId: string | number, currentIsPaid: boolean) => {

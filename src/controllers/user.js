@@ -122,6 +122,42 @@ exports.deleteUser = async (req, res, next) => {
     }
 };
 
+exports.getSuspendedUsers = async (req, res, next) => {
+    try {
+        const users = await userService.getSuspendedUsers();
+        res.status(200).json({
+            status: 'success',
+            users
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.restoreUser = async (req, res, next) => {
+    try {
+        await userService.restoreUser(req.params.id);
+        res.status(200).json({
+            status: 'success',
+            message: 'Օգտատերը հաջողությամբ վերականգնվեց'
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.permanentDelete = async (req, res, next) => {
+    try {
+        await userService.permanentDeleteUser(req.params.id);
+        res.status(200).json({
+            status: 'success',
+            message: 'Օգտատերը ընդմիշտ ջնջվեց'
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
 exports.deleteAvatar = async (req, res, next) => {
     try {
         await userService.deleteAvatar(req.user.id);

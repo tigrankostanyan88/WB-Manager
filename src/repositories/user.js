@@ -23,16 +23,17 @@ module.exports = {
   
   // Find all users excluding certain roles
   findAllExcludingRoles: async (excludeRoles = []) => {
-    const where = excludeRoles.length
-      ? { role: { [Op.notIn]: excludeRoles } }
-      : {};
+    const where = { deleted: false };
+    if (excludeRoles.length) {
+      where.role = { [Op.notIn]: excludeRoles };
+    }
     return User.findAll({ where, include: 'files' });
   },
   
   // Find users with pagination, search, and filters
   findPaged: async ({ page = 1, limit = 20, search = '', role = 'all', excludeId = null } = {}) => {
     const offset = (page - 1) * limit;
-    const where = {};
+    const where = { deleted: false };
     
     if (excludeId) {
       where.id = { [Op.ne]: excludeId };
@@ -56,5 +57,19 @@ module.exports = {
       order: [['createdAt', 'DESC']],
       attributes: ['id', 'name', 'email', 'role', 'isPaid', 'createdAt', 'course_ids']
     });
+  },
+  
+  // Find deleted (suspended) users
+  findDeleted: async () => {
+    return User.findAll({ 
+      where: { deleted: true },
+      include: 'files',
+      order: [['updatedAt', 'DESC']]
+    });
+  },
+  
+  // Restore user (set deleted=false)
+  restoreUser: async (id) => {
+    return User.update({ deleted: false }, { where: { id } });
   }
 };

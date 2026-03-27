@@ -17,7 +17,10 @@ module.exports = {
         updateMe: user.updateMe,
         deleteUser: user.deleteUser,
         deleteAvatar: user.deleteAvatar,
-        resetGroups: user.resetGroups
+        resetGroups: user.resetGroups,
+        getSuspendedUsers: user.getSuspendedUsers,
+        restoreUser: user.restoreUser,
+        permanentDelete: user.permanentDelete
     },
     payment: {
         getPayments: payment.getPayments,

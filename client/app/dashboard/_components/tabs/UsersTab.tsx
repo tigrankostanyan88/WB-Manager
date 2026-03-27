@@ -1,6 +1,7 @@
 'use client'
 
-import { Search, Edit, Trash2, User as UserIcon } from 'lucide-react'
+import { useState } from 'react'
+import { Search, Edit, Trash2, User as UserIcon, AlertTriangle, UserX } from 'lucide-react'
 import type { User } from '../../_types'
 import { withOrigin } from '../../_utils/image'
 
@@ -32,8 +33,65 @@ export default function UsersTab({
   onEdit,
   onDelete
 }: UsersTabProps) {
+  const [showConfirmDelete, setShowConfirmDelete] = useState<string | null>(null)
+  const [userToDelete, setUserToDelete] = useState<User | null>(null)
+
+  const handleDeleteClick = (user: User) => {
+    setUserToDelete(user)
+    setShowConfirmDelete(user.id)
+  }
+
+  const confirmDelete = () => {
+    if (showConfirmDelete) {
+      onDelete(showConfirmDelete)
+      setShowConfirmDelete(null)
+      setUserToDelete(null)
+    }
+  }
+
+  const cancelDelete = () => {
+    setShowConfirmDelete(null)
+    setUserToDelete(null)
+  }
   return (
     <div className="space-y-6">
+      {/* Delete confirmation modal */}
+      {showConfirmDelete && userToDelete && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[100] overflow-y-auto py-8">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl my-auto">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
+                <UserX className="w-6 h-6 text-amber-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">Ջնջե՞լ օգտատիրոջը</h3>
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4 text-left">
+                <p className="text-amber-800 text-sm font-medium mb-2">⚠️ Կասեցման վերաբերյալ</p>
+                <p className="text-slate-600 text-sm">
+                  <span className="font-medium text-slate-800">{userToDelete.name}</span> օգտատերը կտեղափոխվի <span className="font-medium text-slate-800">«Ժամանակավոր կասեցվածներ»</span> բաժին։
+                </p>
+                <p className="text-slate-600 text-sm mt-2">
+                  Օգտատերը չի կարողանա մուտք գործել իր պրոֆիլը, քանի դեռ ադմինը չի վերականգնի նրան։
+                </p>
+              </div>
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={cancelDelete}
+                  className="flex-1 px-4 py-2.5 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors font-medium"
+                >
+                  Չեղարկել
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 px-4 py-2.5 bg-red-600 text-white hover:bg-red-700 rounded-xl transition-colors font-medium"
+                >
+                  Ջնջել
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-slate-900">Օգտվողներ</h2>
         <div className="relative">
@@ -69,7 +127,7 @@ export default function UsersTab({
               {users.map((user) => {
                 const avatarUrl = getUserAvatarUrl(user)
                 return (
-                <tr key={user._id} className="hover:bg-slate-50">
+                <tr key={user.id} className="hover:bg-slate-50">
                   <td className="px-4 py-4">
                     <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center">
                       {avatarUrl ? (
@@ -112,7 +170,7 @@ export default function UsersTab({
                         <Edit className="w-4 h-4 text-slate-500" />
                       </button>
                       <button
-                        onClick={() => onDelete(user._id)}
+                        onClick={() => handleDeleteClick(user)}
                         className="p-2 hover:bg-red-50 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-4 h-4 text-red-500" />
