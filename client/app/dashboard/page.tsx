@@ -50,7 +50,7 @@ export default function DashboardPage() {
     showNotification(message, type)
   }
 
-  const { isAuthLoading, allowed } = useAuth()
+  const { isAuthLoading, allowed, user: currentUser } = useAuth()
 
   const { recentStudents, isRecentLoading, statCounts, relativeTime: overviewRelativeTime } = useOverview({ activeTab, allowed })
   const {
@@ -63,7 +63,7 @@ export default function DashboardPage() {
     getUserPaymentStatus,
     startEditUserModal,
     submitEditUser
-  } = useUsers({ activeTab, allowed, editingUser, setEditingUser, showToast })
+  } = useUsers({ activeTab, allowed, editingUser, setEditingUser, showToast, currentUser })
   const { reviews, isReviewsLoading, relativeTime: reviewsRelativeTime, isToday, handleDeleteReview } = useReviews({ activeTab, allowed })
   const { faqs, faqForm, setFaqForm, isFaqLoading, isFaqSubmitting, editingId, editForm, setEditForm, isFaqUpdating, submitFaq, startEdit, cancelEdit, updateFaq, deleteFaq } =
     useFaq({ activeTab, allowed, showToast })

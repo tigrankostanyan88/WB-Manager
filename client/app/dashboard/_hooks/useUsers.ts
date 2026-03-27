@@ -28,9 +28,10 @@ interface UseUsersParams {
   editingUser: EditingUser
   setEditingUser: React.Dispatch<React.SetStateAction<EditingUser>>
   showToast?: (message: string, type?: 'success' | 'error') => void
+  currentUser?: User
 }
 
-export default function useUsers({ activeTab, allowed, editingUser, setEditingUser, showToast }: UseUsersParams) {
+export default function useUsers({ activeTab, allowed, editingUser, setEditingUser, showToast, currentUser }: UseUsersParams) {
   const confirm = useConfirm()
   const [users, setUsers] = useState<User[]>([])
   const [payments, setPayments] = useState<Payment[]>([])
@@ -49,7 +50,11 @@ export default function useUsers({ activeTab, allowed, editingUser, setEditingUs
           userService.getAllUsers(),
           fetch('/api/v1/payments').then(r => r.json()).catch(() => ({ payments: [] }))
         ])
-        const list = ((usersRes.data?.users || []) as User[]).filter((u) => u.role === 'user')
+        const currentUserId = String(currentUser?.id || currentUser?._id)
+        const list = ((usersRes.data?.users || []) as User[]).filter((u) => {
+          const userId = String(u.id || u._id)
+          return userId !== currentUserId
+        })
         const paymentsList = (paymentsRes.payments || paymentsRes.data || []) as Payment[]
         if (!cancelled) {
           setUsers(list)
@@ -105,7 +110,8 @@ export default function useUsers({ activeTab, allowed, editingUser, setEditingUs
     if (!editingUser || editingUser.__editScope !== 'users') return
     try {
       await userService.updateUser(editingUser.id, data as unknown as Record<string, unknown>)
-      setUsers((prev) => prev.map((u) => (u.id === editingUser.id ? { ...u, ...data } : u)).filter((u) => u.role === 'user'))
+      const currentUserId = String(currentUser?.id || currentUser?._id)
+      setUsers((prev) => prev.map((u) => (u.id === editingUser.id ? { ...u, ...data } : u)).filter((u) => String(u.id || u._id) !== currentUserId))
       setEditingUser(null)
       showToast?.('Օգտատերը հաջողությամբ թարմացվել է', 'success')
     } catch (error) {
