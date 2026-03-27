@@ -75,7 +75,7 @@ export default function useOverview({ activeTab, allowed }: UseOverviewParams) {
 
         if (!cancelled) {
           setRecentStudents(usersList)
-          setStatCounts({ students: studentsCount, courses: coursesCount, reviews: reviewsCount, activeUsers: activeUsersCount })
+          setStatCounts({ students: enrolledStudentsCount, courses: coursesCount, reviews: reviewsCount, activeUsers: activeUsersCount })
         }
       } finally {
         if (!cancelled) setIsRecentLoading(false)
