@@ -22,6 +22,7 @@ export interface User {
   role?: 'admin' | 'user' | 'student' | string
   isPaid?: boolean
   createdAt?: string
+  files?: any[]
   [key: string]: unknown
 }
 

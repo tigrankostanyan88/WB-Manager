@@ -17,8 +17,9 @@ interface UsersTabProps {
 
 // Helper to get user avatar URL
 function getUserAvatarUrl(user: User): string | null {
-  if (!user.files || user.files.length === 0) return null
-  const avatarFile = user.files.find((f: any) => f?.name_used === 'user_img')
+  const files = user.files
+  if (!files || !Array.isArray(files) || files.length === 0) return null
+  const avatarFile = files.find((f: any) => f?.name_used === 'user_img')
   if (!avatarFile) return null
   const path = `/images/users/large/${avatarFile.name}.${avatarFile.ext}`
   return withOrigin(path) || null
@@ -38,7 +39,7 @@ export default function UsersTab({
 
   const handleDeleteClick = (user: User) => {
     setUserToDelete(user)
-    setShowConfirmDelete(user.id)
+    setShowConfirmDelete(String(user.id))
   }
 
   const confirmDelete = () => {
@@ -154,11 +155,11 @@ export default function UsersTab({
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-3 py-1 rounded-full text-xs font-bold ${
-                      getUserPaymentStatus(user.id || user._id || '')
+                      getUserPaymentStatus(String(user.id))
                         ? 'bg-emerald-100 text-emerald-700' 
                         : 'bg-slate-100 text-slate-600'
                     }`}>
-                      {getUserPaymentStatus(user.id || user._id || '') ? 'Վճարված' : 'Չվճարված'}
+                      {getUserPaymentStatus(String(user.id)) ? 'Վճարված' : 'Չվճարված'}
                     </span>
                   </td>
                   <td className="px-4 py-4">

@@ -51,6 +51,13 @@ export default function useOverview({ activeTab, allowed }: UseOverviewParams) {
         const studentsCount = allUsers.filter((u) => u.role === 'student').length
         const activeUsersCount = allUsers.filter((u) => u.role === 'user').length
         
+        // Fetch actual course participants (enrolled students)
+        const resEnrollments = await api.get('/api/v1/student-courses')
+        const enrollmentsData = Array.isArray(resEnrollments.data) 
+          ? resEnrollments.data 
+          : (resEnrollments.data?.data || [])
+        const enrolledStudentsCount = Array.isArray(enrollmentsData) ? enrollmentsData.length : 0
+        
         const resCourses = await api.get('/api/v1/courses')
         const coursesData = Array.isArray(resCourses.data?.data) ? resCourses.data.data : (resCourses.data?.data?.courses || resCourses.data?.courses || [])
         const coursesCount = Array.isArray(coursesData) ? coursesData.length : 0
