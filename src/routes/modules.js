@@ -10,7 +10,6 @@ router.post(
 
 router.get(
     '/',
-    // ctrls.auth.protect, // Public or protected? Let's make it public for now like courses
     ctrls.modules.getModules
 );
 

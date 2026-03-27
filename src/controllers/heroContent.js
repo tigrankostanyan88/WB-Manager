@@ -4,7 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 
 class HeroContentController {
     constructor() {
-        this.service = new HeroContentService();
+        this.service = HeroContentService;
     }
 
     get = catchAsync(async (req, res) => {
@@ -28,19 +28,14 @@ class HeroContentController {
 
     upsert = catchAsync(async (req, res) => {
         const { title, name, text } = req.body;
-        const videoFile = req.files?.hero_video?.[0]; 
-        const data = {
-            title,
-            name,
-            text,
-            videoFile
-        };
+        const files = req.files; // Files from middleware
 
-        const content = await this.service.upsert(data);
-        const result = this._formatResponse(content);
+        const result = await this.service.upsert(
+            { title, name, text },
+            files
+        );
         
-        const isNew = !content.created_at || content.created_at === content.updated_at;
-        const message = isNew 
+        const message = result.wasCreated 
             ? 'Հերո բովանդակությունը ստեղծված է' 
             : 'Հերո բովանդակությունը թարմացված է';
 
@@ -70,8 +65,8 @@ class HeroContentController {
     _formatResponse(content) {
         const data = content.toJSON ? content.toJSON() : content;
         
-        if (data.videoFile) {
-            data.video_url = `/files/${data.videoFile.name}.${data.videoFile.ext}`;
+        if (data.file) {
+            data.video_url = `/files/${data.file.name}.${data.file.ext}`;
         }
 
         return data;

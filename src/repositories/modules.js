@@ -2,17 +2,14 @@ const DB = require('../models');
 const { Module, Course, File } = DB.models;
 
 module.exports = {
-  // Sync Module model
   sync: async () => {
     return Module.sync({ alter: true });
   },
 
-  // Find module by ID
   findById: async (id) => {
     return Module.findByPk(id);
   },
 
-  // Find module by ID with files
   findByIdWithFiles: async (id) => {
     return Module.findByPk(id, {
       include: [{
@@ -25,7 +22,6 @@ module.exports = {
     });
   },
 
-  // Find all modules with optional course filter
   findAll: async ({ courseId } = {}) => {
     const where = {};
     if (courseId) where.course_id = courseId;
@@ -43,7 +39,6 @@ module.exports = {
     });
   },
 
-  // Get max order for course
   findMaxOrder: async (courseId, transaction) => {
     return Module.findOne({
       where: { course_id: courseId },
@@ -52,22 +47,18 @@ module.exports = {
     });
   },
 
-  // Create new module
   create: async (data, transaction) => {
     return Module.create(data, { transaction });
   },
 
-  // Update module
   update: async (module, data, transaction) => {
     return module.update(data, { transaction });
   },
 
-  // Delete module
   destroy: async (module, transaction) => {
     return module.destroy({ transaction });
   },
 
-  // Find files by row_id and table_name
   findFiles: async (rowId, tableName, transaction) => {
     return File.findAll({
       where: { row_id: rowId, table_name: tableName },
