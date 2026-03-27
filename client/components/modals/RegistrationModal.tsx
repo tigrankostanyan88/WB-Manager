@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { X, CheckCircle, Loader2, Mail, Phone, MapPin, User as UserIcon, Lock, Chrome } from 'lucide-react'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { X, CheckCircle, Loader2, Mail, Phone, MapPin, User as UserIcon, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { User } from '@/lib/auth'
@@ -12,6 +13,7 @@ interface RegistrationModalProps {
 }
 
 export default function RegistrationModal({ isOpen, onClose }: RegistrationModalProps) {
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -24,6 +26,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
     address: '',
     password: ''
   })
+  const [rememberMe, setRememberMe] = useState(false)
 
   if (!isOpen) return null
 
@@ -67,14 +70,20 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
       }
 
       // Success!
-      const user = data && typeof data === 'object' && (data as { user?: unknown }).user ? (data as { user: User }).user : null;
-      const token = data && typeof data === 'object' && (data as { token?: unknown }).token ? String((data as { token: string }).token) : null;
+      const responseData = data as { user?: User; token?: string } | null;
+      const user = responseData?.user ?? null;
+      const token = responseData?.token ?? null;
+      
+      // Dispatch event FIRST before any state changes that might cause unmounting
+      if (user) {
+        window.dispatchEvent(new CustomEvent('auth:updated', { detail: { user } }));
+      }
+      
       if (token) {
         localStorage.setItem('token', token);
       }
       if (user) {
         localStorage.setItem('user', JSON.stringify(user));
-        window.dispatchEvent(new CustomEvent('auth:updated', { detail: { user } }));
       }
       setIsSuccess(true)
       setTimeout(() => {
@@ -126,18 +135,25 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
         throw new Error(msgFromJson || rawText || 'Google-ով մուտքի սխալ')
       }
 
-      if (data && typeof data === 'object' && typeof (data as { token?: unknown }).token === 'string') {
-        localStorage.setItem('token', String((data as { token?: unknown }).token))
-        const maybeUser = (data as { user?: unknown }).user
-        if (maybeUser) {
-          localStorage.setItem('user', JSON.stringify(maybeUser))
-        }
-        setIsSuccess(true)
-        setTimeout(() => {
-          onClose()
-          window.location.reload()
-        }, 1500)
+      const responseData = data as { user?: User; token?: string } | null;
+      const user = responseData?.user ?? null;
+      const token = responseData?.token ?? null;
+      
+      // Dispatch event FIRST before any state changes
+      if (user) {
+        window.dispatchEvent(new CustomEvent('auth:updated', { detail: { user } }));
       }
+      
+      if (token) {
+        localStorage.setItem('token', token);
+      }
+      if (user) {
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+      setIsSuccess(true)
+      setTimeout(() => {
+        onClose()
+      }, 1500)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Google-ով մուտքի սխալ')
     } finally {
@@ -309,6 +325,22 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
                     </motion.p>
                   )}
 
+                  {/* Remember me - only for signin */}
+                  {mode === 'signin' && (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="rememberMe"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        className="h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500 cursor-pointer"
+                      />
+                      <label htmlFor="rememberMe" className="text-sm text-slate-600 cursor-pointer select-none">
+                        Հիշել ինձ
+                      </label>
+                    </div>
+                  )}
+
                   <Button 
                     disabled={isLoading}
                     className="w-full py-7 rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-200 transition-all font-bold text-lg active:scale-[0.98] flex items-center justify-center gap-2"
@@ -321,22 +353,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
                   </Button>
                 </form>
 
-                <div className="relative flex items-center gap-4 py-2">
-                  <div className="h-px flex-1 bg-slate-100"></div>
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">կամ</span>
-                  <div className="h-px flex-1 bg-slate-100"></div>
-                </div>
-
-                <button 
-                  onClick={handleGoogleLogin}
-                  disabled={isLoading}
-                  className="w-full py-3.5 rounded-2xl bg-white border-2 border-slate-100 text-slate-700 hover:bg-slate-50 hover:border-slate-200 transition-all font-bold flex items-center justify-center gap-3 active:scale-[0.98] shadow-sm"
-                >
-                  <Chrome className="w-5 h-5 text-violet-600" />
-                  Շարունակել Google-ով
-                </button>
-
-                <p className="text-center text-slate-500 text-sm font-medium">
+                <p className="text-center text-slate-500 text-sm font-medium pt-4">
                   {mode === 'signup' ? 'Արդեն ունե՞ք հաշիվ' : 'Դեռ չունե՞ք հաշիվ'} {' '}
                   <button 
                     onClick={() => setMode(mode === 'signup' ? 'signin' : 'signup')}

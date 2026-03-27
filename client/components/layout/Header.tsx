@@ -122,7 +122,10 @@ export default function Header({ forceWhiteBackground = false }: { forceWhiteBac
             )}
       </header>
       <CourseRegistrationModal isOpen={isCourseModalOpen} onClose={() => setIsCourseModalOpen(false)} />
-      <RegistrationModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
+      <RegistrationModal 
+        isOpen={isLoginModalOpen} 
+        onClose={() => setIsLoginModalOpen(false)} 
+      />
     </>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { User as UserIcon } from 'lucide-react'
@@ -45,44 +45,6 @@ export default function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mob
     }
     return withOrigin(path)
   })()
-
-  useEffect(() => {
-    const handler = (evt: Event) => {
-      const u = (evt as CustomEvent<{ user?: unknown }>).detail?.user as unknown
-      if (!u) return
-      const rec = u && typeof u === 'object' ? (u as Record<string, unknown>) : null
-      if (!rec) return
-      if (typeof rec.avatar === 'string' && rec.avatar) {
-        setAvatarOverride(rec.avatar)
-        return
-      }
-      const files = Array.isArray(rec.files) ? (rec.files as unknown[]) : []
-      const fileObj =
-        files.find((x) => {
-          if (!x || typeof x !== 'object') return false
-          const f = x as Record<string, unknown>
-          return f.name_used === 'user_img'
-        }) || files[0]
-      if (fileObj && typeof fileObj === 'object') {
-        const f = fileObj as Record<string, unknown>
-        if (typeof f.name !== 'string' || typeof f.ext !== 'string') return
-        const table = typeof f.table_name === 'string' && f.table_name ? f.table_name : 'users'
-        const path = `/images/${table}/large/${f.name}.${f.ext}`
-        const apiBase = process.env.NEXT_PUBLIC_API_URL || '/api'
-        const withOrigin = (p: string) => {
-          if (/^https?:\/\//i.test(apiBase)) {
-            const origin = apiBase.replace(/\/api.*$/, '')
-            return `${origin}${p}`
-          }
-          const prefix = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase
-          return `${prefix}${p}`
-        }
-        setAvatarOverride(`${withOrigin(path)}?t=${Date.now()}`)
-      }
-    }
-    window.addEventListener('auth:updated', handler as EventListener)
-    return () => window.removeEventListener('auth:updated', handler as EventListener)
-  }, [])
 
   if (mobile) {
     if (!isLoaded) {

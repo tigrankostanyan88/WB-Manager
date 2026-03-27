@@ -90,8 +90,6 @@ export function AuthProvider({ children, initialUser = null }: { children: React
         const userWithAvatar = { ...u, avatar: buildAvatar(u) }
         setUserState(userWithAvatar)
         setIsLoaded(true)
-      } else {
-        fetchUser()
       }
     }
     window.addEventListener('auth:updated', onAuthUpdated as EventListener)

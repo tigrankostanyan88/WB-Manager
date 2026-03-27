@@ -98,7 +98,7 @@ const limiter = rateLimit({
 });
 
 const authLimiter = rateLimit({
-  max: 10,
+  max: 302,
   windowMs: 60 * 60 * 1000, // 1 hour
   message: { message: 'Այս IP-ից մուտք գործելու չափազանց շատ փորձեր կան, խնդրում ենք կրկին փորձել մեկ ժամից։' }
 });
