@@ -3,7 +3,6 @@ const Files = require('../controllers/File');
 const repo = require('../repositories/instructor');
 
 module.exports = {
-  // Get all instructors
   getInstructor: async (startTime) => {
     await repo.sync();
     const instructors = await repo.findAll({ includeFiles: true });
@@ -14,7 +13,6 @@ module.exports = {
     };
   },
 
-  // Update instructor (create if not exists)
   updateInstructor: async (body, files) => {
     await repo.sync();
     
@@ -22,16 +20,13 @@ module.exports = {
     let wasCreated = false;
 
     if (!instructor) {
-      // Create new instructor if none exists
       instructor = await repo.create(body);
       wasCreated = true;
     } else {
-      // Update existing instructor - preserve avatar_url if not provided in body
-      // If no new avatar file and avatar_url is missing/null in body, keep existing
+
       const existingAvatarUrl = instructor.avatar_url;
       const updateBody = { ...body };
       
-      // If avatar_url is null/undefined/empty in body but exists on instructor, preserve it
       if ((!updateBody.avatar_url && existingAvatarUrl) || updateBody.avatar_url === null || updateBody.avatar_url === undefined) {
         updateBody.avatar_url = existingAvatarUrl;
       }
@@ -39,7 +34,6 @@ module.exports = {
       await repo.update(instructor, updateBody);
     }
 
-    // Refetch to get fresh data with files
     instructor = await repo.findOne({ includeFiles: true });
 
     const filePayload = files?.instructor_img || files?.image || files?.avatar;
@@ -52,7 +46,6 @@ module.exports = {
       };
 
       
-
       const image = await new Files(modelForFiles, filePayload).replace('instructor_img');
 
       if (image.status !== 'success') {
@@ -62,8 +55,6 @@ module.exports = {
 
       await instructor.createFile(image.table);
       
-      // Construct avatar_url from the saved file path
-      // File is saved at: ./public/images/instructors/large/{name}.{ext}
       const avatarUrl = `/images/instructors/large/${image.table.name}.${image.table.ext}`;
       await repo.update(instructor, { avatar_url: avatarUrl });
     }

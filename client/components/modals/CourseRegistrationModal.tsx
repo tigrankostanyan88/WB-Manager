@@ -172,28 +172,46 @@ export default function CourseRegistrationModal({ isOpen, onClose }: CourseRegis
             {!isSuccess && (
               <div className="space-y-6">
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  {/* Course Selection - Simple Native Select */}
-                  <div className="space-y-1.5">
+                  {/* Course Selection - Custom Dropdown */}
+                  <div className="space-y-1.5" ref={dropdownRef}>
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Դասընթաց *</label>
                     <div className="relative">
                       <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10 pointer-events-none" />
-                      <select
-                        name="courseId"
-                        value={formData.courseId}
-                        onChange={handleInputChange}
-                        required
+                      
+                      {/* Custom Select Trigger */}
+                      <button
+                        type="button"
+                        onClick={() => !coursesLoading && setIsDropdownOpen(!isDropdownOpen)}
                         disabled={coursesLoading}
-                        className="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-slate-700 font-medium appearance-none cursor-pointer disabled:opacity-50"
+                        className="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all text-slate-700 font-medium text-left disabled:opacity-50 truncate"
                       >
-                        <option value="">{coursesLoading ? 'Բեռնում...' : 'Ընտրեք դասընթացը'}</option>
-                        {courses.map((course) => (
-                          <option key={course.id} value={String(course.id)}>
-                            {course.title}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                        {selectedCourse ? selectedCourse.title : (coursesLoading ? 'Բեռնում...' : 'Ընտրեք դասընթացը')}
+                      </button>
+                      
+                      <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                      
+                      {/* Custom Dropdown Menu */}
+                      {isDropdownOpen && (
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto">
+                          <div className="py-1">
+                            {courses.map((course) => (
+                              <button
+                                key={course.id}
+                                type="button"
+                                onClick={() => handleCourseSelect(String(course.id), course.title)}
+                                className="w-full px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors truncate"
+                                title={course.title}
+                              >
+                                {course.title}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
+                    
+                    {/* Hidden input for form submission */}
+                    <input type="hidden" name="courseId" value={formData.courseId} required />
                   </div>
 
                   {/* Name */}

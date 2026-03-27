@@ -18,6 +18,7 @@ DB.models = {
   Payment: require('./Payment')(connect, Sequelize.DataTypes),
   CourseRegistration: require('./CourseRegistration')(connect, Sequelize.DataTypes),
   ContactMessage: require('./ContactMessage')(connect, Sequelize.DataTypes),
+  HeroContent: require('./HeroContent')(connect, Sequelize.DataTypes),
 };
 
 DB.models.User.hasMany(DB.models.File,   { foreignKey: 'row_id', as: 'files', constraints: false, scope: { table_name: 'users' } });
@@ -34,6 +35,10 @@ DB.models.Lesson.belongsTo(DB.models.Module, { as: 'module', foreignKey: 'module
 
 DB.models.Course.hasMany(DB.models.Module, { as: 'modules', foreignKey: 'course_id' });
 DB.models.Module.belongsTo(DB.models.Course, { as: 'course', foreignKey: 'course_id' });
+
+
+DB.models.HeroContent.hasOne(DB.models.File,   { foreignKey: 'row_id', as: 'file', constraints: false, scope: { table_name: 'hero_content' } });
+DB.models.File.belongsTo(DB.models.HeroContent, { foreignKey: 'row_id', as: 'heroContent',  constraints: false });
 
 
 DB.models.Module.hasMany(DB.models.File, {

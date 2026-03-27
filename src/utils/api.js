@@ -17,6 +17,7 @@ module.exports = api = (app) => {
             ['/api/v1/payments', routes.payment, 'payment'],
             ['/api/v1/files', routes.file, 'file'],
             ['/api/v1/contact-info', routes.contactMessage, 'contactMessage'],
+            ['/api/v1/hero-content', routes.heroContent, 'heroContent'],
         ];
         for (const [path, router, name] of regs) {
             if (typeof router !== 'function') {

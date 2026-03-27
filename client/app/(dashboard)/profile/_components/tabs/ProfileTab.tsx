@@ -51,13 +51,12 @@ export default function ProfileTab({
       transition={{ duration: 0.25 }}
       className="space-y-6"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
           { label: 'Ընթացիկ դասեր', val: stats?.currentLessons || '0/0', icon: Clock, color: 'text-orange-600', bg: 'bg-orange-50', borderColor: 'border-orange-100' },
-          { label: 'Առաջընթաց', val: `${stats?.progress || 0}%`, icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-50', borderColor: 'border-violet-100' },
           { label: 'Միավորներ', val: stats?.points?.toLocaleString() || '0', icon: Trophy, color: 'text-emerald-600', bg: 'bg-emerald-50', borderColor: 'border-emerald-100' },
-          { label: 'Սերտիֆիկատ', val: stats?.certificates || '0', icon: Award, color: 'text-blue-600', bg: 'bg-blue-50', borderColor: 'border-blue-100' },
-          { label: 'Գրանցված եմ', val: user.course_ids?.length || 0, icon: BookOpenCheck, color: 'text-pink-600', bg: 'bg-pink-50', borderColor: 'border-pink-100' },
+          { label: 'Սերտիֆիկատ', val: 'Տրվում է', icon: Award, color: 'text-blue-600', bg: 'bg-blue-50', borderColor: 'border-blue-100' },
+          { label: 'Գրանցված եմ', val: `${myCourses.length || 0} դասընթաց`, icon: BookOpenCheck, color: 'text-pink-600', bg: 'bg-pink-50', borderColor: 'border-pink-100' },
         ].map((stat, i) => (
           <motion.div 
             key={i} 

@@ -9,6 +9,7 @@ module.exports = {
     registration: require('./registration'),
     courseRegistration: require('./courseRegistration'),
     contactMessage: require('./contactMessage'),
+    heroContent: require('./heroContent'),
     user: {
         getUsers: user.getUsers,
         getMe: user.getMe,

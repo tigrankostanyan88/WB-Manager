@@ -231,6 +231,14 @@ module.exports = class File {
                     types: ["mp4", "mkv", "avi", "mov", "webm"],
                 }],
             },
+            {
+                table: "hero_content",
+                files: [{
+                    name: "hero_video",
+                    count: 90,
+                    types: ["mp4", "mkv", "avi", "mov"],
+                }],
+            },
         ];
 
         let tableData = names.find((n) => n.table == table);

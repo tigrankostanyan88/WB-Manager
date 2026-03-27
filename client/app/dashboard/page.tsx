@@ -225,7 +225,7 @@ export default function DashboardPage() {
       <main className="container max-w-[1400px] px-4 md:px-8 pt-24 pb-32">
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 mt-[120px] items-start">
           <div className="lg:sticky lg:top-24">
-            <DashboardSidebar menuItems={menuItems} activeTab={activeTab} onTabChange={setActiveTab} badges={{ 'contact-messages': contactUnreadCount }} />
+            <DashboardSidebar menuItems={menuItems} activeTab={activeTab} onTabChange={setActiveTab} badges={{ 'contact-messages': contactUnreadCount, 'course-registrations': courseRegistrations.length }} />
           </div>
 
           <div className="space-y-6">
