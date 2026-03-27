@@ -19,7 +19,7 @@ function getUserAvatarUrl(user: User): string | null {
   if (!user.files || user.files.length === 0) return null
   const avatarFile = user.files.find((f: any) => f?.name_used === 'user_img')
   if (!avatarFile) return null
-  const path = `/images/users/large/${avatarFile.name}${avatarFile.ext}`
+  const path = `/images/users/large/${avatarFile.name}.${avatarFile.ext}`
   return withOrigin(path) || null
 }
 

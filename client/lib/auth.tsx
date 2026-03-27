@@ -83,8 +83,10 @@ export function AuthProvider({ children, initialUser = null }: { children: React
     } else {
       setIsLoaded(true)
     }
+  }, [initialUser, fetchUser])
 
-    const onAuthUpdated = (evt: Event) => {
+  useEffect(() => {
+    const handler = (evt: Event) => {
       const u = (evt as CustomEvent<{ user?: User }>).detail?.user
       if (u) {
         const userWithAvatar = { ...u, avatar: buildAvatar(u) }
@@ -92,16 +94,14 @@ export function AuthProvider({ children, initialUser = null }: { children: React
         setIsLoaded(true)
       }
     }
-    window.addEventListener('auth:updated', onAuthUpdated as EventListener)
-    return () => {
-      window.removeEventListener('auth:updated', onAuthUpdated as EventListener)
-    }
-  }, [initialUser, fetchUser])
+    window.addEventListener('auth:updated', handler)
+    return () => window.removeEventListener('auth:updated', handler)
+  }, [])
 
   const logout = async () => {
     try {
       await fetch('/api/v1/users/logout', { method: 'POST' })
-    } catch {}
+    } catch { }
     document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
     setUserState(null)
     window.location.href = '/'

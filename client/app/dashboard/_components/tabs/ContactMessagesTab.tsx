@@ -103,9 +103,9 @@ export default function ContactMessagesTab({
           <p className="text-slate-500">Հաղորդագրություններ չկան</p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm max-h-[calc(100vh-200px)] overflow-y-auto">
           <table className="w-full">
-            <thead className="bg-slate-50">
+            <thead className="bg-slate-50 sticky top-0 z-10">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">ID</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Ուղարկող</th>

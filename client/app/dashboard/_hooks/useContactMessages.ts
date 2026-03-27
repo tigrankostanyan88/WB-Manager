@@ -21,7 +21,7 @@ export function useContactMessages({ activeTab, allowed }: { activeTab: string; 
   const [isMarkingRead, setIsMarkingRead] = useState<number | null>(null)
 
   const fetchMessages = useCallback(async () => {
-    if (activeTab !== 'contact-messages' || !allowed) return
+    if (!allowed) return
     
     try {
       setIsLoading(true)
@@ -34,7 +34,7 @@ export function useContactMessages({ activeTab, allowed }: { activeTab: string; 
     } finally {
       setIsLoading(false)
     }
-  }, [activeTab, allowed])
+  }, [allowed])
 
   const deleteMessage = useCallback(async (id: number) => {
     try {
@@ -67,6 +67,8 @@ export function useContactMessages({ activeTab, allowed }: { activeTab: string; 
     }
   }, [])
 
+  const unreadCount = messages.filter(m => !m.read).length
+
   useEffect(() => {
     fetchMessages()
   }, [fetchMessages])
@@ -76,6 +78,7 @@ export function useContactMessages({ activeTab, allowed }: { activeTab: string; 
     isLoading,
     isDeleting,
     isMarkingRead,
+    unreadCount,
     deleteMessage,
     markAsRead,
     refresh: fetchMessages

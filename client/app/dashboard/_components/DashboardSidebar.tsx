@@ -15,9 +15,10 @@ interface DashboardSidebarProps {
   menuItems: DashboardMenuItem[]
   activeTab: DashboardTabId
   onTabChange: (tab: DashboardTabId) => void
+  badges?: Partial<Record<DashboardTabId, number>>
 }
 
-export default function DashboardSidebar({ menuItems, activeTab, onTabChange }: DashboardSidebarProps) {
+export default function DashboardSidebar({ menuItems, activeTab, onTabChange, badges }: DashboardSidebarProps) {
   return (
     <aside className="lg:w-72 flex-shrink-0">
       <div className="sticky top-40 space-y-6">
@@ -25,6 +26,7 @@ export default function DashboardSidebar({ menuItems, activeTab, onTabChange }: 
           <nav className="space-y-2">
             {menuItems.map((item) => {
               const isActive = activeTab === item.id
+              const badgeCount = badges?.[item.id] ?? 0
               
               return (
                 <button
@@ -52,6 +54,11 @@ export default function DashboardSidebar({ menuItems, activeTab, onTabChange }: 
                   )}
                   <item.icon className={cn('relative z-10 w-5 h-5 transition-colors duration-300', isActive ? 'text-white' : 'text-slate-400')} />
                   <span className="relative z-10">{item.label}</span>
+                  {badgeCount > 0 && (
+                    <span className="relative z-10 ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-bold leading-none">
+                      {badgeCount >= 10 ? '9+' : badgeCount}
+                    </span>
+                  )}
                 </button>
               )
             })}

@@ -32,7 +32,7 @@ export default function CommentsTab({
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="font-semibold text-slate-900">{review.userName}</p>
+                    <p className="font-semibold text-slate-900">{review.name}</p>
                     <span className="text-sm text-slate-400">{relativeTime(review.createdAt)}</span>
                   </div>
                   <div className="flex gap-1 mt-1">
