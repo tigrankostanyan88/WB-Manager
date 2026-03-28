@@ -50,11 +50,11 @@ export default function Header({ forceWhiteBackground = false }: { forceWhiteBac
             {/* Logo */}
             <Link href="/" prefetch={true} className="flex items-center gap-2 relative z-50">
               {settings.logo ? (
-                <div className="h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-violet-200">
+                <div className="h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-slate-200">
                   <img src={settings.logo} alt="Logo" className="w-full h-full object-cover" />
                 </div>
               ) : (
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-violet-200">
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-slate-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6"><path d="M12 3v2.5l-3 3-3-3V3h6Z"/><path d="M18 3v2.5l-3 3-3-3V3h6Z"/><path d="M12 21v-2.5l3-3 3 3V21h-6Z"/><path d="M6 21v-2.5l3-3 3 3V21H6Z"/><path d="M12 8.5 9 12l3 3.5 3-3.5-3-3.5Z"/></svg>
                 </div>
               )}

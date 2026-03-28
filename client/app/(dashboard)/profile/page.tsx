@@ -165,13 +165,13 @@ export default function ProfilePage() {
     : allSidebarLinks
 
   return (
-    <div className="min-h-screen bg-slate-50/50 ">
+    <div className="min-h-screen bg-white">
       <PaymentModal open={showPaymentModal} onClose={() => setShowPaymentModal(false)} />
 
       <Header />
       
-      <main className="container max-w-[1400px] px-4 md:px-8 pt-32 pb-32">
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 mt-[100px] items-start">
+      <main className="container max-w-[1400px] px-4 md:px-8 pt-32 pb-32 mt-[150px]">
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 items-start mt-[150px]">
           
           <ProfileSidebar
             user={currentUser as any}
