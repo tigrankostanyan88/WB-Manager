@@ -121,11 +121,7 @@ export function HeroSection({
 
             <div className="space-y-6 overflow-hidden">
               <h1 className="text-2xl sm:text-5xl md:text-6xl xl:text-7xl/none font-black tracking-tight text-slate-900 break-words">
-              {content?.title || 'Սկսեք ձեր բիզնեսը'}{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-fuchsia-600">
-                  {content?.name?.includes('Wildberries') ? 'Wildberries' : 'Wildberries'}
-                </span>
-                -ում
+                {content?.title || 'Սովորեք Ուայլդբերիի Մասնագետից'}
               </h1>
               <p className="max-w-[600px] text-slate-500 text-sm sm:text-lg md:text-xl leading-relaxed">
                 {content?.text || 'Սովորեք քայլ առ քայլ՝ սկսած հաշվարկներից մինչև վաճառքի մասշտաբավորում՝ իրական փորձի հիման վրա։'}
@@ -204,32 +200,6 @@ export function HeroSection({
                 onClose={() => setPlayingVideo(null)} 
               />
             )}
-
-            <div className="absolute -bottom-2 left-2 right-2 sm:-bottom-6 sm:left-8 sm:right-auto inline-flex items-center justify-center gap-2 sm:gap-3 rounded-2xl bg-white p-2.5 sm:p-4 shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 transform transition-transform duration-500 hover:-translate-y-2">
-              <div className="flex -space-x-2 sm:-space-x-3">
-                {AVATAR_INDICES.map((i) => (
-                  <div
-                    key={i}
-                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-200 ring-2 ring-white overflow-hidden"
-                  >
-                    <img
-                      src={`https://i.pravatar.cc/100?img=${10 + i}`}
-                      alt="User"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-              <div>
-                <div className="flex items-center gap-1">
-                  <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-yellow-400 fill-yellow-400" />
-                  <span className="text-sm font-bold text-slate-900">4.9</span>
-                </div>
-                <p className="text-[10px] sm:text-xs text-slate-500">
-                  2.5k+ ուսանող
-                </p>
-              </div>
-            </div>
 
             <div className="absolute -top-6 -right-6 hidden lg:flex flex-col gap-2 p-4 bg-white rounded-2xl shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 transform rotate-3 transition-transform duration-500 hover:rotate-0 hover:scale-110">
               <div className="flex items-center gap-3">

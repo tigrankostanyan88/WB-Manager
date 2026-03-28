@@ -16,10 +16,10 @@ import {
   CurriculumSection,
   InstructorSection,
   FaqSection,
+  ReviewsSection,
 } from '@/components/landing'
 
 // Lazy load sections below the fold
-const ReviewsSection = lazy(() => import('./ReviewsSection').then(m => ({ default: m.ReviewsSection })))
 const ContactSection = lazy(() => import('./ContactSection').then(m => ({ default: m.ContactSection })))
 const CtaSection = lazy(() => import('./CtaSection').then(m => ({ default: m.CtaSection })))
 
@@ -59,9 +59,7 @@ export default function MarketingLanding() {
         instructor={instructor}
         onOpenModal={handleOpenModal}
       />
-      <Suspense fallback={<SectionLoader />}>
-        <ReviewsSection />
-      </Suspense>
+      <ReviewsSection />
       <FaqSection />
       <Suspense fallback={<SectionLoader />}>
         <ContactSection settings={settings} />
