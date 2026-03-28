@@ -32,8 +32,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
         }
-    }, {
-        tableName: 'registrations'
     });
 
     return Registration;

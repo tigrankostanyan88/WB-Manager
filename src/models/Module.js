@@ -21,8 +21,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         }
-    }, {
-        tableName: 'modules'
     });
 
     return Module;

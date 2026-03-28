@@ -26,6 +26,10 @@ module.exports = (con, DataTypes) => {
                 key: 'id'
             }
         },
+        thumbnail_time: {
+            type: DataTypes.FLOAT,
+            allowNull: true
+        },
         created_at: {
             type: DataTypes.DATE,
             defaultValue: con.literal("CURRENT_TIMESTAMP"),
@@ -36,12 +40,6 @@ module.exports = (con, DataTypes) => {
             defaultValue: con.literal("CURRENT_TIMESTAMP"),
             allowNull: false
         }
-    }, {
-        tableName: 'hero_content',
-        timestamps: true,
-        underscored: true,
-        createdAt: 'created_at',
-        updatedAt: 'updated_at'
     });
 
     HeroContent.associate = (models) => {

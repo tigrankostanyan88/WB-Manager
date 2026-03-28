@@ -232,7 +232,7 @@ module.exports = class File {
                 }],
             },
             {
-                table: "hero_content",
+                table: "hero_contents",
                 files: [{
                     name: "hero_video",
                     count: 90,

@@ -13,10 +13,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: false
     }
-  }, {
-    tableName: 'faqs',
-    underscored: true,
-    timestamps: true
   });
 
   return Faq;

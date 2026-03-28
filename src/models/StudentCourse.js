@@ -46,7 +46,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         }
     }, {
-        tableName: 'student_courses',
         indexes: [
             {
                 unique: true,

@@ -25,8 +25,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         }
-    }, {
-        tableName: 'reviews'
     });
 
     return Review;

@@ -29,10 +29,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: false
     }
-  }, {
-    tableName: 'instructors',
-    underscored: true,
-    timestamps: true
   });
 
   return Instructor;

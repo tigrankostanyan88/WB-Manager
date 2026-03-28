@@ -1,7 +1,7 @@
 module.exports = function server(app) {
     const DB = require('../models');
     DB.con
-        .sync({alter: false})
+        .sync({alter: true})
         .then(async (res) => {
             const port = process.env.PORT || 3300;
             const server = app.listen(port, () => console.log(`App running on port ${port}...`));

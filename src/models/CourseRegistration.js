@@ -25,8 +25,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
         }
-    }, {
-        tableName: 'course_registrations'
     });
 
     return CourseRegistration;

@@ -76,8 +76,6 @@ module.exports = (sequelize, DataTypes) => {
                 this.setDataValue('prerequisites', JSON.stringify(cleaned));
             }
         }
-    }, {
-        tableName: 'courses'
     });
 
     return Course;

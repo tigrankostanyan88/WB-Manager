@@ -1,7 +1,5 @@
 'use client'
 
-// client/components/landing/HeroSection.tsx
-
 import { Button } from '@/components/ui/button'
 import {
   ChevronRight,
@@ -11,9 +9,19 @@ import {
   TrendingUp,
   Users,
   Zap,
+  X,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useCallback } from 'react'
+import { useState, useCallback } from 'react'
+
+interface HeroContent {
+  id: number
+  title: string
+  name: string
+  text: string
+  video_url?: string
+  thumbnail_time?: number
+}
 
 interface HeroSectionProps {
   isPlaying: boolean
@@ -21,9 +29,42 @@ interface HeroSectionProps {
   onPlayVideo: () => void
   onVideoError: () => void
   onOpenModal: () => void
+  content: HeroContent | null
 }
 
 const AVATAR_INDICES = [1, 2, 3] as const
+
+// Video Player Modal - similar to ModulesTab
+function VideoPlayerModal({ videoUrl, onClose }: { videoUrl: string; onClose: () => void }) {
+  return (
+    <div 
+      className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="relative w-full max-w-5xl bg-black rounded-xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+        <video
+          src={videoUrl}
+          controls
+          autoPlay
+          playsInline
+          crossOrigin="anonymous"
+          preload="auto"
+          className="w-full aspect-video"
+          key={videoUrl}
+        />
+      </div>
+    </div>
+  )
+}
 
 export function HeroSection({
   isPlaying,
@@ -31,15 +72,28 @@ export function HeroSection({
   onPlayVideo,
   onVideoError,
   onOpenModal,
+  content,
 }: HeroSectionProps) {
-  const handleVideoLoaded = useCallback(
+  const [playingVideo, setPlayingVideo] = useState<string | null>(null)
+
+  const handleVideoClick = useCallback(() => {
+    const videoUrl = content?.video_url || '/files/hero.mp4'
+    setPlayingVideo(videoUrl)
+  }, [content?.video_url])
+
+  const handleThumbnailLoaded = useCallback(
     (e: React.SyntheticEvent<HTMLVideoElement>) => {
-      const el = e.currentTarget
-      if (el.duration > 1) {
-        el.currentTime = 1
+      const video = e.currentTarget
+      // Use thumbnail_time from API if available, otherwise default to middle of video
+      const thumbnailTime = content?.thumbnail_time
+      const seekTime = thumbnailTime !== undefined && thumbnailTime > 0 
+        ? thumbnailTime 
+        : Math.min(45, video.duration / 2 || 0)
+      if (seekTime > 0) {
+        video.currentTime = seekTime
       }
     },
-    []
+    [content?.thumbnail_time]
   )
 
   return (
@@ -62,20 +116,19 @@ export function HeroSection({
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500" />
               </span>
-              WB Mastery · Wildberries Academy
+              {content?.name || 'WB Mastery · Wildberries Academy'}
             </div>
 
             <div className="space-y-6 overflow-hidden">
               <h1 className="text-2xl sm:text-5xl md:text-6xl xl:text-7xl/none font-black tracking-tight text-slate-900 break-words">
-                Սկսեք ձեր բիզնեսը{' '}
+              {content?.title || 'Սկսեք ձեր բիզնեսը'}{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-fuchsia-600">
-                  Wildberries
+                  {content?.name?.includes('Wildberries') ? 'Wildberries' : 'Wildberries'}
                 </span>
                 -ում
               </h1>
               <p className="max-w-[600px] text-slate-500 text-sm sm:text-lg md:text-xl leading-relaxed">
-                Սովորեք քայլ առ քայլ՝ սկսած հաշվարկներից մինչև վաճառքի
-                մասշտաբավորում՝ իրական փորձի հիման վրա։
+                {content?.text || 'Սովորեք քայլ առ քայլ՝ սկսած հաշվարկներից մինչև վաճառքի մասշտաբավորում՝ իրական փորձի հիման վրա։'}
               </p>
             </div>
 
@@ -113,35 +166,29 @@ export function HeroSection({
           </div>
 
           <div className="relative group perspective-1000 w-full">
-            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200 bg-white ring-1 ring-slate-100 transform transition-transform duration-700 group-hover:rotate-y-2 group-hover:scale-[1.02]">
+            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200 bg-white ring-1 ring-slate-100 transform transition-transform duration-700 group-hover:rotate-y-2 group-hover:scale-[1.02] cursor-pointer"
+              onClick={handleVideoClick}>
               <div className="aspect-[16/10] w-full relative overflow-hidden bg-slate-100">
+                {/* Video Thumbnail - shows preview frame like ModulesTab */}
                 <video
-                  src="/files/hero.mp4"
-                  className="h-full w-full object-cover scale-105 transition-transform duration-700 group-hover:scale-100"
+                  src={content?.video_url || '/files/hero.mp4'}
+                  className="h-full w-full object-cover scale-105 transition-transform duration-700 group-hover:scale-100 opacity-90 group-hover:opacity-100"
+                  preload="metadata"
+                  muted
                   playsInline
-                  preload="auto"
-                  muted={!isPlaying}
-                  controls={isPlaying}
-                  id="heroVideo"
-                  onLoadedMetadata={handleVideoLoaded}
+                  onLoadedMetadata={handleThumbnailLoaded}
                   onError={onVideoError}
                 />
 
-                {!isPlaying && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/5 backdrop-blur-[1px] transition-all group-hover:bg-black/0 group-hover:backdrop-blur-none">
-                    <button
-                      type="button"
-                      aria-label="Play video"
-                      onClick={onPlayVideo}
-                      className="group/btn relative flex items-center justify-center"
-                    >
-                      <div className="absolute inset-0 bg-white/30 rounded-full blur-xl transform scale-150 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500" />
-                      <span className="relative grid place-items-center h-20 w-20 rounded-full bg-white shadow-2xl shadow-violet-500/30 ring-1 ring-white/50 transform transition-all duration-300 group-hover/btn:scale-110">
-                        <Play className="h-8 w-8 text-slate-900 fill-slate-900 ml-1" />
-                      </span>
-                    </button>
+                {/* Play Button Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-all">
+                  <div className="relative flex items-center justify-center">
+                    <div className="absolute inset-0 bg-white/30 rounded-full blur-xl transform scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <span className="relative grid place-items-center h-20 w-20 rounded-full bg-white shadow-2xl shadow-violet-500/30 ring-1 ring-white/50 transform transition-all duration-300 group-hover:scale-110">
+                      <Play className="h-8 w-8 text-slate-900 fill-slate-900 ml-1" />
+                    </span>
                   </div>
-                )}
+                </div>
 
                 {videoError && (
                   <div className="absolute inset-0 flex items-center justify-center bg-slate-100 text-slate-400 text-sm">
@@ -150,6 +197,13 @@ export function HeroSection({
                 )}
               </div>
             </div>
+
+            {playingVideo && (
+              <VideoPlayerModal 
+                videoUrl={playingVideo} 
+                onClose={() => setPlayingVideo(null)} 
+              />
+            )}
 
             <div className="absolute -bottom-2 left-2 right-2 sm:-bottom-6 sm:left-8 sm:right-auto inline-flex items-center justify-center gap-2 sm:gap-3 rounded-2xl bg-white p-2.5 sm:p-4 shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 transform transition-transform duration-500 hover:-translate-y-2">
               <div className="flex -space-x-2 sm:-space-x-3">

@@ -71,6 +71,7 @@ const staticOptions = {
 app.use('/admin', express.static(path.join(__dirname, 'public', 'admin'), staticOptions));
 app.use(express.static(path.join(__dirname, 'public'), staticOptions));
 app.use('/api/images', express.static(path.join(__dirname, 'public', 'images'), staticOptions));
+app.use('/api/files', express.static(path.join(__dirname, 'public', 'files'), staticOptions));
 
 
 // 4. BODY PARSERS

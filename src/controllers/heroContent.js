@@ -66,7 +66,8 @@ class HeroContentController {
         const data = content.toJSON ? content.toJSON() : content;
         
         if (data.file) {
-            data.video_url = `/files/${data.file.name}.${data.file.ext}`;
+            const ext = data.file.ext?.startsWith('.') ? data.file.ext.slice(1) : data.file.ext;
+            data.video_url = `/files/hero_content/${data.file.name}.${ext}`;
         }
 
         return data;

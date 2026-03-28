@@ -43,7 +43,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         }
     }, {
-        tableName: 'payments',
         indexes: [
             { fields: ['user_id'] },
             { fields: ['course_id'] },

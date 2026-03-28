@@ -6,6 +6,7 @@ import { useState, Suspense, lazy } from 'react'
 import { useSettings } from '@/context/SettingsContext'
 import { useInstructor } from '@/hooks/useInstructor'
 import { useVideoPlayer } from '@/hooks/useVideoPlayer'
+import { useHeroContent } from '@/hooks/useHeroContent'
 import RegistrationModal from '@/components/modals/RegistrationModal'
 import {
   HeroSection,
@@ -35,6 +36,7 @@ export default function MarketingLanding() {
   const { settings } = useSettings()
   const { instructor } = useInstructor()
   const { isPlaying, videoError, playVideo, setVideoError } = useVideoPlayer()
+  const { content } = useHeroContent()
 
   const handleOpenModal = () => setIsModalOpen(true)
   const handleCloseModal = () => setIsModalOpen(false)
@@ -47,6 +49,7 @@ export default function MarketingLanding() {
         onPlayVideo={playVideo}
         onVideoError={() => setVideoError('notfound')}
         onOpenModal={handleOpenModal}
+        content={content}
       />
       <LearnSection />
       <ImpactSection />

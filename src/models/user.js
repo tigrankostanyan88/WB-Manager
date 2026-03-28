@@ -77,7 +77,6 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: true
         }
     }, {
-        tableName: 'users',
         hooks: {
             beforeCreate: async (user) => {
                 if (user.password) {
