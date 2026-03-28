@@ -71,8 +71,8 @@ export interface SiteSettings {
 }
 
 export interface InstructorStat {
-  value: string
   label: string
+  value?: string | number
 }
 
 export interface InstructorForm {

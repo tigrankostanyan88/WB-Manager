@@ -12,7 +12,8 @@ import {
   X,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import api from '@/lib/api'
 
 interface HeroContent {
   id: number
@@ -21,6 +22,14 @@ interface HeroContent {
   text: string
   video_url?: string
   thumbnail_time?: number
+}
+
+interface Review {
+  id: number | string
+  name?: string
+  rating?: number
+  comment?: string
+  createdAt?: string
 }
 
 interface HeroSectionProps {
@@ -75,6 +84,22 @@ export function HeroSection({
   content,
 }: HeroSectionProps) {
   const [playingVideo, setPlayingVideo] = useState<string | null>(null)
+  const [latestReviews, setLatestReviews] = useState<Review[]>([])
+
+  // Fetch latest reviews
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const res = await api.get('/api/v1/reviews')
+        const responseData = res.data?.data as { reviews?: Review[] }
+        const list = Array.isArray(responseData?.reviews) ? responseData.reviews : []
+        setLatestReviews(list.slice(0, 3))
+      } catch (err) {
+        console.error('Failed to fetch reviews:', err)
+      }
+    }
+    fetchReviews()
+  }, [])
 
   const handleVideoClick = useCallback(() => {
     const videoUrl = content?.video_url || '/files/hero.mp4'
@@ -84,7 +109,6 @@ export function HeroSection({
   const handleThumbnailLoaded = useCallback(
     (e: React.SyntheticEvent<HTMLVideoElement>) => {
       const video = e.currentTarget
-      // Use thumbnail_time from API if available, otherwise default to middle of video
       const thumbnailTime = content?.thumbnail_time
       const seekTime = thumbnailTime !== undefined && thumbnailTime > 0 
         ? thumbnailTime 
@@ -113,8 +137,8 @@ export function HeroSection({
           <div className="flex flex-col gap-8">
             <div className="inline-flex items-center gap-2 self-start rounded-full bg-slate-50 border border-slate-100 px-4 py-1.5 text-xs font-semibold text-slate-600 shadow-sm transition-all hover:bg-slate-100 hover:border-slate-200">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-3 bg-violet-400 opacity-75" />
+                <span className="relative inline-flex rounded-3 h-2 w-2 bg-violet-500" />
               </span>
               {content?.name || 'WB Mastery · Wildberries Academy'}
             </div>
@@ -199,6 +223,36 @@ export function HeroSection({
                 videoUrl={playingVideo} 
                 onClose={() => setPlayingVideo(null)} 
               />
+            )}
+
+            {/* Latest Reviews Widget - Bottom Left */}
+            {latestReviews.length > 0 && (
+              <div className="absolute -bottom-3 -left-3 rotate-[5deg] hidden lg:flex items-center gap-3 p-4 bg-white rounded-2xl shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 transform transition-transform duration-500 hover:scale-105">
+                {/* Overlapping Avatars */}
+                <div className="flex -space-x-2">
+                  {latestReviews.slice(0, 3).map((review, idx) => (
+                    <div 
+                      key={review.id || idx}
+                      className="relative w-8 h-8 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white text-xs font-bold ring-2 ring-white overflow-hidden"
+                    >
+                      {review.name?.charAt(0).toUpperCase() || 'Ո'}
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Rating & Count */}
+                <div className="flex flex-col leading-none">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span className="text-sm font-bold text-slate-900">
+                      {(latestReviews.reduce((acc, r) => acc + (r.rating || 5), 0) / latestReviews.length).toFixed(1)}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-500 font-medium">
+                    {latestReviews.length}+ կարծիք
+                  </span>
+                </div>
+              </div>
             )}
 
             <div className="absolute -top-6 -right-6 hidden lg:flex flex-col gap-2 p-4 bg-white rounded-2xl shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 transform rotate-3 transition-transform duration-500 hover:rotate-0 hover:scale-110">

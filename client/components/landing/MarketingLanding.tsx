@@ -63,7 +63,7 @@ export default function MarketingLanding() {
       <FaqSection />
       <Suspense fallback={<SectionLoader />}>
         <ContactSection settings={settings} />
-        <CtaSection onOpenModal={handleOpenModal} />
+        <CtaSection />
       </Suspense>
 
       {isModalOpen && (

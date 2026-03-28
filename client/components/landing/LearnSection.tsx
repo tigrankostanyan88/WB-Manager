@@ -1,7 +1,5 @@
 'use client'
 
-// client/components/landing/LearnSection.tsx
-
 import {
   CheckCircle,
   ShoppingBag,
@@ -49,7 +47,7 @@ const PHONE_CHART_BARS = [
 
 export function LearnSection() {
   return (
-    <section className="w-full py-20 md:py-32 relative overflow-hidden bg-[#F8F9FB]">
+    <section id="learn" className="w-full py-20 md:py-32 relative overflow-hidden bg-[#F8F9FB]">
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-violet-200/20 rounded-full blur-3xl" />
         <div className="absolute bottom-[10%] right-[5%] w-80 h-80 bg-blue-200/20 rounded-full blur-3xl" />
