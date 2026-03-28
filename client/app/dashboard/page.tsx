@@ -202,7 +202,7 @@ export default function DashboardPage() {
 
   if (isAuthLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+      <div className="flex items-center justify-center min-h-screen bg-white">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600" />
       </div>
     )
@@ -210,7 +210,7 @@ export default function DashboardPage() {
 
   if (!allowed) {
     return (
-      <div className="min-h-screen bg-slate-50/50 flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col">
         <Header forceWhiteBackground />
         <main className="flex-1 flex items-center justify-center px-4 py-20">
           <div className="w-full max-w-xl bg-white rounded-[2.5rem] p-10 shadow-lg border border-slate-100 text-center">
@@ -227,7 +227,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50">
+    <div className="min-h-screen bg-white">
       <Header />
 
       <main className="container max-w-[1400px] px-4 md:px-8 pt-24 pb-32">

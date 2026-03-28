@@ -385,7 +385,7 @@ export default function CourseDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-white">
       <CourseHero course={courseHero} onStartCourse={handleStartCourse} />
 
       <main className="container max-w-[1200px] mx-auto px-4 md:px-6 pt-16 pb-10 relative">

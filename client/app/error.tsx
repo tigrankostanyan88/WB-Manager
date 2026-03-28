@@ -14,7 +14,7 @@ export default function Error({
   }, [error])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
+    <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="text-center p-8 bg-white rounded-2xl shadow-lg max-w-md">
         <h2 className="text-xl font-bold text-slate-900 mb-4">Սխալ է տեղի ունեցել</h2>
         <p className="text-slate-500 mb-6">{error.message || 'Անհայտ սխալ'}</p>
