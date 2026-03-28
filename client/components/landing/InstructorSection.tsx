@@ -80,11 +80,6 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-tight">
                   {instructor.title || 'Մենթորի'}
                 </h2>
-                {instructor.name && (
-                  <div className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-4 py-2 rounded-xl text-xl md:text-2xl font-black">
-                    {instructor.name}
-                  </div>
-                )}
               </div>
               {instructor.profession && (
                 <p className="text-lg text-slate-500 mb-2">{instructor.profession}</p>
@@ -95,7 +90,7 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              {displayStats.map((s, i) => {
+              {displayStats.map((stat, i) => {
                 const IconComponent = STAT_ICONS[i] || Users
                 return (
                   <div
@@ -108,10 +103,10 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-2xl sm:text-3xl font-black text-slate-900 mb-1">
-                          {s.value || '—'}
+                          {stat.value || '—'}
                         </div>
                         <p className="text-xs sm:text-sm font-medium text-slate-500 leading-tight">
-                          {s.label}
+                          {stat.label}
                         </p>
                       </div>
                     </div>
