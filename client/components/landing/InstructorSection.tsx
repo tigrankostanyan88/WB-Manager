@@ -70,7 +70,7 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
             <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-indigo-400 rounded-full blur-3xl opacity-20" />
           </div>
 
-          <div className="w-full lg:w-1/1 space-y-6">
+          <div className="w-full lg:w-1/2 space-y-6">
             <div>
               <div className="inline-flex items-center rounded-full bg-violet-100 px-4 py-1.5 text-sm font-bold text-violet-700 mb-4">
                 <Star className="w-4 h-4 mr-2 fill-current" />
@@ -89,23 +89,20 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {displayStats.map((stat, i) => {
                 const IconComponent = STAT_ICONS[i] || Users
                 return (
-                  <div
-                    key={i}
-                    className="group bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100/50 transition-all duration-300"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center text-violet-600 group-hover:scale-110 transition-transform duration-300 shrink-0">
-                        <IconComponent className="w-6 h-6" />
+                  <div key={i} className="group bg-white p-3 sm:p-5 rounded-xl sm:rounded-2xl shadow-sm border border-slate-100 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100/50 transition-all duration-300">
+                    <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center text-violet-600 group-hover:scale-110 transition-transform duration-300 shrink-0">
+                        <IconComponent className="w-5 h-5 sm:w-6 sm:h-6" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-2xl sm:text-3xl font-black text-slate-900 mb-1">
+                        <div className="text-xl sm:text-3xl font-black text-slate-900 mb-0.5 sm:mb-1">
                           {stat.value || '—'}
                         </div>
-                        <p className="text-xs sm:text-sm font-medium text-slate-500 leading-tight">
+                        <p className="text-[10px] sm:text-sm font-medium text-slate-500 leading-tight">
                           {stat.label}
                         </p>
                       </div>
