@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard, Building2, GraduationCap, Mail, UserX } from 'lucide-react'
+import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard, Building2, GraduationCap, Mail, UserX, Sparkles } from 'lucide-react'
 import DashboardHeader from '@/app/dashboard/_components/DashboardHeader'
 import DashboardSidebar from '@/app/dashboard/_components/DashboardSidebar'
 import CropModal from '@/app/dashboard/_components/CropModal'
@@ -23,6 +23,7 @@ import SuspendedUsersTab from '@/app/dashboard/_components/tabs/SuspendedUsersTa
 import EnrollmentsTab from '@/app/dashboard/_components/tabs/EnrollmentsTab'
 import CourseRegistrationsTab from '@/app/dashboard/_components/tabs/CourseRegistrationsTab'
 import ContactMessagesTab from '@/app/dashboard/_components/tabs/ContactMessagesTab'
+import HeroContentTab from '@/app/dashboard/_components/tabs/HeroContentTab'
 import useAuth from '@/app/dashboard/_hooks/useAuth'
 import useCrop from '@/app/dashboard/_hooks/useCrop'
 import useCourses from '@/app/dashboard/_hooks/useCourses'
@@ -37,6 +38,7 @@ import useUsers from '@/app/dashboard/_hooks/useUsers'
 import { useEnrollments } from '@/app/dashboard/_hooks/useEnrollments'
 import { useCourseRegistrations } from '@/app/dashboard/_hooks/useCourseRegistrations'
 import { useContactMessages } from '@/app/dashboard/_hooks/useContactMessages'
+import { useHeroContent } from '@/app/dashboard/_hooks/useHeroContent'
 import { userService } from '@/lib/api'
 import type { DashboardMenuItem } from '@/app/dashboard/_components/DashboardSidebar'
 import type { DashboardTabId, User } from '@/app/dashboard/_types'
@@ -162,6 +164,11 @@ export default function DashboardPage() {
     activeTab,
     allowed
   })
+  const { form, setForm, isLoading, isSubmitting, videoFile: heroVideoFile, videoPreview, handleVideoChange, clearVideo, submitContent, deleteContent } = useHeroContent({
+    activeTab,
+    allowed,
+    showToast
+  })
   const menuItems = useMemo<DashboardMenuItem[]>(
     () => [
       { id: 'overview', label: 'Վահանակ', icon: LayoutDashboard },
@@ -177,6 +184,7 @@ export default function DashboardPage() {
       { id: 'comments', label: 'Մեկնաբանություններ', icon: MessageSquare },
       { id: 'instructor', label: 'Մենթոր', icon: Shield },
       { id: 'faq', label: 'ՀՏՀ', icon: HelpCircle },
+      { id: 'hero-content', label: 'Հերո բովանդակություն', icon: Sparkles },
       { id: 'settings', label: 'Կարգավորումներ', icon: Settings }
     ],
     []
@@ -394,6 +402,21 @@ export default function DashboardPage() {
                     cancelEdit={cancelEdit}
                     updateFaq={updateFaq}
                     deleteFaq={deleteFaq}
+                  />
+              )}
+
+              {activeTab === 'hero-content' && (
+                  <HeroContentTab
+                    form={form}
+                    setForm={setForm}
+                    isLoading={isLoading}
+                    isSubmitting={isSubmitting}
+                    videoFile={heroVideoFile}
+                    videoPreview={videoPreview}
+                    handleVideoChange={handleVideoChange}
+                    clearVideo={clearVideo}
+                    submitContent={submitContent}
+                    deleteContent={deleteContent}
                   />
               )}
 

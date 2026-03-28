@@ -13,6 +13,7 @@ export type DashboardTabId =
   | 'enrollments'
   | 'course-registrations'
   | 'contact-messages'
+  | 'hero-content'
 
 export interface User {
   id: number | string

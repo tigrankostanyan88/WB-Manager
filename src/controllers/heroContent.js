@@ -27,11 +27,11 @@ class HeroContentController {
     });
 
     upsert = catchAsync(async (req, res) => {
-        const { title, name, text } = req.body;
+        const { title, name, text, thumbnail_time } = req.body;
         const files = req.files; // Files from middleware
 
         const result = await this.service.upsert(
-            { title, name, text },
+            { title, name, text, thumbnail_time },
             files
         );
         
