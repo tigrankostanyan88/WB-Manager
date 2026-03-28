@@ -104,7 +104,7 @@ html {
   }
   body {
     @apply bg-background text-foreground;
-    background-color: #F9F7FD;
+    background-color: #ffffff;
   }
 }
 

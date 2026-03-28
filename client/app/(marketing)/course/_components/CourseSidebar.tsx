@@ -86,7 +86,7 @@ export default function CourseSidebar({ price, originalPrice, discount, includes
             size="sm"
             className="w-full border-white/20 hover:bg-white/10 text-white text-xs h-9"
           >
-            Կապ հաստատել
+            Անվճար խորհրդատվություն
           </Button>
         </div>
       </div>

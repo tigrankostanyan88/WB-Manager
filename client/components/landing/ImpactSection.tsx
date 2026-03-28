@@ -1,7 +1,5 @@
 'use client'
 
-// client/components/landing/ImpactSection.tsx
-
 import {
   BarChart,
   CheckCircle,

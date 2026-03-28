@@ -94,7 +94,7 @@ export default function ProfileSidebar({
 
   return (
     <aside className="space-y-6 self-start">
-      <Card className="shadow-2xl shadow-slate-200/40 rounded-2xl overflow-hidden bg-white/80 backdrop-blur-xl border border-white/60">
+      <Card className="shadow-2xl shadow-slate-200/40 rounded-2xl overflow-hidden bg-white backdrop-blur-xl border border-white/60">
         <CardContent className="p-6">
           <div className="flex flex-col items-center text-center mb-8">
             <div className="relative group cursor-pointer">

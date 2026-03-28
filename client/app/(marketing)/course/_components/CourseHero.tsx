@@ -1,4 +1,7 @@
+'use client'
+
 import { Clock, Star, Play } from 'lucide-react'
+import VideoThumbnail from './VideoThumbnail'
 
 export interface CourseHeroData {
   title: string
@@ -11,6 +14,7 @@ export interface CourseHeroData {
   language: string
   image?: string
   previewVideoUrl?: string | null
+  thumbnailTime?: number
 }
 
 interface CourseHeroProps {
@@ -23,7 +27,7 @@ export default function CourseHero({ course, onStartCourse }: CourseHeroProps) {
   
   return (
     <div className="bg-slate-50 pt-8 pb-6">
-      <div className="container max-w-[1200px] mx-auto px-4 md:px-6">
+      <div className="container max-w-[1400px] mx-auto px-4 md:px-6">
         {/* Section Label */}
         <p className="text-xs font-semibold tracking-widest text-slate-500 uppercase mb-4">
           Course Details
@@ -33,26 +37,27 @@ export default function CourseHero({ course, onStartCourse }: CourseHeroProps) {
         <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="flex flex-col md:flex-row">
             {/* Course Image / Video Preview */}
-            <div className="md:w-2/5 bg-gradient-to-br from-violet-100 to-fuchsia-100 p-8 flex items-center justify-center">
-              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
+            <div className="md:w-2/5 bg-slate-100 p-8 flex items-center justify-center">
+              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-lg bg-slate-900">
                 {course.image ? (
                   <img
                     src={course.image}
                     alt={course.title}
                     className="w-full h-full object-cover"
                   />
-                ) : hasVideo ? (
-                  <video
-                    src={course.previewVideoUrl || ''}
-                    className="w-full h-full object-cover"
-                    preload="metadata"
-                    muted
-                    playsInline
+                ) : course.previewVideoUrl ? (
+                  <VideoThumbnail 
+                    videoUrl={course.previewVideoUrl}
+                    time={course.thumbnailTime}
+                    className="w-full h-full"
                   />
                 ) : null}
                 
                 {/* Play Button Overlay */}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/10 hover:bg-black/20 transition-colors cursor-pointer group">
+                <div 
+                  className="absolute inset-0 flex items-center justify-center cursor-pointer group"
+                  onClick={onStartCourse}
+                >
                   <div className="w-16 h-16 rounded-full bg-white/90 shadow-lg flex items-center justify-center transform group-hover:scale-110 transition-transform">
                     <Play className="w-7 h-7 text-violet-600 ml-1" fill="currentColor" />
                   </div>
@@ -110,7 +115,7 @@ export default function CourseHero({ course, onStartCourse }: CourseHeroProps) {
                 onClick={onStartCourse}
                 className="w-full md:w-auto px-8 py-3.5 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-violet-200"
               >
-                START COURSE
+                Սկսել դասընթացը
               </button>
             </div>
           </div>

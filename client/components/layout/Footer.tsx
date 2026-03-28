@@ -7,7 +7,7 @@ export default function Footer() {
   const { settings } = useSettings()
 
   return (
-    <footer className="bg-slate-950 border-t border-slate-800 mt-0">
+    <footer className="bg-slate-950 border-t border-slate-800 mt-20 py-10">
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-violet-950/20 to-slate-950/0 pointer-events-none" />
       

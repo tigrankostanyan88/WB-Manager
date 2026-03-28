@@ -5,8 +5,6 @@ import { useParams } from 'next/navigation'
 import api from '@/lib/api'
 import CourseModulesList from '@/app/(marketing)/course/_components/CourseModulesList'
 import { useAuth } from '@/lib/auth'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
 import CourseHero, { type CourseHeroData } from '@/app/(marketing)/course/_components/CourseHero'
 import WhatYouLearn from '@/app/(marketing)/course/_components/WhatYouLearn'
 import CourseRequirements from '@/app/(marketing)/course/_components/CourseRequirements'
@@ -80,6 +78,8 @@ export default function CourseDetailsPage() {
   const [error, setError] = useState<string | null>(null)
   const [hasAccess, setHasAccess] = useState(false)
   const [checkingAccess, setCheckingAccess] = useState(true)
+  const [realRating, setRealRating] = useState<number>(4.9)
+  const [realReviewsCount, setRealReviewsCount] = useState<number>(0)
 
   useEffect(() => {
     if (!courseId || !isLoggedIn) {
@@ -137,6 +137,26 @@ export default function CourseDetailsPage() {
         const courseData = courseRes.data?.data || courseRes.data?.course || courseRes.data
         setCourse(courseData)
         
+        // Fetch reviews and calculate real rating
+        let calculatedRating = 4.9
+        let calculatedCount = 0
+        try {
+          const reviewsRes = await api.get('/api/v1/reviews')
+          const payload = reviewsRes.data as { data?: { reviews?: Array<{ rating?: number }> } }
+          const reviews = payload.data?.reviews || []
+          
+          if (reviews.length > 0) {
+            const totalRating = reviews.reduce((sum, r) => sum + (r.rating || 0), 0)
+            const avgRating = totalRating / reviews.length
+            calculatedRating = Number(avgRating.toFixed(1))
+            calculatedCount = reviews.length
+            setRealRating(calculatedRating)
+            setRealReviewsCount(calculatedCount)
+          }
+        } catch {
+          // Keep default values if reviews fetch fails
+        }
+        
         // Fetch instructor data
         try {
           const instructorRes = await api.get('/api/v1/instructor')
@@ -172,7 +192,7 @@ export default function CourseDetailsPage() {
               role: typeof data.profession === 'string' ? data.profession : 'Գլխավոր մենթոր',
               desc: typeof data.description === 'string' ? data.description : 'Փորձառու մասնագետ WB ոլորտում',
               imageUrl: imageUrl || 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=400&auto=format&fit=crop',
-              ratingText: '4.9 վարկանիշ',
+              ratingText: `${calculatedRating} վարկանիշ`,
               coursesText: '0 վիդեոդաս'
             })
           }
@@ -183,7 +203,7 @@ export default function CourseDetailsPage() {
             role: 'Գլխավոր մենթոր',
             desc: 'Փորձառու մասնագետ WB ոլորտում',
             imageUrl: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=400&auto=format&fit=crop',
-            ratingText: '4.9 վարկանիշ',
+            ratingText: `${calculatedRating} վարկանիշ`,
             coursesText: '0 վիդեոդաս'
           })
         }
@@ -201,7 +221,6 @@ export default function CourseDetailsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50">
-        <Header forceWhiteBackground />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center space-y-4">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-200 border-t-violet-600 mx-auto" />
@@ -245,14 +264,15 @@ export default function CourseDetailsPage() {
   const courseHero: CourseHeroData = {
     title: course.title,
     description: course.description,
-    rating: course.rating || 4.9,
-    reviewsCount: course.reviewsCount || 0,
+    rating: realRating,
+    reviewsCount: realReviewsCount,
     studentsLabel: `${course.studentsCount || 0} ուսանող`,
     author: course.author || 'WB-Manager Team',
     updatedAt: course.updatedAt ? new Date(course.updatedAt).toLocaleDateString('hy-AM', { year: 'numeric', month: 'long' }) : 'Հունվար 2024',
     language: course.language === 'ARM' ? 'Հայերեն' : course.language || 'Հայերեն',
     image: course.image,
-    previewVideoUrl: previewVideoUrl
+    previewVideoUrl: previewVideoUrl,
+    thumbnailTime: (course as unknown as { thumbnail_time?: number }).thumbnail_time
   }
 
   const learn = course.whatToLearn || [
@@ -366,7 +386,6 @@ export default function CourseDetailsPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Header forceWhiteBackground />
       <CourseHero course={courseHero} onStartCourse={handleStartCourse} />
 
       <main className="container max-w-[1200px] mx-auto px-4 md:px-6 pt-16 pb-10 relative">

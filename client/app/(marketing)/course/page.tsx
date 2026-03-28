@@ -23,6 +23,7 @@ interface Course {
   studentsCount?: number
   duration?: string
   imageUrl?: string
+  thumbnail_time?: number
   whatToLearn?: string[]
   modules?: Array<{
     id?: number | string
@@ -70,8 +71,9 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
     video.preload = 'metadata'
 
     video.onloadedmetadata = () => {
-      // Seek to 30 seconds or the middle if video is shorter
-      const seekTime = Math.min(30, video.duration / 2)
+      // Use thumbnail_time from database if available, otherwise default to 30s or half of video
+      const defaultTime = Math.min(30, video.duration / 2)
+      const seekTime = course.thumbnail_time ?? defaultTime
       video.currentTime = seekTime
     }
 

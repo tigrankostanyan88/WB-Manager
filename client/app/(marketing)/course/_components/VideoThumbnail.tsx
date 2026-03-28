@@ -4,10 +4,11 @@ import { useEffect, useRef, useState } from 'react'
 
 interface VideoThumbnailProps {
   videoUrl: string
+  time?: number
   className?: string
 }
 
-export function generateVideoThumbnail(videoUrl: string): Promise<string> {
+export function generateVideoThumbnail(videoUrl: string, time?: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video')
     const canvas = document.createElement('canvas')
@@ -23,8 +24,8 @@ export function generateVideoThumbnail(videoUrl: string): Promise<string> {
     video.muted = true
     
     video.addEventListener('loadeddata', () => {
-      // Seek to 30 seconds or 10% of video if shorter
-      const seekTime = Math.min(30, video.duration * 0.1 || 30)
+      // Use provided time, or default to 30 seconds or 10% of video if shorter
+      const seekTime = time ?? Math.min(30, video.duration * 0.1 || 30)
       video.currentTime = seekTime
     })
     
@@ -47,7 +48,7 @@ export function generateVideoThumbnail(videoUrl: string): Promise<string> {
   })
 }
 
-export default function VideoThumbnail({ videoUrl, className = '' }: VideoThumbnailProps) {
+export default function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnailProps) {
   const [thumbnail, setThumbnail] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const generatedRef = useRef(false)
@@ -57,7 +58,7 @@ export default function VideoThumbnail({ videoUrl, className = '' }: VideoThumbn
     
     generatedRef.current = true
     
-    generateVideoThumbnail(videoUrl)
+    generateVideoThumbnail(videoUrl, time)
       .then(url => {
         setThumbnail(url)
         setLoading(false)
@@ -65,7 +66,7 @@ export default function VideoThumbnail({ videoUrl, className = '' }: VideoThumbn
       .catch(() => {
         setLoading(false)
       })
-  }, [videoUrl])
+  }, [videoUrl, time])
   
   if (loading) {
     return (
