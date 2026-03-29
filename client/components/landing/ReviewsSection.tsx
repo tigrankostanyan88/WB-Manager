@@ -228,6 +228,7 @@ export function ReviewsSection() {
                       key={idx}
                       onClick={() => setCurrentSlide(idx)}
                       className={`h-2 rounded-full transition-all duration-300 ${idx === currentSlide ? 'w-8 bg-violet-500' : 'w-2 bg-slate-600 hover:bg-slate-500'}`}
+                      aria-label={`Go to slide ${idx + 1}`}
                     />
                   ))}
                 </div>
@@ -235,12 +236,14 @@ export function ReviewsSection() {
                   <button
                     onClick={prevSlide}
                     className="w-11 h-11 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-all hover:scale-105"
+                    aria-label="Նախորդ հարցում"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <button
                     onClick={nextSlide}
                     className="w-11 h-11 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 flex items-center justify-center text-white transition-all hover:scale-105 shadow-lg shadow-violet-900/30"
+                    aria-label="Հաջորդ հարցում"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>

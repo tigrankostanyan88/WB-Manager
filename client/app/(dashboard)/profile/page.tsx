@@ -8,22 +8,22 @@ import { useState, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import ProfileSidebar from './_components/ProfileSidebar'
-import ProBanner from './_components/ProBanner'
-import Toast from './_components/Toast'
-import PaymentModal from './_components/modals/PaymentModal'
-import PasswordModal from './_components/modals/PasswordModal'
-import TransactionModal from './_components/modals/TransactionModal'
-import ProfileTab from './_components/tabs/ProfileTab'
-import CoursesTab from './_components/tabs/CoursesTab'
-import PaymentsTab from './_components/tabs/PaymentsTab'
-import SettingsTab from './_components/tabs/SettingsTab'
-import CommentsTab from './_components/tabs/CommentsTab'
-import PersonalDataTab from './_components/tabs/PersonalDataTab'
-import { useProfileData } from './_hooks/useProfileData'
-import type { ProfileUser } from './_hooks/useProfileData'
-import { useProfileSettings } from './_hooks/useProfileSettings'
-import { useReviews } from './_hooks/useReviews'
+import ProfileSidebar from '@/components/features/profile/ProfileSidebar'
+import ProBanner from '@/components/features/profile/ProBanner'
+import Toast from '@/components/features/profile/Toast'
+import PaymentModal from '@/components/features/profile/modals/PaymentModal'
+import PasswordModal from '@/components/features/profile/modals/PasswordModal'
+import TransactionModal from '@/components/features/profile/modals/TransactionModal'
+import ProfileTab from '@/components/features/profile/tabs/ProfileTab'
+import CoursesTab from '@/components/features/profile/tabs/CoursesTab'
+import PaymentsTab from '@/components/features/profile/tabs/PaymentsTab'
+import SettingsTab from '@/components/features/profile/tabs/SettingsTab'
+import CommentsTab from '@/components/features/profile/tabs/CommentsTab'
+import PersonalDataTab from '@/components/features/profile/tabs/PersonalDataTab'
+import { useProfileData } from '@/components/features/profile/hooks/useProfileData'
+import type { ProfileUser } from '@/components/features/profile/hooks/useProfileData'
+import { useProfileSettings } from '@/components/features/profile/hooks/useProfileSettings'
+import { useReviews } from '@/components/features/profile/hooks/useReviews'
 import api from '@/lib/api'
 
 interface SidebarLink {
@@ -67,7 +67,7 @@ export default function ProfilePage() {
   const { user: authUser, isLoaded, isLoggedIn, logout, setUser: setAuthUser } = useAuth()
   const router = useRouter()
 
-  const { user, setUser, isLoadingData, myReview, setMyReview, myCourses, myPayments, stats } = useProfileData({ authUser: authUser as unknown as ProfileUser | null, isLoaded, logout })
+  const { user, setUser, isLoadingData, myReview, setMyReview, myCourses, myPayments, stats } = useProfileData({ authUser: authUser as ProfileUser | null, isLoaded, logout })
 
   useEffect(() => {
     // If we have a user (even optimistically), we stay on the page.
@@ -134,7 +134,7 @@ export default function ProfilePage() {
   }
 
   // We are "ready" if we have a user (either from auth or from profile data fetch)
-  const currentUser = user || (authUser as unknown as ProfileUser | null);
+  const currentUser = user || (authUser as ProfileUser | null);
   const isReady = isLoaded && currentUser;
 
   if (!isReady) {

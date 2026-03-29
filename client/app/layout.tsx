@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { ReactNode } from 'react'
 import { ConfirmProvider } from '@/components/providers/ConfirmProvider'
+import { QueryProvider } from '@/components/providers/QueryProvider'
 import { SettingsProvider, useSettings } from '@/context/SettingsContext' // moved from lib
 import { AuthProvider } from '@/lib/auth'
 import type { User } from '@/lib/auth'
@@ -9,6 +10,20 @@ import { cookies } from 'next/headers'
 import { decodeJwt } from 'jose'
 import { prisma } from '@/lib/db'
 
+// Database User type from Prisma (minimal fields needed)
+interface DbUser {
+  id: string
+  email: string
+  name?: string | null
+  phone?: string | null
+  address?: string | null
+  role?: string | null
+  avatar?: string | null
+  isPaid?: boolean | null
+  files?: unknown[] | null
+  createdAt?: Date | null
+  updatedAt?: Date | null
+}
 
 // Using web fonts via <link> to avoid SWC-native requirement during dev on Windows
 
@@ -82,7 +97,7 @@ async function getUser() {
 
     if (!process.env.DATABASE_URL) return null
 
-    const fullUser = await prisma.user.findUnique({ where: { id: userId } })
+    const fullUser = await prisma.user.findUnique({ where: { id: userId } }) as DbUser | null
     if (!fullUser) return null
     
     // Map to Auth User interface
@@ -91,13 +106,13 @@ async function getUser() {
       createdAt: fullUser.createdAt?.toISOString(),
       updatedAt: fullUser.updatedAt?.toISOString(),
       // Default missing fields if schema differs
-      name: (fullUser as unknown as { name?: string }).name || '',
-      phone: (fullUser as unknown as { phone?: string }).phone || '',
-      address: (fullUser as unknown as { address?: string }).address || '',
-      role: (fullUser as unknown as { role?: string }).role || 'user',
-      avatar: (fullUser as unknown as { avatar?: string }).avatar || '',
-      isPaid: (fullUser as unknown as { isPaid?: boolean }).isPaid || false,
-      files: (fullUser as unknown as { files?: unknown[] }).files || []
+      name: fullUser.name || '',
+      phone: fullUser.phone || '',
+      address: fullUser.address || '',
+      role: fullUser.role || 'user',
+      avatar: fullUser.avatar || '',
+      isPaid: fullUser.isPaid || false,
+      files: fullUser.files || []
     }
   } catch {
     // console.error(e)
@@ -124,13 +139,15 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         />
       </head>
       <body style={{ fontFamily: '"Noto Sans Armenian", Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif' }}>
-        <AuthProvider initialUser={user as User | null}>
-          <SettingsProvider initialSettings={settings}>
-            <ConfirmProvider>
-              {children}
-            </ConfirmProvider>
-          </SettingsProvider>
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider initialUser={user as User | null}>
+            <SettingsProvider initialSettings={settings}>
+              <ConfirmProvider>
+                {children}
+              </ConfirmProvider>
+            </SettingsProvider>
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   )

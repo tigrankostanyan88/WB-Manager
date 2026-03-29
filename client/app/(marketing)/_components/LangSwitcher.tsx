@@ -4,8 +4,12 @@ import type { Lang } from '@/lib/i18n'
 
 export function LangSwitcher({ current }: { current: Lang }) {
   const setLang = (lang: Lang) => {
-    document.cookie = `lang=${lang}; path=/`
-    window.location.reload()
+    if (typeof document !== 'undefined') {
+      document.cookie = `lang=${lang}; path=/`
+    }
+    if (typeof window !== 'undefined') {
+      window.location.reload()
+    }
   }
 
   return (

@@ -1,0 +1,11 @@
+// Course feature components
+export { default as CourseDescription } from './CourseDescription'
+export { default as CourseHero, type CourseHeroData } from './CourseHero'
+export { default as CourseInstructors, type Instructor } from './CourseInstructors'
+export { default as CourseModulesList, type VideoItem, type ModuleWithVideos } from './CourseModulesList'
+export { default as CourseRequirements } from './CourseRequirements'
+export { default as CourseSidebar } from './CourseSidebar'
+export { default as CourseSyllabus } from './CourseSyllabus'
+export { default as VideoModulesList } from './VideoModulesList'
+export { default as VideoThumbnail } from './VideoThumbnail'
+export { default as WhatYouLearn } from './WhatYouLearn'

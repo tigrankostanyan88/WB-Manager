@@ -326,7 +326,7 @@ export default function CoursesPage() {
               <h3 className="text-xl font-semibold text-slate-900 mb-2">Սխալ է տեղի ունեցել</h3>
               <p className="text-slate-500">{error}</p>
               <Button
-                onClick={() => window.location.reload()}
+                onClick={() => typeof window !== 'undefined' && window.location.reload()}
                 className="mt-6"
               >
                 Կրկին փորձել

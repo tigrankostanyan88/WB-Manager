@@ -13,27 +13,43 @@ interface HeaderActionsProps {
   onMobileLinkClick?: () => void
 }
 
+// User with avatar/files type definition
+interface UserWithAvatar {
+  avatar?: string
+  files?: Array<{
+    name_used?: string
+    name?: string
+    ext?: string
+    table_name?: string
+  }>
+}
+
+// Type guard for avatar/files access
+function getAvatarUrl(user: UserWithAvatar | null): string {
+  if (!user) return ''
+  
+  if (typeof user.avatar === 'string' && user.avatar) {
+    return user.avatar
+  }
+  
+  const files = Array.isArray(user.files) ? user.files : []
+  const fileObj = files.find((x) => x.name_used === 'user_img') || files[0]
+  if (!fileObj) return ''
+  
+  const table = fileObj.table_name || 'users'
+  return `/images/${table}/large/${fileObj.name}.${fileObj.ext}`
+}
+
 export default function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onMobileLinkClick }: HeaderActionsProps) {
   const { user, isLoggedIn, isLoaded } = useAuth()
   const [avatarOverride, setAvatarOverride] = useState<string>('')
 
   const avatarUrl = (() => {
     if (avatarOverride) return avatarOverride
-    const u = user as unknown as { avatar?: unknown; files?: unknown } | null
-    if (!u) return ''
-    if (typeof u.avatar === 'string' && u.avatar) return u.avatar
-    const files = Array.isArray(u.files) ? (u.files as unknown[]) : []
-    const fileObj =
-      files.find((x) => {
-        if (!x || typeof x !== 'object') return false
-        const rec = x as Record<string, unknown>
-        return rec.name_used === 'user_img'
-      }) || files[0]
-    if (!fileObj || typeof fileObj !== 'object') return ''
-    const f = fileObj as Record<string, unknown>
-    if (typeof f.name !== 'string' || typeof f.ext !== 'string') return ''
-    const table = typeof f.table_name === 'string' && f.table_name ? f.table_name : 'users'
-    const path = `/images/${table}/large/${f.name}.${f.ext}`
+    const typedUser = user as UserWithAvatar | null
+    const path = getAvatarUrl(typedUser)
+    if (!path) return ''
+
     const apiBase = process.env.NEXT_PUBLIC_API_URL || '/api'
     const withOrigin = (p: string) => {
       if (/^https?:\/\//i.test(apiBase)) {

@@ -34,7 +34,7 @@ const isFirstRender = { current: true }
 function withOrigin(path?: string): string | undefined {
   if (!path || typeof path !== 'string') return path
   if (path.startsWith('/files/')) {
-    // Վերադարձնում ենք path-ը առանց /api պրեֆիքսի
+    // Return path without /api prefix
     return path
   }
   return path

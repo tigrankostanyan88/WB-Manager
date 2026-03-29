@@ -1,16 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import api from '@/lib/api'
-import CourseModulesList from '@/app/(marketing)/course/_components/CourseModulesList'
+import { buildVideoUrl } from '@/lib/videoUtils'
+import CourseModulesList from '@/components/features/course/CourseModulesList'
 import { useAuth } from '@/lib/auth'
-import CourseHero, { type CourseHeroData } from '@/app/(marketing)/course/_components/CourseHero'
-import WhatYouLearn from '@/app/(marketing)/course/_components/WhatYouLearn'
-import CourseRequirements from '@/app/(marketing)/course/_components/CourseRequirements'
-import CourseDescription from '@/app/(marketing)/course/_components/CourseDescription'
-import CourseInstructors, { type Instructor } from '@/app/(marketing)/course/_components/CourseInstructors'
-import CourseSidebar from '@/app/(marketing)/course/_components/CourseSidebar'
+import CourseHero, { type CourseHeroData } from '@/components/features/course/CourseHero'
+import WhatYouLearn from '@/components/features/course/WhatYouLearn'
+import CourseRequirements from '@/components/features/course/CourseRequirements'
+import CourseDescription from '@/components/features/course/CourseDescription'
+import CourseInstructors, { type Instructor } from '@/components/features/course/CourseInstructors'
+import CourseSidebar from '@/components/features/course/CourseSidebar'
 
 // Format duration from seconds or string to readable format
 function formatDuration(duration: string | number | undefined): string {
@@ -39,14 +40,6 @@ function formatDuration(duration: string | number | undefined): string {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`
 }
 
-// Build video URL with origin (same as dashboard)
-const buildVideoUrl = (name: string, ext: string) => {
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || ''
-  const origin = /^https?:\/\//i.test(apiBase) ? apiBase.replace(/\/api.*$/, '') : ''
-  const dot = ext.startsWith('.') ? '' : '.'
-  return `${origin}/files/modules/${name}${dot}${ext}`
-}
-
 interface CourseData {
   id: string | number
   title: string
@@ -65,6 +58,20 @@ interface CourseData {
   studentsCount?: number
   updatedAt?: string
   image?: string
+  thumbnail_time?: number
+}
+
+// Extended user type with course_ids from API
+interface UserWithCourses {
+  id: string
+  name: string
+  email: string
+  phone?: string
+  address?: string
+  role?: string
+  avatar?: string
+  course_ids?: (string | number)[]
+  isPaid?: boolean
 }
 
 export default function CourseDetailsPage() {
@@ -98,15 +105,12 @@ export default function CourseDetailsPage() {
         }
         
         // Check if user's course_ids array contains this courseId
-        const userCourseIds = (user as unknown as { course_ids?: (string | number)[] })?.course_ids || []
+        const typedUser = user as UserWithCourses
+        const userCourseIds = typedUser?.course_ids || []
         const numericCourseId = Number(courseId)
         const hasCourseAccess = userCourseIds.some((id) => 
           id === courseId || id === numericCourseId || String(id) === courseId
         )
-        
-        console.log('User course_ids:', userCourseIds)
-        console.log('Current courseId:', courseId)
-        console.log('Has course access:', hasCourseAccess)
         
         if (hasCourseAccess) {
           setHasAccess(true)
@@ -191,7 +195,7 @@ export default function CourseDetailsPage() {
               name: typeof data.name === 'string' ? data.name : 'WB-Manager Team',
               role: typeof data.profession === 'string' ? data.profession : 'Գլխավոր մենթոր',
               desc: typeof data.description === 'string' ? data.description : 'Փորձառու մասնագետ WB ոլորտում',
-              imageUrl: imageUrl || 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=400&auto=format&fit=crop',
+              imageUrl: imageUrl || '',
               ratingText: `${calculatedRating} վարկանիշ`,
               coursesText: '0 վիդեոդաս'
             })
@@ -207,8 +211,7 @@ export default function CourseDetailsPage() {
             coursesText: '0 վիդեոդաս'
           })
         }
-      } catch (err) {
-        console.error('Error fetching data:', err)
+      } catch {
         setError('Դասընթացը չի գտնվել')
       } finally {
         setLoading(false)
@@ -272,7 +275,7 @@ export default function CourseDetailsPage() {
     language: course.language === 'ARM' ? 'Հայերեն' : course.language || 'Հայերեն',
     image: course.image,
     previewVideoUrl: previewVideoUrl,
-    thumbnailTime: (course as unknown as { thumbnail_time?: number }).thumbnail_time
+    thumbnailTime: course.thumbnail_time
   }
 
   const learn = course.whatToLearn || [
@@ -370,16 +373,16 @@ export default function CourseDetailsPage() {
     return null
   }
 
+  const modulesSectionRef = useRef<HTMLDivElement>(null)
+
   const handleStartCourse = () => {
     const firstVideo = getFirstVideo()
-    if (firstVideo) {
-      // Scroll to modules section
-      const modulesSection = document.getElementById('course-modules')
-      if (modulesSection) {
-        modulesSection.scrollIntoView({ behavior: 'smooth' })
-      }
-      // Store the video to play and dispatch event for same-tab communication
-      window.localStorage.setItem('playVideoId', String(firstVideo.id))
+    if (firstVideo && typeof window !== 'undefined') {
+      // Scroll to modules section using ref
+      modulesSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
+      // Store video id for CourseModulesList to read
+      localStorage.setItem('playVideoId', String(firstVideo.id))
+      // Dispatch custom event for same-tab communication
       window.dispatchEvent(new Event('startCourse'))
     }
   }
@@ -392,7 +395,7 @@ export default function CourseDetailsPage() {
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           <div className="lg:w-2/3 space-y-10">
             <WhatYouLearn learn={learn} />
-            <div id="course-modules">
+            <div ref={modulesSectionRef} id="course-modules">
               <CourseModulesList modules={courseModules} />
             </div>
             <CourseRequirements requirements={requirements} />
