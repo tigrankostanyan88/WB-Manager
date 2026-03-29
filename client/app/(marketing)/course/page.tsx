@@ -1,264 +1,23 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { Star, Clock, Users, ArrowRight, BookOpen, PlayCircle } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { ArrowRight } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { Button } from '@/components/ui/button'
-import api from '@/lib/api'
-
-interface Course {
-  id: number | string
-  title: string
-  description: string
-  category?: string
-  language?: string
-  price: number | string
-  discount?: number | string
-  rating?: number
-  reviewsCount?: number
-  studentsCount?: number
-  duration?: string
-  imageUrl?: string
-  thumbnail_time?: number
-  whatToLearn?: string[]
-  modules?: Array<{
-    id?: number | string
-    title?: string
-    name?: string
-    files?: Array<{
-      name?: string
-      ext?: string
-      name_used?: string
-    }>
-  }>
-}
-
-function CourseCard({ course, index }: { course: Course; index: number }) {
-  const price = typeof course.price === 'number' ? course.price : Number(course.price)
-  const discount = course.discount ? Number(course.discount) : 0
-  const discountedPrice = discount > 0 ? price * (1 - discount / 100) : price
-
-  const displayPrice = discountedPrice > 0 ? `${Math.round(discountedPrice).toLocaleString()} դրամ` : 'Անվճար'
-  const originalPrice = discount > 0 ? `${price.toLocaleString()} դրամ` : null
-
-  const [thumbnail, setThumbnail] = useState<string | null>(null)
-  const [thumbnailLoading, setThumbnailLoading] = useState(true)
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || ''
-  const origin = /^https?:\/\//i.test(apiBase) ? apiBase.replace(/\/api.*$/, '') : ''
-
-  // Get first video from first module
-  const firstModule = course.modules?.[0]
-  const videoFiles = firstModule?.files?.filter((f) => f.name_used === 'module_video') || []
-  const firstVideo = videoFiles[0]
-  const hasVideo = firstVideo?.name && firstVideo?.ext
-
-  useEffect(() => {
-    if (!hasVideo) {
-      setThumbnailLoading(false)
-      return
-    }
-
-    const videoPath = `/files/modules/${firstVideo.name}${firstVideo.ext}`
-    const videoUrl = `${origin}${videoPath}`
-
-    const video = document.createElement('video')
-    video.crossOrigin = 'anonymous'
-    video.src = videoUrl
-    video.preload = 'metadata'
-
-    video.onloadedmetadata = () => {
-      // Use thumbnail_time from database if available, otherwise default to 30s or half of video
-      const defaultTime = Math.min(30, video.duration / 2)
-      const seekTime = course.thumbnail_time ?? defaultTime
-      video.currentTime = seekTime
-    }
-
-    video.onseeked = () => {
-      const canvas = document.createElement('canvas')
-      canvas.width = video.videoWidth || 640
-      canvas.height = video.videoHeight || 360
-      const ctx = canvas.getContext('2d')
-      if (ctx) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-        setThumbnail(canvas.toDataURL('image/jpeg', 0.8))
-      }
-      setThumbnailLoading(false)
-    }
-
-    video.onerror = () => {
-      setThumbnailLoading(false)
-    }
-  }, [firstVideo, hasVideo, origin])
-
-  const imageSrc = thumbnail || course.imageUrl || '/images/no-image.png'
-  const showFallback = !hasVideo && !course.imageUrl
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-    >
-      <Link href={`/course-details/${course.id}`} prefetch={true}>
-        <div className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 hover:border-violet-200 h-full flex flex-col">
-          {/* Thumbnail Container */}
-          <div className="relative h-48 overflow-hidden bg-slate-900">
-            {thumbnailLoading ? (
-              <div className="w-full h-full bg-slate-800 animate-pulse" />
-            ) : (
-              <Image
-                src={showFallback ? '/images/no-image.png' : imageSrc}
-                alt={course.title}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-
-            {/* Category Badge */}
-            {course.category && (
-              <div className="absolute top-4 left-4">
-                <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-slate-700 text-xs font-semibold rounded-full">
-                  {course.category}
-                </span>
-              </div>
-            )}
-
-            {/* Discount Badge */}
-            {discount > 0 && (
-              <div className="absolute top-4 right-4">
-                <span className="px-3 py-1 bg-rose-500 text-white text-xs font-bold rounded-full shadow-lg">
-                  -{discount}%
-                </span>
-              </div>
-            )}
-
-            {/* Play Button Overlay */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                <PlayCircle className="w-8 h-8 text-white" />
-              </div>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="p-5 flex flex-col flex-grow">
-            {/* Rating & Students */}
-            <div className="flex items-center gap-4 mb-3">
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                <span className="text-sm font-semibold text-slate-700">
-                  {course.rating?.toFixed(1) || '4.9'}
-                </span>
-                <span className="text-sm text-slate-400">
-                  ({course.reviewsCount || 0})
-                </span>
-              </div>
-              <div className="flex items-center gap-1 text-slate-400">
-                <Users className="w-4 h-4" />
-                <span className="text-sm">{course.studentsCount || 0}</span>
-              </div>
-            </div>
-
-            {/* Title */}
-            <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-2 group-hover:text-violet-700 transition-colors">
-              {course.title}
-            </h3>
-
-            {/* Description */}
-            <p className="text-sm text-slate-500 mb-4 line-clamp-2 flex-grow">
-              {course.description}
-            </p>
-
-            {/* Meta Info */}
-            <div className="flex items-center gap-3 text-xs text-slate-400 mb-4">
-              <div className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" />
-                <span>{course.duration || '6 ժամ'}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>{course.language === 'ARM' ? 'Հայերեն' : course.language || 'Հայերեն'}</span>
-              </div>
-            </div>
-
-            {/* Price & CTA */}
-            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-              <div className="flex flex-col">
-                <span className="text-lg font-bold text-violet-600">
-                  {displayPrice}
-                </span>
-                {originalPrice && (
-                  <span className="text-sm text-slate-400 line-through">
-                    {originalPrice}
-                  </span>
-                )}
-              </div>
-              <Button
-                size="sm"
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              >
-                Մանրամասն
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Link>
-    </motion.div>
-  )
-}
-
-function LoadingCard() {
-  return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 h-full">
-      <div className="h-48 bg-slate-200 animate-pulse" />
-      <div className="p-5 space-y-3">
-        <div className="h-4 bg-slate-200 rounded animate-pulse w-3/4" />
-        <div className="h-3 bg-slate-200 rounded animate-pulse" />
-        <div className="h-3 bg-slate-200 rounded animate-pulse w-5/6" />
-        <div className="pt-4 border-t border-slate-100 flex justify-between">
-          <div className="h-6 bg-slate-200 rounded animate-pulse w-20" />
-          <div className="h-8 bg-slate-200 rounded animate-pulse w-24" />
-        </div>
-      </div>
-    </div>
-  )
-}
+import { useCourses } from './hooks/useCourses'
+import { CourseCard } from './components/CourseCard'
+import { LoadingCard } from './components/LoadingCard'
 
 export default function CoursesPage() {
-  const [courses, setCourses] = useState<Course[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        setLoading(true)
-        const res = await api.get('/api/v1/courses')
-        const coursesData = res.data?.data || res.data?.courses || res.data || []
-        setCourses(Array.isArray(coursesData) ? coursesData : [])
-      } catch (err) {
-        console.error('Error fetching courses:', err)
-        setError('Դասընթացները բեռնելու ժամանակ սխալ է տեղի ունեցել')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchCourses()
-  }, [])
+  const { courses, loading, error, refetch } = useCourses()
 
   return (
     <div className="min-h-screen bg-white">
       <Header forceWhiteBackground />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden bg-white">
+      <section className="relative pt-32 pb-20 overflow-hidden bg-gradient-to-br from-violet-900 to-purple-800">
         <div className="container mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -325,10 +84,7 @@ export default function CoursesPage() {
               <div className="text-6xl mb-4">😕</div>
               <h3 className="text-xl font-semibold text-slate-900 mb-2">Սխալ է տեղի ունեցել</h3>
               <p className="text-slate-500">{error}</p>
-              <Button
-                onClick={() => typeof window !== 'undefined' && window.location.reload()}
-                className="mt-6"
-              >
+              <Button onClick={refetch} className="mt-6">
                 Կրկին փորձել
               </Button>
             </div>
