@@ -13,7 +13,9 @@ export function useCoursesQuery() {
     queryKey: [COURSES_QUERY_KEY],
     queryFn: async () => {
       const response = await api.get('/api/v1/courses')
-      return response.data.courses as Course[]
+      // Handle different API response structures
+      const coursesData = response.data?.data || response.data?.courses || response.data || []
+      return (Array.isArray(coursesData) ? coursesData : []) as Course[]
     },
     staleTime: 1000 * 60 * 5,
   })

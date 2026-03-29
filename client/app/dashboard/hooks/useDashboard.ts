@@ -17,6 +17,7 @@ import { useEnrollments } from '@/components/features/admin/hooks/useEnrollments
 import { useCourseRegistrations } from '@/components/features/admin/hooks/useCourseRegistrations'
 import { useContactMessages } from '@/components/features/admin/hooks/useContactMessages'
 import { useHeroContent } from '@/components/features/admin/hooks/useHeroContent'
+import { useSuspendedUsers } from './useSuspendedUsers'
 import { userService } from '@/lib/api'
 import type { DashboardTabId, User } from '@/components/features/admin/types'
 import type { DashboardMenuItem } from '@/components/features/admin/DashboardSidebar'
@@ -33,52 +34,6 @@ export function useDashboard() {
     showNotification(message, type)
   }
 
-  // Suspended users state
-  const [suspendedUsers, setSuspendedUsers] = useState<User[]>([])
-  const [isSuspendedLoading, setIsSuspendedLoading] = useState(false)
-  const [suspendedSearch, setSuspendedSearch] = useState('')
-
-  const loadSuspendedUsers = async (allowed: boolean) => {
-    if (!allowed) return
-    setIsSuspendedLoading(true)
-    try {
-      const { data } = await userService.getSuspendedUsers()
-      setSuspendedUsers(data.users || [])
-    } catch (err) {
-      showToast('Կասեցված օգտվողների ցուցակը բեռնել չհաջողվեց', 'error')
-    } finally {
-      setIsSuspendedLoading(false)
-    }
-  }
-
-  const handleRestoreUser = async (id: number | string) => {
-    try {
-      await userService.restoreUser(id)
-      showToast('Օգտատերը հաջողությամբ վերականգնվեց', 'success')
-    } catch (err) {
-      showToast('Վերականգնումը ձախողվեց', 'error')
-    }
-  }
-
-  const handlePermanentDelete = async (id: number | string) => {
-    try {
-      await userService.permanentDeleteUser(id)
-      showToast('Օգտատերը ընդմիշտ ջնջվեց', 'success')
-    } catch (err) {
-      showToast('Ջնջումը ձախողվեց', 'error')
-    }
-  }
-
-  const handleBulkDelete = async (ids: (number | string)[]) => {
-    try {
-      await Promise.all(ids.map(id => userService.permanentDeleteUser(id)))
-      showToast(`${ids.length} օգտատեր ընդմիշտ ջնջվեց`, 'success')
-    } catch (err) {
-      showToast('Կապակցված ջնջումը ձախողվեց', 'error')
-    }
-  }
-
-  // Auth
   const { isAuthLoading, allowed, user: currentUser } = useAuth()
 
   // Overview
@@ -163,6 +118,18 @@ export function useDashboard() {
     allowed,
     showToast
   })
+
+  // Suspended Users
+  const {
+    suspendedUsers,
+    isSuspendedLoading,
+    suspendedSearch,
+    setSuspendedSearch,
+    loadSuspendedUsers,
+    handleRestoreUser,
+    handlePermanentDelete,
+    handleBulkDelete
+  } = useSuspendedUsers(showToast)
 
   // Load suspended users when tab changes
   useEffect(() => {
