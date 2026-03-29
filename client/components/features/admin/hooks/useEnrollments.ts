@@ -77,11 +77,19 @@ export function useEnrollments({ activeTab, allowed }: UseEnrollmentsParams) {
 
   const enrollmentsByCourse = useMemo(() => {
     return courses
-      .map((course) => ({
-        course,
-        enrollments: enrollments.filter((e) => e.course_id === course.id),
-        count: enrollments.filter((e) => e.course_id === course.id).length,
-      }))
+      .map((course) => {
+        const courseEnrollments = enrollments.filter((e) => e.course_id === course.id)
+        const count = courseEnrollments.length
+        const activeCount = courseEnrollments.filter((e) => e.status === 'active').length
+        const expiredCount = courseEnrollments.filter((e) => e.status === 'expired').length
+        return {
+          course,
+          enrollments: courseEnrollments,
+          count,
+          activeCount,
+          expiredCount,
+        }
+      })
       .filter((c) => c.count > 0)
   }, [courses, enrollments])
 

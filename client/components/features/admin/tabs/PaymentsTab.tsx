@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { CreditCard, CheckCircle, Clock, XCircle, User as UserIcon, BookOpen } from 'lucide-react'
 import type { Payment, Course } from '../hooks/usePayments'
 import type { User, FAQ } from '../types'
@@ -113,6 +113,23 @@ export default function PaymentsTab({
     )
   }
 
+  // Memoized payment calculations for performance
+  const { totalAmount, successAmount, successCount, pendingAmount, pendingCount } = useMemo(() => {
+    const total = payments.reduce((sum, p) => sum + parseFloat(p.amount.toString()), 0)
+    const successPayments = payments.filter(p => p.status === 'success')
+    const successAmt = successPayments.reduce((sum, p) => sum + parseFloat(p.amount.toString()), 0)
+    const pendingPayments = payments.filter(p => p.status === 'pending')
+    const pendingAmt = pendingPayments.reduce((sum, p) => sum + parseFloat(p.amount.toString()), 0)
+
+    return {
+      totalAmount: total,
+      successAmount: successAmt,
+      successCount: successPayments.length,
+      pendingAmount: pendingAmt,
+      pendingCount: pendingPayments.length
+    }
+  }, [payments])
+
   return (
     <div className="space-y-6">
       {/* Header with Add Button */}
@@ -134,26 +151,26 @@ export default function PaymentsTab({
         <div className="bg-gradient-to-r from-violet-500 to-violet-600 rounded-2xl p-5 text-white">
           <p className="text-violet-100 text-sm font-medium">Ընդհանուր գումար</p>
           <p className="text-2xl font-bold mt-1">
-            {payments.reduce((sum, p) => sum + parseFloat(p.amount.toString()), 0).toLocaleString()} դրամ
+            {totalAmount.toLocaleString()} դրամ
           </p>
           <p className="text-violet-200 text-xs mt-1">{payments.length} վճարում</p>
         </div>
         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white">
           <p className="text-emerald-100 text-sm font-medium">Վճարված</p>
           <p className="text-2xl font-bold mt-1">
-            {payments.filter(p => p.status === 'success').reduce((sum, p) => sum + parseFloat(p.amount.toString()), 0).toLocaleString()} դրամ
+            {successAmount.toLocaleString()} դրամ
           </p>
           <p className="text-emerald-200 text-xs mt-1">
-            {payments.filter(p => p.status === 'success').length} վճարում
+            {successCount} վճարում
           </p>
         </div>
         <div className="bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl p-5 text-white">
           <p className="text-amber-100 text-sm font-medium">Սպասման մեջ</p>
           <p className="text-2xl font-bold mt-1">
-            {payments.filter(p => p.status === 'pending').reduce((sum, p) => sum + parseFloat(p.amount.toString()), 0).toLocaleString()} դրամ
+            {pendingAmount.toLocaleString()} դրամ
           </p>
           <p className="text-amber-200 text-xs mt-1">
-            {payments.filter(p => p.status === 'pending').length} վճարում
+            {pendingCount} վճարում
           </p>
         </div>
       </div>

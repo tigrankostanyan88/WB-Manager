@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Search, BookOpen, Users, X, CheckCircle, AlertCircle, GraduationCap } from 'lucide-react'
 import { withOrigin } from '../_utils/image'
 
@@ -121,7 +121,7 @@ export default function EnrollmentsTab({
         </div>
       ) : (
         <div className="space-y-4">
-          {enrollmentsByCourse.map(({ course, enrollments: courseEnrollments, count }) => (
+          {enrollmentsByCourse.map(({ course, enrollments: courseEnrollments, count, activeCount, expiredCount }) => (
             <div
               key={course.id}
               className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm"
@@ -145,10 +145,10 @@ export default function EnrollmentsTab({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 font-medium">
-                    {courseEnrollments.filter((e) => e.status === 'active').length} ակտիվ
+                    {activeCount} ակտիվ
                   </span>
                   <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-600 font-medium">
-                    {courseEnrollments.filter((e) => e.status === 'expired').length} ավարտված
+                    {expiredCount} ավարտված
                   </span>
                 </div>
               </button>
