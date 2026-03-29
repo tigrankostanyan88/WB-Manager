@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Play, X, Upload, Film, Save, Trash2, Type, FileText, Clock, Scissors } from 'lucide-react'
 import { useState, useRef, useCallback, useEffect } from 'react'
-import type { HeroContentForm } from '../../_hooks/useHeroContent'
+import type { HeroContentForm } from '../hooks/useHeroContent'
+import { VideoPlayerModal } from '@/components/shared'
 
 // Video Frame Scrubber Component - allows dragging to select thumbnail frame
 function VideoFrameScrubber({ 
@@ -191,38 +192,6 @@ function VideoFrameScrubber({
           <span>0:00</span>
           <span>{formatTime(duration)}</span>
         </div>
-      </div>
-    </div>
-  )
-}
-
-// Video Player Modal
-function VideoPlayerModal({ videoUrl, onClose }: { videoUrl: string; onClose: () => void }) {
-  return (
-    <div 
-      className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4"
-      onClick={onClose}
-    >
-      <div 
-        className="relative w-full max-w-4xl bg-black rounded-xl overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors"
-        >
-          <X className="w-5 h-5" />
-        </button>
-        <video
-          src={videoUrl}
-          controls
-          autoPlay
-          playsInline
-          crossOrigin="anonymous"
-          preload="auto"
-          className="w-full aspect-video"
-          key={videoUrl}
-        />
       </div>
     </div>
   )

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import CourseRegistrationModal from '@/components/modals/CourseRegistrationModal'
-import RegistrationModal from '@/components/modals/RegistrationModal'
+import { RegistrationModal } from '@/components/modals'
 import { cn } from '@/lib/utils'
 import { useSettings } from '@/context/SettingsContext' // moved from lib
 import HeaderActions from './HeaderActions'

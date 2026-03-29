@@ -4,8 +4,6 @@ export {
   useEnrollmentsQuery,
   useEnrollmentCoursesQuery,
   useRevokeAccess,
-  type Enrollment,
-  type Course as EnrollmentCourse,
 } from './useEnrollments'
 
 export {
@@ -16,9 +14,6 @@ export {
   useCreatePayment,
   useVerifyPayment,
   useUpdatePaymentStatus,
-  type Payment,
-  type Course as PaymentCourse,
-  type PaymentFormData,
 } from './usePayments'
 
 export {
@@ -28,8 +23,6 @@ export {
   useDeleteUser,
   useUpdateUser,
   useToggleUserPaid,
-  type Payment as UserPayment,
-  type EditUserForm,
 } from './useUsers'
 
 export {
@@ -38,13 +31,6 @@ export {
   useCreateCourse,
   useUpdateCourse,
   useDeleteCourse,
-  type Course,
-  type CourseFile,
-  type CourseModuleWithVideos,
-  type ExtendedCourse,
-  type CourseModule,
-  type CourseVideo,
-  type CourseForm,
 } from './useCourses'
 
 export {
@@ -57,10 +43,9 @@ export {
   useUploadModuleVideo,
   useDeleteModuleVideo,
   useUpdateVideoTitle,
-  type ModuleItem,
-  type ModuleFile,
-  type CourseOption,
-  type ModuleForm,
   mapModule,
   parseModules,
-} from './useModules'
+} from './modules/useModules'
+
+// Re-export types from types.ts
+export type { Enrollment, Course, Payment } from '../types'

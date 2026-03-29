@@ -7,7 +7,7 @@ import { useSettings } from '@/context/SettingsContext'
 import { useInstructor } from '@/hooks/useInstructor'
 import { useVideoPlayer } from '@/hooks/useVideoPlayer'
 import { useHeroContent } from '@/hooks/useHeroContent'
-import RegistrationModal from '@/components/modals/RegistrationModal'
+import { RegistrationModal } from '@/components/modals'
 import {
   HeroSection,
   LearnSection,
@@ -20,7 +20,7 @@ import {
 } from '@/components/landing'
 
 // Lazy load sections below the fold
-const ContactSection = lazy(() => import('./ContactSection').then(m => ({ default: m.ContactSection })))
+const ContactSection = lazy(() => import('./contact').then(m => ({ default: m.ContactSection })))
 const CtaSection = lazy(() => import('./CtaSection').then(m => ({ default: m.CtaSection })))
 
 function SectionLoader() {

@@ -3,16 +3,20 @@ import type { NextRequest } from 'next/server'
 
 const publicRoutes = [
   '/',
+  '/course',
+  '/course-details',
+  '/pricing',
   '/api/v1/users/signUp',
-  '/api/v1/users/signIn',
-  '/api/v1/users/googleAuth'
+  '/api/v1/users/signIn'
 ]
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Check if it's a public route
-  const isPublic = publicRoutes.some(route => pathname === route) || pathname.startsWith('/(marketing)')
+  // Check if it's a public route (exact match or starts with)
+  const isPublic = publicRoutes.some(route => 
+    pathname === route || pathname.startsWith(`${route}/`)
+  )
 
   return NextResponse.next()
 }

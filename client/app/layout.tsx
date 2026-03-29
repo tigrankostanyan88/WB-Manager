@@ -1,5 +1,5 @@
 import './globals.css'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { ReactNode } from 'react'
 import { ConfirmProvider } from '@/components/providers/ConfirmProvider'
 import { QueryProvider } from '@/components/providers/QueryProvider'
@@ -52,12 +52,13 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description: 'Production-ready AI Tools SaaS with Next.js 14',
     icons,
-    viewport: {
-      width: 'device-width',
-      initialScale: 1,
-      maximumScale: 1,
-    },
   }
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 }
 
 async function getSettings() {
