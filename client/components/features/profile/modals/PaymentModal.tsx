@@ -8,7 +8,7 @@ interface PaymentModalProps {
   onClose: () => void
 }
 
-export default function PaymentModal({ open, onClose }: PaymentModalProps) {
+export function PaymentModal({ open, onClose }: PaymentModalProps) {
   return (
     <AnimatePresence>
       {open && (

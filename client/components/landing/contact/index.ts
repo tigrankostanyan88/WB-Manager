@@ -1,5 +1,3 @@
-// landing/contact/index.ts - Contact section barrel exports
-
 export { ContactSection } from './ContactSection'
 export { ContactForm } from './ContactForm'
 export { ContactInfo } from './ContactInfo'

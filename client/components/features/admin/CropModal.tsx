@@ -17,7 +17,7 @@ interface CropModalProps {
   onConfirm: () => void
 }
 
-export default function CropModal({ open, cropImage, crop, zoom, setCrop, setZoom, onCropComplete, onClose, onConfirm }: CropModalProps) {
+export function CropModal({ open, cropImage, crop, zoom, setCrop, setZoom, onCropComplete, onClose, onConfirm }: CropModalProps) {
   if (!open || !cropImage) return null
 
   return (

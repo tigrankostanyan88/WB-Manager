@@ -1,0 +1,88 @@
+'use client'
+
+import { Play } from 'lucide-react'
+import { useCallback } from 'react'
+import { VideoPlayerModal } from '@/components/shared'
+import type { HeroContentData } from './types'
+
+interface HeroVideoProps {
+  content: HeroContentData | null
+  playingVideo: string | null
+  videoError: string | null
+  onVideoError: () => void
+  onPlay: (url: string) => void
+  onClose: () => void
+}
+
+export function HeroVideo({ 
+  content, 
+  playingVideo, 
+  videoError, 
+  onVideoError, 
+  onPlay, 
+  onClose 
+}: HeroVideoProps) {
+  const handleVideoClick = useCallback(() => {
+    const videoUrl = content?.video_url || '/files/hero.mp4'
+    onPlay(videoUrl)
+  }, [content?.video_url, onPlay])
+
+  const handleThumbnailLoaded = useCallback(
+    (e: React.SyntheticEvent<HTMLVideoElement>) => {
+      const video = e.currentTarget
+      const thumbnailTime = content?.thumbnail_time
+      const seekTime = thumbnailTime !== undefined && thumbnailTime > 0 
+        ? thumbnailTime 
+        : Math.min(45, video.duration / 2 || 0)
+      if (seekTime > 0) {
+        video.currentTime = seekTime
+      }
+    },
+    [content?.thumbnail_time]
+  )
+
+  return (
+    <div className="relative group perspective-1000 w-full">
+      <div 
+        className="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200 bg-white ring-1 ring-slate-100 transform transition-transform duration-700 group-hover:rotate-y-2 group-hover:scale-[1.02] cursor-pointer"
+        onClick={handleVideoClick}
+      >
+        <div className="aspect-[16/10] w-full relative overflow-hidden bg-slate-100">
+          {/* Video Thumbnail */}
+          <video
+            src={content?.video_url || '/files/hero.mp4'}
+            className="h-full w-full object-cover scale-105 transition-transform duration-700 group-hover:scale-100 opacity-90 group-hover:opacity-100"
+            preload="metadata"
+            muted
+            playsInline
+            onLoadedMetadata={handleThumbnailLoaded}
+            onError={onVideoError}
+          />
+
+          {/* Play Button Overlay */}
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-all">
+            <div className="relative flex items-center justify-center">
+              <div className="absolute inset-0 bg-white/30 rounded-full blur-xl transform scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <span className="relative grid place-items-center h-20 w-20 rounded-full bg-white shadow-2xl shadow-violet-500/30 ring-1 ring-white/50 transform transition-all duration-300 group-hover:scale-110">
+                <Play className="h-8 w-8 text-slate-900 fill-slate-900 ml-1" />
+              </span>
+            </div>
+          </div>
+
+          {videoError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-100 text-slate-400 text-sm">
+              Video placeholder
+            </div>
+          )}
+        </div>
+      </div>
+
+      {playingVideo && (
+        <VideoPlayerModal 
+          videoUrl={playingVideo} 
+          onClose={onClose} 
+        />
+      )}
+    </div>
+  )
+}

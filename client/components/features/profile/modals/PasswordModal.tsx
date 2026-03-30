@@ -19,7 +19,7 @@ interface PasswordModalProps {
   onChange: (id: keyof PasswordData, value: string) => void
 }
 
-export default function PasswordModal({ open, isUpdating, passwordData, onClose, onSubmit, onChange }: PasswordModalProps) {
+export function PasswordModal({ open, isUpdating, passwordData, onClose, onSubmit, onChange }: PasswordModalProps) {
   return (
     <AnimatePresence>
       {open && (

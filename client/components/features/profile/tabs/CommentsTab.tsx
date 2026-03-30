@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import CommentModal from '../modals/CommentModal'
+import { CommentModal } from '../modals/CommentModal'
 
 interface ReviewData {
   id: string
@@ -30,7 +30,7 @@ interface CommentsTabProps {
   onReviewCommentChange?: (comment: string) => void
 }
 
-export default function CommentsTab({
+export function CommentsTab({
   myReview,
   reviewForm = { rating: 5, comment: '' },
   isReviewSubmitting = false,

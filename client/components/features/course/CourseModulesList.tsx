@@ -1,8 +1,9 @@
 'use client'
 
+import Image from 'next/image'
 import { Lock, Play, FileText, X } from 'lucide-react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import VideoThumbnail from './VideoThumbnail'
+import { VideoThumbnail } from './VideoThumbnail'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -29,7 +30,7 @@ interface CourseModulesListProps {
   modules: ModuleWithVideos[]
 }
 
-export default function CourseModulesList({ modules }: CourseModulesListProps) {
+export function CourseModulesList({ modules }: CourseModulesListProps) {
   const [playingVideo, setPlayingVideo] = useState<VideoItem | null>(null)
   const [openModule, setOpenModule] = useState<string | undefined>(undefined)
 
@@ -112,10 +113,12 @@ export default function CourseModulesList({ modules }: CourseModulesListProps) {
                       {video.videoUrl && !video.isLocked ? (
                         <VideoThumbnail videoUrl={video.videoUrl} className="opacity-90" />
                       ) : video.thumbnail ? (
-                        <img 
-                          src={video.thumbnail} 
+                        <Image
+                          src={video.thumbnail}
                           alt={video.title}
-                          className="w-full h-full object-cover opacity-90"
+                          fill
+                          className="object-cover opacity-90"
+                          sizes="80px"
                         />
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-violet-600 to-indigo-700" />

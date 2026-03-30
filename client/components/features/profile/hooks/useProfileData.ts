@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react'
 import api, { userService } from '@/lib/api'
-
-export interface UserFile {
-  name_used?: string
-  table_name?: string
-  name?: string
-  ext?: string
-}
+import type { UserFile } from '@/components/features/admin/types'
 
 export interface ProfileUser {
   id: string

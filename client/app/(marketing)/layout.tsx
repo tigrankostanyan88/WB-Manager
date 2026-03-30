@@ -1,8 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
+import { Header, Footer } from '@/components/layout'
 
 export default function MarketingLayout({
   children,

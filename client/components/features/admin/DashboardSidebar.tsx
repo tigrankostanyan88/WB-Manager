@@ -18,7 +18,7 @@ interface DashboardSidebarProps {
   badges?: Partial<Record<DashboardTabId, number>>
 }
 
-export default function DashboardSidebar({ menuItems, activeTab, onTabChange, badges }: DashboardSidebarProps) {
+export function DashboardSidebar({ menuItems, activeTab, onTabChange, badges }: DashboardSidebarProps) {
   return (
     <aside className="lg:w-72 flex-shrink-0">
       <div className="sticky top-40 space-y-6">

@@ -30,7 +30,7 @@ interface EditUserModalProps {
   onSubmit: (data: EditUserForm) => Promise<void> | void
 }
 
-export default function EditUserModal({ user, open, onClose, onSubmit }: EditUserModalProps) {
+export function EditUserModal({ user, open, onClose, onSubmit }: EditUserModalProps) {
   const [form, setForm] = useState<EditUserForm>({ name: '', email: '', phone: '', courseIds: [] })
   const [courses, setCourses] = useState<Course[]>([])
 

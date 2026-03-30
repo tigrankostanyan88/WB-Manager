@@ -10,7 +10,7 @@ interface DashboardToastProps {
   onClose: () => void
 }
 
-export default function DashboardToast({ toast, onClose }: DashboardToastProps) {
+export function DashboardToast({ toast, onClose }: DashboardToastProps) {
   return (
     <AnimatePresence>
       {toast && (

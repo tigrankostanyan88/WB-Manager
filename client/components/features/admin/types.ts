@@ -27,7 +27,7 @@ export interface User {
   [key: string]: unknown
 }
 
-interface UserFile {
+export interface UserFile {
   id?: string | number
   name?: string
   ext?: string

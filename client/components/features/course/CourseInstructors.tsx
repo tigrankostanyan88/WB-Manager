@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { Play, Star } from 'lucide-react'
 
@@ -14,7 +15,7 @@ interface CourseInstructorsProps {
   instructor: Instructor | null
 }
 
-export default function CourseInstructors({ instructor }: CourseInstructorsProps) {
+export function CourseInstructors({ instructor }: CourseInstructorsProps) {
   if (!instructor) return null
 
   return (
@@ -24,11 +25,13 @@ export default function CourseInstructors({ instructor }: CourseInstructorsProps
         <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
           {/* Avatar */}
           <div className="relative">
-            <div className="w-28 h-28 md:w-32 md:h-32 rounded-3xl overflow-hidden bg-white shadow-xl shadow-violet-200/50 ring-4 ring-white">
-              <img 
-                src={instructor.imageUrl} 
-                alt={instructor.name} 
-                className="w-full h-full object-cover"
+            <div className="w-28 h-28 md:w-32 md:h-32 rounded-3xl overflow-hidden bg-white shadow-xl shadow-violet-200/50 ring-4 ring-white relative">
+              <Image
+                src={instructor.imageUrl}
+                alt={instructor.name}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 112px, 128px"
               />
             </div>
             <div className="absolute -bottom-2 -right-2 bg-violet-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">

@@ -5,7 +5,7 @@ interface WhatYouLearnProps {
   learn: string[]
 }
 
-export default function WhatYouLearn({ learn }: WhatYouLearnProps) {
+export function WhatYouLearn({ learn }: WhatYouLearnProps) {
   return (
     <Card className="border border-slate-200 shadow-sm rounded-2xl overflow-hidden">
       <CardContent className="p-6 md:p-8">

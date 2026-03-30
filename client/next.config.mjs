@@ -3,6 +3,23 @@ const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').rep
 const apiOrigin = /^https?:\/\//.test(apiBase) ? apiBase.replace(/\/api\/?$/, '') : apiBase
 const nextConfig = {
   reactStrictMode: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3300',
+        pathname: '/images/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3300',
+        pathname: '/api/images/**',
+      },
+    ],
+    unoptimized: process.env.NODE_ENV === 'development',
+  },
   compiler: {
     styledComponents: false,
   },

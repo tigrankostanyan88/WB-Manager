@@ -2,7 +2,7 @@ interface CourseRequirementsProps {
   requirements: string[]
 }
 
-export default function CourseRequirements({ requirements }: CourseRequirementsProps) {
+export function CourseRequirements({ requirements }: CourseRequirementsProps) {
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-black text-slate-900">Նախապայմաններ</h2>

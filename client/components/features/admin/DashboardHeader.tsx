@@ -9,7 +9,7 @@ interface DashboardHeaderProps {
   setUserSearch: (v: string) => void
 }
 
-export default function DashboardHeader({ activeTab, userSearch, setUserSearch }: DashboardHeaderProps) {
+export function DashboardHeader({ activeTab, userSearch, setUserSearch }: DashboardHeaderProps) {
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
       <div>

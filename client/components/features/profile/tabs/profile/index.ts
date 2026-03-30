@@ -1,0 +1,5 @@
+export { ProfileTab } from './ProfileTab'
+export { ProfileStats } from './ProfileStats'
+export { ProfileCourses } from './ProfileCourses'
+export { ProfilePayments } from './ProfilePayments'
+export type { ProfileUser, StatsData, ProfileTabProps } from './utils'

@@ -1,6 +1,5 @@
 'use client'
 
-// Admin hooks barrel export - merged hooks only
 export {
   useEnrollments,
   useEnrollmentsQuery,
@@ -50,4 +49,3 @@ export {
 } from './modules/useModules'
 
 // Re-export types from types.ts
-export type { Enrollment, Course, Payment } from '../types'

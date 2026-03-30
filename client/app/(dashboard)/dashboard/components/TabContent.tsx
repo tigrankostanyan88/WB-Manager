@@ -2,10 +2,10 @@
 
 import { OverviewTab } from '@/components/features/admin/tabs/OverviewTab'
 import { UsersTab } from '@/components/features/admin/tabs/UsersTab'
-import { SuspendedUsersTab } from '@/components/features/admin/tabs/SuspendedUsersTab'
-import { EnrollmentsTab } from '@/components/features/admin/tabs/EnrollmentsTab'
+import { SuspendedUsersTab } from '@/components/features/admin/tabs/suspended'
+import { EnrollmentsTab } from '@/components/features/admin/tabs/enrollments'
 import { CourseRegistrationsTab } from '@/components/features/admin/tabs/CourseRegistrationsTab'
-import { ContactMessagesTab } from '@/components/features/admin/tabs/ContactMessagesTab'
+import { ContactMessagesTab } from '@/components/features/admin/tabs/contact'
 import { PaymentsTab } from '@/components/features/admin/tabs/payments'
 import { BankCardsTab } from '@/components/features/admin/tabs/bankcards'
 import { CoursesTab } from '@/components/features/admin/tabs/CoursesTab'

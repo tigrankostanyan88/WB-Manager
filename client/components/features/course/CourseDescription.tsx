@@ -4,7 +4,7 @@ interface CourseDescriptionProps {
   description?: React.ReactNode
 }
 
-export default function CourseDescription({ description }: CourseDescriptionProps) {
+export function CourseDescription({ description }: CourseDescriptionProps) {
   if (description) {
     return (
       <div className="space-y-4">

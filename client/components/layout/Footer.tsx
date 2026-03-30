@@ -1,9 +1,10 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useSettings } from '@/context/SettingsContext'
 
-export default function Footer() {
+export function Footer() {
   const { settings } = useSettings()
 
   return (
@@ -16,8 +17,14 @@ export default function Footer() {
           <div className="space-y-4 col-span-2 md:col-span-2">
             <div className="flex flex-wrap items-center gap-3">
               {settings.logo ? (
-                <div className="h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-violet-500/20 ring-1 ring-violet-500/30">
-                  <img src={settings.logo} alt="Logo" className="w-full h-full object-cover" />
+                <div className="h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-violet-500/20 ring-1 ring-violet-500/30 relative">
+                  <Image
+                    src={settings.logo}
+                    alt="Logo"
+                    fill
+                    className="object-cover"
+                    sizes="40px"
+                  />
                 </div>
               ) : (
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-violet-500/30 ring-1 ring-violet-400/50">

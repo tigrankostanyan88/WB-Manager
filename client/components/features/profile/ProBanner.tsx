@@ -28,7 +28,7 @@ interface ProBannerProps {
   onShowPaymentModal: () => void
 }
 
-export default function ProBanner({ user, myPayments = [], totalCoursesCount = 0, onShowPaymentModal }: ProBannerProps) {
+export function ProBanner({ user, myPayments = [], totalCoursesCount = 0, onShowPaymentModal }: ProBannerProps) {
   const successfulPayments = myPayments.filter(p => p.status === 'success')
   const pendingPayments = myPayments.filter(p => p.status === 'pending')
   const failedPayments = myPayments.filter(p => p.status === 'failed')

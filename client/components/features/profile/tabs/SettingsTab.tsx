@@ -22,7 +22,7 @@ interface SettingsTabProps {
   onShowPasswordModal: () => void
 }
 
-export default function SettingsTab({ user, isUpdating, onSubmit, onShowPasswordModal }: SettingsTabProps) {
+export function SettingsTab({ user, isUpdating, onSubmit, onShowPasswordModal }: SettingsTabProps) {
   const [formData, setFormData] = useState({
     name: user.name || '',
     email: user.email || '',

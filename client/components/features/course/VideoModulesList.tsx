@@ -16,7 +16,7 @@ interface VideoModulesListProps {
   modules: VideoModule[]
 }
 
-export default function VideoModulesList({ modules }: VideoModulesListProps) {
+export function VideoModulesList({ modules }: VideoModulesListProps) {
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-black text-slate-900">Դասընթացի բովանդակությունը</h2>

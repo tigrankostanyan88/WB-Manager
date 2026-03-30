@@ -12,7 +12,7 @@ interface AvatarCropModalProps {
   onCropComplete: (croppedImage: Blob) => void
 }
 
-export default function AvatarCropModal({ isOpen, imageSrc, onClose, onCropComplete }: AvatarCropModalProps) {
+export function AvatarCropModal({ isOpen, imageSrc, onClose, onCropComplete }: AvatarCropModalProps) {
   const [scale, setScale] = useState(1)
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)

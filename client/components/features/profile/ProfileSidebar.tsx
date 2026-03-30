@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Camera, LogOut, User as UserIcon, type LucideIcon } from 'lucide-react'
@@ -56,7 +57,7 @@ interface ProfileSidebarProps {
   onLogout: () => void
 }
 
-export default function ProfileSidebar({
+export function ProfileSidebar({
   user,
   activeTab,
   isUploadingAvatar,
@@ -91,7 +92,13 @@ export default function ProfileSidebar({
                     </div>
                   ) : null}
                   {avatarUrl ? (
-                    <img src={avatarUrl} alt={user?.name || 'User'} className="w-full h-full object-cover" />
+                    <Image 
+                      src={avatarUrl} 
+                      alt={user?.name || 'User'} 
+                      fill
+                      className="object-cover"
+                      sizes="112px"
+                    />
                   ) : (
                     <div className="w-full h-full bg-slate-50 flex items-center justify-center">
                       <UserIcon className="w-12 h-12 text-slate-200" />

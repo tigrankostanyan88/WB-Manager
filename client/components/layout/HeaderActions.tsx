@@ -40,7 +40,7 @@ function getAvatarUrl(user: UserWithAvatar | null): string {
   return `/images/${table}/large/${fileObj.name}.${fileObj.ext}`
 }
 
-export default function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onMobileLinkClick }: HeaderActionsProps) {
+export function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onMobileLinkClick }: HeaderActionsProps) {
   const { user, isLoggedIn, isLoaded } = useAuth()
   const [avatarOverride, setAvatarOverride] = useState<string>('')
 

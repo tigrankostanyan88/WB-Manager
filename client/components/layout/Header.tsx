@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
@@ -7,9 +8,9 @@ import CourseRegistrationModal from '@/components/modals/CourseRegistrationModal
 import { RegistrationModal } from '@/components/modals'
 import { cn } from '@/lib/utils'
 import { useSettings } from '@/context/SettingsContext' // moved from lib
-import HeaderActions from './HeaderActions'
+import { HeaderActions } from './HeaderActions'
 
-export default function Header({ forceWhiteBackground = false }: { forceWhiteBackground?: boolean }) {
+export function Header({ forceWhiteBackground = false }: { forceWhiteBackground?: boolean }) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isCourseModalOpen, setIsCourseModalOpen] = useState(false)
@@ -50,8 +51,15 @@ export default function Header({ forceWhiteBackground = false }: { forceWhiteBac
             {/* Logo */}
             <Link href="/" prefetch={true} className="flex items-center gap-2 relative z-50">
               {settings.logo ? (
-                <div className="h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-slate-200">
-                  <img src={settings.logo} alt="Logo" className="w-full h-full object-cover" />
+                <div className="h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-slate-200 relative">
+                  <Image 
+                    src={settings.logo} 
+                    alt="Logo" 
+                    fill
+                    className="object-cover"
+                    sizes="40px"
+                    priority
+                  />
                 </div>
               ) : (
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-slate-200">

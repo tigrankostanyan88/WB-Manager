@@ -14,7 +14,7 @@ interface ToastProps {
   onClose: () => void
 }
 
-export default function Toast({ toast, onClose }: ToastProps) {
+export function Toast({ toast, onClose }: ToastProps) {
   return (
     <AnimatePresence>
       {toast && (

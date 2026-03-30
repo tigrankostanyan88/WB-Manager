@@ -21,7 +21,7 @@ interface CommentModalProps {
   onDelete?: (commentId: string) => void
 }
 
-export default function CommentModal({ open, comment, onClose, onEdit, onDelete }: CommentModalProps) {
+export function CommentModal({ open, comment, onClose, onEdit, onDelete }: CommentModalProps) {
   if (!comment) return null
 
   return (

@@ -1,8 +1,7 @@
 'use client'
 
 import { Shield } from 'lucide-react'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
+import { Header, Footer } from '@/components/layout'
 
 interface UnauthorizedStateProps {
   forceWhiteBackground?: boolean

@@ -13,7 +13,7 @@ interface CoursesTabProps {
   myCourses: UserCourse[]
 }
 
-export default function CoursesTab({ isLoadingData, myCourses }: CoursesTabProps) {
+export function CoursesTab({ isLoadingData, myCourses }: CoursesTabProps) {
   return (
     <motion.div
       key="courses"

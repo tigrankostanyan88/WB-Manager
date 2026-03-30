@@ -2,8 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
+import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/button'
 import { useCourses } from './hooks/useCourses'
 import { CourseCard } from './components/CourseCard'

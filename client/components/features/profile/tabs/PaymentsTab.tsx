@@ -23,7 +23,7 @@ interface PaymentsTabProps {
   user: PaymentsUser
 }
 
-export default function PaymentsTab({ user }: PaymentsTabProps) {
+export function PaymentsTab({ user }: PaymentsTabProps) {
   const [bankCards, setBankCards] = useState<BankCard[]>([])
   const [loading, setLoading] = useState(true)
 

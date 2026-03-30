@@ -48,7 +48,7 @@ export function generateVideoThumbnail(videoUrl: string, time?: number): Promise
   })
 }
 
-export default function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnailProps) {
+export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnailProps) {
   const [thumbnail, setThumbnail] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const generatedRef = useRef(false)

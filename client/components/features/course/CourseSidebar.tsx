@@ -11,7 +11,7 @@ interface CourseSidebarProps {
   isEnrolled?: boolean
 }
 
-export default function CourseSidebar({ price, originalPrice, discount, includes, modules, isEnrolled = false }: CourseSidebarProps) {
+export function CourseSidebar({ price, originalPrice, discount, includes, modules, isEnrolled = false }: CourseSidebarProps) {
   return (
     <div className="lg:w-1/3 relative">
       <div className="sticky top-24 space-y-4">

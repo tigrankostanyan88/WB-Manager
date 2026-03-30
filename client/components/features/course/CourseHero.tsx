@@ -1,7 +1,8 @@
 'use client'
 
+import Image from 'next/image'
 import { Clock, Star, Play } from 'lucide-react'
-import VideoThumbnail from './VideoThumbnail'
+import { VideoThumbnail } from './VideoThumbnail'
 
 export interface CourseHeroData {
   title: string
@@ -22,7 +23,7 @@ interface CourseHeroProps {
   onStartCourse?: () => void
 }
 
-export default function CourseHero({ course, onStartCourse }: CourseHeroProps) {
+export function CourseHero({ course, onStartCourse }: CourseHeroProps) {
   const hasVideo = !!course.previewVideoUrl
   
   return (
@@ -40,10 +41,13 @@ export default function CourseHero({ course, onStartCourse }: CourseHeroProps) {
             <div className="md:w-2/5 bg-slate-100 p-8 flex items-center justify-center">
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-lg bg-slate-900">
                 {course.image ? (
-                  <img
+                  <Image
                     src={course.image}
                     alt={course.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 40vw"
+                    priority
                   />
                 ) : course.previewVideoUrl ? (
                   <VideoThumbnail 

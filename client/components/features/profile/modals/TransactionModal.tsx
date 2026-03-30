@@ -19,7 +19,7 @@ interface TransactionModalProps {
   onClose: () => void
 }
 
-export default function TransactionModal({ transaction, onClose }: TransactionModalProps) {
+export function TransactionModal({ transaction, onClose }: TransactionModalProps) {
   return (
     <AnimatePresence>
       {transaction && (

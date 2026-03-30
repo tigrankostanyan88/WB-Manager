@@ -16,7 +16,7 @@ interface PersonalDataTabProps {
   isLoadingData?: boolean
 }
 
-export default function PersonalDataTab({ 
+export function PersonalDataTab({ 
   user, 
   myCoursesCount, 
   totalCoursesCount,
