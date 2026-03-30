@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
+import Image from 'next/image'
 import { Plus, X, Camera } from 'lucide-react'
 import type { CourseForm } from '@/components/features/admin/hooks/useCourses'
 import type { Course } from '@/components/features/admin/types'
@@ -191,10 +192,12 @@ export function CourseFormComponent({
           <div className="space-y-4">
             {(imagePreview || courseForm.image) && (
               <div className="relative aspect-video w-full max-w-md rounded-xl overflow-hidden bg-slate-100">
-                <img
+                <Image
                   src={imagePreview || courseForm.image || ''}
                   alt="Course thumbnail"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 400px"
                 />
                 <button
                   type="button"

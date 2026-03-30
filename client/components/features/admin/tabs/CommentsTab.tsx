@@ -1,6 +1,7 @@
 'use client'
 
 import { Trash2, User as UserIcon } from 'lucide-react'
+import Image from 'next/image'
 import type { Review } from '../types'
 import { withOrigin } from '../_utils/image'
 
@@ -48,10 +49,12 @@ export function CommentsTab({
                   <div className="flex-shrink-0">
                     <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center border-2 border-white shadow-sm">
                       {avatarUrl ? (
-                        <img 
-                          src={avatarUrl} 
+                        <Image
+                          src={avatarUrl}
                           alt={review.name || 'User'}
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
+                          sizes="48px"
                         />
                       ) : (
                         <UserIcon className="w-6 h-6 text-slate-400" />

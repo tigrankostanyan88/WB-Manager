@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import NextImage from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { User as UserIcon } from 'lucide-react'
@@ -50,7 +51,7 @@ export function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onM
     const path = getAvatarUrl(typedUser)
     if (!path) return ''
 
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || '/api'
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300'
     const withOrigin = (p: string) => {
       if (/^https?:\/\//i.test(apiBase)) {
         const origin = apiBase.replace(/\/api.*$/, '')
@@ -140,9 +141,16 @@ export function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onM
         <div className="flex items-center gap-3">
           <Link href="/profile" prefetch={true} title="Պրոֆիլ">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 p-[2px] shadow-lg shadow-violet-100 hover:scale-110 transition-transform active:scale-95">
-              <div className="w-full h-full rounded-[10px] bg-white flex items-center justify-center overflow-hidden">
+              <div className="w-full h-full rounded-[10px] bg-white flex items-center justify-center overflow-hidden relative">
                 {avatarUrl ? (
-                  <img key={avatarUrl} src={avatarUrl} alt={user?.name || 'avatar'} className="w-full h-full object-cover" />
+                  <NextImage 
+                    key={avatarUrl} 
+                    src={avatarUrl} 
+                    alt={user?.name || 'avatar'} 
+                    fill
+                    className="object-cover"
+                    sizes="40px"
+                  />
                 ) : (
                   <UserIcon className="w-5 h-5 text-violet-600" />
                 )}

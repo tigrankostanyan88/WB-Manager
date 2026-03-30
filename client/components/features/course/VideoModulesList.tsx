@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Lock, Play } from 'lucide-react'
 
 export interface VideoModule {
@@ -36,10 +37,12 @@ export function VideoModulesList({ modules }: VideoModulesListProps) {
             {/* Video Thumbnail */}
             <div className="relative shrink-0 w-40 aspect-video rounded-lg overflow-hidden bg-slate-900">
               {module.thumbnail ? (
-                <img 
-                  src={module.thumbnail} 
+                <Image
+                  src={module.thumbnail}
                   alt={module.title}
-                  className="w-full h-full object-cover opacity-90"
+                  fill
+                  className="object-cover opacity-90"
+                  sizes="160px"
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-violet-600 to-indigo-700" />

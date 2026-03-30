@@ -92,7 +92,6 @@ export function CurriculumSection() {
         </div>
 
         <div className="relative rounded-[2rem] sm:rounded-[2.5rem] bg-gradient-to-r from-violet-900/20 to-indigo-900/20 border border-white/10 p-6 sm:p-8 md:p-12 overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
           <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center">
             <div>
               <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">

@@ -20,7 +20,7 @@ interface DbUser {
   role?: string | null
   avatar?: string | null
   isPaid?: boolean | null
-  files?: unknown[] | null
+  files?: { name_used?: string; name?: string; ext?: string; table_name?: string }[] | null
   createdAt?: Date | null
   updatedAt?: Date | null
 }

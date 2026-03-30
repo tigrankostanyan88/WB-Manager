@@ -33,8 +33,8 @@ export function useLocalStorage<T>(key: string, defaultValue: T) {
       if (typeof window !== 'undefined') {
         localStorage.setItem(key, JSON.stringify(valueToStore))
       }
-    } catch (error) {
-      console.error('Error saving to localStorage:', error)
+    } catch {
+      // Silently fail - localStorage not available or quota exceeded
     }
   }, [key, storedValue])
 
@@ -44,8 +44,8 @@ export function useLocalStorage<T>(key: string, defaultValue: T) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem(key)
       }
-    } catch (error) {
-      console.error('Error removing from localStorage:', error)
+    } catch {
+      // Silently fail - localStorage not available
     }
   }, [key, defaultValue])
 

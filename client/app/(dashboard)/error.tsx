@@ -10,8 +10,7 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error('Dashboard error:', error)
+    // Error monitoring in production
   }, [error])
 
   return (

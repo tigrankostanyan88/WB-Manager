@@ -12,7 +12,7 @@ interface TabErrorBoundaryProps {
 
 export function TabErrorBoundary({ error, reset, tabName, children }: TabErrorBoundaryProps) {
   useEffect(() => {
-    console.error(`[${tabName} Tab Error]:`, error)
+    // Log to error monitoring service in production
   }, [error, tabName])
 
   return (

@@ -2,6 +2,7 @@
 
 // client/components/landing/InstructorSection.tsx
 
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { CheckCircle, Star, Users, TrendingUp, Clock, HeadphonesIcon } from 'lucide-react'
@@ -38,10 +39,13 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
             <div className="relative w-full max-w-md mx-auto aspect-[3/4] rounded-[2rem] overflow-hidden shadow-2xl shadow-violet-900/20 group bg-slate-100">
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent z-10" />
               {instructor.avatarUrl ? (
-                <img
+                <Image
                   src={instructor.avatarUrl}
                   alt="Instructor"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-slate-200">

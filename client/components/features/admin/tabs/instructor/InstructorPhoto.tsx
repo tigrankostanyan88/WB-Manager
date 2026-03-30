@@ -2,6 +2,7 @@
 
 'use client'
 
+import Image from 'next/image'
 import { User, Camera } from 'lucide-react'
 
 interface InstructorPhotoProps {
@@ -17,10 +18,12 @@ export function InstructorPhoto({ avatarUrl, name, profession, onAvatarFileSelec
       <div className="relative flex-1 min-h-[380px] flex items-center justify-center">
         {avatarUrl ? (
           <div className="relative w-full h-full rounded-xl overflow-hidden shadow-lg">
-            <img
+            <Image
               src={avatarUrl}
               alt="Մենթոր"
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 400px"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4">

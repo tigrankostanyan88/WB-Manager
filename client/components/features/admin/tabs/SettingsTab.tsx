@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Camera, Clock, Facebook, Globe, Instagram, Mail, MapPin, MessageSquare, Phone, Save, Send, type LucideIcon } from 'lucide-react'
@@ -45,7 +46,13 @@ export function SettingsTab({
           <div className="flex flex-col items-center mb-10">
             <div className="relative w-32 h-32 rounded-3xl overflow-hidden bg-slate-50 border-4 border-white shadow-2xl mb-4 group cursor-pointer">
               {siteSettings.logo ? (
-                <img src={siteSettings.logo} alt="Logo" className="w-full h-full object-cover" />
+                <Image
+                  src={siteSettings.logo}
+                  alt="Logo"
+                  fill
+                  className="object-cover"
+                  sizes="128px"
+                />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-slate-300">
                   <Globe className="w-12 h-12 opacity-50" />

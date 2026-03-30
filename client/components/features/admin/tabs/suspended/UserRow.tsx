@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { RefreshCw, Trash2, User as UserIcon } from 'lucide-react'
 import type { User } from '../../types'
 import { getUserAvatarUrl } from './utils'
@@ -28,10 +29,12 @@ export function UserRow({ user, isSelected, onToggle, onRestore, onDelete }: Use
       <td className="px-4 py-4">
         <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center">
           {avatarUrl ? (
-            <img 
-              src={avatarUrl} 
+            <Image
+              src={avatarUrl || ''}
               alt={user.name}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="40px"
             />
           ) : (
             <UserIcon className="w-5 h-5 text-slate-400" />

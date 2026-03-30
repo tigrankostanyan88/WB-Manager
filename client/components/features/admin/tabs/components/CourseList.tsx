@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Plus, Edit, Trash2, Play, BookOpen, Tag, Video } from 'lucide-react'
 import type { Course } from '@/components/features/admin/types'
 import { VideoThumbnail } from '@/components/features/admin/components/VideoThumbnail'
@@ -103,10 +104,12 @@ function CourseCard({ course, onEdit, onDelete, getCourseFirstVideoUrl }: Course
             className="w-full h-full transition-transform duration-500 group-hover:scale-105"
           />
         ) : course.image ? (
-          <img
+          <Image
             src={course.image}
             alt={course.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 50vw, 300px"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">

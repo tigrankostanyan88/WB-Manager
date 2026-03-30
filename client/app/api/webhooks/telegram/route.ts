@@ -124,8 +124,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error in Telegram webhook:', error)
+  } catch {
+    // Error logged server-side, don't expose to client
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

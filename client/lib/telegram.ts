@@ -1,11 +1,13 @@
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
 const TELEGRAM_ADMIN_CHAT_ID = process.env.TELEGRAM_ADMIN_CHAT_ID
 
-if (!TELEGRAM_BOT_TOKEN) {
+if (!TELEGRAM_BOT_TOKEN && process.env.NODE_ENV === 'development') {
+  // eslint-disable-next-line no-console
   console.warn('TELEGRAM_BOT_TOKEN is not set')
 }
 
-if (!TELEGRAM_ADMIN_CHAT_ID) {
+if (!TELEGRAM_ADMIN_CHAT_ID && process.env.NODE_ENV === 'development') {
+  // eslint-disable-next-line no-console
   console.warn('TELEGRAM_ADMIN_CHAT_ID is not set')
 }
 

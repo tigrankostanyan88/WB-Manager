@@ -23,7 +23,9 @@ export function HeroVideo({
   onClose 
 }: HeroVideoProps) {
   const handleVideoClick = useCallback(() => {
-    const videoUrl = content?.video_url || '/files/hero.mp4'
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300'
+    const defaultUrl = `${apiBase.replace(/\/$/, '')}/files/hero.mp4`
+    const videoUrl = content?.video_url || defaultUrl
     onPlay(videoUrl)
   }, [content?.video_url, onPlay])
 

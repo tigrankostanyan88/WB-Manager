@@ -164,7 +164,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 items-start mt-[150px]">
           
           <ProfileSidebar
-            user={currentUser as any}
+            user={currentUser}
             activeTab={activeTab}
             isUploadingAvatar={isUploadingAvatar}
             avatarPreview={avatarPreview}
@@ -177,13 +177,13 @@ export default function ProfilePage() {
 
           <div className="space-y-6 min-h-[850px]">
             {currentUser?.role !== 'admin' && (
-              <ProBanner user={currentUser as any} myPayments={myPayments} totalCoursesCount={totalCoursesCount} onShowPaymentModal={() => setShowPaymentModal(true)} />
+              <ProBanner user={currentUser} myPayments={myPayments} totalCoursesCount={totalCoursesCount} onShowPaymentModal={() => setShowPaymentModal(true)} />
             )}
 
             <AnimatePresence mode="wait">
               {activeTab === 'profile' && (
                 <ProfileTab
-                  user={currentUser as any}
+                  user={currentUser}
                   stats={stats}
                   isLoadingData={isLoadingData}
                   myCourses={myCourses}
@@ -194,7 +194,7 @@ export default function ProfilePage() {
 
               {activeTab === 'personal' && (
                 <PersonalDataTab 
-                  user={currentUser as any} 
+                  user={currentUser} 
                   myCoursesCount={myCourses?.length || 0}
                   totalCoursesCount={totalCoursesCount}
                   isLoadingData={isLoadingData}
@@ -219,11 +219,11 @@ export default function ProfilePage() {
               )}
 
               {activeTab === 'payments' && (
-                <PaymentsTab user={currentUser as any} />
+                <PaymentsTab user={currentUser} />
               )}
 
               {activeTab === 'settings' && (
-                <SettingsTab user={currentUser as any} isUpdating={isUpdating} onSubmit={handleUpdateProfile} onShowPasswordModal={() => setShowPasswordModal(true)} />
+                <SettingsTab user={currentUser} isUpdating={isUpdating} onSubmit={handleUpdateProfile} onShowPasswordModal={() => setShowPasswordModal(true)} />
               )}
             </AnimatePresence>
           </div>

@@ -3,6 +3,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react'
 import { userService } from '@/lib/api'
 
+export interface UserFile {
+  name_used?: string
+  name?: string
+  ext?: string
+  table_name?: string
+}
+
 export interface User {
   id: string
   name: string
@@ -12,7 +19,7 @@ export interface User {
   role: string
   avatar?: string
   isPaid?: boolean
-  files?: unknown[]
+  files?: UserFile[]
 }
 
 interface AuthContextType {
@@ -30,17 +37,10 @@ function buildAvatar(user: User | null): string {
   if (!user) return ''
   if (user.avatar) return user.avatar
   if (user.files && Array.isArray(user.files) && user.files.length > 0) {
-    const avatarFile = user.files.find((f: unknown) => {
-      if (!f || typeof f !== 'object') return false
-      const file = f as Record<string, unknown>
-      return file.name_used === 'user_img'
-    })
-    if (avatarFile && typeof avatarFile === 'object') {
-      const f = avatarFile as Record<string, unknown>
-      if (typeof f.name === 'string' && typeof f.ext === 'string') {
-        const table = typeof f.table_name === 'string' && f.table_name ? f.table_name : 'users'
-        return `/api/images/${table}/large/${f.name}.${f.ext}`
-      }
+    const avatarFile = user.files.find((f) => f?.name_used === 'user_img') ?? user.files[0]
+    if (avatarFile?.name && avatarFile?.ext) {
+      const table = avatarFile.table_name || 'users'
+      return `/api/images/${table}/large/${avatarFile.name}.${avatarFile.ext}`
     }
   }
   return ''
@@ -56,9 +56,9 @@ export function AuthProvider({ children, initialUser = null }: { children: React
       const u = res.data.user
       const userWithAvatar = { ...u, avatar: buildAvatar(u) }
       setUserState(userWithAvatar)
-    } catch (err: unknown) {
-      const status = (err as { response?: { status?: number } }).response?.status
-      if (status === 401) {
+    } catch (err) {
+      const axiosError = err as { response?: { status?: number } }
+      if (axiosError.response?.status === 401) {
         setUserState(null)
       }
     } finally {

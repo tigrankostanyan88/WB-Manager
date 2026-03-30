@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Check, ZoomIn, ZoomOut } from 'lucide-react'
@@ -127,15 +128,13 @@ export function AvatarCropModal({ isOpen, imageSrc, onClose, onCropComplete }: A
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
               >
-                <img
-                  ref={imageRef}
+                <Image
+                  ref={imageRef as React.Ref<HTMLImageElement>}
                   src={imageSrc}
                   alt="Preview"
-                  className="w-full h-full object-cover"
-                  style={{
-                    transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-                    transition: isDragging ? 'none' : 'transform 0.2s ease'
-                  }}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 100vw, 500px"
                   draggable={false}
                 />
                 

@@ -39,10 +39,11 @@ export function Header({ forceWhiteBackground = false }: { forceWhiteBackground?
   return (
     <>
       <header 
+        style={{ backgroundColor: 'white', transition: 'none' }}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 bg-white",
+          "fixed top-0 left-0 right-0 z-[100]",
           shouldBeSolid
-            ? "bg-white shadow-sm py-3 mb-20"
+            ? "shadow-sm py-3 mb-20"
             : "py-5"
         )}
       >

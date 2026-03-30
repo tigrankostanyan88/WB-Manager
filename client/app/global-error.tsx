@@ -10,8 +10,8 @@ export default function GlobalError({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error('GlobalError caught:', error)
-    console.error('Error stack:', error?.stack)
+    // Log to error monitoring service (e.g., Sentry) in production
+    // console.error is removed to prevent exposing errors in browser console
   }, [error])
 
   return (

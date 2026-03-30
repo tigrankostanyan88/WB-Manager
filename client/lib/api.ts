@@ -8,11 +8,10 @@ const api = axios.create({
 // No localStorage token - using httpOnly cookies only for security
 api.interceptors.request.use((config) => {
   if (config.data instanceof FormData) {
-    if (config.headers && 'Content-Type' in config.headers) {
-      delete (config.headers as any)['Content-Type'];
-    }
-    if (config.headers && 'content-type' in config.headers) {
-      delete (config.headers as any)['content-type'];
+    // Let browser set Content-Type with boundary for FormData
+    if (config.headers) {
+      delete config.headers['Content-Type']
+      delete config.headers['content-type']
     }
   }
   return config;

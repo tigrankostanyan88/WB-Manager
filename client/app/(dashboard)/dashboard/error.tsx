@@ -10,7 +10,7 @@ export default function DashboardError({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error('Dashboard error:', error)
+    // Error monitoring in production
   }, [error])
 
   return (
