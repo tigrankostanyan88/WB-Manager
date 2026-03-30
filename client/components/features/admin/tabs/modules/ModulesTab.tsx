@@ -3,25 +3,32 @@
 'use client'
 
 import { useState } from 'react'
-import type { ModuleItem, ModuleFile } from '@/components/features/admin/hooks/modules/types'
-import type { ModulesTabProps as HookModulesTabProps } from '@/components/features/admin/hooks/modules/useModules'
+import type { ModuleItem, ModuleFile, CourseOption } from '@/components/features/admin/hooks/modules/types'
 import { ModuleForm } from './ModuleForm'
 import { ModuleList } from './ModuleList'
 
-interface ModulesTabProps extends HookModulesTabProps {
+interface ModulesTabProps {
   showModuleForm: boolean
   setShowModuleForm: (show: boolean) => void
   moduleForm: { title: string; description: string; courseId: string }
   setModuleForm: React.Dispatch<React.SetStateAction<{ title: string; description: string; courseId: string }>>
   allModules: ModuleItem[]
+  courses: CourseOption[]
+  isLoading: boolean
   editingId: string | null
   startNewModule: () => void
+  editModule: (module: ModuleItem) => void
   cancelNewModule: () => void
   submitModule: (e: React.FormEvent) => Promise<void>
   deleteModule: (id: string) => void
+  videoFile: File | null
+  isUploadingVideo: boolean
   currentModuleVideos: ModuleFile[]
   deleteModuleVideo: (videoId: string) => void
   updateModuleVideo: (videoId: string, title: string) => void
+  handleVideoFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  uploadModuleVideo: () => void
+  getVideoUrl: (file: ModuleFile) => string
 }
 
 export function ModulesTab({

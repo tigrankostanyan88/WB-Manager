@@ -83,7 +83,7 @@ export function useDashboard() {
   })
 
   // Modules
-  const { showModuleForm, moduleForm, setModuleForm, allModules, courses: moduleCourses, isLoading: isModulesLoading, editingId: editingModuleId, startNewModule, editModule, cancelNewModule, submitModule, deleteModule, videoFile, isUploadingVideo, currentModuleVideos, deleteModuleVideo, updateModuleVideo, handleVideoFileChange, uploadModuleVideo, getVideoUrl } = useModules({
+  const { showModuleForm, setShowModuleForm, moduleForm, setModuleForm, allModules, courses: moduleCourses, isLoading: isModulesLoading, editingId: editingModuleId, startNewModule, editModule, cancelNewModule, submitModule, deleteModule, videoFile, isUploadingVideo, currentModuleVideos, deleteModuleVideo, updateModuleVideo, handleVideoFileChange, uploadModuleVideo, getVideoUrl } = useModules({
     activeTab,
     showToast
   })
@@ -267,6 +267,7 @@ export function useDashboard() {
     
     // Modules
     showModuleForm,
+    setShowModuleForm,
     moduleForm,
     setModuleForm,
     allModules,

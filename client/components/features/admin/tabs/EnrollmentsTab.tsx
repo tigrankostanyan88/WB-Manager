@@ -5,15 +5,15 @@ import { Search, BookOpen, Users, X, CheckCircle, AlertCircle, GraduationCap } f
 import { withOrigin } from '../_utils/image'
 
 interface Student {
-  id: number
-  name: string
-  email: string
+  id: number | string
+  name?: string
+  email?: string
   phone?: string
-  role: string
+  role?: string
 }
 
 interface Course {
-  id: number
+  id: number | string
   title: string
   description?: string
 }
@@ -32,8 +32,8 @@ interface Enrollment {
 
 interface EnrollmentsTabProps {
   enrollments: Enrollment[]
-  courses: { id: number; title: string }[]
-  enrollmentsByCourse: { course: Course; enrollments: Enrollment[]; count: number }[]
+  courses: { id: number | string; title: string }[]
+  enrollmentsByCourse: { course: Course; enrollments: Enrollment[]; count: number; activeCount: number; expiredCount: number }[]
   isLoading: boolean
   selectedCourse: number | null
   setSelectedCourse: (id: number | null) => void
@@ -42,7 +42,7 @@ interface EnrollmentsTabProps {
   revokeAccess: (userId: number, courseId: number) => Promise<boolean>
 }
 
-export default function EnrollmentsTab({
+export function EnrollmentsTab({
   enrollments,
   courses,
   enrollmentsByCourse,
@@ -53,7 +53,7 @@ export default function EnrollmentsTab({
   setSearchTerm,
   revokeAccess
 }: EnrollmentsTabProps) {
-  const [expandedCourse, setExpandedCourse] = useState<number | null>(null)
+  const [expandedCourse, setExpandedCourse] = useState<number | string | null>(null)
   const [revoking, setRevoking] = useState<{ userId: number; courseId: number } | null>(null)
 
   const handleRevoke = async (userId: number, courseId: number) => {

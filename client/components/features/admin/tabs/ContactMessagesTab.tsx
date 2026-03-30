@@ -22,7 +22,7 @@ interface ContactMessagesTabProps {
   onMarkAsRead: (id: number) => Promise<boolean>
 }
 
-export default function ContactMessagesTab({
+export function ContactMessagesTab({
   messages,
   isLoading,
   isDeleting,
@@ -151,7 +151,7 @@ export default function ContactMessagesTab({
                   </td>
                   <td className="px-4 py-3 text-center">
                     {msg.read ? (
-                      <CheckCheck className="w-5 h-5 text-green-500 mx-auto" title="Կարդացված" />
+                      <CheckCheck className="w-5 h-5 text-green-500 mx-auto" />
                     ) : (
                       <span className="inline-flex items-center px-2 py-1 rounded-full bg-violet-100 text-violet-600 text-xs font-medium">
                         Նոր

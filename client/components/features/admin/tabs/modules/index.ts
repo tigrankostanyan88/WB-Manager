@@ -1,3 +1,5 @@
+'use client'
+
 // tabs/modules/index.ts - Barrel exports
 
 export { ModulesTab } from './ModulesTab'

@@ -1,3 +1,5 @@
+'use client'
+
 // tabs/bankcards/index.ts - Bank cards tab barrel exports
 
 export { BankCardsTab } from './BankCardsTab'

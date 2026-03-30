@@ -25,7 +25,7 @@ function getUserAvatarUrl(user: User): string | null {
   return withOrigin(path) || null
 }
 
-export default function SuspendedUsersTab({
+export function SuspendedUsersTab({
   users,
   isLoading,
   search,

@@ -1,3 +1,5 @@
+'use client'
+
 // tabs/instructor/index.ts - Instructor tab barrel exports
 
 export { InstructorTab } from './InstructorTab'

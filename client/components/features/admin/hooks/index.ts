@@ -1,3 +1,5 @@
+'use client'
+
 // Admin hooks barrel export - merged hooks only
 export {
   useEnrollments,

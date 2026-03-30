@@ -42,7 +42,7 @@ function withOrigin(path?: string): string | undefined {
 }
 
 export function useInstructor(): UseInstructorReturn {
-  const [instructor, setInstructor] = useState<Instructor>({})
+  const [instructor, setInstructor] = useState<Instructor>({ name: '' })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
   const hasFetched = useRef(false)
@@ -61,7 +61,7 @@ export function useInstructor(): UseInstructorReturn {
         const row = list.length > 0 ? list[0] : null
 
         if (!row) {
-          setInstructor({})
+          setInstructor({ name: '' })
           return
         }
 

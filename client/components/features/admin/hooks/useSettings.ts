@@ -26,6 +26,8 @@ export default function useSettings({ activeTab, allowed, showToast }: UseSettin
   const { updateSettings } = useGlobalSettings()
   const [siteSettings, setSiteSettings] = useState<SiteSettings>({
     siteName: 'WB Manager',
+    firstName: '',
+    lastName: '',
     phone: '+374 (98) 55-66-88',
     email: 'info@wbmanager.am',
     address: 'Երևան, Հայաստան',
@@ -63,6 +65,8 @@ export default function useSettings({ activeTab, allowed, showToast }: UseSettin
         if (!cancelled) {
           setSiteSettings({
             siteName: typeof data.siteName === 'string' ? data.siteName : '',
+            firstName: typeof data.firstName === 'string' ? data.firstName : '',
+            lastName: typeof data.lastName === 'string' ? data.lastName : '',
             phone: typeof data.phone === 'string' ? data.phone : '',
             email: typeof data.email === 'string' ? data.email : '',
             address: typeof data.address === 'string' ? data.address : '',

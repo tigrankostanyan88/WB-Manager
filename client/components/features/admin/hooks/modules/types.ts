@@ -26,9 +26,8 @@ export interface CourseOption {
 
 export interface ModuleForm {
   title: string
-  duration: string
   courseId: string
-  description?: string
+  description: string
 }
 
 export interface UseModulesParams {

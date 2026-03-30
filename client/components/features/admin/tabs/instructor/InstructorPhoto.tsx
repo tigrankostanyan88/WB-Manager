@@ -1,5 +1,7 @@
 // tabs/instructor/InstructorPhoto.tsx - Instructor photo upload component
 
+'use client'
+
 import { User, Camera } from 'lucide-react'
 
 interface InstructorPhotoProps {

@@ -3,11 +3,11 @@
 import { useMemo } from 'react'
 import type { Course } from '@/components/features/admin/types'
 import { useConfirm } from '@/components/providers/ConfirmProvider'
-import CourseFormComponent from './components/CourseForm'
-import CourseList from './components/CourseList'
+import { CourseFormComponent } from './components/CourseForm'
+import { CourseList } from './components/CourseList'
 import type { CoursesTabProps } from './types'
 
-export default function CoursesTab({
+export function CoursesTab({
   showCourseForm,
   courseForm,
   setCourseForm,

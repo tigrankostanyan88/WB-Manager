@@ -1,3 +1,5 @@
+'use client'
+
 // Admin feature components
 export { default as DashboardHeader } from './DashboardHeader'
 export { default as DashboardSidebar, type DashboardMenuItem } from './DashboardSidebar'

@@ -22,7 +22,7 @@ interface UseModulesParams {
   showToast: (message: string, type?: 'success' | 'error') => void
 }
 
-const emptyForm: ModuleForm = { title: '', duration: '', courseId: '' }
+const emptyForm: ModuleForm = { title: '', courseId: '', description: '' }
 
 export function useModules({ showToast }: UseModulesParams) {
   const confirm = useConfirm()
@@ -63,8 +63,8 @@ export function useModules({ showToast }: UseModulesParams) {
     setEditingId(module.id)
     setModuleForm({
       title: module.title,
-      duration: module.duration,
       courseId: module.courseId,
+      description: '',
     })
     const videos = getModuleVideos(module)
     setCurrentModuleVideos(videos)
@@ -123,8 +123,8 @@ export function useModules({ showToast }: UseModulesParams) {
           setEditingId(newModule.id)
           setModuleForm({
             title: newModule.title,
-            duration: newModule.duration,
             courseId: newModule.courseId,
+            description: '',
           })
           const videos = getModuleVideos(newModule)
           setCurrentModuleVideos(videos)

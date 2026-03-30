@@ -19,7 +19,7 @@ interface SettingsTabProps {
   onLogoFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export default function SettingsTab({
+export function SettingsTab({
   siteSettings,
   setSiteSettings,
   workingHoursSchedule,

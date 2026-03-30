@@ -8,19 +8,57 @@ datasource db {
 }
 
 model User {
-  id                  String   @id @default(uuid())
-  clerkId             String   @unique
-  email               String   @unique
-  plan                Plan     @default(FREE)
-  credits             Int      @default(10)
-  stripeCustomerId    String?  @unique
+  id                  String        @id @default(uuid())
+  clerkId             String        @unique
+  email               String        @unique
+  plan                Plan          @default(FREE)
+  credits             Int           @default(10)
+  stripeCustomerId    String?       @unique
   stripeSubscriptionId String?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  sessions            ChatSession[]
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
 }
 
 enum Plan {
   FREE
   PRO
   ENTERPRISE
+}
+
+model Generation {
+  id        String   @id @default(uuid())
+  userId    String
+  toolId    String
+  prompt    String
+  result    String?
+  output    String?
+  tokens    Int      @default(0)
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+}
+
+model ChatSession {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  messages  ChatMessage[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+model ChatMessage {
+  id                String      @id @default(uuid())
+  sessionId         String
+  session           ChatSession @relation(fields: [sessionId], references: [id])
+  content           String
+  senderType        String      // 'USER' or 'ADMIN'
+  telegramMessageId String?
+  createdAt         DateTime    @default(now())
+  
+  @@index([sessionId])
+  @@index([telegramMessageId])
 }

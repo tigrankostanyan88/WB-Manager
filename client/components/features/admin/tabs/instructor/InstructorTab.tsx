@@ -1,5 +1,7 @@
 // tabs/instructor/InstructorTab.tsx - Main instructor tab orchestrator
 
+'use client'
+
 import { Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { InstructorPhoto } from './InstructorPhoto'

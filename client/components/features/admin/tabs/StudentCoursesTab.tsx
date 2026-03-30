@@ -6,8 +6,16 @@ interface StudentCoursesTabProps {
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void
 }
 
-export default function StudentCoursesTab({ showToast }: StudentCoursesTabProps) {
-  const [enrollments, setEnrollments] = useState<any[]>([])
+interface Enrollment {
+  _id: string
+  userName: string
+  courseName: string
+  enrolledAt: string
+  progress?: number
+}
+
+export function StudentCoursesTab({ showToast }: StudentCoursesTabProps) {
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
@@ -17,8 +25,8 @@ export default function StudentCoursesTab({ showToast }: StudentCoursesTabProps)
         const res = await fetch('/api/student-courses')
         const data = await res.json()
         setEnrollments(data.enrollments || [])
-      } catch (error) {
-        console.error('Error fetching enrollments:', error)
+      } catch {
+        // Fail silently - enrollments are optional
       } finally {
         setIsLoading(false)
       }

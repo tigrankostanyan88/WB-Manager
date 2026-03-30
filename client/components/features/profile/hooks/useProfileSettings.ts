@@ -60,7 +60,6 @@ export function useProfileSettings({
       setUser(nextUser)
       showToast('Պրոֆիլը հաջողությամբ թարմացվեց')
     } catch (err: unknown) {
-      console.error('Error updating profile:', err)
       showToast(extractErrorMessage(err) || 'Սխալ պրոֆիլի թարմացման ժամանակ', 'error')
     } finally {
       setIsUpdating(false)
@@ -130,7 +129,6 @@ export function useProfileSettings({
       } catch {}
       showToast('Նկարը հաջողությամբ թարմացվեց')
     } catch (err: unknown) {
-      console.error('Error uploading avatar:', err)
       showToast('Սխալ նկարի թարմացման ժամանակ', 'error')
       // Clean up the blob URL on error too
       if (previewUrl) {
@@ -162,7 +160,6 @@ export function useProfileSettings({
       setPasswordData({ passwordCurrent: '', password: '', passwordConfirm: '' })
       showToast('Գաղտնաբառը հաջողությամբ թարմացվեց')
     } catch (err: unknown) {
-      console.error('Error updating password:', err)
       showToast(extractErrorMessage(err) || 'Սխալ գաղտնաբառի թարմացման ժամանակ', 'error')
     } finally {
       setIsUpdating(false)

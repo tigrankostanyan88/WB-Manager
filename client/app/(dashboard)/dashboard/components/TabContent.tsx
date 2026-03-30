@@ -1,20 +1,20 @@
 'use client'
 
-import OverviewTab from '@/components/features/admin/tabs/OverviewTab'
-import UsersTab from '@/components/features/admin/tabs/UsersTab'
-import SuspendedUsersTab from '@/components/features/admin/tabs/SuspendedUsersTab'
-import EnrollmentsTab from '@/components/features/admin/tabs/EnrollmentsTab'
-import CourseRegistrationsTab from '@/components/features/admin/tabs/CourseRegistrationsTab'
-import ContactMessagesTab from '@/components/features/admin/tabs/ContactMessagesTab'
+import { OverviewTab } from '@/components/features/admin/tabs/OverviewTab'
+import { UsersTab } from '@/components/features/admin/tabs/UsersTab'
+import { SuspendedUsersTab } from '@/components/features/admin/tabs/SuspendedUsersTab'
+import { EnrollmentsTab } from '@/components/features/admin/tabs/EnrollmentsTab'
+import { CourseRegistrationsTab } from '@/components/features/admin/tabs/CourseRegistrationsTab'
+import { ContactMessagesTab } from '@/components/features/admin/tabs/ContactMessagesTab'
 import { PaymentsTab } from '@/components/features/admin/tabs/payments'
 import { BankCardsTab } from '@/components/features/admin/tabs/bankcards'
-import CoursesTab from '@/components/features/admin/tabs/CoursesTab'
+import { CoursesTab } from '@/components/features/admin/tabs/CoursesTab'
 import { ModulesTab } from '@/components/features/admin/tabs/modules'
-import CommentsTab from '@/components/features/admin/tabs/CommentsTab'
+import { CommentsTab } from '@/components/features/admin/tabs/CommentsTab'
 import { InstructorTab } from '@/components/features/admin/tabs/instructor'
-import FaqTab from '@/components/features/admin/tabs/FaqTab'
-import HeroContentTab from '@/components/features/admin/tabs/HeroContentTab'
-import SettingsTab from '@/components/features/admin/tabs/SettingsTab'
+import { FaqTab } from '@/components/features/admin/tabs/FaqTab'
+import { HeroContentTab } from '@/components/features/admin/tabs/HeroContentTab'
+import { SettingsTab } from '@/components/features/admin/tabs/SettingsTab'
 import type { DashboardTabId } from '@/components/features/admin/types'
 import type { ReturnTypeUseDashboard } from '../hooks/useDashboard'
 
@@ -139,6 +139,7 @@ export function TabContent({ activeTab, data }: TabContentProps) {
       return (
         <ModulesTab
           showModuleForm={data.showModuleForm}
+          setShowModuleForm={data.setShowModuleForm}
           moduleForm={data.moduleForm}
           setModuleForm={data.setModuleForm}
           allModules={data.allModules}

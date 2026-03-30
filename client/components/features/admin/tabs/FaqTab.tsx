@@ -20,7 +20,7 @@ interface FaqTabProps {
   deleteFaq: (id: number) => void
 }
 
-export default function FaqTab({
+export function FaqTab({
   faqs,
   faqForm,
   setFaqForm,

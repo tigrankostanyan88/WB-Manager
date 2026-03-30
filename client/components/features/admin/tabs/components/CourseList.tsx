@@ -13,7 +13,7 @@ interface CourseListProps {
   getCourseFirstVideoUrl: (course: Course) => string | null
 }
 
-export default function CourseList({
+export function CourseList({
   courses,
   isLoading,
   onEdit,

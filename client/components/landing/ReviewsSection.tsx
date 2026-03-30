@@ -25,8 +25,8 @@ export function ReviewsSection() {
         const responseData = reviewsRes.data?.data as { reviews?: Review[] }
         const list = Array.isArray(responseData?.reviews) ? responseData.reviews : []
         setReviews(list)
-      } catch (err) {
-        console.error('Failed to fetch data:', err)
+      } catch {
+        // Fail silently - reviews are optional
       } finally {
         setIsLoading(false)
       }

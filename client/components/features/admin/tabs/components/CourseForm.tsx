@@ -28,7 +28,7 @@ const languages = [
   { value: 'English', label: 'Անգլերեն' }
 ]
 
-export default function CourseFormComponent({
+export function CourseFormComponent({
   courseForm,
   setCourseForm,
   isEditing,

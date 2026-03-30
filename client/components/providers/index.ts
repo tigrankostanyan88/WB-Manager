@@ -1,3 +1,3 @@
 // client/components/providers/index.ts
 
-export { default as ConfirmProvider } from './ConfirmProvider'
+export { ConfirmProvider, useConfirm } from './ConfirmProvider'

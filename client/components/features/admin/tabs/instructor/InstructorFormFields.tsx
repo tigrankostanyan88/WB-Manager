@@ -1,5 +1,7 @@
 // tabs/instructor/InstructorFormFields.tsx - Instructor form fields component
 
+'use client'
+
 import { Users, TrendingUp, Clock, HeadphonesIcon } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'

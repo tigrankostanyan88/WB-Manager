@@ -1,3 +1,5 @@
+'use client'
+
 // tabs/payments/index.ts - Payments tab barrel exports
 
 export { PaymentsTab } from './PaymentsTab'

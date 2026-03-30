@@ -25,7 +25,7 @@ interface OverviewTabProps {
   relativeTime: (date: string) => string
 }
 
-export default function OverviewTab({ stats, recentStudents, isRecentLoading, relativeTime }: OverviewTabProps) {
+export function OverviewTab({ stats, recentStudents, isRecentLoading, relativeTime }: OverviewTabProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -63,7 +63,7 @@ export default function OverviewTab({ stats, recentStudents, isRecentLoading, re
                     <p className="font-medium text-slate-900">{student.firstName} {student.lastName}</p>
                     <p className="text-sm text-slate-500">{student.email}</p>
                   </div>
-                  <span className="text-sm text-slate-400">{relativeTime(student.createdAt)}</span>
+                  <span className="text-sm text-slate-400">{relativeTime(student.createdAt || '')}</span>
                 </div>
               ))}
             </div>

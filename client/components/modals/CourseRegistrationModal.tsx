@@ -56,9 +56,9 @@ export default function CourseRegistrationModal({ isOpen, onClose }: CourseRegis
       setCoursesLoading(true)
       const res = await api.get('/api/v1/courses')
       const coursesData = Array.isArray(res.data?.data) ? res.data.data : (res.data?.data?.courses || res.data?.courses || [])
-      setCourses(Array.isArray(coursesData) ? coursesData.map((c: any) => ({ id: c.id, title: c.title })) : [])
-    } catch (err) {
-      console.error('Error fetching courses:', err)
+      setCourses(Array.isArray(coursesData) ? coursesData.map((c) => ({ id: c.id, title: c.title })) : [])
+    } catch {
+      // Fail silently - courses are optional
     } finally {
       setCoursesLoading(false)
     }

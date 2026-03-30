@@ -18,7 +18,7 @@ export type DashboardTabId =
 export interface User {
   id: number | string
   name?: string
-  email?: string
+  email: string
   phone?: string
   role?: 'admin' | 'user' | 'student' | string
   isPaid?: boolean
@@ -108,16 +108,16 @@ export interface ToastState {
 
 // Shared domain types - centralized to avoid duplication across hooks
 export interface Course {
-  id: number
+  id: number | string
   _id?: string
   title: string
-  description?: string
-  price?: number
+  description: string
+  price: number | string
   category?: string
   language?: string
   image?: string | null
   thumbnail_time?: number
-  modules?: Array<{ _id?: string; id?: number; title: string; duration: string }>
+  modules?: Array<{ id: string; _id?: string; title: string; duration?: string }>
   prerequisites?: string[]
   whatToLearn?: string[]
 }
@@ -129,10 +129,10 @@ export interface Payment {
   order_id?: string
   amount: number
   status: 'pending' | 'success' | 'failed'
-  payment_method?: 'idram' | 'ameria' | 'acba'
+  payment_method: 'idram' | 'ameria' | 'acba'
   transaction_id?: string
   paid_at?: string
-  createdAt?: string
+  createdAt: string
   user?: User
   course?: Course
 }

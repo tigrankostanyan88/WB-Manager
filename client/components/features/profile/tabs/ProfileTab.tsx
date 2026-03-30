@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import React from 'react'
-import type { UserCourse, Payment } from '../../_hooks/useProfileData'
+import type { UserCourse, Payment } from '../hooks/useProfileData'
 
 interface ProfileUser {
   role?: string

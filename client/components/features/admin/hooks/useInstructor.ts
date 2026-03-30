@@ -3,60 +3,28 @@
 import { useEffect, useState, useCallback } from 'react'
 import api from '@/lib/api'
 import type { Area, Point } from 'react-easy-crop'
-import type { DashboardTabId, InstructorErrors, InstructorForm } from '../types'
-import { fixLarge, withOrigin } from '../_utils/image'
+import { getCroppedImg } from '../_utils/image'
 
-// Helper function to create cropped image
-const createImage = (url: string) =>
-  new Promise<HTMLImageElement>((resolve, reject) => {
-    const image = new Image()
-    image.addEventListener('load', () => resolve(image))
-    image.addEventListener('error', (error) => reject(error))
-    image.setAttribute('crossOrigin', 'anonymous')
-    image.src = url
-  })
-
-const getRadianAngle = (degreeValue: number) => (degreeValue * Math.PI) / 180
-
-const rotateSize = (width: number, height: number, rotation: number) => {
-  const rotRad = getRadianAngle(rotation)
-  return {
-    width: Math.abs(Math.cos(rotRad) * width) + Math.abs(Math.sin(rotRad) * height),
-    height: Math.abs(Math.sin(rotRad) * width) + Math.abs(Math.cos(rotRad) * height)
-  }
+interface InstructorForm {
+  title: string
+  name: string
+  profession: string
+  description: string
+  badgeText: string
+  avatarUrl: string
+  avatarFile: File | null
+  stats: { value: string; label: string }[]
 }
 
-const getCroppedImg = async (imageSrc: string, pixelCrop: Area, rotation = 0) => {
-  const image = await createImage(imageSrc)
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  if (!ctx) throw new Error('No canvas context')
-
-  const rotRad = getRadianAngle(rotation)
-  const { width: bBoxWidth, height: bBoxHeight } = rotateSize(image.width, image.height, rotation)
-  canvas.width = bBoxWidth
-  canvas.height = bBoxHeight
-
-  ctx.translate(bBoxWidth / 2, bBoxHeight / 2)
-  ctx.rotate(rotRad)
-  ctx.translate(-image.width / 2, -image.height / 2)
-  ctx.drawImage(image, 0, 0)
-
-  const data = ctx.getImageData(pixelCrop.x, pixelCrop.y, pixelCrop.width, pixelCrop.height)
-  canvas.width = pixelCrop.width
-  canvas.height = pixelCrop.height
-  ctx.putImageData(data, 0, 0)
-
-  return new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (!blob) return reject(new Error('Canvas is empty'))
-      resolve(blob)
-    }, 'image/png')
-  })
+interface InstructorErrors {
+  name: boolean
+  profession: boolean
+  description: boolean
+  stats: boolean[]
 }
 
 interface UseInstructorParams {
-  activeTab: DashboardTabId
+  activeTab: string
   allowed: boolean
   showToast: (message: string, type?: 'success' | 'error') => void
 }
@@ -68,7 +36,17 @@ const defaultStats = [
   { value: '24/7', label: 'Անհատական աջակցություն' }
 ]
 
-export default function useInstructor({ activeTab, allowed, showToast }: UseInstructorParams) {
+function extractErrorMessage(err: unknown): string | null {
+  if (!err || typeof err !== 'object') return null
+  const resp = (err as { response?: unknown }).response
+  if (!resp || typeof resp !== 'object') return null
+  const data = (resp as { data?: unknown }).data
+  if (!data || typeof data !== 'object') return null
+  const msg = (data as { message?: unknown }).message
+  return typeof msg === 'string' ? msg : null
+}
+
+export function useInstructor({ activeTab, allowed, showToast }: UseInstructorParams) {
   const [isInstructorLoading, setIsInstructorLoading] = useState(false)
   const [instructorForm, setInstructorForm] = useState<InstructorForm>({
     title: 'Սովորեք Ուայլդբերիի Մասնագետից',
@@ -87,7 +65,6 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
     stats: [false, false, false, false]
   })
   
-  // Crop modal state
   const [cropModalOpen, setCropModalOpen] = useState(false)
   const [cropImage, setCropImage] = useState<string | null>(null)
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 })
@@ -95,19 +72,8 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
   const [pendingFile, setPendingFile] = useState<File | null>(null)
 
-  const extractErrorMessage = (err: unknown): string | null => {
-    if (!err || typeof err !== 'object') return null
-    const resp = (err as { response?: unknown }).response
-    if (!resp || typeof resp !== 'object') return null
-    const data = (resp as { data?: unknown }).data
-    if (!data || typeof data !== 'object') return null
-    const msg = (data as { message?: unknown }).message
-    return typeof msg === 'string' ? msg : null
-  }
-
   useEffect(() => {
-    if (!allowed) return
-    if (activeTab !== 'instructor') return
+    if (!allowed || activeTab !== 'instructor') return
     let cancelled = false
     ;(async () => {
       setIsInstructorLoading(true)
@@ -142,18 +108,13 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
           : [...defaultStats]
 
         if (!cancelled) {
-          const rawAvatar = '/images/instructors/large/26bb2cffb8d9f89f66ce033a6b4c3d476df8d8ee.png'
-          
-          const fixedAvatar = fixLarge(rawAvatar)
-          const finalAvatar = withOrigin(fixedAvatar) || ''
-          
           setInstructorForm({
             title: typeof data.title === 'string' ? data.title : 'Սովորեք Ուայլդբերիի Մասնագետից',
             name: typeof data.name === 'string' ? data.name : '',
             profession: typeof data.profession === 'string' ? data.profession : '',
             description: typeof data.description === 'string' ? data.description : '',
             badgeText: typeof data.badge_text === 'string' ? data.badge_text : 'Վերադարձված մենթորություն',
-            avatarUrl: finalAvatar,
+            avatarUrl: typeof data.avatar_url === 'string' ? data.avatar_url : '',
             avatarFile: null,
             stats: normalizedStats
           })
@@ -162,9 +123,7 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
         if (!cancelled) setIsInstructorLoading(false)
       }
     })()
-    return () => {
-      cancelled = true
-    }
+    return () => { cancelled = true }
   }, [activeTab, allowed])
 
   const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPx: Area) => {
@@ -202,46 +161,24 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
     }
   }
 
-  const onTitleChange = (value: string) => {
-    setInstructorForm((prev) => ({ ...prev, title: value }))
-  }
-
+  const onTitleChange = (value: string) => setInstructorForm((prev) => ({ ...prev, title: value }))
   const onNameChange = (value: string) => {
     setInstructorForm((prev) => ({ ...prev, name: value }))
-    if (instructorErrors.name && value.trim()) {
-      setInstructorErrors((err) => ({ ...err, name: false }))
-    }
+    if (instructorErrors.name && value.trim()) setInstructorErrors((err) => ({ ...err, name: false }))
   }
-
   const onProfessionChange = (value: string) => {
     setInstructorForm((prev) => ({ ...prev, profession: value }))
-    if (instructorErrors.profession && value.trim()) {
-      setInstructorErrors((err) => ({ ...err, profession: false }))
-    }
+    if (instructorErrors.profession && value.trim()) setInstructorErrors((err) => ({ ...err, profession: false }))
   }
-
   const onDescriptionChange = (value: string) => {
     setInstructorForm((prev) => ({ ...prev, description: value }))
-    if (instructorErrors.description && value.trim()) {
-      setInstructorErrors((err) => ({ ...err, description: false }))
-    }
+    if (instructorErrors.description && value.trim()) setInstructorErrors((err) => ({ ...err, description: false }))
   }
-
-  const onBadgeTextChange = (value: string) => {
-    setInstructorForm((prev) => ({ ...prev, badgeText: value }))
-  }
-
+  const onBadgeTextChange = (value: string) => setInstructorForm((prev) => ({ ...prev, badgeText: value }))
   const onStatValueChange = (index: number, value: string) => {
-    setInstructorForm((prev) => ({
-      ...prev,
-      stats: prev.stats.map((s, i) => (i === index ? { ...s, value } : s))
-    }))
+    setInstructorForm((prev) => ({ ...prev, stats: prev.stats.map((s, i) => (i === index ? { ...s, value } : s)) }))
     if (instructorErrors.stats[index] && value.trim()) {
-      setInstructorErrors((err) => {
-        const arr = [...err.stats]
-        arr[index] = false
-        return { ...err, stats: arr }
-      })
+      setInstructorErrors((err) => { const arr = [...err.stats]; arr[index] = false; return { ...err, stats: arr } })
     }
   }
 
@@ -257,19 +194,11 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
       if (!String(instructorForm.description || '').trim()) missing.push('Նկարագրություն')
       
       instructorForm.stats.forEach((s, i) => {
-        if (!String(s.value || '').trim()) {
-          missing.push(s.label)
-          statErrors[i] = true
-        }
+        if (!String(s.value || '').trim()) { missing.push(s.label); statErrors[i] = true }
       })
       
       if (missing.length) {
-        setInstructorErrors({
-          name: !String(instructorForm.name || '').trim(),
-          profession: !String(instructorForm.profession || '').trim(),
-          description: !String(instructorForm.description || '').trim(),
-          stats: statErrors
-        })
+        setInstructorErrors({ name: !String(instructorForm.name || '').trim(), profession: !String(instructorForm.profession || '').trim(), description: !String(instructorForm.description || '').trim(), stats: statErrors })
         showToast('Լրացրու պարտադիր դաշտերը', 'error')
         return
       }
@@ -284,49 +213,24 @@ export default function useInstructor({ activeTab, allowed, showToast }: UseInst
       fd.append('badge_text', instructorForm.badgeText || '')
       fd.append('stats_json', JSON.stringify(instructorForm.stats))
       
-      // Send new avatar file if selected, otherwise send existing avatarUrl
-      if (instructorForm.avatarFile) {
-        fd.append('avatar', instructorForm.avatarFile)
-      } else if (instructorForm.avatarUrl) {
-        // Extract path from full URL if needed
-        const avatarPath = instructorForm.avatarUrl.includes('/images/') 
-          ? instructorForm.avatarUrl.split('/images/')[1] 
-            ? '/images/' + instructorForm.avatarUrl.split('/images/')[1]
-            : instructorForm.avatarUrl
-          : instructorForm.avatarUrl
-        fd.append('avatar_url', avatarPath)
-      }
+      if (instructorForm.avatarFile) fd.append('avatar', instructorForm.avatarFile)
+      else if (instructorForm.avatarUrl) fd.append('avatar_url', instructorForm.avatarUrl)
 
       await api.post('/api/v1/instructor', fd)
       showToast('Մենթորի տվյալները պահպանվեցին', 'success')
     } catch (err: unknown) {
-      showToast(extractErrorMessage(err) || (err instanceof Error ? err.message : 'Չհաջողվեց պահպանել'), 'error')
+      showToast(extractErrorMessage(err) || 'Չհաջողվեց պահպանել', 'error')
     } finally {
       setIsInstructorLoading(false)
     }
   }
 
   return {
-    instructorForm,
-    instructorErrors,
-    isInstructorLoading,
-    onAvatarFile,
-    onTitleChange,
-    onNameChange,
-    onProfessionChange,
-    onDescriptionChange,
-    onBadgeTextChange,
-    onStatValueChange,
-    saveInstructor,
-    // Crop modal exports
-    cropModalOpen,
-    cropImage,
-    crop,
-    zoom,
-    setCrop,
-    setZoom,
-    onCropComplete,
-    closeCropModal,
-    confirmCrop
+    instructorForm, instructorErrors, isInstructorLoading,
+    onAvatarFile, onTitleChange, onNameChange, onProfessionChange, onDescriptionChange,
+    onBadgeTextChange, onStatValueChange, saveInstructor,
+    cropModalOpen, cropImage, crop, zoom, setCrop, setZoom, onCropComplete, closeCropModal, confirmCrop
   }
 }
+
+export default useInstructor

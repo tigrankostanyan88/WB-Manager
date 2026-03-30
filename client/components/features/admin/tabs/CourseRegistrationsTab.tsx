@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, BookOpen, Users, X, Trash2, GraduationCap, Phone, User } from 'lucide-react'
+import { Search, BookOpen, Users, Trash2, GraduationCap, Phone, User } from 'lucide-react'
 
 interface CourseRegistration {
   id: number
@@ -22,12 +22,8 @@ interface CourseRegistrationsTabProps {
   onDelete: (id: number) => Promise<boolean>
 }
 
-export default function CourseRegistrationsTab({
-  registrations,
-  isLoading,
-  isDeleting,
-  onDelete
-}: CourseRegistrationsTabProps) {
+export function CourseRegistrationsTab(props: CourseRegistrationsTabProps) {
+  const { registrations, isLoading, isDeleting, onDelete } = props
   const [searchTerm, setSearchTerm] = useState('')
 
   const formatDate = (dateString: string) => {

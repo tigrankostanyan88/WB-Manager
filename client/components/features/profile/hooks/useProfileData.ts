@@ -230,7 +230,6 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
       
       setMyPayments(userPayments)
     } catch (err: unknown) {
-      console.error('[Profile] Error fetching profile data:', err)
       // Handle 401 unauthorized - clear user and redirect will happen in page component
       const error = err as { response?: { status?: number } }
       if (error?.response?.status === 401) {

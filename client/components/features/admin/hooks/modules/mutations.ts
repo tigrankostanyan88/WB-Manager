@@ -12,7 +12,7 @@ export function useCreateModule() {
     mutationFn: async (data: ModuleForm) => {
       const res = await api.post('/api/v1/modules', {
         title: data.title,
-        duration: data.duration,
+        description: data.description,
         courseId: Number(data.courseId),
       })
       return res.data
@@ -30,7 +30,7 @@ export function useUpdateModule() {
     mutationFn: async ({ id, data }: { id: string; data: ModuleForm }) => {
       const res = await api.patch(`/api/v1/modules/${id}`, {
         title: data.title.trim(),
-        duration: data.duration.trim(),
+        description: data.description?.trim(),
         courseId: data.courseId,
       })
       return res.data

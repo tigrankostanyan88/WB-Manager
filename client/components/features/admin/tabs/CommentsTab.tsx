@@ -13,15 +13,15 @@ interface CommentsTabProps {
 }
 
 // Helper to get user avatar URL
-function getUserAvatarUrl(user: { files: { name_used: string; name: string; ext: string }[] } | null): string | null {
+function getUserAvatarUrl(user: { files?: { name_used?: string; name?: string; ext?: string }[] } | null | undefined): string | null {
   if (!user || !user.files || user.files.length === 0) return null
   const avatarFile = user.files.find((f) => f?.name_used === 'user_img')
-  if (!avatarFile) return null
+  if (!avatarFile || !avatarFile.name || !avatarFile.ext) return null
   const path = `/images/users/large/${avatarFile.name}.${avatarFile.ext}`
   return withOrigin(path) || null
 }
 
-export default function CommentsTab({
+export function CommentsTab({
   reviews,
   isReviewsLoading,
   relativeTime,
@@ -66,7 +66,7 @@ export default function CommentsTab({
                         <div className="flex items-center gap-2 flex-wrap">
                           <p className="font-bold text-slate-900 text-lg leading-tight">{review.name}</p>
                           <span className="text-xs font-medium px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full">
-                            {relativeTime(review.createdAt)}
+                            {relativeTime(review.createdAt || '')}
                           </span>
                         </div>
                         <div className="flex gap-0.5 mt-1.5">
