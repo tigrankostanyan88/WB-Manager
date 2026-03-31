@@ -1,9 +1,10 @@
 'use client'
 
+import type { DashboardTabId } from '@/components/features/admin/types'
 import { useCourses } from '@/components/features/admin/hooks/useCourses'
 
 interface UseCoursesTabProps {
-  activeTab: string
+  activeTab: DashboardTabId
   showToast: (message: string, type?: 'success' | 'error') => void
 }
 
@@ -24,7 +25,7 @@ export function useCoursesTab({ activeTab, showToast }: UseCoursesTabProps) {
     isLoading,
     getCourseFirstVideoUrl,
     editingCourse
-  } = useCourses({ activeTab: activeTab as any, showToast })
+  } = useCourses({ activeTab, showToast })
 
   return {
     showCourseForm,

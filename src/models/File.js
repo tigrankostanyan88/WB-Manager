@@ -61,8 +61,6 @@ module.exports = (con, DataTypes) => {
         hooks: {
             beforeFind: async (query) => {},
             beforeDestroy: async (file, options) => {
-                console.log('[File.beforeDestroy] Deleting file:', file.name, file.ext, 'table:', file.table_name, 'type:', file.type);
-                
                 // 1) Pathes
                 let pathStart = `./public/files`,
                     pathFile = `${file.name}${file.ext}`;
@@ -96,15 +94,12 @@ module.exports = (con, DataTypes) => {
                         // root
                         file.removeFromPath(`${pathStart}/${pathFile}`);
                     }
-                    console.log('[File.beforeDestroy] Image file deletion attempted');
                     return; // Images handled above
                 }
                 
                 // file (video or other)
                 const fullPath = `${pathStart}/${pathFile}`;
-                console.log('[File.beforeDestroy] Trying to delete:', fullPath);
                 file.removeFromPath(fullPath);
-                console.log('[File.beforeDestroy] Video/file deletion attempted');
             }
         }
     });

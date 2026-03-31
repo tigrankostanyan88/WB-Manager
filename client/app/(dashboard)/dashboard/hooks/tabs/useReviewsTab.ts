@@ -1,9 +1,10 @@
 'use client'
 
+import type { DashboardTabId } from '@/components/features/admin/types'
 import useReviews from '@/components/features/admin/hooks/useReviews'
 
 interface UseReviewsTabProps {
-  activeTab: string
+  activeTab: DashboardTabId
   allowed: boolean
 }
 
@@ -14,7 +15,7 @@ export function useReviewsTab({ activeTab, allowed }: UseReviewsTabProps) {
     relativeTime,
     isToday,
     handleDeleteReview
-  } = useReviews({ activeTab: activeTab as any, allowed })
+  } = useReviews({ activeTab, allowed })
 
   return {
     reviews,

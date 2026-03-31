@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { userService } from '@/lib/api'
 import api from '@/lib/api'
+import { logger } from '@/lib/logger'
 import type { DashboardTabId, User } from '../types'
 
 interface StatCounts {
@@ -76,6 +77,13 @@ export default function useOverview({ activeTab, allowed }: UseOverviewParams) {
         if (!cancelled) {
           setRecentStudents(usersList)
           setStatCounts({ students: enrolledStudentsCount, courses: coursesCount, reviews: reviewsCount, activeUsers: activeUsersCount })
+        }
+      } catch (err: unknown) {
+        logger.error('useOverview: Failed to fetch dashboard data', err)
+        // Set default empty state on error so UI doesn't crash
+        if (!cancelled) {
+          setRecentStudents([])
+          setStatCounts({ students: 0, courses: 0, reviews: 0, activeUsers: 0 })
         }
       } finally {
         if (!cancelled) setIsRecentLoading(false)

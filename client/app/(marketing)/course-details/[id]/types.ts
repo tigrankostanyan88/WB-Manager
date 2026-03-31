@@ -11,7 +11,7 @@ export interface CourseData {
   price: number | string
   discount?: number | string
   whatToLearn?: string[]
-  modules?: unknown[]
+  modules?: CourseModuleData[]
   author?: string
   rating?: number
   reviewsCount?: number
@@ -43,9 +43,9 @@ export interface CourseModuleFile {
 }
 
 export interface CourseModuleData {
-  id?: unknown
-  title?: unknown
-  name?: unknown
-  duration?: unknown
-  files?: unknown[]
+  id?: string | number
+  title?: string
+  name?: string
+  duration?: string
+  files?: CourseModuleFile[]
 }

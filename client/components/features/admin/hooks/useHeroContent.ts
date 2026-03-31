@@ -69,37 +69,21 @@ export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContent
 
   // Fetch hero content - only once when tab is active
   useEffect(() => {
-    console.log('[HeroContent] useEffect triggered:', { activeTab, allowed, hasFetched: hasFetched.current })
-    
     // Early return conditions
-    if (activeTab !== 'hero-content') {
-      console.log('[HeroContent] Skipping: activeTab is not hero-content')
-      return
-    }
-    if (!allowed) {
-      console.log('[HeroContent] Skipping: not allowed')
-      return
-    }
-    if (hasFetched.current) {
-      console.log('[HeroContent] Skipping: already fetched')
-      return
-    }
-    
+    if (activeTab !== 'hero-content') return
+    if (!allowed) return
+    if (hasFetched.current) return
+
     // Mark as fetched immediately to prevent duplicate requests
     hasFetched.current = true
     setIsLoading(true)
-    console.log('[HeroContent] Starting fetch...')
 
     const fetchContent = async () => {
       try {
         const res = await api.get('/api/v1/hero-content')
-        console.log('[HeroContent] Full API response:', res)
-        console.log('[HeroContent] res.data:', res.data)
         const data = res.data?.data
-        console.log('[HeroContent] Extracted data:', data, 'type:', typeof data, 'isNull:', data === null, 'isUndefined:', data === undefined)
         
         if (data) {
-          console.log('[HeroContent] Setting content:', data)
           setContent(data)
           setForm({
             title: data.title || '',
@@ -110,14 +94,10 @@ export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContent
           if (data.video_url) {
             setVideoPreview(data.video_url)
           }
-        } else {
-          console.log('[HeroContent] No data in response')
         }
       } catch (err) {
         // Log error for debugging
-        console.error('[HeroContent] Fetch error:', err)
       } finally {
-        console.log('[HeroContent] Setting isLoading to false')
         setIsLoading(false)
       }
     }

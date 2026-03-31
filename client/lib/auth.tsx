@@ -21,6 +21,7 @@ export interface User {
   isPaid?: boolean
   files?: UserFile[]
   course_ids?: (string | number)[]
+  [key: string]: unknown // Allow additional fields for compatibility
 }
 
 interface AuthContextType {
@@ -60,7 +61,13 @@ export function AuthProvider({ children, initialUser = null }: { children: React
     } catch (err) {
       const axiosError = err as { response?: { status?: number } }
       if (axiosError.response?.status === 401) {
+        // Clear invalid JWT cookie and redirect to login
+        document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
         setUserState(null)
+        // Redirect to home page for login
+        if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+          window.location.href = '/'
+        }
       }
       if (process.env.NODE_ENV === 'development') {
         console.error('Failed to fetch user:', err)

@@ -2,22 +2,29 @@
 
 import { useEffect } from 'react'
 
-export default function GlobalError({
-  error,
-  reset,
-}: {
+interface GlobalErrorProps {
   error: Error & { digest?: string }
   reset: () => void
-}) {
+}
+
+/**
+ * Global error boundary for the entire application
+ * Catches critical errors that escape route boundaries
+ */
+export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
+    // Log error for monitoring in production
     if (process.env.NODE_ENV === 'production') {
-      // Send to error monitoring service (e.g., Sentry, LogRocket)
-      // Example: Sentry.captureException(error)
+      // Send to error tracking service (Sentry, LogRocket, etc.)
+      // Example: Sentry.captureException(error, { 
+      //   tags: { boundary: 'global' },
+      //   level: 'fatal'
+      // })
     }
   }, [error])
 
   return (
-    <html>
+    <html lang="hy">
       <body>
         <div className="min-h-screen bg-slate-50/50 flex items-center justify-center">
           <div className="bg-white rounded-3xl p-8 shadow-lg border border-slate-100 max-w-md text-center">
@@ -27,7 +34,11 @@ export default function GlobalError({
               </svg>
             </div>
             <h2 className="text-xl font-bold text-slate-900 mb-2">Սխալ է տեղի ունեցել</h2>
-            <p className="text-slate-500 mb-6">{error.message || 'Անհայտ սխալ'}</p>
+            <p className="text-slate-500 mb-6">
+              {process.env.NODE_ENV === 'development'
+                ? error.message || 'Անհայտ սխալ'
+                : 'Կրկնակի սխալ: Խնդրում ենք թարմացնել էջը'}
+            </p>
             <button
               onClick={reset}
               className="bg-violet-600 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-violet-700 transition-colors"

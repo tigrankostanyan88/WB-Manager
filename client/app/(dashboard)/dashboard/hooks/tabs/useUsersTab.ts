@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import { useUsers } from '@/components/features/admin/hooks/useUsers'
-import type { User } from '@/components/features/admin/types'
+import type { User, DashboardTabId } from '@/components/features/admin/types'
 
 interface UseUsersTabProps {
-  activeTab: string
+  activeTab: DashboardTabId
   allowed: boolean
   currentUser: User | null
-  showToast: (message: string, type: 'success' | 'error') => void
+  showToast: (message: string, type?: 'success' | 'error') => void
   editingUser: (User & { __editScope?: 'users' }) | null
   setEditingUser: React.Dispatch<React.SetStateAction<(User & { __editScope?: 'users' }) | null>>
 }
@@ -26,7 +26,7 @@ export function useUsersTab({ activeTab, allowed, currentUser, showToast, editin
     getUserPaymentStatus,
     submitEditUser
   } = useUsers({
-    activeTab: activeTab as any,
+    activeTab,
     allowed,
     editingUser,
     setEditingUser,

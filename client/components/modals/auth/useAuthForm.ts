@@ -3,6 +3,7 @@
 'use client'
 
 import { useState } from 'react'
+import type { ApiResponse } from '@/types/api'
 import type { AuthFormData, AuthMode, AuthResponse } from './types'
 
 const emptyForm: AuthFormData = {
@@ -48,7 +49,7 @@ export function useAuthForm(onSuccess: () => void) {
 
       if (contentType.includes('application/json')) {
         try {
-          data = (await response.json()) as unknown
+          data = await response.json() as ApiResponse<AuthResponse>
         } catch {
           rawText = await response.text()
         }

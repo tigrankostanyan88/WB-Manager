@@ -3,7 +3,12 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Lock, Loader2, CheckCircle, XCircle } from 'lucide-react'
+import { Lock, Loader2, CheckCircle } from 'lucide-react'
+import type { ApiResponse } from '@/types/api'
+
+interface ResetPasswordResponse {
+  message?: string
+}
 
 export default function ResetPasswordPage() {
   const params = useParams()
@@ -71,7 +76,7 @@ export default function ResetPasswordPage() {
 
       if (contentType.includes('application/json')) {
         try {
-          data = (await response.json()) as unknown
+          data = (await response.json()) as ApiResponse<ResetPasswordResponse>
         } catch {
           rawText = await response.text()
         }

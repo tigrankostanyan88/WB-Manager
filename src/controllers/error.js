@@ -23,8 +23,6 @@ const handleCastErrorDB = err => {
 
 const handleDuplicateFieldsDB = err => {
     const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
-    console.log(value);
-
     const message = `Duplicate field value: ${value}. Please use another value!`;
     return new AppError(message, 400);
 }
@@ -35,6 +33,17 @@ const handleValidationErrorDB = err => {
     const message = `Invalid input data. ${errors.join('. ')}`;
     return new AppError(message, 400);
 }
+
+const handleSequelizeUniqueConstraintError = err => {
+    const field = err.errors?.[0]?.path || 'field';
+    const message = `Duplicate value for ${field}. Please use another value.`;
+    return new AppError(message, 409, 'DUPLICATE_VALUE');
+};
+
+const handleSequelizeValidationError = err => {
+    const messages = err.errors.map(e => e.message);
+    return new AppError(`Validation error: ${messages.join(', ')}`, 400, 'VALIDATION_ERROR');
+};
 
 const handleJWTError = err => new AppError('Invalid token. Please log in.', 401);
 

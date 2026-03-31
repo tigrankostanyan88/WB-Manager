@@ -9,7 +9,10 @@ const User = DB.models.User;
 
 // Cached JWT Secret (computed once)
 const JWT_SECRET = (() => {
-    const secret = process.env.JWT_SECRET || 'eyu$!923k28@JSi328^7*&jw';
+    const secret = process.env.JWT_SECRET;
+    if (!secret || secret.trim().length < 32) {
+        throw new Error('JWT_SECRET must be defined and at least 32 characters long');
+    }
     return secret.trim().replace(/^"|"$/g, '');
 })();
 

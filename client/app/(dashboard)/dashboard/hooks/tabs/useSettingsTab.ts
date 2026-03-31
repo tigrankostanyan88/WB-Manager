@@ -1,9 +1,10 @@
 'use client'
 
+import type { DashboardTabId } from '@/components/features/admin/types'
 import useSettings from '@/components/features/admin/hooks/useSettings'
 
 interface UseSettingsTabProps {
-  activeTab: string
+  activeTab: DashboardTabId
   allowed: boolean
   showToast: (message: string, type?: 'success' | 'error') => void
 }
@@ -16,7 +17,7 @@ export function useSettingsTab({ activeTab, allowed, showToast }: UseSettingsTab
     setWorkingHoursSchedule,
     isSettingsLoading,
     saveSettings
-  } = useSettings({ activeTab: activeTab as any, allowed, showToast })
+  } = useSettings({ activeTab, allowed, showToast })
 
   return {
     siteSettings,

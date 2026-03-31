@@ -74,10 +74,7 @@ export function EditUserModal({ user, open, onClose, onSubmit }: EditUserModalPr
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('[EditUserModal] Submit clicked, form:', form)
-    console.log('[EditUserModal] onSubmit prop:', onSubmit)
     await onSubmit(form)
-    console.log('[EditUserModal] onSubmit completed')
   }
 
   if (!open || !user) return null

@@ -32,11 +32,9 @@ export function generateVideoThumbnail(videoUrl: string, time?: number): Promise
     }
     
     const onLoadedData = () => {
-      console.log('[VideoThumbnail] Video loadeddata fired, duration:', video.duration, 'readyState:', video.readyState)
       // Cap seek time to video duration - thumbnail_time might exceed video length
       const maxTime = Math.max(0, video.duration - 1)
       const seekTime = time ? Math.min(time, maxTime) : Math.min(30, video.duration * 0.1 || 30)
-      console.log('[VideoThumbnail] Seeking to time:', seekTime, '(thumbnail_time was:', time, ')')
       // Use setTimeout to ensure the seek happens after loadeddata is fully processed
       setTimeout(() => {
         video.currentTime = seekTime
@@ -44,47 +42,40 @@ export function generateVideoThumbnail(videoUrl: string, time?: number): Promise
     }
     
     const onLoadedMetadata = () => {
-      console.log('[VideoThumbnail] Video loadedmetadata fired, duration:', video.duration)
       // Don't seek here - wait for loadeddata to have enough buffered data
     }
     
     const onSeeked = () => {
-      console.log('[VideoThumbnail] Video seeked, drawing to canvas, video size:', video.videoWidth, 'x', video.videoHeight)
       canvas.width = video.videoWidth || 320
       canvas.height = video.videoHeight || 180
       
       try {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
         const thumbnailUrl = canvas.toDataURL('image/jpeg', 0.7)
-        console.log('[VideoThumbnail] Canvas to data URL success, length:', thumbnailUrl.length)
         cleanup()
         resolve(thumbnailUrl)
       } catch (e) {
-        console.error('[VideoThumbnail] Canvas draw/toDataURL failed:', e)
         cleanup()
         reject(e)
       }
     }
     
     const onError = (e: Event) => {
-      console.error('[VideoThumbnail] Video load error:', e, 'Video error code:', video.error?.code, 'message:', video.error?.message)
       cleanup()
       reject(new Error('Failed to load video'))
     }
     
     const onCanPlay = () => {
-      console.log('[VideoThumbnail] Video can play event fired, duration:', video.duration, 'currentTime:', video.currentTime)
       // If we haven't seeked yet, do it now
       if (video.currentTime === 0 && video.duration > 0) {
         const maxTime = Math.max(0, video.duration - 1)
         const seekTime = time ? Math.min(time, maxTime) : Math.min(30, video.duration * 0.1 || 30)
-        console.log('[VideoThumbnail] Seeking from canplay to:', seekTime)
         video.currentTime = seekTime
       }
     }
     
     const onCanPlayThrough = () => {
-      console.log('[VideoThumbnail] Video canplaythrough event fired, duration:', video.duration)
+      // Video fully buffered, no action needed
     }
     
     video.addEventListener('loadeddata', onLoadedData)
@@ -95,7 +86,6 @@ export function generateVideoThumbnail(videoUrl: string, time?: number): Promise
     video.addEventListener('canplaythrough', onCanPlayThrough)
     
     // Start loading the video
-    console.log('[VideoThumbnail] Starting video load:', videoUrl)
     video.load()
   })
 }
@@ -113,7 +103,6 @@ export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnai
     setLoading(true)
     setError(null)
     
-    console.log('[VideoThumbnail] videoUrl changed:', videoUrl, 'time:', time)
     if (!videoUrl) {
       setLoading(false)
       return
@@ -123,12 +112,10 @@ export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnai
     
     generateVideoThumbnail(videoUrl, time)
       .then(url => {
-        console.log('[VideoThumbnail] Generated thumbnail successfully')
         setThumbnail(url)
         setLoading(false)
       })
       .catch((err) => {
-        console.error('[VideoThumbnail] Failed to generate thumbnail:', err)
         setError(String(err))
         setLoading(false)
       })

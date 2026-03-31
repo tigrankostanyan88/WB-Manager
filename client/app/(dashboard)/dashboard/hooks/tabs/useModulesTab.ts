@@ -1,10 +1,11 @@
 'use client'
 
+import type { DashboardTabId } from '@/components/features/admin/types'
 import { useModules } from '@/components/features/admin/hooks/modules/useModules'
 
 interface UseModulesTabProps {
-  activeTab: string
-  showToast: (message: string, type: 'success' | 'error') => void
+  activeTab: DashboardTabId
+  showToast: (message: string, type?: 'success' | 'error') => void
 }
 
 export function useModulesTab({ activeTab, showToast }: UseModulesTabProps) {
@@ -30,7 +31,7 @@ export function useModulesTab({ activeTab, showToast }: UseModulesTabProps) {
     handleVideoFileChange,
     uploadModuleVideo,
     getVideoUrl
-  } = useModules({ activeTab: activeTab as any, showToast })
+  } = useModules({ activeTab, showToast })
 
   return {
     showModuleForm,

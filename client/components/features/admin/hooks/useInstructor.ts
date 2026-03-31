@@ -5,6 +5,26 @@ import api from '@/lib/api'
 import type { Area, Point } from 'react-easy-crop'
 import { getCroppedImg } from '../_utils/image'
 
+interface InstructorStat {
+  value: string
+  label: string
+}
+
+interface InstructorData {
+  title?: string
+  name?: string
+  profession?: string
+  description?: string
+  badge_text?: string
+  avatar_url?: string
+  stats_json?: string
+  stats?: InstructorStat[]
+}
+
+interface InstructorApiResponse {
+  instructors?: InstructorData[]
+}
+
 interface InstructorForm {
   title: string
   name: string
@@ -79,42 +99,37 @@ export function useInstructor({ activeTab, allowed, showToast }: UseInstructorPa
       setIsInstructorLoading(true)
       try {
         const res = await api.get('/api/v1/instructor')
-        const payload = res.data as { instructors?: unknown }
-        const list = Array.isArray(payload.instructors) ? payload.instructors : []
-        const first = list[0]
-        const data = first && typeof first === 'object' ? (first as Record<string, unknown>) : {}
+        const payload = res.data as InstructorApiResponse
+        const list = payload.instructors || []
+        const first = list[0] || {}
 
-        let statsArr: unknown[] = []
-        const statsJson = data.stats_json
-        if (typeof statsJson === 'string' && statsJson) {
+        let statsArr: InstructorStat[] = []
+        if (typeof first.stats_json === 'string' && first.stats_json) {
           try {
-            const parsed = JSON.parse(statsJson) as unknown
+            const parsed = JSON.parse(first.stats_json) as InstructorStat[] | unknown
             statsArr = Array.isArray(parsed) ? parsed : []
           } catch {
             statsArr = []
           }
-        } else if (Array.isArray(data.stats)) {
-          statsArr = data.stats as unknown[]
+        } else if (Array.isArray(first.stats)) {
+          statsArr = first.stats
         }
         
         const normalizedStats = statsArr.length
-          ? statsArr.map((s, i) => {
-              const rec = s && typeof s === 'object' ? (s as Record<string, unknown>) : {}
-              return { 
-                value: String(rec.value ?? defaultStats[i]?.value ?? ''), 
-                label: String(rec.label ?? defaultStats[i]?.label ?? '') 
-              }
-            })
+          ? statsArr.map((s, i) => ({
+              value: String(s?.value ?? defaultStats[i]?.value ?? ''),
+              label: String(s?.label ?? defaultStats[i]?.label ?? '')
+            }))
           : [...defaultStats]
 
         if (!cancelled) {
           setInstructorForm({
-            title: typeof data.title === 'string' ? data.title : 'Սովորեք Ուայլդբերիի Մասնագետից',
-            name: typeof data.name === 'string' ? data.name : '',
-            profession: typeof data.profession === 'string' ? data.profession : '',
-            description: typeof data.description === 'string' ? data.description : '',
-            badgeText: typeof data.badge_text === 'string' ? data.badge_text : 'Վերադարձված մենթորություն',
-            avatarUrl: typeof data.avatar_url === 'string' ? data.avatar_url : '',
+            title: first.title || 'Սովորեք Ուայլդբերիի Մասնագետից',
+            name: first.name || '',
+            profession: first.profession || '',
+            description: first.description || '',
+            badgeText: first.badge_text || 'Վերադարձված մենթորություն',
+            avatarUrl: first.avatar_url || '',
             avatarFile: null,
             stats: normalizedStats
           })

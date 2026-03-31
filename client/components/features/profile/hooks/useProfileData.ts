@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import api, { userService } from '@/lib/api'
 import type { UserFile } from '@/components/features/admin/types'
+import type { ApiResponse, ApiData } from '@/types/api'
+import type { Course } from '@/components/features/admin/types'
 
 export interface ProfileUser {
   id: string
@@ -102,17 +104,16 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
     return maybeReview as ReviewData
   }
 
-  const transformCourses = (courses: unknown[]): UserCourse[] => {
+  const transformCourses = (courses: Course[]): UserCourse[] => {
     if (!Array.isArray(courses)) return []
-    return courses.map((course: unknown) => {
-      const c = course as Record<string, unknown>
+    return courses.map((course) => {
+      const c = course
       // Calculate progress from modules if available, otherwise default to 0
       let progress = 0
-      const modules = c.modules as unknown[] | undefined
+      const modules = c.modules
       if (modules && Array.isArray(modules) && modules.length > 0) {
-        const completedModules = modules.filter((m: unknown) => {
-          const mod = m as Record<string, unknown>
-          return mod.isCompleted || mod.completed
+        const completedModules = modules.filter((m) => {
+          return m.isCompleted || m.completed
         }).length
         progress = Math.round((completedModules / modules.length) * 100)
       }
