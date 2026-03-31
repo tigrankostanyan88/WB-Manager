@@ -37,17 +37,15 @@ export function generateVideoThumbnail(videoUrl: string, time?: number): Promise
       const maxTime = Math.max(0, video.duration - 1)
       const seekTime = time ? Math.min(time, maxTime) : Math.min(30, video.duration * 0.1 || 30)
       console.log('[VideoThumbnail] Seeking to time:', seekTime, '(thumbnail_time was:', time, ')')
-      video.currentTime = seekTime
+      // Use setTimeout to ensure the seek happens after loadeddata is fully processed
+      setTimeout(() => {
+        video.currentTime = seekTime
+      }, 0)
     }
     
     const onLoadedMetadata = () => {
       console.log('[VideoThumbnail] Video loadedmetadata fired, duration:', video.duration)
-      // Try seeking here too if loadeddata doesn't fire
-      if (video.duration > 0) {
-        const maxTime = Math.max(0, video.duration - 1)
-        const seekTime = time ? Math.min(time, maxTime) : Math.min(30, video.duration * 0.1 || 30)
-        video.currentTime = seekTime
-      }
+      // Don't seek here - wait for loadeddata to have enough buffered data
     }
     
     const onSeeked = () => {
@@ -75,9 +73,9 @@ export function generateVideoThumbnail(videoUrl: string, time?: number): Promise
     }
     
     const onCanPlay = () => {
-      console.log('[VideoThumbnail] Video can play event fired, duration:', video.duration)
-      // Seek using canplay since loadeddata may not fire consistently
-      if (video.duration > 0 && video.currentTime === 0) {
+      console.log('[VideoThumbnail] Video can play event fired, duration:', video.duration, 'currentTime:', video.currentTime)
+      // If we haven't seeked yet, do it now
+      if (video.currentTime === 0 && video.duration > 0) {
         const maxTime = Math.max(0, video.duration - 1)
         const seekTime = time ? Math.min(time, maxTime) : Math.min(30, video.duration * 0.1 || 30)
         console.log('[VideoThumbnail] Seeking from canplay to:', seekTime)
@@ -105,11 +103,21 @@ export function generateVideoThumbnail(videoUrl: string, time?: number): Promise
 export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnailProps) {
   const [thumbnail, setThumbnail] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const generatedRef = useRef(false)
   
   useEffect(() => {
-    console.log('[VideoThumbnail] videoUrl:', videoUrl, 'time:', time)
-    if (!videoUrl || generatedRef.current) return
+    // Reset when videoUrl changes
+    generatedRef.current = false
+    setThumbnail(null)
+    setLoading(true)
+    setError(null)
+    
+    console.log('[VideoThumbnail] videoUrl changed:', videoUrl, 'time:', time)
+    if (!videoUrl) {
+      setLoading(false)
+      return
+    }
     
     generatedRef.current = true
     
@@ -121,6 +129,7 @@ export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnai
       })
       .catch((err) => {
         console.error('[VideoThumbnail] Failed to generate thumbnail:', err)
+        setError(String(err))
         setLoading(false)
       })
   }, [videoUrl, time])

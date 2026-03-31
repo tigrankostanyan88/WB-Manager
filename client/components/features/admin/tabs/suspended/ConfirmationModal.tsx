@@ -58,7 +58,7 @@ export function ConfirmationModal({
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[9999] overflow-y-auto py-8">
       <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl my-auto">
-        <div className="flex flex-col items-center text-center">
+        <div className="flex flex-col items-center text-left">
           <div className={`w-12 h-12 rounded-full ${styles.iconBg} flex items-center justify-center mb-4`}>
             <IconComponent className={`w-6 h-6 ${styles.iconColor}`} />
           </div>

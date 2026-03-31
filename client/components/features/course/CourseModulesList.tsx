@@ -111,7 +111,7 @@ export function CourseModulesList({ modules }: CourseModulesListProps) {
                     {/* Video Thumbnail */}
                     <div className="relative shrink-0 w-32 aspect-video rounded-lg overflow-hidden bg-slate-900">
                       {video.videoUrl && !video.isLocked ? (
-                        <VideoThumbnail videoUrl={video.videoUrl} className="opacity-90" />
+                        <VideoThumbnail videoUrl={video.videoUrl} time={15} className="opacity-90" />
                       ) : video.thumbnail ? (
                         <Image
                           src={video.thumbnail}

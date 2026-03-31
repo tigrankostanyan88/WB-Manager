@@ -65,7 +65,16 @@ const staticOptions = {
   etag: true,
   maxAge: '1y',
   immutable: true,
-  setHeaders: res => res.setHeader('X-Content-Type-Options', 'nosniff')
+  setHeaders: (res, path) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    // Add CORS headers for video files to allow seeking
+    if (path.endsWith('.mp4') || path.endsWith('.webm') || path.endsWith('.mov')) {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD');
+      res.setHeader('Access-Control-Allow-Headers', 'Range');
+      res.setHeader('Accept-Ranges', 'bytes');
+    }
+  }
 };
 
 app.use('/admin', express.static(path.join(__dirname, 'public', 'admin'), staticOptions));
