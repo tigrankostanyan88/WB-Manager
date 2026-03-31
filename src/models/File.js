@@ -69,7 +69,6 @@ module.exports = (con, DataTypes) => {
                 // image
                 if (file.type && file.type.startsWith('image')) {
                     // 1) Check path
-                    // procedural
                     pathStart = `./public/images/${file.table_name}`;
                     // gallery
                     if (file.name_used == 'gallery')

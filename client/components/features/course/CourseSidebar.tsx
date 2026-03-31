@@ -84,7 +84,7 @@ export function CourseSidebar({ price, originalPrice, discount, includes, module
           <Button 
             variant="outline" 
             size="sm"
-            className="w-full border-white/20 hover:bg-white/10 text-white text-xs h-9"
+            className="w-full border-white/30 bg-white/10 hover:bg-white/20 text-white hover:text-white text-xs h-9 font-medium"
           >
             Անվճար խորհրդատվություն
           </Button>

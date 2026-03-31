@@ -74,14 +74,17 @@ export function EditUserModal({ user, open, onClose, onSubmit }: EditUserModalPr
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('[EditUserModal] Submit clicked, form:', form)
+    console.log('[EditUserModal] onSubmit prop:', onSubmit)
     await onSubmit(form)
+    console.log('[EditUserModal] onSubmit completed')
   }
 
   if (!open || !user) return null
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/40">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden h-[600px] flex flex-col">
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[600px] flex flex-col">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between">
           <h3 className="text-xl font-black text-slate-900">Թարմացնել օգտատիրոջը</h3>
           <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100" aria-label="Փակել">

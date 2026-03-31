@@ -1,7 +1,5 @@
-/**
- * AI Configuration for Groq Chat Integration
- * Edit this file to 'train' the AI about your business
- */
+// Server-only AI configuration
+// This file should NEVER be imported in client-side code
 
 export const SITE_CONTEXT = `You are an AI sales manager for WB-Manager - an online learning platform.
 
@@ -67,7 +65,7 @@ A: Yes, we support Idram and Stripe payments.
 - Respect user's decision if they want to speak with a human`;
 
 export const AI_CONFIG = {
-  // Groq model configuration
+  // Model configuration
   model: 'llama-3.1-70b-versatile',
   temperature: 0.8,
   maxTokens: 1024,

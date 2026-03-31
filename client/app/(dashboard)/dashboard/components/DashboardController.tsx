@@ -4,20 +4,39 @@ import { Header, Footer } from '@/components/layout'
 import { DashboardSidebar } from '@/components/features/admin'
 import { CropModal } from '@/components/features/admin'
 import { NotificationContainer } from '@/components/features/admin'
-import { EditUserModal } from '@/components/features/admin'
-import { useDashboard } from '../hooks/useDashboard'
+import { useDashboardSimple as useDashboard } from '../hooks/useDashboardSimple'
+import { useSuspendedTab, useInstructorTab, useCropTab, useContactMessagesTab, useCourseRegistrationsTab } from '../hooks/tabs'
 import { LoadingState } from './LoadingState'
 import { UnauthorizedState } from './UnauthorizedState'
-import { TabContent } from './TabContent'
+import { TabContent } from './TabContentNew'
 
 export function DashboardController() {
-  const data = useDashboard()
+  const {
+    activeTab,
+    setActiveTab,
+    menuItems,
+    isAuthLoading,
+    allowed,
+    currentUser,
+    editingUser,
+    setEditingUser,
+    showToast,
+    notifications,
+    removeNotification
+  } = useDashboard()
 
-  if (data.isAuthLoading) {
+  // Get data for sidebar badges and modals
+  const suspended = useSuspendedTab({ showToast })
+  const instructor = useInstructorTab({ activeTab, allowed, showToast })
+  const crop = useCropTab({ setSiteSettings: () => {} })
+  const contactMessages = useContactMessagesTab({ activeTab, allowed })
+  const registrations = useCourseRegistrationsTab({ activeTab, allowed })
+
+  if (isAuthLoading) {
     return <LoadingState />
   }
 
-  if (!data.allowed) {
+  if (!allowed) {
     return <UnauthorizedState forceWhiteBackground />
   }
 
@@ -29,54 +48,54 @@ export function DashboardController() {
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 mt-[120px] items-start">
           <div className="lg:sticky lg:top-24">
             <DashboardSidebar 
-              menuItems={data.menuItems} 
-              activeTab={data.activeTab} 
-              onTabChange={data.setActiveTab} 
+              menuItems={menuItems} 
+              activeTab={activeTab} 
+              onTabChange={setActiveTab} 
               badges={{ 
-                'contact-messages': data.contactUnreadCount, 
-                'course-registrations': data.courseRegistrations.length 
+                'contact-messages': contactMessages.unreadCount || 0, 
+                'course-registrations': registrations.registrations?.length || 0
               }} 
             />
           </div>
 
           <div className="space-y-6">
-            <TabContent activeTab={data.activeTab} data={data} />
+            <TabContent 
+              activeTab={activeTab} 
+              allowed={allowed}
+              currentUser={currentUser}
+              showToast={showToast}
+              editingUser={editingUser}
+              setEditingUser={setEditingUser}
+            />
           </div>
         </div>
       </main>
 
-      <EditUserModal
-        open={Boolean(data.editingUser)}
-        user={data.editingUser}
-        onClose={() => data.setEditingUser(null)}
-        onSubmit={data.submitEditUser}
+      <CropModal
+        open={crop.cropModalOpen}
+        cropImage={crop.cropImage}
+        crop={crop.crop}
+        zoom={crop.zoom}
+        setCrop={crop.setCrop}
+        setZoom={crop.setZoom}
+        onCropComplete={crop.onCropComplete}
+        onClose={crop.closeCrop}
+        onConfirm={crop.createCroppedImage}
       />
 
       <CropModal
-        open={data.cropModalOpen}
-        cropImage={data.cropImage}
-        crop={data.crop}
-        zoom={data.zoom}
-        setCrop={data.setCrop}
-        setZoom={data.setZoom}
-        onCropComplete={data.onCropComplete}
-        onClose={data.closeCrop}
-        onConfirm={data.createCroppedImage}
+        open={instructor.cropModalOpen}
+        cropImage={instructor.cropImage}
+        crop={instructor.crop}
+        zoom={instructor.zoom}
+        setCrop={instructor.setCrop}
+        setZoom={instructor.setZoom}
+        onCropComplete={instructor.onCropComplete}
+        onClose={instructor.closeCropModal}
+        onConfirm={instructor.confirmCrop}
       />
 
-      <CropModal
-        open={data.instructorCropModalOpen}
-        cropImage={data.instructorCropImage}
-        crop={data.instructorCrop}
-        zoom={data.instructorZoom}
-        setCrop={data.setInstructorCrop}
-        setZoom={data.setInstructorZoom}
-        onCropComplete={data.onInstructorCropComplete}
-        onClose={data.closeInstructorCropModal}
-        onConfirm={data.confirmInstructorCrop}
-      />
-
-      <NotificationContainer notifications={data.notifications} onRemove={data.removeNotification} />
+      <NotificationContainer notifications={notifications} onRemove={removeNotification} />
 
       <Footer />
     </div>

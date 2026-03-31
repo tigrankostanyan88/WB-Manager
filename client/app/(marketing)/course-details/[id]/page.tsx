@@ -84,6 +84,8 @@ export default function CourseDetailsPage() {
       ? new Date(course.updatedAt).toLocaleDateString('hy-AM', { year: 'numeric', month: 'long' })
       : 'Հունվար 2024',
     language: course.language === 'ARM' ? 'Հայերեն' : course.language || 'Հայերեն',
+    category: course.category,
+    duration: course.duration,
     image: course.image,
     previewVideoUrl,
     thumbnailTime: course.thumbnail_time

@@ -20,6 +20,7 @@ export interface User {
   avatar?: string
   isPaid?: boolean
   files?: UserFile[]
+  course_ids?: (string | number)[]
 }
 
 interface AuthContextType {
@@ -60,6 +61,9 @@ export function AuthProvider({ children, initialUser = null }: { children: React
       const axiosError = err as { response?: { status?: number } }
       if (axiosError.response?.status === 401) {
         setUserState(null)
+      }
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to fetch user:', err)
       }
     } finally {
       setIsLoaded(true)

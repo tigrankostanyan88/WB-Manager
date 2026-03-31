@@ -10,8 +10,10 @@ export default function GlobalError({
   reset: () => void
 }) {
   useEffect(() => {
-    // Log to error monitoring service (e.g., Sentry) in production
-    // console.error is removed to prevent exposing errors in browser console
+    if (process.env.NODE_ENV === 'production') {
+      // Send to error monitoring service (e.g., Sentry, LogRocket)
+      // Example: Sentry.captureException(error)
+    }
   }, [error])
 
   return (

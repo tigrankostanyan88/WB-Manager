@@ -1,7 +1,5 @@
 'use client'
 
-// client/components/MarketingLanding.tsx
-
 import { useState, Suspense, lazy } from 'react'
 import { useSettings } from '@/context/SettingsContext'
 import { useInstructor } from '@/hooks/useInstructor'

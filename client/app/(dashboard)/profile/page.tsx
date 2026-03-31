@@ -177,7 +177,7 @@ export default function ProfilePage() {
 
           <div className="space-y-6 min-h-[850px]">
             {currentUser?.role !== 'admin' && (
-              <ProBanner user={currentUser} myPayments={myPayments} totalCoursesCount={totalCoursesCount} onShowPaymentModal={() => setShowPaymentModal(true)} />
+              <ProBanner user={currentUser} myCourses={myCourses} totalCoursesCount={totalCoursesCount} onShowPaymentModal={() => setShowPaymentModal(true)} />
             )}
 
             <AnimatePresence mode="wait">

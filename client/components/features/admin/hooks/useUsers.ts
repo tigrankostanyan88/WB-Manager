@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useConfirm } from '@/components/providers/ConfirmProvider'
 import api from '@/lib/api'
@@ -100,12 +100,28 @@ export function useUsers({
   showToast,
   currentUser,
 }: UseUsersParams) {
+  const queryClient = useQueryClient()
   const confirm = useConfirm()
   const [userSearch, setUserSearch] = useState('')
 
   const currentUserId = String(currentUser?.id || currentUser?._id)
 
-  const { data: users = [], isLoading: isUsersLoading } = useUsersQuery(currentUserId)
+  const { data: users = [], isLoading: isUsersLoading, refetch } = useQuery({
+    queryKey: [USERS_QUERY_KEY],
+    queryFn: async () => {
+      const res = await api.get('/api/v1/users')
+      return (res.data?.users || []) as User[]
+    },
+    staleTime: 1000 * 60 * 5,
+    enabled: activeTab === 'users' && allowed,
+  })
+
+  useEffect(() => {
+    if (activeTab === 'users' && allowed) {
+      refetch()
+    }
+  }, [activeTab, allowed, refetch])
+
   const { data: payments = [] } = usePaymentsQuery()
   const deleteUser = useDeleteUser()
   const updateUser = useUpdateUser()
@@ -117,10 +133,17 @@ export function useUsers({
   }
 
   const filteredUsers = useMemo(() => {
-    const q = userSearch.trim().toLowerCase()
-    if (!q) return users
-    return users.filter((u) => [u.name, u.email, u.phone, u.role].join(' ').toLowerCase().includes(q))
-  }, [users, userSearch])
+    if (!userSearch.trim()) return users.filter((u) => String(u.id || u._id) !== String(currentUser?.id || currentUser?._id))
+    const term = userSearch.toLowerCase()
+    return users.filter((u) => {
+      if (String(u.id || u._id) === String(currentUser?.id || currentUser?._id)) return false
+      return (
+        u.name?.toLowerCase().includes(term) ||
+        u.email?.toLowerCase().includes(term) ||
+        u.phone?.toLowerCase().includes(term)
+      )
+    })
+  }, [users, userSearch, currentUser])
 
   const handleDeleteUser = async (id: number | string) => {
     try {
@@ -145,12 +168,16 @@ export function useUsers({
       const userData: Partial<User> = {
         name: data.name,
         email: data.email,
-        phone: data.phone
+        phone: data.phone,
+        course_ids: data.courseIds
       }
       await updateUser.mutateAsync({ id: editingUser.id, data: userData })
+      // Invalidate users cache to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['users'] })
       setEditingUser(null)
       showToast?.('Օգտատերը հաջողությամբ թարմացվել է', 'success')
-    } catch {
+    } catch (err) {
+      console.error('Edit user error:', err)
       showToast?.('Օգտատիրոջ թարմացման ժամանակ սխալ է տեղի ունեցել', 'error')
     }
   }

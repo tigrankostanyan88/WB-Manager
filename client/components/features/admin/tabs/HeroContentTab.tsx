@@ -17,7 +17,6 @@ interface HeroContentTabProps {
   handleVideoChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   clearVideo: () => void
   submitContent: () => void
-  deleteContent: () => void
 }
 
 export function HeroContentTab({
@@ -29,8 +28,7 @@ export function HeroContentTab({
   videoPreview,
   handleVideoChange,
   clearVideo,
-  submitContent,
-  deleteContent
+  submitContent
 }: HeroContentTabProps) {
   const [playingVideo, setPlayingVideo] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -105,7 +103,6 @@ export function HeroContentTab({
           <ActionButtons
             isSubmitting={isSubmitting}
             onSubmit={submitContent}
-            onDelete={deleteContent}
           />
         </CardContent>
       </Card>

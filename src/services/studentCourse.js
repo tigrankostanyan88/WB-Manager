@@ -27,7 +27,7 @@ module.exports = {
       throw new AppError('Օգտատերը արդեն գրանցված է այս դասընթացին', 409);
     }
 
-    return repo.create({
+    const enrollment = await repo.create({
       user_id: userId,
       course_id: courseId,
       status: 'active',
@@ -35,6 +35,20 @@ module.exports = {
       payment_method: paymentMethod || 'manual',
       notes: notes || null
     });
+
+    // Also add course_id to user's course_ids array
+    let currentCourseIds = [];
+    if (user.course_ids && Array.isArray(user.course_ids)) {
+      currentCourseIds = [...user.course_ids];
+    }
+    const numericCourseId = Number(courseId);
+    if (!currentCourseIds.includes(numericCourseId)) {
+      currentCourseIds.push(numericCourseId);
+      user.course_ids = currentCourseIds;
+      await user.save();
+    }
+
+    return enrollment;
   },
 
   // Check if student has access to course

@@ -29,7 +29,7 @@ export interface HeroContentForm {
 interface UseHeroContentProps {
   activeTab: string
   allowed: boolean
-  showToast: (message: string, type: 'success' | 'error') => void
+  showToast: (message: string, type?: 'success' | 'error') => void
 }
 
 export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContentProps) {
@@ -46,11 +46,17 @@ export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContent
   const [videoPreview, setVideoPreview] = useState<string | null>(null)
   const hasFetched = useRef(false)
   const isMounted = useRef(true)
+  const blobUrlRef = useRef<string | null>(null)
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       isMounted.current = false
+      // Revoke blob URL to prevent memory leak
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current)
+        blobUrlRef.current = null
+      }
     }
   }, [])
 
@@ -63,24 +69,37 @@ export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContent
 
   // Fetch hero content - only once when tab is active
   useEffect(() => {
+    console.log('[HeroContent] useEffect triggered:', { activeTab, allowed, hasFetched: hasFetched.current })
+    
     // Early return conditions
-    if (activeTab !== 'hero-content') return
-    if (!allowed) return
-    if (hasFetched.current) return
+    if (activeTab !== 'hero-content') {
+      console.log('[HeroContent] Skipping: activeTab is not hero-content')
+      return
+    }
+    if (!allowed) {
+      console.log('[HeroContent] Skipping: not allowed')
+      return
+    }
+    if (hasFetched.current) {
+      console.log('[HeroContent] Skipping: already fetched')
+      return
+    }
     
     // Mark as fetched immediately to prevent duplicate requests
     hasFetched.current = true
     setIsLoading(true)
+    console.log('[HeroContent] Starting fetch...')
 
     const fetchContent = async () => {
       try {
         const res = await api.get('/api/v1/hero-content')
+        console.log('[HeroContent] Full API response:', res)
+        console.log('[HeroContent] res.data:', res.data)
         const data = res.data?.data
-        
-        // Only update state if component is still mounted
-        if (!isMounted.current) return
+        console.log('[HeroContent] Extracted data:', data, 'type:', typeof data, 'isNull:', data === null, 'isUndefined:', data === undefined)
         
         if (data) {
+          console.log('[HeroContent] Setting content:', data)
           setContent(data)
           setForm({
             title: data.title || '',
@@ -91,13 +110,15 @@ export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContent
           if (data.video_url) {
             setVideoPreview(data.video_url)
           }
+        } else {
+          console.log('[HeroContent] No data in response')
         }
       } catch (err) {
-        // Error handled silently
+        // Log error for debugging
+        console.error('[HeroContent] Fetch error:', err)
       } finally {
-        if (isMounted.current) {
-          setIsLoading(false)
-        }
+        console.log('[HeroContent] Setting isLoading to false')
+        setIsLoading(false)
       }
     }
 
@@ -118,9 +139,14 @@ export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContent
         showToast('Ֆայլի չափը չպետք է գերազանցի 500MB-ը', 'error')
         return
       }
+      // Revoke previous blob URL if exists
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current)
+      }
       setVideoFile(file)
       // Create preview URL
       const url = URL.createObjectURL(file)
+      blobUrlRef.current = url
       setVideoPreview(url)
     }
   }, [showToast])
@@ -128,11 +154,12 @@ export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContent
   // Clear video selection
   const clearVideo = useCallback(() => {
     setVideoFile(null)
-    if (videoPreview && videoPreview.startsWith('blob:')) {
-      URL.revokeObjectURL(videoPreview)
+    if (blobUrlRef.current) {
+      URL.revokeObjectURL(blobUrlRef.current)
+      blobUrlRef.current = null
     }
     setVideoPreview(content?.video_url || null)
-  }, [content, videoPreview])
+  }, [content])
 
   // Submit form
   const submitContent = useCallback(async () => {

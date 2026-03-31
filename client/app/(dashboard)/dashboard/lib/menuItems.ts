@@ -6,15 +6,15 @@ export const menuItems: DashboardMenuItem[] = [
   { id: 'users', label: 'Օգտվողներ', icon: Users },
   { id: 'suspended-users', label: 'Կասեցվածներ', icon: UserX },
   { id: 'enrollments', label: 'Գրանցումներ', icon: GraduationCap },
-  { id: 'course-registrations', label: 'Կուրսերի գրանցումներ', icon: BookOpen },
-  { id: 'contact-messages', label: 'Կոնտակտներ', icon: Mail },
+  { id: 'course-registrations', label: 'Դասընթացների գրանցումներ', icon: BookOpen },
+  { id: 'contact-messages', label: 'Կոնտակտային հաղորդագրություններ', icon: Mail },
   { id: 'payments', label: 'Վճարումներ', icon: CreditCard },
   { id: 'bank-cards', label: 'Բանկային քարտեր', icon: Building2 },
   { id: 'courses', label: 'Դասընթացներ', icon: BookOpen },
   { id: 'modules', label: 'Մոդուլներ', icon: Layers },
   { id: 'comments', label: 'Մեկնաբանություններ', icon: MessageSquare },
   { id: 'instructor', label: 'Մենթոր', icon: Shield },
-  { id: 'faq', label: 'ՀՏՀ', icon: HelpCircle },
+  { id: 'faq', label: 'Հաճախ Տրվող Հարցեր', icon: HelpCircle },
   { id: 'hero-content', label: 'Հերո բովանդակություն', icon: Sparkles },
   { id: 'settings', label: 'Կարգավորումներ', icon: Settings }
 ]

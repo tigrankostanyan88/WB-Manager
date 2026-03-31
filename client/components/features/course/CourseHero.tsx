@@ -13,6 +13,8 @@ export interface CourseHeroData {
   author: string
   updatedAt: string
   language: string
+  category?: string
+  duration?: string
   image?: string
   previewVideoUrl?: string | null
   thumbnailTime?: number
@@ -40,7 +42,13 @@ export function CourseHero({ course, onStartCourse }: CourseHeroProps) {
             {/* Course Image / Video Preview */}
             <div className="md:w-2/5 bg-slate-100 p-8 flex items-center justify-center">
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-lg bg-slate-900">
-                {course.image ? (
+                {course.previewVideoUrl ? (
+                  <VideoThumbnail 
+                    videoUrl={course.previewVideoUrl}
+                    time={course.thumbnailTime}
+                    className="w-full h-full"
+                  />
+                ) : course.image ? (
                   <Image
                     src={course.image}
                     alt={course.title}
@@ -48,12 +56,6 @@ export function CourseHero({ course, onStartCourse }: CourseHeroProps) {
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 40vw"
                     priority
-                  />
-                ) : course.previewVideoUrl ? (
-                  <VideoThumbnail 
-                    videoUrl={course.previewVideoUrl}
-                    time={course.thumbnailTime}
-                    className="w-full h-full"
                   />
                 ) : null}
                 
@@ -86,10 +88,14 @@ export function CourseHero({ course, onStartCourse }: CourseHeroProps) {
               {/* Category Tag */}
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-xs font-semibold tracking-wider text-violet-600 uppercase">
-                  Getting Started with Orchid
+                  {course.category || 'Դասընթաց'}
                 </span>
-                <span className="text-xs text-slate-400">|</span>
-                <span className="text-xs text-slate-500">12h mastery class</span>
+                {course.duration && (
+                  <>
+                    <span className="text-xs text-slate-400">|</span>
+                    <span className="text-xs text-slate-500">{course.duration}</span>
+                  </>
+                )}
               </div>
 
               {/* Title */}
@@ -106,7 +112,7 @@ export function CourseHero({ course, onStartCourse }: CourseHeroProps) {
               <div className="flex items-center gap-4 mb-6">
                 <div className="flex items-center gap-1.5 text-slate-600">
                   <Clock className="w-4 h-4 text-violet-600" />
-                  <span className="text-sm font-medium">12h</span>
+                  <span className="text-sm font-medium">{course.duration || '12h'}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-slate-600">
                   <Star className="w-4 h-4 text-violet-600 fill-violet-600" />

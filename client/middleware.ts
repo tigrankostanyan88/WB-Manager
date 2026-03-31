@@ -13,10 +13,15 @@ const publicRoutes = [
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Check if it's a public route (exact match or starts with)
   const isPublic = publicRoutes.some(route => 
     pathname === route || pathname.startsWith(`${route}/`)
   )
+
+  const token = request.cookies.get('jwt')?.value
+
+  if (!isPublic && !token) {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
 
   return NextResponse.next()
 }

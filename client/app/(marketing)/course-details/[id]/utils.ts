@@ -1,6 +1,6 @@
 // Format duration from seconds or string to readable format
 export function formatDuration(duration: string | number | undefined): string {
-  if (!duration) return '15:00'
+  if (!duration) return '00:00'
 
   // If it's already a formatted string like "15:00" or "1:30:00", return as is
   if (typeof duration === 'string' && duration.includes(':')) {
@@ -10,8 +10,8 @@ export function formatDuration(duration: string | number | undefined): string {
   // Convert to number (seconds)
   const totalSeconds = typeof duration === 'string' ? parseInt(duration, 10) : duration
 
-  if (isNaN(totalSeconds) || totalSeconds <= 0) {
-    return '15:00'
+  if (isNaN(totalSeconds) || totalSeconds < 0) {
+    return '00:00'
   }
 
   const hours = Math.floor(totalSeconds / 3600)

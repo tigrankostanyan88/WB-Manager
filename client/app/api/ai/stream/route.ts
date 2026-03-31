@@ -6,6 +6,7 @@ import { prisma } from '@/lib/db'
 import { canUseCredits, decrementCredit } from '@/lib/credits'
 import { cookies } from 'next/headers'
 import { decodeJwt } from 'jose'
+import { SITE_CONTEXT, AI_CONFIG } from '../lib/config'
 
 async function getCurrentUser() {
   const cookieStore = cookies()
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
     toolId: string
     systemPrompt?: string
   }
-  const { messages, toolId, systemPrompt } = body
+  const { messages, toolId } = body
 
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } })
   if (!dbUser) return new Response('User not found', { status: 404 })
@@ -41,9 +42,12 @@ export async function POST(req: NextRequest) {
   if (!allowed) return new Response('Insufficient credits', { status: 402 })
 
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-  const sys = systemPrompt || 'You are a helpful AI assistant.'
+  
+  // Use server-side system prompt with business context
+  const systemPrompt = `${AI_CONFIG.systemMessage}\n\n${SITE_CONTEXT}`
+  
   const finalMessages: ChatCompletionMessageParam[] = [
-    { role: 'system', content: sys },
+    { role: 'system', content: systemPrompt },
     ...messages.map(m => ({ role: m.role, content: m.content }))
   ]
 

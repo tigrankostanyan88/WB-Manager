@@ -3,12 +3,13 @@ import type { Metadata, Viewport } from 'next'
 import { ReactNode } from 'react'
 import { ConfirmProvider } from '@/components/providers/ConfirmProvider'
 import { QueryProvider } from '@/components/providers/QueryProvider'
-import { SettingsProvider, useSettings } from '@/context/SettingsContext' // moved from lib
+import { SettingsProvider, useSettings } from '@/context/SettingsContext'
 import { AuthProvider } from '@/lib/auth'
 import type { User } from '@/lib/auth'
 import { cookies } from 'next/headers'
 import { decodeJwt } from 'jose'
 import { prisma } from '@/lib/db'
+import { JwtPayloadSchema, DbUserSchema, SettingsSchema } from '@/lib/schemas'
 
 // Database User type from Prisma (minimal fields needed)
 interface DbUser {
@@ -92,31 +93,38 @@ async function getUser() {
     const token = cookieStore.get('jwt')?.value
     if (!token) return null
 
-    const decoded = decodeJwt(token) as { id?: string; sub?: string }
-    const userId = decoded.id || decoded.sub
+    const decoded = decodeJwt(token)
+    const jwtResult = JwtPayloadSchema.safeParse(decoded)
+    if (!jwtResult.success) return null
+    
+    const userId = jwtResult.data.id || jwtResult.data.sub
     if (!userId) return null
 
     if (!process.env.DATABASE_URL) return null
 
-    const fullUser = await prisma.user.findUnique({ where: { id: userId } }) as DbUser | null
-    if (!fullUser) return null
+    const dbUser = await prisma.user.findUnique({ where: { id: userId } })
+    if (!dbUser) return null
     
-    // Map to Auth User interface
+    const userResult = DbUserSchema.safeParse(dbUser)
+    if (!userResult.success) return null
+    
+    const fullUser = userResult.data
+    
     return {
       ...fullUser,
       createdAt: fullUser.createdAt?.toISOString(),
       updatedAt: fullUser.updatedAt?.toISOString(),
-      // Default missing fields if schema differs
       name: fullUser.name || '',
       phone: fullUser.phone || '',
       address: fullUser.address || '',
       role: fullUser.role || 'user',
       avatar: fullUser.avatar || '',
       isPaid: fullUser.isPaid || false,
+      course_ids: fullUser.course_ids || [],
       files: fullUser.files || []
     }
   } catch {
-    // console.error(e)
+    // Silently fail in production, errors logged by monitoring
   }
   return null
 }

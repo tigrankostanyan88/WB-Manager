@@ -69,7 +69,9 @@ export function useCourseDetails(courseId: string): UseCourseDetailsResult {
       try {
         // Admin has full access to all courses
         const userRole = user?.role
+        console.log('[useCourseDetails] Checking access for course:', courseId, 'user role:', userRole, 'user:', user)
         if (userRole === 'admin') {
+          console.log('[useCourseDetails] User is admin, granting access')
           setHasAccess(true)
           setCheckingAccess(false)
           return
@@ -77,20 +79,36 @@ export function useCourseDetails(courseId: string): UseCourseDetailsResult {
 
         // Check if user's course_ids array contains this courseId
         const typedUser = user as UserWithCourses
-        const userCourseIds = typedUser?.course_ids || []
+        let userCourseIds = typedUser?.course_ids || []
+        // Ensure course_ids is always an array (handle JSON string case)
+        if (typeof userCourseIds === 'string') {
+          try {
+            userCourseIds = JSON.parse(userCourseIds)
+          } catch {
+            userCourseIds = []
+          }
+        }
+        if (!Array.isArray(userCourseIds)) {
+          userCourseIds = []
+        }
+        console.log('[useCourseDetails] User course_ids:', userCourseIds, 'isArray:', Array.isArray(userCourseIds))
         const numericCourseId = Number(courseId)
         const hasCourseAccess = userCourseIds.some((id: string | number) =>
           id === courseId || id === numericCourseId || String(id) === courseId
         )
 
         if (hasCourseAccess) {
+          console.log('[useCourseDetails] User has course in their list, granting access')
           setHasAccess(true)
         } else {
           // Check via API if not in user's course list
+          console.log('[useCourseDetails] Checking API for access')
           const res = await api.get(`/api/v1/student-courses/access/${courseId}`)
+          console.log('[useCourseDetails] API access response:', res.data)
           setHasAccess(res.data?.hasAccess || false)
         }
-      } catch {
+      } catch (err) {
+        console.log('[useCourseDetails] Access check error:', err)
         setHasAccess(false)
       } finally {
         setCheckingAccess(false)
@@ -110,6 +128,8 @@ export function useCourseDetails(courseId: string): UseCourseDetailsResult {
       // Fetch course data
       const courseRes = await api.get(`/api/v1/courses/${courseId}`)
       const courseData = courseRes.data?.data || courseRes.data?.course || courseRes.data
+      console.log('[useCourseDetails] Raw API response:', courseRes.data)
+      console.log('[useCourseDetails] Parsed courseData:', courseData, 'modules:', courseData?.modules)
       setCourse(courseData)
 
       // Fetch reviews and calculate real rating
@@ -195,19 +215,25 @@ export function useCourseDetails(courseId: string): UseCourseDetailsResult {
 
   // Derived: Find first video for preview
   const previewVideoUrl = useMemo(() => {
+    console.log('[useCourseDetails] Building previewVideoUrl, course.modules:', course?.modules)
     if (!course?.modules) return null
     for (const m of course.modules) {
       const mm = m as CourseModuleData
       const files = Array.isArray(mm.files) ? mm.files : []
+      console.log('[useCourseDetails] Module files:', files)
       for (const f of files) {
         const ff = f as CourseModuleFile
         const isVideo = ff.name_used === 'module_video' ||
           (ff.ext && ['mp4', 'webm', 'mov'].includes(String(ff.ext).toLowerCase()))
+        console.log('[useCourseDetails] File:', ff.name, 'ext:', ff.ext, 'isVideo:', isVideo)
         if (isVideo && ff.name && ff.ext) {
-          return buildVideoUrl(ff.name, ff.ext)
+          const url = buildVideoUrl(ff.name, ff.ext)
+          console.log('[useCourseDetails] Generated previewVideoUrl:', url)
+          return url
         }
       }
     }
+    console.log('[useCourseDetails] No video found for preview')
     return null
   }, [course])
 

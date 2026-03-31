@@ -36,8 +36,6 @@ export function SettingsProvider({ children, initialSettings = {} }: { children:
   const [settings, setSettings] = useState<SettingsShape>(initialSettings)
 
   useEffect(() => {
-    // On the client-side, after initial render, we can update from localStorage or API
-    // For now, we just ensure the logo path is correct on the client as well.
     if (initialSettings.logo && !initialSettings.logo.startsWith('http')) {
       setSettings(prev => ({...prev, logo: withOrigin(initialSettings.logo || '')}))
     }

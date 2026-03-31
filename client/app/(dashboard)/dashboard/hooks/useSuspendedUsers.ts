@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { userService } from '@/lib/api'
 import type { User } from '@/components/features/admin/types'
 
@@ -18,6 +19,7 @@ interface UseSuspendedUsersResult {
 export function useSuspendedUsers(
   showToast: (message: string, type: 'success' | 'error') => void
 ): UseSuspendedUsersResult {
+  const queryClient = useQueryClient()
   const [suspendedUsers, setSuspendedUsers] = useState<User[]>([])
   const [isSuspendedLoading, setIsSuspendedLoading] = useState(false)
   const [suspendedSearch, setSuspendedSearch] = useState('')
@@ -38,11 +40,15 @@ export function useSuspendedUsers(
   const handleRestoreUser = useCallback(async (id: number | string) => {
     try {
       await userService.restoreUser(id)
+      // Remove user from local state immediately
+      setSuspendedUsers(prev => prev.filter(user => user.id !== id))
+      // Invalidate users query to refresh the users list
+      queryClient.invalidateQueries({ queryKey: ['users'] })
       showToast('Օգտատերը հաջողությամբ վերականգնվեց', 'success')
     } catch {
       showToast('Վերականգնումը ձախողվեց', 'error')
     }
-  }, [showToast])
+  }, [showToast, queryClient])
 
   const handlePermanentDelete = useCallback(async (id: number | string) => {
     try {

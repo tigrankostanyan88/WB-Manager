@@ -23,28 +23,82 @@ export function generateVideoThumbnail(videoUrl: string, time?: number): Promise
     video.src = videoUrl
     video.muted = true
     
-    video.addEventListener('loadeddata', () => {
-      // Use provided time, or default to 30 seconds or 10% of video if shorter
-      const seekTime = time ?? Math.min(30, video.duration * 0.1 || 30)
-      video.currentTime = seekTime
-    })
+    const cleanup = () => {
+      video.removeEventListener('loadeddata', onLoadedData)
+      video.removeEventListener('seeked', onSeeked)
+      video.removeEventListener('error', onError)
+      video.src = ''
+      video.load()
+    }
     
-    video.addEventListener('seeked', () => {
+    const onLoadedData = () => {
+      console.log('[VideoThumbnail] Video loadeddata fired, duration:', video.duration, 'readyState:', video.readyState)
+      // Cap seek time to video duration - thumbnail_time might exceed video length
+      const maxTime = Math.max(0, video.duration - 1)
+      const seekTime = time ? Math.min(time, maxTime) : Math.min(30, video.duration * 0.1 || 30)
+      console.log('[VideoThumbnail] Seeking to time:', seekTime, '(thumbnail_time was:', time, ')')
+      video.currentTime = seekTime
+    }
+    
+    const onLoadedMetadata = () => {
+      console.log('[VideoThumbnail] Video loadedmetadata fired, duration:', video.duration)
+      // Try seeking here too if loadeddata doesn't fire
+      if (video.duration > 0) {
+        const maxTime = Math.max(0, video.duration - 1)
+        const seekTime = time ? Math.min(time, maxTime) : Math.min(30, video.duration * 0.1 || 30)
+        video.currentTime = seekTime
+      }
+    }
+    
+    const onSeeked = () => {
+      console.log('[VideoThumbnail] Video seeked, drawing to canvas, video size:', video.videoWidth, 'x', video.videoHeight)
       canvas.width = video.videoWidth || 320
       canvas.height = video.videoHeight || 180
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
       
       try {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
         const thumbnailUrl = canvas.toDataURL('image/jpeg', 0.7)
+        console.log('[VideoThumbnail] Canvas to data URL success, length:', thumbnailUrl.length)
+        cleanup()
         resolve(thumbnailUrl)
       } catch (e) {
+        console.error('[VideoThumbnail] Canvas draw/toDataURL failed:', e)
+        cleanup()
         reject(e)
       }
-    })
+    }
     
-    video.addEventListener('error', () => {
+    const onError = (e: Event) => {
+      console.error('[VideoThumbnail] Video load error:', e, 'Video error code:', video.error?.code, 'message:', video.error?.message)
+      cleanup()
       reject(new Error('Failed to load video'))
-    })
+    }
+    
+    const onCanPlay = () => {
+      console.log('[VideoThumbnail] Video can play event fired, duration:', video.duration)
+      // Seek using canplay since loadeddata may not fire consistently
+      if (video.duration > 0 && video.currentTime === 0) {
+        const maxTime = Math.max(0, video.duration - 1)
+        const seekTime = time ? Math.min(time, maxTime) : Math.min(30, video.duration * 0.1 || 30)
+        console.log('[VideoThumbnail] Seeking from canplay to:', seekTime)
+        video.currentTime = seekTime
+      }
+    }
+    
+    const onCanPlayThrough = () => {
+      console.log('[VideoThumbnail] Video canplaythrough event fired, duration:', video.duration)
+    }
+    
+    video.addEventListener('loadeddata', onLoadedData)
+    video.addEventListener('loadedmetadata', onLoadedMetadata)
+    video.addEventListener('seeked', onSeeked)
+    video.addEventListener('error', onError)
+    video.addEventListener('canplay', onCanPlay)
+    video.addEventListener('canplaythrough', onCanPlayThrough)
+    
+    // Start loading the video
+    console.log('[VideoThumbnail] Starting video load:', videoUrl)
+    video.load()
   })
 }
 
@@ -54,16 +108,19 @@ export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnai
   const generatedRef = useRef(false)
   
   useEffect(() => {
+    console.log('[VideoThumbnail] videoUrl:', videoUrl, 'time:', time)
     if (!videoUrl || generatedRef.current) return
     
     generatedRef.current = true
     
     generateVideoThumbnail(videoUrl, time)
       .then(url => {
+        console.log('[VideoThumbnail] Generated thumbnail successfully')
         setThumbnail(url)
         setLoading(false)
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error('[VideoThumbnail] Failed to generate thumbnail:', err)
         setLoading(false)
       })
   }, [videoUrl, time])
