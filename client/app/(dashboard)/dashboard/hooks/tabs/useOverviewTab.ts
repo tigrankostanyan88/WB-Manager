@@ -1,8 +1,8 @@
 'use client'
 
 import { useMemo } from 'react'
-import useSettings from '@/components/features/admin/hooks/useSettings'
-import useOverview from '@/components/features/admin/hooks/useOverview'
+import useSettings from '@/hooks/admin/useSettings'
+import useOverview from '@/hooks/admin/useOverview'
 import type { DashboardTabId } from '@/components/features/admin/types'
 import { createStats } from '@/app/(dashboard)/dashboard/lib/menuItems'
 

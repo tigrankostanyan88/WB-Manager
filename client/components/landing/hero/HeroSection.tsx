@@ -38,6 +38,13 @@ export function HeroSection({
     onPlayVideo()
   }
 
+  const handleHeroPlay = () => {
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300'
+    const defaultUrl = `${apiBase.replace(/\/$/, '')}/files/hero.mp4`
+    const videoUrl = content?.video_url || defaultUrl
+    handlePlay(videoUrl)
+  }
+
   const handleClose = () => {
     setPlayingVideo(null)
   }
@@ -59,7 +66,11 @@ export function HeroSection({
 
       <div className="container relative z-10">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-20 items-center">
-          <HeroContent content={content} onOpenModal={onOpenModal} />
+          <HeroContent 
+            content={content} 
+            onOpenModal={onOpenModal} 
+            onPlayVideo={handleHeroPlay}
+          />
 
           <div className="relative">
             <HeroVideo

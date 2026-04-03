@@ -1,4 +1,4 @@
-import type { CourseForm } from '@/components/features/admin/hooks/useCourses'
+import type { CourseForm } from '@/hooks/admin/useCourses'
 import type { Course } from '@/components/features/admin/types'
 
 export interface CoursesTabProps {

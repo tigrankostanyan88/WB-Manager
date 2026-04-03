@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import type { Area, Point } from 'react-easy-crop'
-import type { SiteSettings } from '../types'
+import type { SiteSettings } from '@/components/features/admin/types'
 import type { Dispatch, SetStateAction } from 'react'
 
 const createImage = (url: string) =>

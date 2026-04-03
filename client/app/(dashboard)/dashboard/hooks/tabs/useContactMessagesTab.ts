@@ -1,6 +1,6 @@
 'use client'
 
-import { useContactMessages } from '@/components/features/admin/hooks/useContactMessages'
+import { useContactMessages } from '@/hooks/admin/useContactMessages'
 
 interface UseContactMessagesTabProps {
   activeTab: string

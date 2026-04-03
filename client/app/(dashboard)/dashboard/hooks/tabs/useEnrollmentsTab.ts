@@ -1,6 +1,6 @@
 'use client'
 
-import { useEnrollments } from '@/components/features/admin/hooks/useEnrollments'
+import { useEnrollments } from '@/hooks/admin/useEnrollments'
 
 interface UseEnrollmentsTabProps {
   activeTab: string

@@ -1,6 +1,6 @@
 'use client'
 
-import type { DashboardTabId } from '../types'
+import type { DashboardTabId } from '@/components/features/admin/types'
 import type { CourseForm, ExtendedCourse } from './courseTypes'
 import { useCoursesQuery, useDeleteCourse, getCourseFirstVideoUrl } from './useCourseQueries'
 import { useCourseForm } from './useCourseForm'

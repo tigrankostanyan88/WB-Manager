@@ -1,26 +1,26 @@
 {
   "development": {
-    "username": "root",
-    "password": "mysecretpassword",
-    "database": "savaa",
-    "host": "localhost",
-    "port": 3306,
+    "username": "${DB_USERNAME}",
+    "password": "${DB_PASSWORD}",
+    "database": "${DB_NAME}",
+    "host": "${DB_HOST}",
+    "port": "${DB_PORT}",
     "dialect": "mysql"
   },
   "test": {
-    "username": "root",
-    "password": "mysecretpassword",
-    "database": "savaa_test",
-    "host": "localhost",
-    "port": 3306,
+    "username": "${DB_USERNAME}",
+    "password": "${DB_PASSWORD}",
+    "database": "${DB_NAME}_test",
+    "host": "${DB_HOST}",
+    "port": "${DB_PORT}",
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": "mysecretpassword",
-    "database": "savaa",
-    "host": "localhost",
-    "port": 3306,
+    "username": "${DB_USERNAME}",
+    "password": "${DB_PASSWORD}",
+    "database": "${DB_NAME}",
+    "host": "${DB_HOST}",
+    "port": "${DB_PORT}",
     "dialect": "mysql"
   }
 }

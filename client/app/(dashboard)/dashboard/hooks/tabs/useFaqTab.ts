@@ -1,6 +1,6 @@
 'use client'
 
-import useFaq from '@/components/features/admin/hooks/useFaq'
+import useFaq from '@/hooks/admin/useFaq'
 
 interface UseFaqTabProps {
   activeTab: string

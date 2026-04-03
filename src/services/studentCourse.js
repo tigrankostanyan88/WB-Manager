@@ -1,4 +1,4 @@
-const AppError = require('../utils/Error');
+const AppError = require('../utils/appError');
 const repo = require('../repositories/studentCourse');
 
 module.exports = {

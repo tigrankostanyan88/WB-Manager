@@ -1,4 +1,5 @@
-// Module exports an error handler for HTTP requests
+// Global error handling middleware - separates operational from programming errors
+// Operational: user-friendly message | Programming: log and send generic response
 const AppError = require('../utils/appError');
 
 // Helper for SEO metadata
@@ -75,7 +76,11 @@ const sendErrorDev = (err, req, res) => {
 
 // This function sends error responses to the client during production. It checks if the request is coming from an API or a rendered website and responds accordingly with the appropriate status code and message.
 const sendErrorProd = (err, req, res, next) => {
-    // A) API
+    // Ensure statusCode is always valid (default to 500)
+    const statusCode = err.statusCode || 500;
+    const status = err.status || 'error';
+    
+    // A) API requests
     if (req.originalUrl.startsWith('/api')) {
         // A) Operational, trusted error: send message to client
         if (err.isOperational) {
@@ -97,12 +102,9 @@ const sendErrorProd = (err, req, res, next) => {
         });
     }
 
-    // B) RENDERED WEBSITE
+    // B) Rendered website
     if (err.isOperational) {
-        // console.log(err);
-        
-        // return new AppError('Something went wrong!', err.statusCode)
-        return res.status(err.statusCode).render('error', {
+        return res.status(statusCode).render('error', {
             ...buildSEO(req, {
                 title: 'Սխալ տեղի ունեցավ',
                 description: 'Խնդրում ենք փորձել կրկին ավելի ուշ։'
@@ -112,12 +114,10 @@ const sendErrorProd = (err, req, res, next) => {
             user: res.locals.user || null
         });
     }
-    // B) Programming or other unknown error: don't leak error details
-    // 1) Log error
+    
+    // Programming/unknown error: log and send generic message
     console.error('ERROR 💥', err);
-    // 2) Send generic message
-    // return new AppError('Something went wrong!', 403)
-    return res.status(err.statusCode).render('error', {
+    return res.status(statusCode).render('error', {
         ...buildSEO(req, {
             title: 'Սխալ տեղի ունեցավ',
             description: 'Խնդրում ենք փորձել կրկին ավելի ուշ։'
@@ -129,11 +129,14 @@ const sendErrorProd = (err, req, res, next) => {
 };
 
 
-// This function handles errors that occur during processing
+// Main error handler middleware - centralizes all error processing
 module.exports = (err, req, res, next) => {
-    // Set default values for status code and error status
-    err.statusCode = err.statusCode || 500;
-    err.status = err.status || 'error';
+    // Set safe defaults
+    const statusCode = err.statusCode || 500;
+    const status = err.status || 'error';
+    
+    err.statusCode = statusCode;
+    err.status = status;
 
     // Check if running in development environment
     if (process.env.NODE_ENV === 'development') {

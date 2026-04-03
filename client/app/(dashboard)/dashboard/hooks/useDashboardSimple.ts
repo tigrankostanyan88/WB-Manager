@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useNotification } from '@/components/features/admin/Notification'
-import useAuth from '@/components/features/admin/hooks/useAuth'
+import useAuth from '@/hooks/admin/useAuth'
 import type { User } from '@/components/features/admin/types'
 import type { DashboardTabId } from '@/components/features/admin/types'
 import { menuItems } from '@/app/(dashboard)/dashboard/lib/menuItems'

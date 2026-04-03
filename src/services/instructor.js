@@ -1,4 +1,4 @@
-const AppError = require('../utils/Error');
+const AppError = require('../utils/appError');
 const Files = require('../controllers/File');
 const repo = require('../repositories/instructor');
 

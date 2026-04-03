@@ -1,6 +1,6 @@
 'use client'
 
-import { useCourseRegistrations } from '@/components/features/admin/hooks/useCourseRegistrations'
+import { useCourseRegistrations } from '@/hooks/admin/useCourseRegistrations'
 
 interface UseCourseRegistrationsTabProps {
   activeTab: string

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useUsers } from '@/components/features/admin/hooks/useUsers'
+import { useUsers } from '@/hooks/admin/useUsers'
 import type { User, DashboardTabId } from '@/components/features/admin/types'
 
 interface UseUsersTabProps {

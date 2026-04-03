@@ -3,7 +3,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { ModuleItem, ModuleFile, CourseOption } from '@/components/features/admin/hooks/modules/types'
+import type { ModuleItem, ModuleFile, CourseOption } from '@/hooks/admin/modules/types'
 import { ModuleForm } from './ModuleForm'
 import { ModuleList } from './ModuleList'
 

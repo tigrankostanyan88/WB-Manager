@@ -1,7 +1,12 @@
 const fs = require("fs");
 const crypto = require("crypto");
 const sharp = require("sharp");
+const config = require("../config/app.config");
 
+/**
+ * File upload and processing class
+ * Handles image resizing, validation, and storage with security checks
+ */
 module.exports = class File {
     constructor(model, file, options = {}) {
         this.data = {};
@@ -255,23 +260,23 @@ module.exports = class File {
         const mediaTypes = [
             {
                 name: "image",
-                types: ["jpeg", "png", "gif", "webp", "svg"],
-                size: 50 * 1024 * 1024,
+                types: config.FILE_TYPES.IMAGE.types,
+                size: config.FILE_TYPES.IMAGE.maxSize,
             },
             {
                 name: "video",
-                types: ["mp4", "mkv", "avi", "mov", "webm"],
-                size: 1000 * 1024 * 1024, 
+                types: config.FILE_TYPES.VIDEO.types,
+                size: config.FILE_TYPES.VIDEO.maxSize,
             },
             {
                 name: "audio",
-                types: ["mp3", "wav", "ogg"],
-                size: 50 * 1024 * 1024,
+                types: config.FILE_TYPES.AUDIO.types,
+                size: config.FILE_TYPES.AUDIO.maxSize,
             },
             {
                 name: "application",
-                types: ["pdf", "zip"],
-                size: 50 * 1024 * 1024,
+                types: config.FILE_TYPES.DOCUMENT.types,
+                size: config.FILE_TYPES.DOCUMENT.maxSize,
             },
         ];
 

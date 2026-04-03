@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import api from '@/lib/api'
 import { useConfirm } from '@/components/providers/ConfirmProvider'
-import type { DashboardTabId, Review } from '../types'
+import type { DashboardTabId, Review } from '@/components/features/admin/types'
 
 interface UseReviewsParams {
   activeTab: DashboardTabId

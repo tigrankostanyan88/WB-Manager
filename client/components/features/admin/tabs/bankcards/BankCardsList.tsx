@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { BankCardDisplay } from './BankCardDisplay'
 import { BankCardEdit } from './BankCardEdit'
-import type { BankCard } from '@/components/features/admin/hooks/useBankCards'
+import type { BankCard } from '@/hooks/admin/useBankCards'
 
 interface BankCardsListProps {
   cards: BankCard[]

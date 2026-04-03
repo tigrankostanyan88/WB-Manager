@@ -1,6 +1,6 @@
 'use client'
 
-import { usePayments } from '@/components/features/admin/hooks/usePayments'
+import { usePayments } from '@/hooks/admin/usePayments'
 
 interface UsePaymentsTabProps {
   activeTab: string

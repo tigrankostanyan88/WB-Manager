@@ -1,7 +1,7 @@
 'use client'
 
 import type { DashboardTabId } from '@/components/features/admin/types'
-import { useCourses } from '@/components/features/admin/hooks/useCourses'
+import { useCourses } from '@/hooks/admin/useCourses'
 
 interface UseCoursesTabProps {
   activeTab: DashboardTabId

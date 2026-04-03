@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const config = require('../config/app.config');
 const AppError = require('../utils/appError');
 const Email = require('../utils/Email');
 const Validator = require('../utils/validation');
@@ -7,11 +8,11 @@ const repo = require('../repositories/auth');
 const DB = require('../models');
 const User = DB.models.User;
 
-// Cached JWT Secret (computed once)
+// Centralized JWT secret with validation at startup - fails fast if misconfigured
 const JWT_SECRET = (() => {
     const secret = process.env.JWT_SECRET;
     if (!secret || secret.trim().length < 32) {
-        throw new Error('JWT_SECRET must be defined and at least 32 characters long');
+        throw new Error('JWT_SECRET must be defined and at least 32 characters long for security');
     }
     return secret.trim().replace(/^"|"$/g, '');
 })();
@@ -31,7 +32,10 @@ const createSendToken = async (user, statusCode, req, res, target = false) => {
     const loginToken = crypto.randomBytes(32).toString('hex');
     await fastUpdateLoginToken(user.id, loginToken);
 
-    const jwtExpire = req.body && req.body.remember === 'on' ? 60 : 1;
+    // Use remember me option or default expiration
+    const jwtExpire = req.body && req.body.remember === 'on' 
+        ? config.JWT.EXPIRES_IN_DAYS_REMEMBER 
+        : config.JWT.EXPIRES_IN_DAYS_DEFAULT;
 
     const token = jwt.sign({
             id: user.id,
@@ -86,10 +90,10 @@ const mapUserWithAvatar = (user) => {
 // Handle Sequelize unique constraint error
 const handleUniqueConstraintError = (err) => {
     if (err.name === 'SequelizeUniqueConstraintError') {
-        const field = err.errors ?.[0]?.path;
-        const msg = field === 'phone' ?
-            'Այս հեռախոսահամարն արդեն գրանցված է։' :
-            'Այս էլ․ հասցեն արդեն գրանցված է։';
+        const field = err.errors?.[0]?.path;
+        const msg = field === 'phone' 
+            ? 'Այս հեռախոսահամարն արդեն գրանցված է։' 
+            : 'Այս էլ․ հասցեն արդեն գրանցված է։';
         const code = field === 'phone' ? 'PHONE_EXISTS' : 'EMAIL_EXISTS';
         return new AppError(msg, 409, code);
     }
@@ -198,7 +202,7 @@ const protect = async (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET);
 
         // 3) Check if user still exists (with files for avatar)
         const currentUser = await User.findByPk(decoded.id, {
@@ -309,7 +313,7 @@ const forgotPassword = async (req, res, next) => {
 
     // Send email
     try {
-        const resetURL = `http://localhost:3000/resetPassword/${resetToken}`;
+        const resetURL = `${process.env.CLIENT_ORIGIN || 'http://localhost:3000'}/resetPassword/${resetToken}`;
         await new Email(user, resetURL).sendPasswordReset();
 
         return {

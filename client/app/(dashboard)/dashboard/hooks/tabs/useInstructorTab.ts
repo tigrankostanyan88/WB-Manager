@@ -1,6 +1,6 @@
 'use client'
 
-import useInstructor from '@/components/features/admin/hooks/useInstructor'
+import useInstructor from '@/hooks/admin/useInstructor'
 
 interface UseInstructorTabProps {
   activeTab: string

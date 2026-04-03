@@ -1,16 +1,19 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { ChevronRight, Globe, Users, Zap } from 'lucide-react'
+import { ChevronRight, Globe, Play, Users, Zap } from 'lucide-react'
 import Link from 'next/link'
+import { useAuth } from '@/lib/auth'
 import type { HeroSectionProps } from './types'
 
 interface HeroContentProps {
   content: HeroSectionProps['content']
   onOpenModal: HeroSectionProps['onOpenModal']
+  onPlayVideo: () => void
 }
 
-export function HeroContent({ content, onOpenModal }: HeroContentProps) {
+export function HeroContent({ content, onOpenModal, onPlayVideo }: HeroContentProps) {
+  const { isLoggedIn } = useAuth()
   return (
     <div className="flex flex-col gap-8">
       {/* Badge */}
@@ -32,20 +35,31 @@ export function HeroContent({ content, onOpenModal }: HeroContentProps) {
         </p>
       </div>
 
-      {/* CTA Buttons */}
+      {/* CTA Buttons - Change based on login status */}
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-        <Button
-          className="rounded-full h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-bold bg-slate-900 text-white hover:bg-violet-600 transition-all shadow-xl shadow-slate-200 hover:shadow-violet-200 hover:scale-105 active:scale-95 w-full sm:w-auto"
-          onClick={onOpenModal}
-        >
-          Սկսել հիմա <ChevronRight className="ml-2 h-5 w-5" />
-        </Button>
+        {isLoggedIn ? (
+          // Logged in users - show video play button
+          <Button
+            className="rounded-full h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-bold bg-violet-600 text-white hover:bg-violet-700 transition-all shadow-xl shadow-violet-200 hover:shadow-violet-300 hover:scale-105 active:scale-95 w-full sm:w-auto"
+            onClick={onPlayVideo}
+          >
+            <Play className="mr-2 h-5 w-5 fill-white" /> Դիտել ներածություն
+          </Button>
+        ) : (
+          // Not logged in - show registration button
+          <Button
+            className="rounded-full h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-bold bg-slate-900 text-white hover:bg-violet-600 transition-all shadow-xl shadow-slate-200 hover:shadow-violet-200 hover:scale-105 active:scale-95 w-full sm:w-auto"
+            onClick={onOpenModal}
+          >
+            Սկսել հիմա <ChevronRight className="ml-2 h-5 w-5" />
+          </Button>
+        )}
         <Link href="/course" prefetch={true} className="w-full sm:w-auto">
           <Button
             variant="outline"
             className="rounded-full h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-bold border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all w-full"
           >
-            Դիտել ծրագիրը
+            Դիտել դասընթացները
           </Button>
         </Link>
       </div>

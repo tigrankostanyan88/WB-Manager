@@ -1,8 +1,8 @@
 // tabs/modules/ModuleCard.tsx - Individual module card display
 
 import { Video, Clock, BookOpen, Edit, Trash2 } from 'lucide-react'
-import type { ModuleItem, CourseOption } from '@/components/features/admin/hooks/modules/types'
-import { formatMinutes, getVideoCount, getTotalVideoDuration } from '@/components/features/admin/hooks/modules/utils'
+import type { ModuleItem, CourseOption } from '@/hooks/admin/modules/types'
+import { formatMinutes, getVideoCount, getTotalVideoDuration } from '@/hooks/admin/modules/utils'
 
 interface ModuleCardProps {
   module: ModuleItem

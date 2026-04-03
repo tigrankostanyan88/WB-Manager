@@ -1,6 +1,6 @@
 'use client'
 
-import { useHeroContent } from '@/components/features/admin/hooks/useHeroContent'
+import { useHeroContent } from '@/hooks/admin/useHeroContent'
 
 interface UseHeroContentTabProps {
   activeTab: string

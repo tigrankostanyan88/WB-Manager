@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import api from '@/lib/api'
 import { useSettings as useGlobalSettings } from '@/context/SettingsContext' // moved from lib
-import type { DashboardTabId, DayKey, SiteSettings, WorkingHoursSchedule } from '../types'
-import { fixLarge, withOrigin } from '../_utils/image'
+import type { DashboardTabId, DayKey, SiteSettings, WorkingHoursSchedule } from '@/components/features/admin/types'
+import { fixLarge, withOrigin } from '@/components/features/admin/_utils/image'
 
 interface UseSettingsParams {
   activeTab: DashboardTabId

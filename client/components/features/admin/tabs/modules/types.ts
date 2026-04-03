@@ -1,6 +1,6 @@
 // tabs/modules/types.ts - Module tab shared types
 
-import type { ModuleItem, ModuleFile, CourseOption } from '@/components/features/admin/hooks/modules/types'
+import type { ModuleItem, ModuleFile, CourseOption } from '@/hooks/admin/modules/types'
 
 export interface ModuleFormData {
   title: string

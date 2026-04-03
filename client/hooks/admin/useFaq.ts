@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import api from '@/lib/api'
 import { useConfirm } from '@/components/providers/ConfirmProvider'
-import type { DashboardTabId, FAQ } from '../types'
+import type { DashboardTabId, FAQ } from '@/components/features/admin/types'
 
 interface UseFaqParams {
   activeTab: DashboardTabId

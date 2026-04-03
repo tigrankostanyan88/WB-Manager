@@ -83,7 +83,12 @@ async function getSettings() {
         return s
       }
     }
-  } catch {}
+  } catch (err) {
+    // Graceful degradation - log error but don't crash the app
+    if (process.env.NODE_ENV === 'development') {
+      console.error('[getSettings] Failed to fetch settings:', err)
+    }
+  }
   return {}
 }
 
@@ -123,8 +128,11 @@ async function getUser() {
       course_ids: fullUser.course_ids || [],
       files: fullUser.files || []
     }
-  } catch {
-    // Silently fail in production, errors logged by monitoring
+  } catch (err) {
+    // Graceful degradation for auth errors - user will be treated as logged out
+    if (process.env.NODE_ENV === 'development') {
+      console.error('[getUser] Auth error:', err)
+    }
   }
   return null
 }

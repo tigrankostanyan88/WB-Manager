@@ -1,6 +1,7 @@
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const userService = require('../services/user');
+const { sanitizeUser } = require('../utils/avatar');
 
 // GET ALL USERS
 exports.getUsers = catchAsync(async (req, res) => {
@@ -14,19 +15,7 @@ exports.getUsers = catchAsync(async (req, res) => {
 });
 
 exports.getMe = catchAsync(async (req, res, next) => {
-    const userData = req.user.toJSON ? req.user.toJSON() : req.user;
-    
-    // Remove sensitive fields
-    delete userData.password;
-    delete userData.passwordConfirm;
-    
-    // Add avatar URL if user has files
-    if (userData.files && userData.files.length > 0) {
-        const f = userData.files.find((x) => x.name_used === 'user_img') || userData.files[0];
-        if (f && f.name && f.ext) {
-            userData.avatar = `/images/${f.table_name || 'users'}/large/${f.name}.${f.ext}`;
-        }
-    }
+    const userData = sanitizeUser(req.user);
     
     res.status(200).json({
         status: 'success',
@@ -35,147 +24,80 @@ exports.getMe = catchAsync(async (req, res, next) => {
 });
 
 // GET SINGLE USER BY ID
-exports.getUserById = async (req, res, next) => {
-    try {
-        const user = await userService.getUserById(req.params.id);
-        const userData = user.toJSON ? user.toJSON() : user;
-        
-        // Remove sensitive fields
-        delete userData.password;
-        delete userData.passwordConfirm;
-        
-        if (userData.files && userData.files.length > 0) {
-            const f = userData.files.find((x) => x.name_used === 'user_img') || userData.files[0];
-            if (f && f.name && f.ext) {
-                userData.avatar = `/images/${f.table_name || 'users'}/large/${f.name}.${f.ext}`;
-            }
-        }
-        
-        res.status(200).json({
-            status: 'success',
-            user: userData
-        });
-    } catch (err) {
-        next(err);
-    }
-};
+exports.getUserById = catchAsync(async (req, res, next) => {
+    const user = await userService.getUserById(req.params.id);
+    const userData = sanitizeUser(user);
+    
+    res.status(200).json({
+        status: 'success',
+        user: userData
+    });
+});
 
 // UPDATE USER 
-exports.updateUser = async (req, res, next) => {
-    try {
-        const user = await userService.updateUser(req.params.id, req.body, req.files);
-        const userData = user.toJSON ? user.toJSON() : user;
-        
-        // Remove sensitive fields
-        delete userData.password;
-        delete userData.passwordConfirm;
-        
-        if (userData.files && userData.files.length > 0) {
-            const f = userData.files.find((x) => x.name_used === 'user_img') || userData.files[0];
-            if (f && f.name && f.ext) {
-                userData.avatar = `/images/${f.table_name || 'users'}/large/${f.name}.${f.ext}`;
-            }
-        }
-        res.status(200).json({
-            status: 'success',
-            time: `${Date.now() - req.time} ms`,
-            user: userData,
-            reload: true
-        });
-    } catch (err) {
-        next(err);
-    }
-};
+exports.updateUser = catchAsync(async (req, res, next) => {
+    const user = await userService.updateUser(req.params.id, req.body, req.files);
+    const userData = sanitizeUser(user);
+    
+    res.status(200).json({
+        status: 'success',
+        time: `${Date.now() - req.time} ms`,
+        user: userData,
+        reload: true
+    });
+});
 
-exports.updateMe = async (req, res, next) => {
-    try {
-        const user = await userService.updateMe(req.user.id, req.body, req.files);
-        const userData = user.toJSON ? user.toJSON() : user;
-        
-        // Remove sensitive fields
-        delete userData.password;
-        delete userData.passwordConfirm;
-        
-        if (userData.files && userData.files.length > 0) {
-            const f = userData.files.find((x) => x.name_used === 'user_img') || userData.files[0];
-            if (f && f.name && f.ext) {
-                userData.avatar = `/images/${f.table_name || 'users'}/large/${f.name}.${f.ext}`;
-            }
-        }
-        res.status(200).json({
-            status: 'success',
-            time: `${Date.now() - req.time} ms`,
-            user: userData,
-            reload: true
-        });
-    } catch (err) {
-        next(err);
-    }
-};
+exports.updateMe = catchAsync(async (req, res, next) => {
+    const user = await userService.updateMe(req.user.id, req.body, req.files);
+    const userData = sanitizeUser(user);
+    
+    res.status(200).json({
+        status: 'success',
+        time: `${Date.now() - req.time} ms`,
+        user: userData,
+        reload: true
+    });
+});
 
-exports.deleteUser = async (req, res, next) => {
-    try {
-        await userService.deleteUser(req.params.id);
-        res.status(204).json({ status: 'success' });
-    } catch (err) {
-        next(err);
-    }
-};
+exports.deleteUser = catchAsync(async (req, res, next) => {
+    await userService.deleteUser(req.params.id);
+    res.status(204).json({ status: 'success' });
+});
 
-exports.getSuspendedUsers = async (req, res, next) => {
-    try {
-        const users = await userService.getSuspendedUsers();
-        res.status(200).json({
-            status: 'success',
-            users
-        });
-    } catch (err) {
-        next(err);
-    }
-};
+exports.getSuspendedUsers = catchAsync(async (req, res, next) => {
+    const users = await userService.getSuspendedUsers();
+    res.status(200).json({
+        status: 'success',
+        users
+    });
+});
 
-exports.restoreUser = async (req, res, next) => {
-    try {
-        await userService.restoreUser(req.params.id);
-        res.status(200).json({
-            status: 'success',
-            message: 'Օգտատերը հաջողությամբ վերականգնվեց'
-        });
-    } catch (err) {
-        next(err);
-    }
-};
+exports.restoreUser = catchAsync(async (req, res, next) => {
+    await userService.restoreUser(req.params.id);
+    res.status(200).json({
+        status: 'success',
+        message: 'Օգտատերը հաջողությամբ վերականգնվեց'
+    });
+});
 
-exports.permanentDelete = async (req, res, next) => {
-    try {
-        await userService.permanentDeleteUser(req.params.id);
-        res.status(200).json({
-            status: 'success',
-            message: 'Օգտատերը ընդմիշտ ջնջվեց'
-        });
-    } catch (err) {
-        next(err);
-    }
-};
+exports.permanentDelete = catchAsync(async (req, res, next) => {
+    await userService.permanentDeleteUser(req.params.id);
+    res.status(200).json({
+        status: 'success',
+        message: 'Օգտատերը ընդմիշտ ջնջվեց'
+    });
+});
 
-exports.deleteAvatar = async (req, res, next) => {
-    try {
-        await userService.deleteAvatar(req.user.id);
-        res.status(200).json({
-            status: 'success',
-            time: `${Date.now() - req.time} ms`,
-            reload: true
-        });
-    } catch (err) {
-        next(err);
-    }
-};
+exports.deleteAvatar = catchAsync(async (req, res, next) => {
+    await userService.deleteAvatar(req.user.id);
+    res.status(200).json({
+        status: 'success',
+        time: `${Date.now() - req.time} ms`,
+        reload: true
+    });
+});
 
-exports.resetGroups = async (req, res, next) => {
-    try {
-        await userService.resetGroups(req.user.id);
-        res.status(200).json({ status: 'success', message: 'Խմբերի արդյունքները հաջողությամբ զրոյացվեցին' });
-    } catch (err) {
-        next(err);
-    }
-};
+exports.resetGroups = catchAsync(async (req, res, next) => {
+    await userService.resetGroups(req.user.id);
+    res.status(200).json({ status: 'success', message: 'Խմբերի արդյունքները հաջողությամբ զրոյացվեցին' });
+});

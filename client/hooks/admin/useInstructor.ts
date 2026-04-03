@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import api from '@/lib/api'
 import type { Area, Point } from 'react-easy-crop'
-import { getCroppedImg } from '../_utils/image'
+import { getCroppedImg } from '@/components/features/admin/_utils/image'
 
 interface InstructorStat {
   value: string

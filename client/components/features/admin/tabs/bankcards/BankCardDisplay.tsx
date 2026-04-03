@@ -2,7 +2,7 @@
 
 import { Building2, Edit2, Trash2, Eye, EyeOff, Copy, Check } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import type { BankCard } from '@/components/features/admin/hooks/useBankCards'
+import type { BankCard } from '@/hooks/admin/useBankCards'
 
 interface BankCardDisplayProps {
   card: BankCard

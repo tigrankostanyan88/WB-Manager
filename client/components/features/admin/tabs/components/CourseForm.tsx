@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import { Plus, X, Camera } from 'lucide-react'
-import type { CourseForm } from '@/components/features/admin/hooks/useCourses'
+import type { CourseForm } from '@/hooks/admin/useCourses'
 import type { Course } from '@/components/features/admin/types'
 import { VideoFrameSelector } from '@/components/features/admin/components/VideoFrameSelector'
 

@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
-import type { User, Payment, Course } from '../types'
+import type { User, Payment, Course } from '@/components/features/admin/types'
 
 export interface PaymentFormData {
   userId: string | number

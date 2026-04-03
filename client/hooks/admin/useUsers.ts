@@ -4,7 +4,10 @@ import { useMemo, useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useConfirm } from '@/components/providers/ConfirmProvider'
 import api from '@/lib/api'
-import type { DashboardTabId, User, Payment } from '../types'
+import { createLogger } from '@/lib/logger'
+import type { DashboardTabId, User, Payment } from '@/components/features/admin/types'
+
+const logger = createLogger('Users')
 
 // Types
 export interface EditUserForm {
@@ -177,7 +180,7 @@ export function useUsers({
       setEditingUser(null)
       showToast?.('Օգտատերը հաջողությամբ թարմացվել է', 'success')
     } catch (err) {
-      console.error('Edit user error:', err)
+      logger.error('Edit user error:', err)
       showToast?.('Օգտատիրոջ թարմացման ժամանակ սխալ է տեղի ունեցել', 'error')
     }
   }

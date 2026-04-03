@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
 import { buildVideoUrl } from '@/lib/videoUtils'
-import type { Course } from '../types'
+import type { Course } from '@/components/features/admin/types'
 import type { ExtendedCourse } from './courseTypes'
 
 const COURSES_QUERY_KEY = 'courses'

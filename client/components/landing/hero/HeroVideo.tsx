@@ -2,6 +2,7 @@
 
 import { Play } from 'lucide-react'
 import { useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { VideoPlayerModal } from '@/components/shared'
 import type { HeroContentData } from './types'
 
@@ -79,11 +80,12 @@ export function HeroVideo({
         </div>
       </div>
 
-      {playingVideo && (
+      {playingVideo && createPortal(
         <VideoPlayerModal 
           videoUrl={playingVideo} 
           onClose={onClose} 
-        />
+        />,
+        document.body
       )}
     </div>
   )

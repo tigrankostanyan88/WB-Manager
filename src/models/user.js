@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const config = require('../config/app.config');
 
 module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define('User', {
@@ -44,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true, 
             validate: {
-                min: 6
+                min: config.PASSWORD.MIN_LENGTH
             }
         },
         role: {
@@ -80,12 +81,12 @@ module.exports = (sequelize, DataTypes) => {
         hooks: {
             beforeCreate: async (user) => {
                 if (user.password) {
-                    user.password = await bcrypt.hash(user.password, 10);
+                    user.password = await bcrypt.hash(user.password, config.PASSWORD.BCRYPT_ROUNDS);
                 }
             },
             beforeUpdate: async (user) => {
                 if (user.changed('password')) {
-                    user.password = await bcrypt.hash(user.password, 10);
+                    user.password = await bcrypt.hash(user.password, config.PASSWORD.BCRYPT_ROUNDS);
                     user.passwordChangedAt = Date.now() - 1000;
                 }
             }
@@ -102,7 +103,7 @@ module.exports = (sequelize, DataTypes) => {
             .createHash('sha256')
             .update(resetToken)
             .digest('hex');
-        this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+        this.passwordResetExpires = Date.now() + config.PASSWORD_RESET.TOKEN_EXPIRES_MS;
         return resetToken;
     };
 

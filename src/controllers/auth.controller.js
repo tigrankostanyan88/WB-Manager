@@ -4,13 +4,22 @@ const AppError = require('../utils/appError');
 const authService = require('../services/auth.service');
 const repo = require('../repositories/auth.repository');
 
-// JWT Configuration
+// Centralized JWT secret management with validation
 const getJWTSecret = () => {
-  const secret = process.env.JWT_SECRET || 'eyu$!923k28@JSi328^7*&jw';
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret.trim().length < 32) {
+    throw new Error('JWT_SECRET must be defined and at least 32 characters long for security');
+  }
   return secret.trim().replace(/^"|"$/g, '');
 };
 
-// ==================== CONTROLLER METHODS ====================
+const JWT_SECRET = getJWTSecret();
+
+/**
+ * Authentication Controller
+ * Handles user authentication flows: signup, login, logout, password reset
+ * All methods follow the pattern: validate -> process -> respond
+ */
 
 const googleAuth = catchAsync(async (req, res, next) => {
   const result = await authService.googleAuth(req, res, next);
@@ -30,7 +39,7 @@ const authMiddleware = catchAsync(async (req, res, next) => {
   if (!token) return next(new AppError('Token չկա', 401));
   
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     next();
   } catch (err) {
@@ -63,7 +72,7 @@ const signUpByAdmin = catchAsync(async (req, res, next) => {
 const logOut = catchAsync(async (req, res, next) => {
   const result = await authService.logOut(req, res);
   
-  // Check if HTML request
+  // Check if HTML request for server-side redirect
   if (req.headers.accept && req.headers.accept.includes('text/html')) {
     return res.redirect('/');
   }
@@ -76,28 +85,14 @@ const logOut = catchAsync(async (req, res, next) => {
 });
 
 const signIn = catchAsync(async (req, res, next) => {
-  try {
-    const result = await authService.signIn(req, res, next);
-    
-    res.status(200).json({
-      status: 'success',
-      token: result.token,
-      user: result.user,
-      time: (Date.now() - req.time + ' ms'),
-      reload: result.reload
-    });
-  } catch (err) {
-    console.error('SIGNIN ERROR:', err);
-    throw err;
-  }
-});
-
-const logout = catchAsync(async (req, res, next) => {
-  const result = await authService.logout(req, res);
+  const result = await authService.signIn(req, res, next);
   
   res.status(200).json({
     status: 'success',
-    message: result.message
+    token: result.token,
+    user: result.user,
+    time: (Date.now() - req.time + ' ms'),
+    reload: result.reload
   });
 });
 
@@ -133,9 +128,9 @@ const isLoggedIn = async (req, res, next) => {
 
   if (req.cookies.jwt) {
     try {
-      // 1) Verify token
-      const secret = getJWTSecret();
-      const decoded = jwt.verify(req.cookies.jwt, secret);
+  // 1) Verify token using centralized JWT secret
+  const secret = JWT_SECRET;
+  const decoded = jwt.verify(req.cookies.jwt, secret);
 
       // 2) Check if user still exists
       const currentUser = await repo.findById(decoded.id, { includeFiles: true });
@@ -191,11 +186,10 @@ const protect = catchAsync(async (req, res, next) => {
     return next(new AppError('Խնդրում ենք մուտք գործել', 401));
   }
 
-  // 2) Verify token
+  // 2) Verify token using centralized JWT secret
   let decoded;
   try {
-    const secret = getJWTSecret();
-    decoded = jwt.verify(token, secret);
+    decoded = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     return next(new AppError('Խնդրում ենք կրկին մուտք գործել (Սխալ թոքեն)', 401));
   }
@@ -236,7 +230,6 @@ module.exports = {
   signUpByAdmin,
   logOut,
   signIn,
-  logout,
   restrictTo,
   forgotPassword,
   resetPassword,

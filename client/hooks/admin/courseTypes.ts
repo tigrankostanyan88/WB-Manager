@@ -1,6 +1,6 @@
 // Course types
 
-import type { Course } from '../types'
+import type { Course } from '@/components/features/admin/types'
 
 export interface CourseModuleWithVideos {
   id: string

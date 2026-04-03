@@ -10,3 +10,6 @@ client/.next/
 client/.turbo/
 client/.vercel/
 public/files/modules/*.mp4
+.env
+.env.local
+.env.*.local

@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
-import type { Enrollment, Course } from '../types'
+import type { Enrollment, Course } from '@/components/features/admin/types'
 
 interface UseEnrollmentsParams {
   activeTab: string

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { userService } from '@/lib/api'
 import api from '@/lib/api'
 import { logger } from '@/lib/logger'
-import type { DashboardTabId, User } from '../types'
+import type { DashboardTabId, User } from '@/components/features/admin/types'
 
 interface StatCounts {
   students: number

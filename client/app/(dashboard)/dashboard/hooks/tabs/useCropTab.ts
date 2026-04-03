@@ -1,6 +1,6 @@
 'use client'
 
-import useCrop from '@/components/features/admin/hooks/useCrop'
+import useCrop from '@/hooks/admin/useCrop'
 
 interface UseCropTabProps {
   setSiteSettings: React.Dispatch<React.SetStateAction<any>>

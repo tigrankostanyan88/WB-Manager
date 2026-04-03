@@ -1,7 +1,7 @@
 'use client'
 
 import type { DashboardTabId } from '@/components/features/admin/types'
-import useSettings from '@/components/features/admin/hooks/useSettings'
+import useSettings from '@/hooks/admin/useSettings'
 
 interface UseSettingsTabProps {
   activeTab: DashboardTabId

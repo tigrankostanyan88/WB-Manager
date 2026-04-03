@@ -1,7 +1,7 @@
 // tabs/modules/ModuleList.tsx - Module list/grid display
 
 import { Plus, Video } from 'lucide-react'
-import type { ModuleItem, CourseOption } from '@/components/features/admin/hooks/modules/types'
+import type { ModuleItem, CourseOption } from '@/hooks/admin/modules/types'
 import { ModuleCard } from './ModuleCard'
 
 interface ModuleListProps {
