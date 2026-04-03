@@ -2,24 +2,14 @@
 
 import { Trash2, User as UserIcon } from 'lucide-react'
 import Image from 'next/image'
-import type { Review } from '../types'
-import { withOrigin } from '../../_utils/image'
+import { getUserAvatarUrl } from '@/lib/utils/avatar'
+import type { Review } from '@/components/features/admin/types'
 
 interface CommentsTabProps {
   reviews: Review[]
   isReviewsLoading: boolean
   relativeTime: (date: string) => string
-  isToday: (date: string) => boolean
   onDeleteReview: (id: string | number) => void
-}
-
-// Helper to get user avatar URL
-function getUserAvatarUrl(user: { files?: { name_used?: string; name?: string; ext?: string }[] } | null | undefined): string | null {
-  if (!user || !user.files || user.files.length === 0) return null
-  const avatarFile = user.files.find((f) => f?.name_used === 'user_img')
-  if (!avatarFile || !avatarFile.name || !avatarFile.ext) return null
-  const path = `/images/users/large/${avatarFile.name}.${avatarFile.ext}`
-  return withOrigin(path) || null
 }
 
 export function CommentsTab({

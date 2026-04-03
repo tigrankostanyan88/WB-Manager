@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { Search, Edit, Trash2, User as UserIcon } from 'lucide-react'
+import { getUserAvatarUrl } from '@/lib/utils/avatar'
 import type { User } from '../types'
-import { withOrigin } from '../../_utils/image'
 import { ConfirmationModal } from '@/components/shared'
 
 interface UsersTabProps {
@@ -15,16 +15,6 @@ interface UsersTabProps {
   getUserPaymentStatus: (userId: number | string) => boolean
   onEdit: (user: User) => void
   onDelete: (id: string) => void
-}
-
-// Helper to get user avatar URL
-function getUserAvatarUrl(user: User): string | null {
-  const files = user.files
-  if (!files || !Array.isArray(files) || files.length === 0) return null
-  const avatarFile = files.find((f) => f?.name_used === 'user_img')
-  if (!avatarFile) return null
-  const path = `/images/users/large/${avatarFile.name}.${avatarFile.ext}`
-  return withOrigin(path) || null
 }
 
 export function UsersTab({

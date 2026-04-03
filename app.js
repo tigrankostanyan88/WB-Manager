@@ -35,8 +35,10 @@ app.use(
     origin: (origin, callback) => {
       const allowedOrigins = [
         process.env.CLIENT_ORIGIN,
-        'http://localhost:3000',
-        'http://localhost:3001'
+        ...(process.env.NODE_ENV !== 'production' ? [
+          'http://localhost:3000',
+          'http://localhost:3001'
+        ] : [])
       ].filter(Boolean);
       
       // Allow requests with no origin (mobile apps, curl, etc.)
