@@ -44,12 +44,8 @@ export function useHeroContent(): UseHeroContentReturn {
   const [content, setContent] = useState<HeroContent | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
-  const hasFetched = useRef(false)
 
   useEffect(() => {
-    // Skip if already fetched (Fast Refresh protection)
-    if (hasFetched.current) return
-    
     let cancelled = false
 
     const fetchHeroContent = async () => {
@@ -75,7 +71,6 @@ export function useHeroContent(): UseHeroContentReturn {
       } finally {
         if (!cancelled) {
           setLoading(false)
-          hasFetched.current = true
         }
       }
     }

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { Search, Edit, Trash2, User as UserIcon } from 'lucide-react'
 import type { User } from '../types'
-import { withOrigin } from '../_utils/image'
+import { withOrigin } from '../../_utils/image'
 import { ConfirmationModal } from '@/components/shared'
 
 interface UsersTabProps {

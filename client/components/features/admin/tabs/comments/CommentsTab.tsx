@@ -3,7 +3,7 @@
 import { Trash2, User as UserIcon } from 'lucide-react'
 import Image from 'next/image'
 import type { Review } from '../types'
-import { withOrigin } from '../_utils/image'
+import { withOrigin } from '../../_utils/image'
 
 interface CommentsTabProps {
   reviews: Review[]
