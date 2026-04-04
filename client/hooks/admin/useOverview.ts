@@ -33,7 +33,7 @@ const fetchOverviewData = async (): Promise<OverviewData> => {
   ])
 
   // Process users data
-  const allUsers = (resUsers.data?.users || []) as User[]
+  const allUsers = ((resUsers.data as { users?: User[] })?.users || []) as User[]
   const recentStudents = allUsers
     .filter((u) => u.role === 'student')
     .sort((a, b) => new Date(String(b.createdAt || 0)).getTime() - new Date(String(a.createdAt || 0)).getTime())

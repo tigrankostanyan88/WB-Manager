@@ -67,7 +67,7 @@ export function ModuleCard({ module, courses, onEdit, onDelete }: ModuleCardProp
             Փոփոխել
           </button>
           <button
-            onClick={() => onDelete(module.id)}
+            onClick={() => onDelete(String(module.id))}
             className="flex items-center justify-center px-4 py-2 bg-slate-50 text-slate-500 rounded-xl hover:bg-red-50 hover:text-red-600 transition-colors"
           >
             <Trash2 className="w-4 h-4" />

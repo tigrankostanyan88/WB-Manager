@@ -7,21 +7,12 @@
 import { lazy, ComponentType } from 'react'
 import type { DashboardTabId } from '@/components/features/admin/types'
 
-// Tab component type definition
-export interface TabComponentProps {
-  data: unknown
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TabComponent = ComponentType<any> | any
 
-export type TabComponent = ComponentType<TabComponentProps>
-
-/**
- * Tab configuration interface
- * - component: Lazy-loaded component
- * - preload: Whether to preload this tab on dashboard mount
- * - title: Display title for the tab
- */
 export interface TabConfig {
-  component: TabComponent
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: any
   title: string
   description?: string
 }
@@ -33,84 +24,79 @@ export interface TabConfig {
  */
 export const tabRegistry: Record<DashboardTabId, TabConfig> = {
   overview: {
-    component: lazy(() => import('@/components/features/admin/tabs/overview/OverviewTab')),
+    component: lazy(() => import('@/components/features/admin/tabs/overview/OverviewTab').then(m => ({ default: m.OverviewTab }))),
     title: 'Overview',
     description: 'Dashboard overview and statistics'
   },
   users: {
-    component: lazy(() => import('@/components/features/admin/tabs/users/UsersTab')),
+    component: lazy(() => import('@/components/features/admin/tabs/users/UsersTab').then(m => ({ default: m.UsersTab }))),
     title: 'Users',
     description: 'User management and administration'
   },
-  suspended: {
-    component: lazy(() => import('@/components/features/admin/tabs/suspended/SuspendedUsersTab')),
+  'suspended-users': {
+    component: lazy(() => import('@/components/features/admin/tabs/suspended/SuspendedUsersTab').then(m => ({ default: m.SuspendedUsersTab }))),
     title: 'Suspended Users',
     description: 'Manage suspended user accounts'
   },
   enrollments: {
-    component: lazy(() => import('@/components/features/admin/tabs/enrollments/EnrollmentsTab')),
+    component: lazy(() => import('@/components/features/admin/tabs/enrollments/EnrollmentsTab').then(m => ({ default: m.EnrollmentsTab }))),
     title: 'Enrollments',
     description: 'Course enrollment management'
   },
   'course-registrations': {
-    component: lazy(() => import('@/components/features/admin/tabs/course-registrations/CourseRegistrationsTab')),
+    component: lazy(() => import('@/components/features/admin/tabs/course-registrations/CourseRegistrationsTab').then(m => ({ default: m.CourseRegistrationsTab }))),
     title: 'Course Registrations',
     description: 'Course registration management'
   },
-  contact: {
-    component: lazy(() => import('@/components/features/admin/tabs/contact/ContactMessagesTab')),
+  'contact-messages': {
+    component: lazy(() => import('@/components/features/admin/tabs/contact/ContactMessagesTab').then(m => ({ default: m.ContactMessagesTab }))),
     title: 'Contact Messages',
     description: 'Contact form messages'
   },
   payments: {
-    component: lazy(() => import('@/components/features/admin/tabs/payments/PaymentsTab')),
+    component: lazy(() => import('@/components/features/admin/tabs/payments/PaymentsTab').then(m => ({ default: m.PaymentsTab }))),
     title: 'Payments',
     description: 'Payment management and history'
   },
-  bankcards: {
-    component: lazy(() => import('@/components/features/admin/tabs/bankcards/BankCardsTab')),
+  'bank-cards': {
+    component: lazy(() => import('@/components/features/admin/tabs/bankcards/BankCardsTab').then(m => ({ default: m.BankCardsTab }))),
     title: 'Bank Cards',
     description: 'Bank card management'
   },
   courses: {
-    component: lazy(() => import('@/components/features/admin/tabs/courses/CoursesTab')),
+    component: lazy(() => import('@/components/features/admin/tabs/courses/CoursesTab').then(m => ({ default: m.CoursesTab }))),
     title: 'Courses',
     description: 'Course management'
   },
   modules: {
-    component: lazy(() => import('@/components/features/admin/tabs/modules/ModulesTab')),
+    component: lazy(() => import('@/components/features/admin/tabs/modules/ModulesTab').then(m => ({ default: m.ModulesTab }))),
     title: 'Modules',
     description: 'Module management'
   },
   comments: {
-    component: lazy(() => import('@/components/features/admin/tabs/comments/CommentsTab')),
+    component: lazy(() => import('@/components/features/admin/tabs/comments/CommentsTab').then(m => ({ default: m.CommentsTab }))),
     title: 'Comments',
     description: 'Course comments and reviews'
   },
   instructor: {
-    component: lazy(() => import('@/components/features/admin/tabs/instructor/InstructorTab')),
+    component: lazy(() => import('@/components/features/admin/tabs/instructor/InstructorTab').then(m => ({ default: m.InstructorTab }))),
     title: 'Instructor',
     description: 'Instructor profile management'
   },
   faq: {
-    component: lazy(() => import('@/components/features/admin/tabs/faq/FaqTab')),
+    component: lazy(() => import('@/components/features/admin/tabs/faq/FaqTab').then(m => ({ default: m.FaqTab }))),
     title: 'FAQ',
     description: 'Frequently asked questions'
   },
   'hero-content': {
-    component: lazy(() => import('@/components/features/admin/tabs/hero-content/HeroContentTab')),
+    component: lazy(() => import('@/components/features/admin/tabs/hero-content/HeroContentTab').then(m => ({ default: m.HeroContentTab }))),
     title: 'Hero Content',
     description: 'Homepage hero section content'
   },
   settings: {
-    component: lazy(() => import('@/components/features/admin/tabs/settings/SettingsTab')),
+    component: lazy(() => import('@/components/features/admin/tabs/settings/SettingsTab').then(m => ({ default: m.SettingsTab }))),
     title: 'Settings',
     description: 'Site settings and configuration'
-  },
-  'student-courses': {
-    component: lazy(() => import('@/components/features/admin/tabs/student-courses/StudentCoursesTab')),
-    title: 'Student Courses',
-    description: 'Student course assignments'
   }
 }
 

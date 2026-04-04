@@ -79,7 +79,7 @@ export function getVideoCount(module: ModuleItem): number {
 }
 
 export function getTotalVideoDuration(module: ModuleItem): number {
-  return durationToMinutes(module.duration)
+  return durationToMinutes(module.duration || '')
 }
 
 export function formatMinutes(minutes: number): string {

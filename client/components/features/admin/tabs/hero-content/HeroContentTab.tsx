@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { Card, CardContent } from '@/components/ui/card'
 import { useState, useRef, useCallback } from 'react'
-import type { HeroContentForm } from '../hooks/useHeroContent'
+import type { HeroContentForm } from '@/hooks/admin/useHeroContent'
 import { VideoPlayerModal } from '@/components/shared'
 import { VideoUploadSection, TextFieldsSection, ActionButtons } from './'
 

@@ -45,12 +45,12 @@ export function HeroVideo({
   )
 
   return (
-    <div className="relative group perspective-1000 w-full">
+    <div className="relative group w-full max-w-full overflow-hidden">
       <div 
-        className="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200 bg-white ring-1 ring-slate-100 transform transition-transform duration-700 group-hover:rotate-y-2 group-hover:scale-[1.02] cursor-pointer"
+        className="relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200 bg-white ring-1 ring-slate-100 transform transition-transform duration-700 hover:scale-[1.02] cursor-pointer max-w-full"
         onClick={handleVideoClick}
       >
-        <div className="aspect-[16/10] w-full relative overflow-hidden bg-slate-100">
+        <div className="aspect-[16/10] w-full max-w-full relative overflow-hidden bg-slate-100">
           {/* Video Thumbnail */}
           <video
             src={content?.video_url || '/files/hero.mp4'}

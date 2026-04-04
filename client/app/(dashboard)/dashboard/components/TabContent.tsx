@@ -124,9 +124,6 @@ export function TabContent({ activeTab, data }: TabContentProps) {
           editCourse={data.editCourse}
           deleteCourse={data.deleteCourse}
           cancelNewCourse={data.cancelNewCourse}
-          addLearningPoint={data.addLearningPoint}
-          changeLearningPoint={data.changeLearningPoint}
-          removeLearningPoint={data.removeLearningPoint}
           submitCourse={data.submitCourse}
           courses={data.courses}
           isLoading={data.isCoursesLoading}
@@ -168,7 +165,6 @@ export function TabContent({ activeTab, data }: TabContentProps) {
           reviews={data.reviews}
           isReviewsLoading={data.isReviewsLoading}
           relativeTime={data.reviewsRelativeTime}
-          isToday={data.isToday}
           onDeleteReview={data.handleDeleteReview}
         />
       )
@@ -222,7 +218,6 @@ export function TabContent({ activeTab, data }: TabContentProps) {
           handleVideoChange={data.handleHeroVideoChange}
           clearVideo={data.clearHeroVideo}
           submitContent={data.submitHeroContent}
-          deleteContent={data.deleteHeroContent}
         />
       )
 

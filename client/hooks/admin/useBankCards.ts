@@ -98,16 +98,15 @@ export function useBankCards() {
     }
   }, [])
 
-  const handleCreateCard = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!formData.bank_name || !formData.card_number) {
+  const handleCreateCard = useCallback(async (data: BankCardFormData) => {
+    if (!data.bank_name || !data.card_number) {
       toast.error('Բոլոր դաշտերը պարտադիր են')
       return
     }
 
     setIsSubmitting(true)
     try {
-      const res = await api.post('/api/v1/bank-cards', formData)
+      const res = await api.post('/api/v1/bank-cards', data)
       if (res.data?.status === 'success') {
         await fetchCards()
         setFormData({ bank_name: '', card_number: '', is_active: true })
@@ -119,7 +118,7 @@ export function useBankCards() {
     } finally {
       setIsSubmitting(false)
     }
-  }, [formData, fetchCards])
+  }, [fetchCards])
 
   const handleUpdateCard = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()

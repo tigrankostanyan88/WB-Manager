@@ -24,9 +24,6 @@ export function CoursesTabWrapper({ showToast }: CoursesTabWrapperProps) {
       editCourse={courses.editCourse}
       deleteCourse={courses.deleteCourse}
       cancelNewCourse={courses.cancelNewCourse}
-      addLearningPoint={courses.addLearningPoint}
-      changeLearningPoint={courses.changeLearningPoint}
-      removeLearningPoint={courses.removeLearningPoint}
       submitCourse={courses.submitCourse}
       courses={courses.courses}
       isLoading={courses.isLoading}

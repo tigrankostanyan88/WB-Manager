@@ -55,15 +55,15 @@ export function useModules({ showToast }: UseModulesParams) {
       return
     }
     setEditingId(null)
-    setModuleForm({ ...emptyForm, courseId: courses[0]?.id || '' })
+    setModuleForm({ ...emptyForm, courseId: String(courses[0]?.id) || '' })
     setShowModuleForm(true)
   }
 
   const editModule = (module: ModuleItem) => {
-    setEditingId(module.id)
+    setEditingId(String(module.id))
     setModuleForm({
       title: module.title,
-      courseId: module.courseId,
+      courseId: String(module.courseId),
       description: '',
     })
     const videos = getModuleVideos(module)
@@ -120,10 +120,10 @@ export function useModules({ showToast }: UseModulesParams) {
         const newModule = newModuleData ? mapModule(newModuleData) : null
 
         if (newModule && newModule.id) {
-          setEditingId(newModule.id)
+          setEditingId(String(newModule.id))
           setModuleForm({
             title: newModule.title,
-            courseId: newModule.courseId,
+            courseId: String(newModule.courseId),
             description: '',
           })
           const videos = getModuleVideos(newModule)

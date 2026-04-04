@@ -1,7 +1,7 @@
 'use client'
 
 import { Plus, Edit, Trash2, X, Check } from 'lucide-react'
-import type { FAQ } from '../types'
+import type { FAQ } from '@/components/features/admin/types'
 
 interface FaqTabProps {
   faqs: FAQ[]

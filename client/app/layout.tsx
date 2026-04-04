@@ -3,6 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import { ReactNode } from 'react'
 import { ConfirmProvider } from '@/components/providers/ConfirmProvider'
 import { QueryProvider } from '@/components/providers/QueryProvider'
+import { LenisProvider } from '@/components/providers/LenisProvider'
+import { ScrollToTop } from '@/components/shared/ScrollToTop'
 import { SettingsProvider, useSettings } from '@/context/SettingsContext'
 import { AuthProvider } from '@/lib/auth'
 import type { User } from '@/lib/auth'
@@ -156,15 +158,18 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         />
       </head>
       <body style={{ fontFamily: '"Noto Sans Armenian", Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif' }}>
-        <QueryProvider>
-          <AuthProvider initialUser={user as User | null}>
-            <SettingsProvider initialSettings={settings}>
-              <ConfirmProvider>
-                {children}
-              </ConfirmProvider>
-            </SettingsProvider>
-          </AuthProvider>
-        </QueryProvider>
+        <LenisProvider>
+          <QueryProvider>
+            <AuthProvider initialUser={user as User | null}>
+              <SettingsProvider initialSettings={settings}>
+                <ConfirmProvider>
+                  {children}
+                  <ScrollToTop />
+                </ConfirmProvider>
+              </SettingsProvider>
+            </AuthProvider>
+          </QueryProvider>
+        </LenisProvider>
       </body>
     </html>
   )

@@ -5,7 +5,22 @@ import type { Course } from '@/components/features/admin/types'
 import { useConfirm } from '@/components/providers/ConfirmProvider'
 import { CourseFormComponent } from './_components/CourseForm'
 import { CourseList } from './_components/CourseList'
-import type { CoursesTabProps } from './types'
+
+interface CoursesTabProps {
+  showCourseForm: boolean
+  courseForm: any
+  setCourseForm: React.Dispatch<React.SetStateAction<any>>
+  startNewCourse: () => void
+  editCourse: (course: Course) => void
+  deleteCourse: (courseId: string) => void
+  cancelNewCourse: () => void
+  submitCourse: (e: React.FormEvent) => Promise<void>
+  courses: Course[]
+  isLoading: boolean
+  onImageFileSelect?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  getCourseFirstVideoUrl?: (course: Course) => string | null
+  editingCourse?: Course | null
+}
 
 export function CoursesTab({
   showCourseForm,
@@ -27,7 +42,7 @@ export function CoursesTab({
   // Get video URL for the editing course (memoized)
   const editingCourseVideoUrl = useMemo(() => {
     if (!editingCourse) return null
-    return getCourseFirstVideoUrl(editingCourse)
+    return getCourseFirstVideoUrl?.(editingCourse) ?? null
   }, [editingCourse, getCourseFirstVideoUrl])
 
   // Handle delete with confirmation
@@ -69,7 +84,7 @@ export function CoursesTab({
         onEdit={editCourse}
         onDelete={handleDelete}
         onCreateNew={startNewCourse}
-        getCourseFirstVideoUrl={getCourseFirstVideoUrl}
+        getCourseFirstVideoUrl={getCourseFirstVideoUrl ?? (() => null)}
       />
     </div>
   )

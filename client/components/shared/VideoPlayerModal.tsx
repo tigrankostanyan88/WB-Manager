@@ -24,30 +24,32 @@ export function VideoPlayerModal({ videoUrl, onClose, className = '' }: VideoPla
 
   return (
     <div
-      className="fixed inset-0 z-[2147483647] w-screen h-screen bg-black/90 flex items-center justify-center p-4"
-      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+      className="fixed inset-0 z-[2147483647] w-full h-full min-h-screen min-w-full bg-black/95 flex items-center justify-center"
+      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, margin: 0, padding: 0 }}
       onClick={onClose}
     >
       <div
-        className={`relative w-full max-w-5xl bg-black rounded-xl overflow-hidden z-[2147483648] ${className}`}
+        className={`relative w-full h-full max-w-6xl max-h-screen mx-auto bg-black flex flex-col items-center justify-center ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-[10000] w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors"
+          className="absolute top-6 right-6 z-[10000] w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors"
           aria-label="Փակել տեսանյութը"
         >
-          <X className="w-6 h-6" />
+          <X className="w-7 h-7" />
         </button>
-        <video
-          src={videoUrl}
-          className="w-full aspect-video"
-          controls
-          autoPlay
-          playsInline
-          crossOrigin="anonymous"
-          preload="auto"
-        />
+        <div className="w-full h-full flex items-center justify-center bg-black">
+          <video
+            src={videoUrl}
+            className="w-full h-full max-h-screen object-contain"
+            controls
+            autoPlay
+            playsInline
+            crossOrigin="anonymous"
+            preload="auto"
+          />
+        </div>
       </div>
     </div>
   )

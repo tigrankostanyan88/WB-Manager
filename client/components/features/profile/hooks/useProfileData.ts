@@ -15,6 +15,7 @@ export interface ProfileUser {
   files?: UserFile[]
   isPaid?: boolean
   course_ids?: string[]
+  [key: string]: unknown  // Add index signature for compatibility
 }
 
 export interface Payment {
@@ -112,8 +113,8 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
       let progress = 0
       const modules = c.modules
       if (modules && Array.isArray(modules) && modules.length > 0) {
-        const completedModules = modules.filter((m) => {
-          return m.isCompleted || m.completed
+        const completedModules = modules.filter((m: any) => {
+          return (m as any).isCompleted || (m as any).completed
         }).length
         progress = Math.round((completedModules / modules.length) * 100)
       }
@@ -122,7 +123,7 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
         title: String(c.title || 'Անհայտ դասընթաց'),
         desc: String(c.description || ''),
         status: progress > 0 ? 'Ակտիվ' : 'Նոր',
-        lessons: modules?.length || Number(c.lessons_count) || Number(c.lessons) || 0,
+        lessons: modules?.length || Number((c as any).lessons_count) || Number((c as any).lessons) || 0,
         progress: progress,
         color: 'bg-violet-50 text-violet-600',
         borderColor: 'border-violet-100'
@@ -192,7 +193,7 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
       const courseIds = nextUser.course_ids || []
       
       // Fetch courses by IDs from course_ids
-      const courses: unknown[] = []
+      const courses: any[] = []
       for (const courseId of courseIds) {
         try {
           const courseRes = await api.get(`/api/v1/courses/${courseId}`)
@@ -204,7 +205,7 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
         }
       }
       
-      const transformedCourses = transformCourses(courses)
+      const transformedCourses = transformCourses(courses as Course[])
       setMyCourses(transformedCourses)
       setStats(calculateStats(transformedCourses))
 

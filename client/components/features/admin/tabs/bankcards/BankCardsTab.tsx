@@ -71,9 +71,8 @@ export function BankCardsTab() {
       {/* Create Form */}
       {showForm && (
         <BankCardForm
-          formData={formData}
+          initialData={formData}
           isSubmitting={isSubmitting}
-          onFormChange={setFormData}
           onSubmit={handleCreateCard}
           onCancel={() => setShowForm(false)}
         />

@@ -1,10 +1,10 @@
 'use client'
 
 import { useUsers } from '@/hooks/admin/useUsers'
-import type { User } from '@/components/features/admin/types'
+import type { DashboardTabId, User } from '@/components/features/admin/types'
 
 interface UseUsersTabParams {
-  activeTab: string
+  activeTab: DashboardTabId
   allowed: boolean
   currentUser: User | null
   showToast: (message: string, type?: 'success' | 'error') => void

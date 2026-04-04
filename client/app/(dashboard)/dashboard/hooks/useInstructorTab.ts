@@ -44,7 +44,9 @@ export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructo
         name: instructor.name || '',
         profession: instructor.profession || '',
         description: instructor.description || '',
-        badgeText: instructor.badgeText || ''
+        badgeText: instructor.badgeText || '',
+        avatarUrl: instructor.avatarUrl || '',
+        stats: instructor.stats || []
       })
     }
   }, [instructor])

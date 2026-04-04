@@ -64,15 +64,17 @@ export function HeroSection({
         <div className="absolute -bottom-[20%] left-[10%] w-[700px] h-[700px] bg-gradient-to-tr from-violet-400/20 via-indigo-400/20 to-blue-400/20 rounded-full blur-[120px]" />
       </div>
 
-      <div className="container relative z-10">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-20 items-center">
-          <HeroContent 
-            content={content} 
-            onOpenModal={onOpenModal} 
-            onPlayVideo={handleHeroPlay}
-          />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 relative z-10">
+        <div className="grid gap-8 lg:gap-12 xl:gap-16 lg:grid-cols-2 items-center max-w-7xl mx-auto">
+          <div className="min-w-0">
+            <HeroContent 
+              content={content} 
+              onOpenModal={onOpenModal} 
+              onPlayVideo={handleHeroPlay}
+            />
+          </div>
 
-          <div className="relative">
+          <div className="relative min-w-0">
             <HeroVideo
               content={content}
               playingVideo={playingVideo}

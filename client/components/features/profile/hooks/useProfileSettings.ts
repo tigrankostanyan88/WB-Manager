@@ -150,7 +150,7 @@ export function useProfileSettings({
     setIsUpdating(true)
     try {
       // Map PasswordData to the expected API format
-      const passwordPayload: Record<string, unknown> = {
+      const passwordPayload = {
         passwordCurrent: passwordData.passwordCurrent,
         password: passwordData.password,
         passwordConfirm: passwordData.passwordConfirm

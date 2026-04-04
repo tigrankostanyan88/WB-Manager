@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Camera, Clock, Facebook, Globe, Instagram, Mail, MapPin, MessageSquare, Phone, Save, Send, type LucideIcon } from 'lucide-react'
-import type { DayKey, SiteSettings, WorkingHoursSchedule } from '../types'
+import type { DayKey, SiteSettings, WorkingHoursSchedule } from '@/components/features/admin/types'
 import type { Dispatch, SetStateAction } from 'react'
 
 type SettingsTextKey = 'siteName' | 'phone' | 'email' | 'address' | 'facebook' | 'instagram' | 'telegram' | 'whatsapp'

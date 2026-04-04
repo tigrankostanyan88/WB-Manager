@@ -30,8 +30,8 @@ export function UserRow({ user, isSelected, onToggle, onRestore, onDelete }: Use
         <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center">
           {avatarUrl ? (
             <Image
-              src={avatarUrl || ''}
-              alt={user.name}
+              src={avatarUrl}
+              alt={user.name || 'User'}
               fill
               className="object-cover"
               sizes="40px"
