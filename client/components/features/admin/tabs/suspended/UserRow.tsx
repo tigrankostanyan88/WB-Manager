@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { RefreshCw, Trash2, User as UserIcon } from 'lucide-react'
-import type { User } from '../../types'
+import type { User } from '@/components/features/admin/types'
 import { getUserAvatarUrl } from './utils'
 
 interface UserRowProps {

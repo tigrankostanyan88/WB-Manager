@@ -26,10 +26,9 @@ const config = require('./src/config/app.config');
 const { Settings } = DB.models;
 
 const app = express();
-// Security: Hide Express version from response headers
+// Security:
 app.disable('x-powered-by');
 
-// CORS configuration - restrict origins for security
 app.use(
   cors({
     origin: (origin, callback) => {

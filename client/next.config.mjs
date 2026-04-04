@@ -34,7 +34,6 @@ const nextConfig = {
   },
   // Optimize for faster navigation
   poweredByHeader: false,
-  generateEtags: false,
   compress: true,
   async rewrites() {
     return [

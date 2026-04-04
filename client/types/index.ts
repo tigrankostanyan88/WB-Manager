@@ -3,6 +3,12 @@
  * Used across the application to ensure type consistency
  */
 
+// Re-export all domain entity types
+export * from './domain'
+
+// Re-export API types
+export * from './api'
+
 // API Response wrapper types
 export interface ApiResponse<T> {
   status: string

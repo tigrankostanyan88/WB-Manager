@@ -1,45 +1,57 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
 import { useConfirm } from '@/components/providers/ConfirmProvider'
 import type { DashboardTabId, Review } from '@/components/features/admin/types'
+import { queryKeys } from '@/lib/queryKeys'
 
 interface UseReviewsParams {
   activeTab: DashboardTabId
   allowed: boolean
 }
 
+const fetchReviews = async (): Promise<Review[]> => {
+  const res = await api.get('/api/v1/reviews')
+  const payload = res.data as { reviews?: unknown; data?: unknown }
+  let list: unknown[] = []
+  if (Array.isArray(payload.reviews)) {
+    list = payload.reviews
+  } else if (payload.data && typeof payload.data === 'object') {
+    const inner = payload.data as { reviews?: unknown }
+    if (Array.isArray(inner.reviews)) list = inner.reviews
+  }
+  return list as Review[]
+}
+
 export default function useReviews({ activeTab, allowed }: UseReviewsParams) {
   const confirm = useConfirm()
-  const [reviews, setReviews] = useState<Review[]>([])
-  const [isReviewsLoading, setIsReviewsLoading] = useState(false)
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    if (!allowed) return
-    if (activeTab !== 'comments') return
-    let cancelled = false
-    ;(async () => {
-      setIsReviewsLoading(true)
-      try {
-        const res = await api.get('/api/v1/reviews')
-        const payload = res.data as { reviews?: unknown; data?: unknown }
-        let list: unknown[] = []
-        if (Array.isArray(payload.reviews)) {
-          list = payload.reviews
-        } else if (payload.data && typeof payload.data === 'object') {
-          const inner = payload.data as { reviews?: unknown }
-          if (Array.isArray(inner.reviews)) list = inner.reviews
-        }
-        if (!cancelled) setReviews(list as Review[])
-      } finally {
-        if (!cancelled) setIsReviewsLoading(false)
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [activeTab, allowed])
+  const { data: reviews = [], isLoading: isReviewsLoading } = useQuery({
+    queryKey: queryKeys.reviews,
+    queryFn: fetchReviews,
+    enabled: allowed && activeTab === 'comments',
+    staleTime: 1000 * 60 * 5,
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number | string) => {
+      const ok = await confirm({
+        title: 'Ջնջե՞լ մեկնաբանությունը',
+        message: 'Գործողությունը չի վերադարձվի',
+        confirmText: 'Ջնջել',
+        cancelText: 'Չեղարկել',
+        tone: 'danger'
+      })
+      if (!ok) throw new Error('Cancelled')
+      await api.delete(`/api/v1/reviews/${id}`)
+      return id
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.reviews })
+    },
+  })
 
   const relativeTime = (iso?: string) => {
     if (!iso) return ''
@@ -61,16 +73,11 @@ export default function useReviews({ activeTab, allowed }: UseReviewsParams) {
   }
 
   const handleDeleteReview = async (id: number | string) => {
-    const ok = await confirm({
-      title: 'Ջնջե՞լ մեկնաբանությունը',
-      message: 'Գործողությունը չի վերադարձվի',
-      confirmText: 'Ջնջել',
-      cancelText: 'Չեղարկել',
-      tone: 'danger'
-    })
-    if (!ok) return
-    await api.delete(`/api/v1/reviews/${id}`)
-    setReviews((prev) => prev.filter((r) => String(r.id) !== String(id)))
+    try {
+      await deleteMutation.mutateAsync(id)
+    } catch (err) {
+      // User cancelled or error occurred
+    }
   }
 
   return { reviews, isReviewsLoading, relativeTime, isToday, handleDeleteReview }

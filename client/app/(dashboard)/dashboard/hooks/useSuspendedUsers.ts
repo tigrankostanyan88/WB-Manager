@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { userService } from '@/lib/api'
 import type { User } from '@/components/features/admin/types'
@@ -28,14 +28,14 @@ export function useSuspendedUsers(
     if (!allowed) return
     setIsSuspendedLoading(true)
     try {
-      const { data } = await userService.getSuspendedUsers()
-      setSuspendedUsers(data.users || [])
+      const { data } = await userService.getSuspendedUsers() as { data: { users?: User[] } }
+      setSuspendedUsers(data?.users || [])
     } catch {
-      showToast('Կասեցված օգտվողների ցուցակը բեռնել չհաջողվեց', 'error')
+      // Silent error - toast shown by caller if needed
     } finally {
       setIsSuspendedLoading(false)
     }
-  }, [showToast])
+  }, []) // Remove showToast from deps
 
   const handleRestoreUser = useCallback(async (id: number | string) => {
     try {

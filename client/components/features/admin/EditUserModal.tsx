@@ -80,44 +80,65 @@ export function EditUserModal({ user, open, onClose, onSubmit }: EditUserModalPr
   if (!open || !user) return null
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/40">
+    <div 
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/40"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="edit-user-title"
+    >
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[600px] flex flex-col">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="text-xl font-black text-slate-900">Թարմացնել օգտատիրոջը</h3>
+          <h3 id="edit-user-title" className="text-xl font-black text-slate-900">Թարմացնել օգտատիրոջը</h3>
           <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100" aria-label="Փակել">
-            <X className="w-5 h-5 text-slate-500" />
+            <X className="w-5 h-5 text-slate-500" aria-hidden="true" />
           </button>
         </div>
         <form onSubmit={submit} className="p-6 space-y-4 overflow-y-auto flex-1">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="user-name" className="sr-only">Անուն Ազգանուն</label>
+              <input
+                id="user-name"
+                value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                type="text"
+                placeholder="Անուն Ազգանուն"
+                className="w-full h-12 rounded-xl bg-slate-50 border border-slate-200 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+              />
+            </div>
+            <div>
+              <label htmlFor="user-phone" className="sr-only">Հեռախոսահամար</label>
+              <input
+                id="user-phone"
+                value={form.phone}
+                onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                type="tel"
+                placeholder="099 99 99 99"
+                className="w-full h-12 rounded-xl bg-slate-50 border border-slate-200 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+              />
+            </div>
+          </div>
+          <div>
+            <label htmlFor="user-email" className="sr-only">Էլ. փոստ</label>
             <input
-              value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              type="text"
-              placeholder="Անուն Ազգանուն"
-              className="w-full h-12 rounded-xl bg-slate-50 border border-slate-200 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20"
-            />
-            <input
-              value={form.phone}
-              onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-              type="tel"
-              placeholder="099 99 99 99"
+              id="user-email"
+              value={form.email}
+              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              type="email"
+              placeholder="example@gmail.com"
               className="w-full h-12 rounded-xl bg-slate-50 border border-slate-200 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20"
             />
           </div>
-          <input
-            value={form.email}
-            onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-            type="email"
-            placeholder="example@gmail.com"
-            className="w-full h-12 rounded-xl bg-slate-50 border border-slate-200 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20"
-          />
           <div className="border-t border-slate-100 pt-4">
-            <h4 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
-              <BookOpen className="w-4 h-4" />
+            <h4 id="courses-heading" className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+              <BookOpen className="w-4 h-4" aria-hidden="true" />
               Դասընթացների մուտք
             </h4>
-            <div className="max-h-48 overflow-y-auto space-y-2 bg-slate-50 rounded-xl p-3">
+            <div 
+              className="max-h-48 overflow-y-auto space-y-2 bg-slate-50 rounded-xl p-3"
+              role="group"
+              aria-labelledby="courses-heading"
+            >
               {courses.length === 0 ? (
                 <p className="text-sm text-slate-500 text-center py-4">Դասընթացներ չկան</p>
               ) : (
@@ -131,6 +152,7 @@ export function EditUserModal({ user, open, onClose, onSubmit }: EditUserModalPr
                       checked={form.courseIds.includes(course.id)}
                       onChange={() => toggleCourse(course.id)}
                       className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+                      aria-label={course.title}
                     />
                     <span className="text-sm font-medium text-slate-700">{course.title}</span>
                   </label>
@@ -144,7 +166,7 @@ export function EditUserModal({ user, open, onClose, onSubmit }: EditUserModalPr
               Չեղարկել
             </Button>
             <Button type="submit" className="rounded-xl bg-slate-900 hover:bg-slate-800">
-              <Save className="w-4 h-4 mr-2" />
+              <Save className="w-4 h-4 mr-2" aria-hidden="true" />
               Պահպանել
             </Button>
           </div>

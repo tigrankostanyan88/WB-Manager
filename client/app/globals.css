@@ -102,7 +102,6 @@ html {
   }
   body {
     @apply bg-background text-foreground;
-    background-color: #ffffff;
   }
 }
 
@@ -112,7 +111,7 @@ html {
   background-size: 40px 40px;
 }
 
-body, html, h1, H2, H3, H4, H5, H6 {
+body, html, h1, h2, h3, h4, h5, h6 {
   line-height: 1.8;
 }
 

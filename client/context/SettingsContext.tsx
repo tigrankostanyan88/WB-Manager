@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import api from '@/lib/api'
+import { withOrigin } from '@/components/features/admin/_utils/image'
 
 type SettingsShape = {
   siteName?: string
@@ -23,14 +24,6 @@ interface SettingsContextType {
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined)
-
-const withOrigin = (url: string) => {
-  if (!url) return ''
-  if (url.startsWith('http')) return url
-  if (url.startsWith('/api/')) return url
-  if (url.startsWith('/images/')) return `/api${url}`
-  return url
-}
 
 export function SettingsProvider({ children, initialSettings = {} }: { children: ReactNode; initialSettings?: SettingsShape }) {
   const [settings, setSettings] = useState<SettingsShape>(initialSettings)

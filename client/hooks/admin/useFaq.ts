@@ -5,6 +5,7 @@ import type { FormEvent } from 'react'
 import api from '@/lib/api'
 import { useConfirm } from '@/components/providers/ConfirmProvider'
 import type { DashboardTabId, FAQ } from '@/components/features/admin/types'
+import { createErrorHandler } from '@/lib/errorHandler'
 
 interface UseFaqParams {
   activeTab: DashboardTabId
@@ -14,6 +15,7 @@ interface UseFaqParams {
 
 export default function useFaq({ activeTab, allowed, showToast }: UseFaqParams) {
   const confirm = useConfirm()
+  const { wrap } = createErrorHandler('useFaq', showToast)
   const [faqs, setFaqs] = useState<FAQ[]>([])
   const [faqForm, setFaqForm] = useState({ title: '', text: '' })
   const [isFaqLoading, setIsFaqLoading] = useState(false)
@@ -52,15 +54,21 @@ export default function useFaq({ activeTab, allowed, showToast }: UseFaqParams) 
       showToast('Լրացրեք պատասխանը', 'error')
       return
     }
-    setIsFaqSubmitting(true)
-    try {
-      const res = await api.post('/api/v1/faq', { title: faqForm.title.trim(), text: faqForm.text.trim() })
-      const created = (res.data as { item?: unknown }).item as FAQ | undefined
-      if (created) setFaqs([created, ...faqs])
-      setFaqForm({ title: '', text: '' })
-    } finally {
-      setIsFaqSubmitting(false)
-    }
+    
+    await wrap(
+      async () => {
+        const res = await api.post('/api/v1/faq', { title: faqForm.title.trim(), text: faqForm.text.trim() })
+        const created = (res.data as { item?: unknown }).item as FAQ | undefined
+        if (created) setFaqs([created, ...faqs])
+        setFaqForm({ title: '', text: '' })
+        return created
+      },
+      {
+        setLoading: setIsFaqSubmitting,
+        successMessage: 'Հարցը ավելացված է',
+        errorMessage: 'Հարց ավելացնելիս սխալ է տեղի ունեցել'
+      }
+    )
   }
 
   const startEdit = (f: FAQ) => {
@@ -84,19 +92,25 @@ export default function useFaq({ activeTab, allowed, showToast }: UseFaqParams) 
       return
     }
     if (!editingId) return
-    setIsFaqUpdating(true)
-    try {
-      const res = await api.put(`/api/v1/faq/${editingId}`, { title: editForm.title.trim(), text: editForm.text.trim() })
-      const updated = (res.data as { item?: unknown }).item as FAQ | undefined
-      if (updated) {
-        setFaqs(faqs.map((f) => (f.id === editingId ? { id: updated.id, question: updated.question, answer: updated.answer } : f)))
-      } else {
-        setFaqs(faqs.map((f) => (f.id === editingId ? { ...f, question: editForm.title, answer: editForm.text } : f)))
+    
+    await wrap(
+      async () => {
+        const res = await api.put(`/api/v1/faq/${editingId}`, { title: editForm.title.trim(), text: editForm.text.trim() })
+        const updated = (res.data as { item?: unknown }).item as FAQ | undefined
+        if (updated) {
+          setFaqs(faqs.map((f) => (f.id === editingId ? { id: updated.id, question: updated.question, answer: updated.answer } : f)))
+        } else {
+          setFaqs(faqs.map((f) => (f.id === editingId ? { ...f, question: editForm.title, answer: editForm.text } : f)))
+        }
+        cancelEdit()
+        return updated
+      },
+      {
+        setLoading: setIsFaqUpdating,
+        successMessage: 'Հարցը թարմացված է',
+        errorMessage: 'Հարց թարմացնելիս սխալ է տեղի ունեցել'
       }
-      cancelEdit()
-    } finally {
-      setIsFaqUpdating(false)
-    }
+    )
   }
 
   const deleteFaq = async (id: number) => {
@@ -108,8 +122,17 @@ export default function useFaq({ activeTab, allowed, showToast }: UseFaqParams) 
       tone: 'danger'
     })
     if (!ok) return
-    await api.delete(`/api/v1/faq/${id}`)
-    setFaqs(faqs.filter((f) => f.id !== id))
+    
+    await wrap(
+      async () => {
+        await api.delete(`/api/v1/faq/${id}`)
+        setFaqs(faqs.filter((f) => f.id !== id))
+      },
+      {
+        successMessage: 'Հարցը ջնջված է',
+        errorMessage: 'Հարց ջնջելիս սխալ է տեղի ունեցել'
+      }
+    )
   }
 
   return {

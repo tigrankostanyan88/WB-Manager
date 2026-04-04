@@ -4,7 +4,7 @@
 
 import { useState } from 'react'
 import { useConfirm } from '@/components/providers/ConfirmProvider'
-import type { DashboardTabId } from '../../types'
+import type { DashboardTabId } from '@/components/features/admin/types'
 import type { ModuleFile, ModuleItem, ModuleForm } from './types'
 import { mapModule, getVideoUrl } from './utils'
 import { useModulesQuery, useModuleCoursesQuery } from './queries'

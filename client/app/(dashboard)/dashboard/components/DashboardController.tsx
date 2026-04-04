@@ -5,7 +5,11 @@ import { DashboardSidebar } from '@/components/features/admin'
 import { CropModal } from '@/components/features/admin'
 import { NotificationContainer } from '@/components/features/admin'
 import { useDashboardSimple as useDashboard } from '../hooks/useDashboardSimple'
-import { useSuspendedTab, useInstructorTab, useCropTab, useContactMessagesTab, useCourseRegistrationsTab } from '../hooks/tabs'
+import { useSuspendedUsers } from '@/app/(dashboard)/dashboard/hooks/useSuspendedUsers'
+import { useInstructorTab } from '@/app/(dashboard)/dashboard/hooks/useInstructorTab'
+import useCrop from '@/hooks/admin/useCrop'
+import { useContactMessages } from '@/hooks/admin/useContactMessages'
+import { useCourseRegistrations } from '@/hooks/admin/useCourseRegistrations'
 import { LoadingState } from './LoadingState'
 import { UnauthorizedState } from './UnauthorizedState'
 import { TabContent } from './TabContentNew'
@@ -26,11 +30,11 @@ export function DashboardController() {
   } = useDashboard()
 
   // Get data for sidebar badges and modals
-  const suspended = useSuspendedTab({ showToast })
+  const suspended = useSuspendedUsers(showToast)
   const instructor = useInstructorTab({ activeTab, allowed, showToast })
-  const crop = useCropTab({ setSiteSettings: () => {} })
-  const contactMessages = useContactMessagesTab({ activeTab, allowed })
-  const registrations = useCourseRegistrationsTab({ activeTab, allowed })
+  const crop = useCrop({ setSiteSettings: () => {} })
+  const contactMessages = useContactMessages({ activeTab, allowed })
+  const registrations = useCourseRegistrations({ activeTab, allowed })
 
   if (isAuthLoading) {
     return <LoadingState />

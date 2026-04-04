@@ -5,7 +5,7 @@ import { Clock, ChevronRight, PlayCircle, BookOpen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import type { UserCourse } from '../../hooks/useProfileData'
+import type { UserCourse } from '@/components/features/profile/hooks/useProfileData'
 
 interface ProfileCoursesProps {
   courses: UserCourse[]

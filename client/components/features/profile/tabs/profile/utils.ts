@@ -1,5 +1,5 @@
 // Profile tab types
-import type { UserCourse, Payment } from '../../hooks/useProfileData'
+import type { UserCourse, Payment } from '@/components/features/profile/hooks/useProfileData'
 
 export interface ProfileUser {
   role?: string

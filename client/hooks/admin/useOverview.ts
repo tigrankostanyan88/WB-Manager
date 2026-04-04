@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { userService } from '@/lib/api'
 import api from '@/lib/api'
-import { logger } from '@/lib/logger'
+import { queryKeys } from '@/lib/queryKeys'
 import type { DashboardTabId, User } from '@/components/features/admin/types'
 
 interface StatCounts {
@@ -13,15 +13,75 @@ interface StatCounts {
   activeUsers: number
 }
 
+interface OverviewData {
+  recentStudents: User[]
+  statCounts: StatCounts
+}
+
 interface UseOverviewParams {
   activeTab: DashboardTabId
   allowed: boolean
 }
 
+const fetchOverviewData = async (): Promise<OverviewData> => {
+  // Fetch all required data in parallel
+  const [resUsers, resEnrollments, resCourses, resReviews] = await Promise.all([
+    userService.getAllUsers(),
+    api.get('/api/v1/student-courses'),
+    api.get('/api/v1/courses'),
+    api.get('/api/v1/reviews'),
+  ])
+
+  // Process users data
+  const allUsers = (resUsers.data?.users || []) as User[]
+  const recentStudents = allUsers
+    .filter((u) => u.role === 'student')
+    .sort((a, b) => new Date(String(b.createdAt || 0)).getTime() - new Date(String(a.createdAt || 0)).getTime())
+    .slice(0, 5)
+
+  const activeUsersCount = allUsers.filter((u) => u.role === 'user').length
+
+  // Process enrollments
+  const enrollmentsData = Array.isArray(resEnrollments.data)
+    ? resEnrollments.data
+    : (resEnrollments.data?.data || [])
+  const studentsCount = Array.isArray(enrollmentsData) ? enrollmentsData.length : 0
+
+  // Process courses
+  const coursesData = Array.isArray(resCourses.data?.data)
+    ? resCourses.data.data
+    : (resCourses.data?.data?.courses || resCourses.data?.courses || [])
+  const coursesCount = Array.isArray(coursesData) ? coursesData.length : 0
+
+  // Process reviews
+  const payload = resReviews.data as { reviews?: unknown; data?: unknown }
+  let reviewsList: unknown[] = []
+  if (Array.isArray(payload.reviews)) {
+    reviewsList = payload.reviews
+  } else if (payload.data && typeof payload.data === 'object') {
+    const inner = payload.data as { reviews?: unknown }
+    if (Array.isArray(inner.reviews)) reviewsList = inner.reviews
+  }
+  const reviewsCount = reviewsList.length
+
+  return {
+    recentStudents,
+    statCounts: {
+      students: studentsCount,
+      courses: coursesCount,
+      reviews: reviewsCount,
+      activeUsers: activeUsersCount,
+    },
+  }
+}
+
 export default function useOverview({ activeTab, allowed }: UseOverviewParams) {
-  const [recentStudents, setRecentStudents] = useState<User[]>([])
-  const [isRecentLoading, setIsRecentLoading] = useState(false)
-  const [statCounts, setStatCounts] = useState<StatCounts>({ students: 0, courses: 0, reviews: 0, activeUsers: 0 })
+  const { data, isLoading } = useQuery({
+    queryKey: queryKeys.overview,
+    queryFn: fetchOverviewData,
+    enabled: allowed && activeTab === 'overview',
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  })
 
   const relativeTime = (iso?: string) => {
     if (!iso) return ''
@@ -35,64 +95,10 @@ export default function useOverview({ activeTab, allowed }: UseOverviewParams) {
     return `${days} օր առաջ`
   }
 
-  useEffect(() => {
-    if (!allowed) return
-    if (activeTab !== 'overview') return
-    let cancelled = false
-    ;(async () => {
-      setIsRecentLoading(true)
-      try {
-        const resUsers = await userService.getAllUsers()
-        const allUsers = (resUsers.data?.users || []) as User[]
-        const usersList = allUsers
-          .filter((u) => u.role === 'student')
-          .sort((a, b) => new Date(String(b.createdAt || 0)).getTime() - new Date(String(a.createdAt || 0)).getTime())
-          .slice(0, 5)
-
-        const studentsCount = allUsers.filter((u) => u.role === 'student').length
-        const activeUsersCount = allUsers.filter((u) => u.role === 'user').length
-        
-        // Fetch actual course participants (enrolled students)
-        const resEnrollments = await api.get('/api/v1/student-courses')
-        const enrollmentsData = Array.isArray(resEnrollments.data) 
-          ? resEnrollments.data 
-          : (resEnrollments.data?.data || [])
-        const enrolledStudentsCount = Array.isArray(enrollmentsData) ? enrollmentsData.length : 0
-        
-        const resCourses = await api.get('/api/v1/courses')
-        const coursesData = Array.isArray(resCourses.data?.data) ? resCourses.data.data : (resCourses.data?.data?.courses || resCourses.data?.courses || [])
-        const coursesCount = Array.isArray(coursesData) ? coursesData.length : 0
-
-        const resReviews = await api.get('/api/v1/reviews')
-        const payload = resReviews.data as { reviews?: unknown; data?: unknown }
-        let reviewsList: unknown[] = []
-        if (Array.isArray(payload.reviews)) {
-          reviewsList = payload.reviews
-        } else if (payload.data && typeof payload.data === 'object') {
-          const inner = payload.data as { reviews?: unknown }
-          if (Array.isArray(inner.reviews)) reviewsList = inner.reviews
-        }
-        const reviewsCount = reviewsList.length
-
-        if (!cancelled) {
-          setRecentStudents(usersList)
-          setStatCounts({ students: enrolledStudentsCount, courses: coursesCount, reviews: reviewsCount, activeUsers: activeUsersCount })
-        }
-      } catch (err: unknown) {
-        logger.error('useOverview: Failed to fetch dashboard data', err)
-        // Set default empty state on error so UI doesn't crash
-        if (!cancelled) {
-          setRecentStudents([])
-          setStatCounts({ students: 0, courses: 0, reviews: 0, activeUsers: 0 })
-        }
-      } finally {
-        if (!cancelled) setIsRecentLoading(false)
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [activeTab, allowed])
-
-  return { recentStudents, isRecentLoading, statCounts, relativeTime }
+  return {
+    recentStudents: data?.recentStudents ?? [],
+    isRecentLoading: isLoading,
+    statCounts: data?.statCounts ?? { students: 0, courses: 0, reviews: 0, activeUsers: 0 },
+    relativeTime,
+  }
 }

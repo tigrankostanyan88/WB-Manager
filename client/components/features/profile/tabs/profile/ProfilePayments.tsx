@@ -3,7 +3,7 @@
 import { CreditCard } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import type { Payment } from '../../hooks/useProfileData'
+import type { Payment } from '@/components/features/profile/hooks/useProfileData'
 
 interface ProfilePaymentsProps {
   payments: Payment[]

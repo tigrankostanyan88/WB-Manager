@@ -1,7 +1,7 @@
 'use client'
 
-import type { User } from '../../types'
-import { withOrigin } from '../../_utils/image'
+import type { User } from '@/components/features/admin/types'
+import { withOrigin } from '@/components/features/admin/_utils/image'
 
 export interface SuspendedUsersTabProps {
   users: User[]

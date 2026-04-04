@@ -1,8 +1,9 @@
 'use client'
 
-import { Search, Trash2 } from 'lucide-react'
+import { Search, Trash2, UserX } from 'lucide-react'
+import { EmptyState } from '@/components/ui/empty-state'
 import { UserRow } from './UserRow'
-import type { User } from '../../types'
+import type { User } from '@/components/features/admin/types'
 
 interface UsersTableProps {
   users: User[]
@@ -46,9 +47,16 @@ export function UsersTable({
 
   if (filteredUsers.length === 0) {
     return (
-      <p className="text-slate-500 text-center py-12">
-        {search.trim() ? 'Ոչինչ չի գտնվել' : 'Ժամանակավոր կասեցված օգտվողներ չկան'}
-      </p>
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm min-h-[400px]">
+        <EmptyState
+          icon={search.trim() ? Search : UserX}
+          title={search.trim() ? 'Ոչինչ չի գտնվել' : 'Ժամանակավոր կասեցված օգտվողներ չկան'}
+          description={search.trim() 
+            ? 'Փորձեք այլ որոնման բառեր' 
+            : 'Այս պահին ժամանակավորապես կասեցված օգտվողներ չկան'
+          }
+        />
+      </div>
     )
   }
 
