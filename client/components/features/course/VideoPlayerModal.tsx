@@ -41,33 +41,33 @@ export function VideoPlayerModal({ isOpen, onClose, videoUrl, title, duration }:
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="relative w-full h-screen max-w-none mx-auto bg-black flex flex-col"
+            className="relative w-full max-w-5xl mx-auto bg-black flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 z-[10000] w-12 h-12 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
+              className="absolute top-6 right-6 z-[10000] w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors"
               aria-label="Փակել տեսանյութը"
             >
-              <X className="w-6 h-6" />
+              <X className="w-7 h-7" />
             </button>
 
-            {/* Video player - fills remaining space */}
-            <div className="w-full flex-1 flex items-center justify-center bg-black min-h-0">
+            {/* Video player - natural aspect ratio */}
+            <div className="w-full flex items-center justify-center bg-black">
               {videoUrl ? (
                 <video
                   src={videoUrl}
                   controls
                   autoPlay
                   playsInline
-                  className="w-full h-full object-contain"
+                  className="w-full max-w-5xl aspect-video object-contain"
                   controlsList="nodownload"
                 >
                   Ձեր browser-ը չի աջակցում վիդեո tag:
                 </video>
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-white">
+                <div className="w-full aspect-video flex items-center justify-center text-white">
                   Վիդեոն հասանելի չէ
                 </div>
               )}
