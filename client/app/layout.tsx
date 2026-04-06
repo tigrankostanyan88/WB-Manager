@@ -5,6 +5,7 @@ import { ConfirmProvider } from '@/components/providers/ConfirmProvider'
 import { QueryProvider } from '@/components/providers/QueryProvider'
 import { LenisProvider } from '@/components/providers/LenisProvider'
 import { ScrollToTop } from '@/components/shared/ScrollToTop'
+import { PageTransition } from '@/components/shared/PageTransition'
 import { SettingsProvider, useSettings } from '@/context/SettingsContext'
 import { AuthProvider } from '@/lib/auth'
 import type { User } from '@/lib/auth'
@@ -163,7 +164,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <AuthProvider initialUser={user as User | null}>
               <SettingsProvider initialSettings={settings}>
                 <ConfirmProvider>
-                  {children}
+                  <PageTransition>
+                    {children}
+                  </PageTransition>
                   <ScrollToTop />
                 </ConfirmProvider>
               </SettingsProvider>

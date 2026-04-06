@@ -7,6 +7,10 @@ html {
   scrollbar-gutter: stable;
 }
 
+* {
+  transition: all 0.4s ease-in-out;
+}
+
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }

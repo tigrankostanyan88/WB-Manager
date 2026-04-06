@@ -161,7 +161,7 @@ export default function ProfilePage() {
       <Header />
       
       <main className="container max-w-[1400px] px-4 md:px-8 pt-32 pb-32 mt-[150px]">
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 items-start mt-[150px]">
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 items-start">
           
           <ProfileSidebar
             user={currentUser}
