@@ -1,8 +1,20 @@
 const repo = require('../repositories/courseRegistration');
+const AppError = require('../utils/appError');
 
 module.exports = {
   // Create new course registration
   createCourseRegistration: async (body) => {
+    // Validation with user-friendly Armenian messages
+    if (!body.course_id) {
+      throw new AppError('Խնդրում ենք ընտրել դասընթացը', 400);
+    }
+    if (!body.name || body.name.trim() === '') {
+      throw new AppError('Խնդրում ենք մուտքագրել ձեր անունը', 400);
+    }
+    if (!body.phone || body.phone.trim() === '') {
+      throw new AppError('Խնդրում ենք մուտքագրել հեռախոսահամարը', 400);
+    }
+
     return repo.create(body);
   },
 
