@@ -14,7 +14,6 @@ import { decodeJwt } from 'jose'
 import { prisma } from '@/lib/db'
 import { JwtPayloadSchema, DbUserSchema, SettingsSchema } from '@/lib/schemas'
 
-// Database User type from Prisma (minimal fields needed)
 interface DbUser {
   id: string
   email: string
@@ -28,8 +27,6 @@ interface DbUser {
   createdAt?: Date | null
   updatedAt?: Date | null
 }
-
-// Using web fonts via <link> to avoid SWC-native requirement during dev on Windows
 
 export async function generateMetadata(): Promise<Metadata> {
   let title = 'AI Tools SaaS'
@@ -73,12 +70,9 @@ async function getSettings() {
     if (res.ok) {
       const data = await res.json()
       if (data?.settings) {
-        // Apply withOrigin logic here since we are on server
         const s = data.settings
         if (s.logo && !s.logo.startsWith('http')) {
            s.logo = `${origin}${s.logo}`
-           // Actually, let's just ensure it is correct. 
-           // If logo starts with /images, prepend base.
            if (s.logo.startsWith('/images/')) {
              s.logo = `${origin}${s.logo}`
            }
@@ -87,7 +81,6 @@ async function getSettings() {
       }
     }
   } catch (err) {
-    // Graceful degradation - log error but don't crash the app
     if (process.env.NODE_ENV === 'development') {
       console.error('[getSettings] Failed to fetch settings:', err)
     }
@@ -132,7 +125,6 @@ async function getUser() {
       files: fullUser.files || []
     }
   } catch (err) {
-    // Graceful degradation for auth errors - user will be treated as logged out
     if (process.env.NODE_ENV === 'development') {
       console.error('[getUser] Auth error:', err)
     }
@@ -145,7 +137,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const user = await getUser()
 
   return (
-    <html lang="hy">
+    <html lang="hy" suppressHydrationWarning style={{ backgroundColor: '#ffffff' }}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -158,7 +150,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         />
       </head>
-      <body style={{ fontFamily: '"Noto Sans Armenian", Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif' }}>
+      <body>
         <LenisProvider>
           <QueryProvider>
             <AuthProvider initialUser={user as User | null}>

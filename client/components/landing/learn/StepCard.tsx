@@ -9,12 +9,20 @@ interface StepCardProps {
   isLast: boolean
 }
 
-const COLOR_CLASSES: Record<string, { bg: string; shadow: string }> = {
-  violet: { bg: 'bg-violet-500', shadow: 'shadow-violet-300/50' },
-  blue: { bg: 'bg-blue-500', shadow: 'shadow-blue-300/50' },
-  orange: { bg: 'bg-orange-500', shadow: 'shadow-orange-300/50' },
-  pink: { bg: 'bg-pink-500', shadow: 'shadow-pink-300/50' },
-  slate: { bg: 'bg-slate-500', shadow: 'shadow-slate-300/50' },
+const CARD_BG_CLASSES: Record<string, string> = {
+  violet: 'bg-gradient-to-br from-violet-50/80 to-violet-100/60',
+  blue: 'bg-gradient-to-br from-blue-50/80 to-blue-100/60',
+  orange: 'bg-gradient-to-br from-orange-50/80 to-orange-100/60',
+  pink: 'bg-gradient-to-br from-pink-50/80 to-pink-100/60',
+  slate: 'bg-gradient-to-br from-slate-50/80 to-slate-100/60',
+}
+
+const BADGE_BG_CLASSES: Record<string, string> = {
+  violet: 'bg-violet-500 shadow-violet-300/50',
+  blue: 'bg-blue-500 shadow-blue-300/50',
+  orange: 'bg-orange-500 shadow-orange-300/50',
+  pink: 'bg-pink-500 shadow-pink-300/50',
+  slate: 'bg-slate-500 shadow-slate-300/50',
 }
 
 const GRID_POSITIONS: Record<number, string> = {
@@ -24,17 +32,17 @@ const GRID_POSITIONS: Record<number, string> = {
 }
 
 export function StepCard({ step, index, isLast }: StepCardProps) {
-  const colors = COLOR_CLASSES[step.color] || COLOR_CLASSES.slate
+  const cardBg = CARD_BG_CLASSES[step.color] || CARD_BG_CLASSES.slate
+  const badgeClasses = BADGE_BG_CLASSES[step.color] || BADGE_BG_CLASSES.slate
   const positionClass = GRID_POSITIONS[index] || ''
 
   return (
     <div className={cn('relative group', positionClass)}>
-      <div className="bg-white rounded-[2rem] p-5 sm:p-6 shadow-xl shadow-slate-200/40 border border-slate-100 relative z-10 transition-transform hover:-translate-y-1 duration-300">
+      <div className={cn('rounded-[2rem] p-5 sm:p-6 shadow-xl shadow-slate-200/50 border border-white/80 backdrop-blur-sm relative z-10 hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-200/60 duration-300', cardBg)}>
         <div
           className={cn(
             'absolute -top-4 -left-4 sm:-top-6 sm:-left-6 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-lg rotate-[-6deg] group-hover:rotate-0 transition-transform ring-2 ring-white z-30',
-            colors.bg,
-            colors.shadow
+            badgeClasses
           )}
         >
           {step.number}

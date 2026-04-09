@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import type { Area, Point } from 'react-easy-crop'
 import type { SiteSettings } from '@/components/features/admin/types'
 import type { Dispatch, SetStateAction } from 'react'
+import { useSettings } from '@/context/SettingsContext'
 
 const createImage = (url: string) =>
   new Promise<HTMLImageElement>((resolve, reject) => {
@@ -55,9 +56,11 @@ const getCroppedImg = async (imageSrc: string, pixelCrop: Area, rotation = 0) =>
 
 interface UseCropParams {
   setSiteSettings: Dispatch<SetStateAction<SiteSettings>>
+  skipGlobalUpdate?: boolean
 }
 
-export default function useCrop({ setSiteSettings }: UseCropParams) {
+export default function useCrop({ setSiteSettings, skipGlobalUpdate }: UseCropParams) {
+  const { updateSettings } = useSettings()
   const [cropImage, setCropImage] = useState<string | null>(null)
   const [cropModalOpen, setCropModalOpen] = useState(false)
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 })
@@ -82,6 +85,9 @@ export default function useCrop({ setSiteSettings }: UseCropParams) {
     const file = new File([blob], `logo_${Date.now()}.png`, { type: 'image/png' })
     const url = URL.createObjectURL(file)
     setSiteSettings((prev) => ({ ...prev, logo: url, logoFile: file }))
+    if (!skipGlobalUpdate) {
+      updateSettings({ logo: url }) // Update global context for footer/nav only for site logo
+    }
     setCropModalOpen(false)
     setCropImage(null)
   }

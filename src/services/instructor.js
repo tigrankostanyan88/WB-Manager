@@ -13,6 +13,59 @@ module.exports = {
     };
   },
 
+  addInstructor: async (body, files, startTime) => {
+    console.log('[addInstructor] START, files:', Object.keys(files || {}));
+    await repo.sync();
+    
+    let instructor = await repo.findOne({ includeFiles: true });
+    console.log('[addInstructor] found instructor:', instructor ? 'yes' : 'no');
+    let wasCreated = false;
+
+    if (!instructor) {
+      console.log('[addInstructor] creating new instructor');
+      instructor = await repo.create(body);
+      wasCreated = true;
+    } else {
+      console.log('[addInstructor] updating existing instructor');
+      await repo.update(instructor, body);
+    }
+
+    instructor = await repo.findOne({ includeFiles: true });
+    console.log('[addInstructor] instructor after save:', instructor ? `id=${instructor.id}` : 'null');
+
+    // Handle avatar upload
+    const filePayload = files?.avatar || files?.instructor_img || files?.image;
+    console.log('[addInstructor] filePayload:', filePayload ? `name=${filePayload.name}` : 'none');
+
+    if (filePayload && filePayload.name && filePayload.mimetype) {
+      const modelForFiles = {
+        id: instructor.id,
+        files: Array.isArray(instructor.files) ? instructor.files : [],
+        constructor: { name: 'instructors' }
+      };
+
+      const image = await new Files(modelForFiles, filePayload).replace('instructor_img');
+
+      if (image.status !== 'success') {
+        const msg = typeof image.message === 'object' ? Object.values(image.message).join(' ') : image.message;
+        throw new AppError(msg, 400);
+      }
+
+      await instructor.createFile(image.table);
+      
+      const avatarUrl = `/images/instructors/large/${image.table.name}.${image.table.ext}`;
+      await repo.update(instructor, { avatar_url: avatarUrl });
+    }
+    
+    const finalInstructor = await repo.findOne({ includeFiles: true });
+    
+    return {
+      instructor: finalInstructor,
+      wasCreated,
+      time: `${Date.now() - startTime} ms`
+    };
+  },
+
   updateInstructor: async (body, files) => {
     await repo.sync();
     
@@ -61,7 +114,6 @@ module.exports = {
     return repo.findOne({ includeFiles: true });
   },
 
-  // Delete instructor
   deleteInstructor: async (id) => {
     await repo.sync();
     const instructor = await repo.findById(id);

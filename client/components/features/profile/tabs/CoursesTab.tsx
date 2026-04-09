@@ -37,7 +37,7 @@ export function CoursesTab({ isLoadingData, myCourses }: CoursesTabProps) {
               className="block group"
             >
               <Card className="h-full bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border-0 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                <div className="h-2 bg-gradient-to-r from-violet-500 to-indigo-600" />
+                <div className="h-2 bg-slate-200" />
                 <CardContent className="p-8">
                   <div className="flex justify-between items-start mb-8">
                     <div className="flex flex-col gap-2">
@@ -45,8 +45,8 @@ export function CoursesTab({ isLoadingData, myCourses }: CoursesTabProps) {
                         {course.status}
                       </span>
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
-                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Վճարված է</span>
+                        <div className="w-2 h-2 rounded-full bg-slate-400"></div>
+                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Վճարված է</span>
                       </div>
                     </div>
                   </div>
@@ -55,14 +55,14 @@ export function CoursesTab({ isLoadingData, myCourses }: CoursesTabProps) {
                   <div className="space-y-4">
                     <div className="flex justify-between text-[10px] font-black mb-1">
                       <span className="text-slate-400 uppercase tracking-widest">ԱՌԱՋԸՆԹԱՑ</span>
-                      <span className="text-violet-600">{course.progress}%</span>
+                      <span className="text-slate-600">{course.progress}%</span>
                     </div>
                     <div className="h-4 w-full bg-slate-50 rounded-full overflow-hidden p-1 border border-slate-100 shadow-inner">
                       <div
                         style={{ width: `${course.progress}%` }}
                         className={cn(
                           'h-full rounded-full shadow-lg transition-all duration-1000 ease-out',
-                          course.progress === 100 ? 'bg-gradient-to-r from-emerald-400 to-emerald-600' : 'bg-gradient-to-r from-violet-500 to-indigo-600'
+                          course.progress === 100 ? 'bg-slate-400' : 'bg-slate-600'
                         )}
                       />
                     </div>
@@ -78,13 +78,13 @@ export function CoursesTab({ isLoadingData, myCourses }: CoursesTabProps) {
           ))
         ) : (
           <div className="col-span-full text-center py-20 bg-white rounded-3xl shadow-lg shadow-slate-200/50">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center mx-auto mb-6">
+            <div className="w-24 h-24 rounded-full bg-white border border-slate-200 flex items-center justify-center mx-auto mb-6">
               <BookOpen className="w-12 h-12 text-slate-400" />
             </div>
             <h3 className="text-xl font-black text-slate-900 mb-2">Դեռ չկան դասընթացներ</h3>
             <p className="text-slate-500 mb-6">Սկսեք սովորել մեր դասընթացներից</p>
             <Link href="/courses" prefetch={true}>
-              <Button className="bg-violet-600 hover:bg-violet-700 text-white rounded-xl px-8 h-12 font-bold">
+              <Button className="bg-slate-800 hover:bg-slate-900 text-white rounded-xl px-8 h-12 font-bold">
                 Դիտել դասընթացները
               </Button>
             </Link>

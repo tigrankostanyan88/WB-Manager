@@ -105,7 +105,6 @@ export default function ProfilePage() {
     showToast
   })
 
-  // Fetch total courses count for points calculation
   useEffect(() => {
     const fetchTotalCourses = async () => {
       try {
@@ -129,7 +128,7 @@ export default function ProfilePage() {
 
   if (!isReady) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+      <div className="flex items-center justify-center min-h-screen bg-white">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
       </div>
     )
@@ -155,25 +154,26 @@ export default function ProfilePage() {
     : allSidebarLinks
 
   return (
-    <div className="min-h-screen bg-white">
-      <PaymentModal open={showPaymentModal} onClose={() => setShowPaymentModal(false)} />
+    <>
+      <div className="min-h-screen">
+        <PaymentModal open={showPaymentModal} onClose={() => setShowPaymentModal(false)} />
 
-      <Header />
-      
-      <main className="container max-w-[1400px] px-4 md:px-8 pt-32 pb-32 mt-[150px]">
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 items-start">
-          
-          <ProfileSidebar
-            user={currentUser}
-            activeTab={activeTab}
-            isUploadingAvatar={isUploadingAvatar}
-            avatarPreview={avatarPreview}
-            sidebarLinks={sidebarLinks}
-            onTabChange={(t) => setActiveTab(t)}
-            onAvatarUpload={handleAvatarUpload}
-            onShowPaymentModal={() => setShowPaymentModal(true)}
-            onLogout={logout}
-          />
+        <Header />
+        
+        <main className="container max-w-[1400px] mx-auto px-4 md:px-8 pt-24 pb-32">
+          <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 mt-[120px] items-start">
+            
+            <ProfileSidebar
+              user={currentUser}
+              activeTab={activeTab}
+              isUploadingAvatar={isUploadingAvatar}
+              avatarPreview={avatarPreview}
+              sidebarLinks={sidebarLinks}
+              onTabChange={(t) => setActiveTab(t)}
+              onAvatarUpload={handleAvatarUpload}
+              onShowPaymentModal={() => setShowPaymentModal(true)}
+              onLogout={logout}
+            />
 
           <div className="space-y-6 min-h-[850px]">
             {currentUser?.role !== 'admin' && (
@@ -241,6 +241,7 @@ export default function ProfilePage() {
       <TransactionModal transaction={selectedTransaction} onClose={() => setSelectedTransaction(null)} />
       <Toast toast={toast} onClose={() => setToast(null)} />
       <Footer />
-    </div>
+      </div>
+    </>
   )
 }

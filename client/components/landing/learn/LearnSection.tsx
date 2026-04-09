@@ -7,12 +7,7 @@ import { STEPS } from './utils'
 
 export function LearnSection() {
   return (
-    <section id="learn" className="w-full py-20 md:py-32 relative overflow-hidden bg-[#F8F9FB]">
-      {/* Background decorations */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-violet-200/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-[10%] right-[5%] w-80 h-80 bg-blue-200/20 rounded-full blur-3xl" />
-      </div>
+    <section id="learn" className="w-full py-20 md:py-32 relative overflow-hidden">
 
       <div className="container relative z-10">
         {/* Header */}
@@ -53,7 +48,7 @@ export function LearnSection() {
             {/* Result Card */}
             <div className="relative group lg:col-span-2 lg:w-1/2 lg:mx-auto lg:mt-8">
               <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-[2rem] p-6 sm:p-8 shadow-2xl shadow-slate-500/20 border border-slate-700 relative z-10 text-center transform transition-all hover:scale-105 duration-300">
-                <div className="absolute -top-6 sm:-top-8 left-1/2 -translate-x-1/2 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-xl sm:text-2xl shadow-lg shadow-green-500/30 border-2 sm:border-4 border-[#F8F9FB]">
+                <div className="absolute -top-6 sm:-top-8 left-1/2 -translate-x-1/2 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-xl sm:text-2xl shadow-lg shadow-green-500/30 border-2 sm:border-4 border-white">
                   <Zap className="w-6 h-6 sm:w-8 sm:h-8 fill-current" />
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-white mt-4 sm:mt-6 mb-2">Արդյունք և Մասշտաբավորում</h3>

@@ -14,7 +14,18 @@ interface UseInstructorTabParams {
 
 export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructorTabParams) {
   const { instructor, loading: isInstructorLoading } = useInstructor()
-  const crop = useCrop({ setSiteSettings: () => {} })
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  
+  // Custom setSiteSettings that updates instructor avatar instead of site logo
+  const setInstructorAvatar = useCallback((updater: any) => {
+    const newState = typeof updater === 'function' ? updater({}) : updater
+    if (newState.logo) {
+      setInstructorForm(prev => ({ ...prev, avatarUrl: newState.logo }))
+      setAvatarFile(newState.logoFile || null)
+    }
+  }, [])
+  
+  const crop = useCrop({ setSiteSettings: setInstructorAvatar, skipGlobalUpdate: true })
   
   const [instructorForm, setInstructorForm] = useState<InstructorForm>({
     title: '',
@@ -81,12 +92,23 @@ export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructo
 
   const saveInstructor = useCallback(async () => {
     try {
-      // Save instructor logic here
+      const formData = new FormData()
+      formData.append('title', instructorForm.title)
+      formData.append('name', instructorForm.name)
+      formData.append('profession', instructorForm.profession)
+      formData.append('description', instructorForm.description)
+      formData.append('badgeText', instructorForm.badgeText)
+      if (avatarFile) {
+        formData.append('avatar', avatarFile)
+      }
+      
+      await api.post('/api/v1/instructor', formData)
+      
       showToast('Դասընթացավարը պահպանված է', 'success')
     } catch {
       showToast('Սխալ պահպանելիս', 'error')
     }
-  }, [instructorForm, showToast])
+  }, [instructorForm, avatarFile, showToast])
 
   const closeCropModal = () => {
     crop.closeCrop()

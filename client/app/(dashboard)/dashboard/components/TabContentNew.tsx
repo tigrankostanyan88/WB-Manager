@@ -45,9 +45,16 @@ interface TabContentProps {
   showToast: (message: string, type?: 'success' | 'error') => void
   editingUser: (User & { __editScope?: 'users' }) | null
   setEditingUser: React.Dispatch<React.SetStateAction<(User & { __editScope?: 'users' }) | null>>
+  onLogoFileSelect?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  siteSettings?: any
+  setSiteSettings?: any
+  workingHoursSchedule?: any
+  setWorkingHoursSchedule?: any
+  isSettingsLoading?: boolean
+  saveSettings?: () => void
 }
 
-export function TabContent({ activeTab, allowed, currentUser, showToast, editingUser, setEditingUser }: TabContentProps) {
+export function TabContent({ activeTab, allowed, currentUser, showToast, editingUser, setEditingUser, onLogoFileSelect, siteSettings, setSiteSettings, workingHoursSchedule, setWorkingHoursSchedule, isSettingsLoading, saveSettings }: TabContentProps) {
   const content = useMemo(() => {
     switch (activeTab) {
       case 'overview':
@@ -180,7 +187,17 @@ export function TabContent({ activeTab, allowed, currentUser, showToast, editing
         return (
           <TabErrorBoundary tabName="Settings">
             <Suspense fallback={<TabLoadingFallback />}>
-              <SettingsTabWrapper allowed={allowed} showToast={showToast} onLogoFileSelect={() => {}} />
+              <SettingsTabWrapper 
+                allowed={allowed} 
+                showToast={showToast} 
+                onLogoFileSelect={onLogoFileSelect || (() => {})}
+                siteSettings={siteSettings || {}}
+                setSiteSettings={setSiteSettings || (() => {})}
+                workingHoursSchedule={workingHoursSchedule || {}}
+                setWorkingHoursSchedule={setWorkingHoursSchedule || (() => {})}
+                isSettingsLoading={isSettingsLoading || false}
+                saveSettings={saveSettings || (() => {})}
+              />
             </Suspense>
           </TabErrorBoundary>
         )
@@ -188,7 +205,7 @@ export function TabContent({ activeTab, allowed, currentUser, showToast, editing
       default:
         return null
     }
-  }, [activeTab, allowed, currentUser, showToast, editingUser, setEditingUser])
+  }, [activeTab, allowed, currentUser, showToast, editingUser, setEditingUser, onLogoFileSelect, siteSettings, setSiteSettings, workingHoursSchedule, setWorkingHoursSchedule, isSettingsLoading, saveSettings])
 
   return content
 }

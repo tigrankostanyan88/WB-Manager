@@ -230,7 +230,7 @@ export function TabContent({ activeTab, data }: TabContentProps) {
           setWorkingHoursSchedule={data.setWorkingHoursSchedule}
           isSettingsLoading={data.isSettingsLoading}
           saveSettings={data.saveSettings}
-          onLogoFileSelect={data.onAvatarFile}
+          onLogoFileSelect={data.onLogoFileSelect}
         />
       )
 

@@ -47,21 +47,8 @@ export function PaymentsTab({ user }: PaymentsTabProps) {
     return '**** **** **** ' + clean.slice(-4)
   }
 
-  const getBankGradient = (bankName: string) => {
-    const name = bankName.toLowerCase()
-    if (name.includes('ameria') || name.includes('америя')) 
-      return 'from-amber-600 to-orange-700'
-    if (name.includes('ardshin') || name.includes('ардшин')) 
-      return 'from-red-600 to-red-800'
-    if (name.includes('acba') || name.includes('акба')) 
-      return 'from-green-600 to-emerald-700'
-    if (name.includes('converse') || name.includes('конверс')) 
-      return 'from-blue-600 to-blue-800'
-    if (name.includes('ineco') || name.includes('инеко')) 
-      return 'from-purple-600 to-violet-700'
-    if (name.includes('hsbc')) 
-      return 'from-slate-700 to-slate-900'
-    return 'from-slate-900 to-slate-800'
+  const getBankStyle = (bankName: string) => {
+    return 'bg-white border border-slate-200 text-slate-900'
   }
 
   return (
@@ -102,7 +89,7 @@ export function PaymentsTab({ user }: PaymentsTabProps) {
               transition={{ delay: index * 0.1 }}
             >
               <Card 
-                className={`bg-gradient-to-br ${getBankGradient(card.bank_name)} text-white rounded-3xl overflow-hidden relative group hover:scale-[1.02] transition-all duration-500 shadow-2xl shadow-slate-900/30`}
+                className={`bg-white border border-slate-200 text-slate-900 rounded-3xl overflow-hidden relative group hover:scale-[1.02] transition-all duration-500 shadow-xl`}
               >
                 {/* Background effects */}
                 <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 blur-[100px] -mr-40 -mt-40 rounded-full"></div>
@@ -125,9 +112,9 @@ export function PaymentsTab({ user }: PaymentsTabProps) {
                         <p className="font-bold text-base">{card.bank_name}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 bg-emerald-500/20 px-2.5 py-1 rounded-lg border border-emerald-500/30">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
-                      <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400">Ակտիվ</span>
+                    <div className="flex items-center gap-2 bg-white border border-slate-200 px-2.5 py-1 rounded-lg">
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-slate-600">Ակտիվ</span>
                     </div>
                   </div>
 
@@ -135,16 +122,16 @@ export function PaymentsTab({ user }: PaymentsTabProps) {
                   <div className="space-y-3">
                     {/* Chip icon */}
                     <div className="flex items-center gap-2">
-                      <div className="w-10 h-8 bg-gradient-to-br from-yellow-400/90 to-yellow-600/90 rounded-md flex items-center justify-center border border-yellow-300/50">
-                        <div className="w-6 h-5 border border-yellow-700/30 rounded-sm flex items-center justify-center">
-                          <div className="w-4 h-3 border border-yellow-700/20 rounded-sm"></div>
+                      <div className="w-10 h-8 bg-slate-100 rounded-md flex items-center justify-center border border-slate-200">
+                        <div className="w-6 h-5 border border-slate-300 rounded-sm flex items-center justify-center">
+                          <div className="w-4 h-3 border border-slate-200 rounded-sm"></div>
                         </div>
                       </div>
                     </div>
                     
                     {/* Card number */}
-                    <div className="bg-white/10 backdrop-blur-sm px-4 py-3 rounded-xl border border-white/10">
-                      <p className="text-lg font-mono tracking-[0.12em] font-medium">{maskCardNumber(card.card_number)}</p>
+                    <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-200">
+                      <p className="text-lg font-mono tracking-[0.12em] font-medium text-slate-900">{maskCardNumber(card.card_number)}</p>
                     </div>
                     
                     {/* Bottom row: ID & Mastercard logo */}
@@ -169,8 +156,8 @@ export function PaymentsTab({ user }: PaymentsTabProps) {
       <Card className="shadow-xl shadow-slate-200/50 rounded-2xl bg-white overflow-hidden border border-slate-100/50 flex flex-col group hover:shadow-2xl transition-all duration-500">
         <CardContent className="p-10 flex-1 flex flex-col items-center justify-center text-center space-y-6">
           <div className="relative">
-            <div className="absolute inset-0 bg-violet-600/10 blur-2xl rounded-full scale-150 animate-pulse"></div>
-            <div className="relative w-40 h-40 bg-slate-50 rounded-2xl p-6 border-2 border-slate-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+            <div className="absolute inset-0 bg-slate-200 blur-2xl rounded-full scale-150"></div>
+            <div className="relative w-40 h-40 bg-white rounded-2xl p-6 border-2 border-slate-200 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
               <QrCode className="w-full h-full text-slate-900" />
             </div>
           </div>

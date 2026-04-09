@@ -23,16 +23,16 @@ interface StatConfig {
 }
 
 const STAT_CONFIG: StatConfig[] = [
-  { label: 'Ընթացիկ դասեր', key: 'currentLessons', default: '0/0', icon: Clock, color: 'text-orange-600', bg: 'bg-orange-50', borderColor: 'border-orange-100' },
-  { label: 'Միավորներ', key: 'points', default: '0', icon: Trophy, color: 'text-emerald-600', bg: 'bg-emerald-50', borderColor: 'border-emerald-100', format: (v: number) => v?.toLocaleString() },
-  { label: 'Սերտիֆիկատ', key: 'certificates', default: 'Տրվում է', icon: Award, color: 'text-blue-600', bg: 'bg-blue-50', borderColor: 'border-blue-100' },
-  { label: 'Գրանցված եմ', key: 'coursesCount', default: '0 դասընթաց', icon: BookOpenCheck, color: 'text-pink-600', bg: 'bg-pink-50', borderColor: 'border-pink-100', format: (v: number) => `${v} դասընթաց` },
+  { label: 'Ընթացիկ դասեր', key: 'currentLessons', default: '0/0', icon: Clock, color: 'text-blue-600', bg: 'bg-blue-50', borderColor: 'border-blue-200' },
+  { label: 'Միավորներ', key: 'points', default: '0', icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50', borderColor: 'border-amber-200', format: (v: number) => v?.toLocaleString() },
+  { label: 'Սերտիֆիկատ', key: 'certificates', default: 'Տրվում է', icon: Award, color: 'text-emerald-600', bg: 'bg-emerald-50', borderColor: 'border-emerald-200' },
+  { label: 'Դասընթացներ', key: 'coursesCount', default: '0', icon: BookOpenCheck, color: 'text-violet-600', bg: 'bg-violet-50', borderColor: 'border-violet-200' },
 ]
 
 export function ProfileStats({ stats, coursesCount, isLoading }: ProfileStatsProps) {
   const getValue = (stat: StatConfig): string => {
     if (stat.key === 'coursesCount') {
-      return stat.format?.(coursesCount) ?? `${coursesCount} դասընթաց`
+      return String(coursesCount)
     }
     const statValue = stats?.[stat.key as keyof StatsData]
     if (typeof statValue === 'number') {
@@ -50,29 +50,29 @@ export function ProfileStats({ stats, coursesCount, isLoading }: ProfileStatsPro
         const value = getValue(stat)
 
         return (
-          <motion.div 
-            key={i} 
-            whileHover={{ y: -4, scale: 1.02 }} 
-            transition={{ duration: 0.2 }}
+          <motion.div
+            key={i}
+            whileHover={{ y: -6, scale: 1.03 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
             className="group"
           >
-            <Card className={`${stat.bg} ${stat.borderColor} border-2 shadow-sm rounded-2xl overflow-hidden group-hover:shadow-lg transition-all duration-300 h-full`}>
+            <Card className={`bg-white ${stat.borderColor} border shadow-md rounded-2xl overflow-hidden group-hover:shadow-xl group-hover:shadow-${stat.bg.split('-')[1]}-200/50 transition-all duration-300 h-full`}>
               {isLoading ? (
-                <CardContent className="p-5 flex items-center gap-3.5 animate-pulse">
-                  <div className="w-12 h-12 rounded-xl bg-white/50" />
-                  <div className="space-y-1.5">
-                    <div className="h-1.5 w-12 bg-white/50 rounded" />
-                    <div className="h-3 w-10 bg-white/50 rounded" />
+                <CardContent className="p-6 flex items-center gap-4 animate-pulse">
+                  <div className="w-14 h-14 rounded-xl bg-slate-100" />
+                  <div className="space-y-2">
+                    <div className="h-2 w-16 bg-slate-100 rounded" />
+                    <div className="h-4 w-12 bg-slate-100 rounded" />
                   </div>
                 </CardContent>
               ) : (
-                <CardContent className="p-5 flex items-center gap-3.5">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${stat.bg} border border-white`}>
-                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                <CardContent className="p-6 flex items-center gap-4">
+                  <div className={`w-14 h-14 rounded-xl ${stat.bg} flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-sm`}>
+                    <stat.icon className={`w-7 h-7 ${stat.color}`} />
                   </div>
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">{stat.label}</p>
-                    <p className="text-2xl font-black text-slate-900">{value}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">{stat.label}</p>
+                    <p className="text-2xl font-bold text-slate-900 tracking-tight whitespace-nowrap">{value}</p>
                   </div>
                 </CardContent>
               )}

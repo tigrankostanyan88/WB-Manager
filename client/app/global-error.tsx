@@ -7,19 +7,9 @@ interface GlobalErrorProps {
   reset: () => void
 }
 
-/**
- * Global error boundary for the entire application
- * Catches critical errors that escape route boundaries
- */
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
-    // Log error for monitoring in production
     if (process.env.NODE_ENV === 'production') {
-      // Send to error tracking service (Sentry, LogRocket, etc.)
-      // Example: Sentry.captureException(error, { 
-      //   tags: { boundary: 'global' },
-      //   level: 'fatal'
-      // })
     }
   }, [error])
 

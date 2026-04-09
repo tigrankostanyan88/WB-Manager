@@ -47,20 +47,22 @@ export function HeroVideo({
   return (
     <div className="relative group w-full max-w-full overflow-hidden">
       <div 
-        className="relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200 bg-white ring-1 ring-slate-100 transform transition-transform duration-700 hover:scale-[1.02] cursor-pointer max-w-full"
+        className="relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200 bg-white ring-1 ring-slate-100 cursor-pointer max-w-full"
         onClick={handleVideoClick}
       >
         <div className="aspect-[16/10] w-full max-w-full relative overflow-hidden bg-slate-100">
-          {/* Video Thumbnail */}
-          <video
-            src={content?.video_url || '/files/hero.mp4'}
-            className="h-full w-full object-cover scale-105 transition-transform duration-700 group-hover:scale-100 opacity-90 group-hover:opacity-100"
-            preload="metadata"
-            muted
-            playsInline
-            onLoadedMetadata={handleThumbnailLoaded}
-            onError={onVideoError}
-          />
+          {/* Video Thumbnail - scales on hover */}
+          <div className="h-full w-full transition-transform duration-700 group-hover:scale-[1.03]">
+            <video
+              src={content?.video_url || '/files/hero.mp4'}
+              className="h-full w-full object-cover scale-105 opacity-90 group-hover:opacity-100 transition-opacity"
+              preload="metadata"
+              muted
+              playsInline
+              onLoadedMetadata={handleThumbnailLoaded}
+              onError={onVideoError}
+            />
+          </div>
 
           {/* Play Button Overlay */}
           <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-all">

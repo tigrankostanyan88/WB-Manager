@@ -32,14 +32,14 @@ export function ProBanner({ user, myCourses = [], totalCoursesCount = 0, onShowP
   // If no courses at all (no course_ids)
   if (totalCourses === 0) {
     return (
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 p-6 text-white shadow-xl">
+      <div className="rounded-2xl bg-slate-30 p-6 text-slate-900 shadow-xl">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10">
-            <Lock className="h-7 w-7 text-white" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white">
+            <Lock className="h-7 w-7 text-slate-600" />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-bold">Դասընթացներ չկան</h3>
-            <p className="text-sm text-slate-400">Դուք դեռ չեք գնել որևէ դասընթաց</p>
+            <h3 className="text-lg font-bold text-slate-900">Դասընթացներ չկան</h3>
+            <p className="text-sm text-slate-500">Դուք դեռ չեք գնել որևէ դասընթաց</p>
           </div>
         </div>
       </div>
@@ -50,14 +50,14 @@ export function ProBanner({ user, myCourses = [], totalCoursesCount = 0, onShowP
     <div className="space-y-4">
       {/* Welcome Message - Show when user has registered courses */}
       {myCourses.length > 0 && (
-        <div className="rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-700 p-6 text-white shadow-xl">
+        <div className="rounded-2xl bg-white border border-slate-200 p-6 text-slate-900 shadow-xl">
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20">
-              <Trophy className="h-7 w-7 text-white" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
+              <Trophy className="h-7 w-7 text-slate-600" />
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-bold">Դուք ունեք գրանցված դասընթացներ!</h3>
-              <p className="text-sm text-white/80">Մաղթում ենք հաջող ուսման ընթացք</p>
+              <h3 className="text-lg font-bold text-slate-900">Դուք ունեք գրանցված դասընթացներ!</h3>
+              <p className="text-sm text-slate-500">Մաղթում ենք հաջող ուսման ընթացք</p>
             </div>
           </div>
         </div>

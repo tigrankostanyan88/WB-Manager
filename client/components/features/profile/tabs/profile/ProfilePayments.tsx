@@ -11,14 +11,14 @@ interface ProfilePaymentsProps {
 }
 
 const STATUS_CONFIG = {
-  success: { bg: 'bg-emerald-100', text: 'text-emerald-600', dot: 'bg-emerald-500', label: 'Հաստատված' },
-  pending: { bg: 'bg-amber-100', text: 'text-amber-600', dot: 'bg-amber-500', label: 'Սպասում' },
-  failed: { bg: 'bg-red-100', text: 'text-red-600', dot: 'bg-red-500', label: 'Մերժված' },
+  success: { bg: 'bg-white', text: 'text-slate-600', dot: 'bg-slate-500', label: 'Հաստատված' },
+  pending: { bg: 'bg-white', text: 'text-slate-600', dot: 'bg-slate-400', label: 'Սպասում' },
+  failed: { bg: 'bg-white', text: 'text-slate-600', dot: 'bg-slate-600', label: 'Մերժված' },
 }
 
 export function ProfilePayments({ payments, isLoading }: ProfilePaymentsProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
       <div className="flex items-center justify-between px-2">
         <h4 className="text-xl font-black text-slate-900">Իմ վճարումները</h4>
         <span className="text-xs font-bold text-slate-400">Վճարման ID | Կուրսի ID</span>

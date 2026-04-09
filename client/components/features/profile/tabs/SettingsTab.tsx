@@ -50,9 +50,9 @@ export function SettingsTab({ user, isUpdating, onSubmit, onShowPasswordModal }:
       transition={{ duration: 0.25 }}
     >
       <Card className="shadow-xl shadow-slate-200/50 rounded-3xl bg-white overflow-hidden border-0">
-        <div className="bg-gradient-to-r from-violet-600 to-indigo-600 px-8 py-6">
-          <h2 className="text-2xl font-black text-white">Անձնական տվյալներ</h2>
-          <p className="text-violet-100 text-sm mt-1">Թարմացրեք ձեր անձնական տեղեկությունները</p>
+        <div className="bg-slate-100 px-8 py-6 border-b border-slate-200">
+          <h2 className="text-2xl font-black text-slate-900">Անձնական տվյալներ</h2>
+          <p className="text-slate-500 text-sm mt-1">Թարմացրեք ձեր անձնական տեղեկությունները</p>
         </div>
         
         <form onSubmit={onSubmit} className="p-8">
@@ -80,10 +80,10 @@ export function SettingsTab({ user, isUpdating, onSubmit, onShowPasswordModal }:
           <div className="pt-8 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-6">
             <div 
               onClick={onShowPasswordModal} 
-              className="flex items-center gap-3 text-slate-500 group cursor-pointer hover:text-violet-600 transition-all p-3 rounded-xl hover:bg-violet-50"
+              className="flex items-center gap-3 text-slate-500 group cursor-pointer hover:text-slate-900 transition-all p-3 rounded-xl hover:bg-slate-100"
             >
-              <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center group-hover:bg-violet-200 transition-colors">
-                <Shield className="w-6 h-6 text-violet-600" />
+              <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center group-hover:bg-slate-100 transition-colors">
+                <Shield className="w-6 h-6 text-slate-600" />
               </div>
               <div>
                 <span className="text-sm font-bold block">Փոխել գաղտնաբառը</span>
@@ -93,7 +93,7 @@ export function SettingsTab({ user, isUpdating, onSubmit, onShowPasswordModal }:
             <Button
               type="submit"
               disabled={isUpdating}
-              className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 font-black px-12 h-14 text-white shadow-2xl shadow-violet-200 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
+              className="w-full sm:w-auto rounded-xl bg-slate-900 hover:bg-slate-800 font-black px-12 h-14 text-white shadow-xl transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
             >
               {isUpdating ? (
                 <div className="flex items-center gap-2">
@@ -101,7 +101,7 @@ export function SettingsTab({ user, isUpdating, onSubmit, onShowPasswordModal }:
                   <span>Պահպանվում է...</span>
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
+                <div className="inline-flex items-center gap-2 text-white">
                   <Save className="w-5 h-5" />
                   <span>Պահպանել փոփոխությունները</span>
                 </div>

@@ -30,13 +30,12 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
   const displayStats = stats.slice(0, 4)
 
   return (
-    <section id="instructor" className="w-full py-20 md:py-28 bg-gradient-to-b from-white to-slate-50/50 relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-violet-50 rounded-full blur-[100px] opacity-60 pointer-events-none" />
+    <section id="instructor" className="w-full py-20 md:py-28 relative overflow-hidden">
 
       <div className="container relative z-10 px-4 md:px-6">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-10">
           <div className="w-full lg:w-1/2 relative">
-            <div className="relative w-full max-w-md mx-auto aspect-[3/4] rounded-[2rem] overflow-hidden shadow-2xl shadow-violet-900/20 group bg-slate-100">
+            <div className="relative w-full max-w-md mx-auto aspect-[3/4] rounded-[2rem] overflow-hidden shadow-2xl shadow-slate-200 group bg-slate-100">
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent z-10" />
               {instructor.avatarUrl ? (
                 <Image
@@ -70,8 +69,6 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
               </div>
             </div>
 
-            <div className="absolute -top-6 -right-6 w-24 h-24 bg-violet-400 rounded-full blur-2xl opacity-30" />
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-indigo-400 rounded-full blur-3xl opacity-20" />
           </div>
 
           <div className="w-full lg:w-1/2 space-y-6">

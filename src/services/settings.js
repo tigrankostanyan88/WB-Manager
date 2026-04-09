@@ -74,7 +74,7 @@ module.exports = {
         throw new AppError(Object.values(image.message || {}).join(' ') || 'Logo save failed', 400);
       }
 
-      await repo.createFile(image.table);
+      await row.createFile(image.table);
       await repo.update(row, {
         logo: `/images/${image.table.table_name}/large/${image.table.name}.${image.table.ext}`
       });

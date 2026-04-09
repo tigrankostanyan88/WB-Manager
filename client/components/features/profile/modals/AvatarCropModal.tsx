@@ -102,7 +102,7 @@ export function AvatarCropModal({ isOpen, imageSrc, onClose, onCropComplete }: A
           className="relative w-full max-w-[400px] bg-white rounded-3xl shadow-2xl"
         >
           {/* Header */}
-          <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-violet-50 to-white rounded-t-3xl">
+          <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-white rounded-t-3xl">
             <div>
               <h3 className="text-lg font-bold text-slate-900">Պրոֆիլի նկար</h3>
               <p className="text-xs text-slate-500">Հարմարեցրեք նկարը կլոր շրջանակում</p>
@@ -122,7 +122,7 @@ export function AvatarCropModal({ isOpen, imageSrc, onClose, onCropComplete }: A
               {/* Circular Preview */}
               <div
                 ref={containerRef}
-                className="relative w-[220px] h-[220px] rounded-full overflow-hidden bg-slate-100 shadow-inner cursor-move ring-4 ring-violet-100"
+                className="relative w-[220px] h-[220px] rounded-full overflow-hidden bg-slate-100 shadow-inner cursor-move ring-4 ring-slate-200"
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
@@ -139,7 +139,7 @@ export function AvatarCropModal({ isOpen, imageSrc, onClose, onCropComplete }: A
                 />
                 
                 {isDragging && (
-                  <div className="absolute inset-0 bg-violet-500/10 pointer-events-none" />
+                  <div className="absolute inset-0 bg-slate-500/10 pointer-events-none" />
                 )}
               </div>
 
@@ -153,7 +153,7 @@ export function AvatarCropModal({ isOpen, imageSrc, onClose, onCropComplete }: A
                     max="300"
                     value={Math.round(scale * 100)}
                     onChange={(e) => setScale(Number(e.target.value) / 100)}
-                    className="flex-1 h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-violet-600 min-w-0"
+                    className="flex-1 h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-slate-600 min-w-0"
                   />
                   <ZoomIn className="w-4 h-4 text-slate-400 shrink-0" />
                 </div>
@@ -183,7 +183,7 @@ export function AvatarCropModal({ isOpen, imageSrc, onClose, onCropComplete }: A
               </Button>
               <Button
                 onClick={getCroppedImage}
-                className="rounded-xl h-11 bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs shadow-lg shadow-violet-200"
+                className="rounded-xl h-11 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs shadow-lg"
               >
                 <Check className="w-4 h-4 mr-1" />
                 Հաստատել

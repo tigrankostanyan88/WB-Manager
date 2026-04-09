@@ -32,10 +32,10 @@ export function PaymentModal({ open, onClose }: PaymentModalProps) {
 
               <div className="space-y-4">
                 <button className="w-full group relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl blur opacity-0 group-hover:opacity-10 transition duration-500"></div>
-                  <div className="relative flex items-center justify-between p-5 bg-slate-50 hover:bg-white border-2 border-transparent hover:border-violet-600/20 rounded-2xl transition-all duration-300">
+                  <div className="absolute -inset-1 bg-slate-200 rounded-2xl blur opacity-0 group-hover:opacity-10 transition duration-500"></div>
+                  <div className="relative flex items-center justify-between p-5 bg-slate-50 hover:bg-white border-2 border-transparent hover:border-slate-300 rounded-2xl transition-all duration-300">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-[#635BFF] flex items-center justify-center text-white shadow-lg shadow-indigo-100">
+                      <div className="w-12 h-12 rounded-xl bg-slate-700 flex items-center justify-center text-white shadow-lg">
                         <CreditCard className="w-6 h-6" />
                       </div>
                       <div className="text-left">
@@ -48,10 +48,10 @@ export function PaymentModal({ open, onClose }: PaymentModalProps) {
                 </button>
 
                 <button className="w-full group relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl blur opacity-0 group-hover:opacity-10 transition duration-500"></div>
-                  <div className="relative flex items-center justify-between p-5 bg-slate-50 hover:bg-white border-2 border-transparent hover:border-orange-500/20 rounded-2xl transition-all duration-300">
+                  <div className="absolute -inset-1 bg-slate-200 rounded-2xl blur opacity-0 group-hover:opacity-10 transition duration-500"></div>
+                  <div className="relative flex items-center justify-between p-5 bg-slate-50 hover:bg-white border-2 border-transparent hover:border-slate-300 rounded-2xl transition-all duration-300">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-[#F7931E] flex items-center justify-center text-white shadow-lg shadow-orange-100 font-black italic">ID</div>
+                      <div className="w-12 h-12 rounded-xl bg-slate-700 flex items-center justify-center text-white shadow-lg font-black italic">ID</div>
                       <div className="text-left">
                         <p className="font-black text-slate-900">Idram</p>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Էլեկտրոնային դրամապանակ</p>
@@ -64,7 +64,7 @@ export function PaymentModal({ open, onClose }: PaymentModalProps) {
 
               <div className="mt-8 pt-6 border-t border-slate-50">
                 <div className="flex items-center gap-3 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] justify-center">
-                  <Shield className="w-4 h-4 text-emerald-500" />
+                  <Shield className="w-4 h-4 text-slate-500" />
                   Ապահով և պաշտպանված վճարում
                 </div>
               </div>

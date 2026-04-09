@@ -52,20 +52,15 @@ export function HeroSection({
   return (
     <section
       id="hero"
-      className="relative w-full pt-32 md:pt-40 lg:pt-48 pb-20 md:pb-32 overflow-hidden bg-slate-50/30"
+      className="relative w-full pt-32 md:pt-40 lg:pt-48 pb-20 md:pb-32 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-violet-50/30"
     >
-      {/* Background Pattern */}
-      <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
+      {/* Decorative gradient blobs */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-violet-200/30 rounded-full blur-3xl" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-violet-100/20 to-blue-100/20 rounded-full blur-3xl" />
       
-      {/* Gradient Blobs */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-gradient-to-br from-violet-400/20 via-fuchsia-400/20 to-purple-400/20 rounded-full blur-[120px]" />
-        <div className="absolute top-[0%] right-[-15%] w-[600px] h-[600px] bg-gradient-to-bl from-fuchsia-400/20 via-pink-400/20 to-rose-400/20 rounded-full blur-[120px]" />
-        <div className="absolute -bottom-[20%] left-[10%] w-[700px] h-[700px] bg-gradient-to-tr from-violet-400/20 via-indigo-400/20 to-blue-400/20 rounded-full blur-[120px]" />
-      </div>
-
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 relative z-10">
-        <div className="grid gap-8 lg:gap-12 xl:gap-16 lg:grid-cols-2 items-center max-w-7xl mx-auto">
+        <div className="grid gap-8 lg:gap-12 xl:gap-16 lg:grid-cols-2 items-center">
           <div className="min-w-0">
             <HeroContent 
               content={content} 

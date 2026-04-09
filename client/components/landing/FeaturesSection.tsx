@@ -4,7 +4,7 @@
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="w-full py-16 md:py-24 lg:py-32 bg-white">
+    <section id="features" className="w-full py-16 md:py-24 lg:py-32">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center mb-16">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-slate-900">
@@ -17,7 +17,7 @@ export function FeaturesSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-6">
-            <div className="bg-blue-50 rounded-[2.5rem] p-6 sm:p-8 min-h-[300px] sm:min-h-[420px] flex flex-col relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-blue-100/50">
+            <div className="bg-gradient-to-br from-blue-100 to-blue-50 rounded-[2.5rem] p-6 sm:p-8 min-h-[300px] sm:min-h-[420px] flex flex-col relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-blue-200/30">
               <div className="relative z-10">
                 <h3 className="text-xl font-bold text-slate-900 mb-3">Բրենդի ճանաչելիություն</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
@@ -35,7 +35,7 @@ export function FeaturesSection() {
               </div>
             </div>
 
-            <div className="bg-orange-50 rounded-[2.5rem] p-6 sm:p-8 min-h-[200px] sm:min-h-[260px] flex flex-col justify-between relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-orange-100/50">
+            <div className="bg-gradient-to-br from-orange-200 to-orange-100 rounded-[2.5rem] p-6 sm:p-8 min-h-[200px] sm:min-h-[260px] flex flex-col justify-between relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-orange-300/40">
               <div className="relative z-10">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">Խթանման գործիքներ</h3>
                 <p className="text-slate-600 text-sm">
@@ -52,7 +52,7 @@ export function FeaturesSection() {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-orange-50 rounded-[2.5rem] p-6 sm:p-8 min-h-[200px] sm:min-h-[260px] flex flex-col relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-orange-100/50">
+            <div className="bg-gradient-to-br from-orange-200 to-orange-100 rounded-[2.5rem] p-6 sm:p-8 min-h-[200px] sm:min-h-[260px] flex flex-col relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-orange-300/40">
               <div className="relative z-10">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">Անվտանգ գործարքներ</h3>
                 <p className="text-slate-600 text-sm">
@@ -64,7 +64,7 @@ export function FeaturesSection() {
               </div>
             </div>
 
-            <div className="bg-blue-50 rounded-[2.5rem] p-6 sm:p-8 min-h-[300px] sm:min-h-[420px] flex flex-col relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-blue-100/50">
+            <div className="bg-gradient-to-br from-blue-100 to-blue-50 rounded-[2.5rem] p-6 sm:p-8 min-h-[300px] sm:min-h-[420px] flex flex-col relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-blue-200/30">
               <div className="relative z-10">
                 <h3 className="text-xl font-bold text-slate-900 mb-3">Ֆինանսական արդյունավետություն</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
@@ -84,7 +84,7 @@ export function FeaturesSection() {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-blue-50 rounded-[2.5rem] p-6 sm:p-8 min-h-[200px] sm:min-h-[260px] flex flex-col relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-blue-100/50">
+            <div className="bg-gradient-to-br from-blue-200 to-blue-100 rounded-[2.5rem] p-6 sm:p-8 min-h-[200px] sm:min-h-[260px] flex flex-col relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-blue-300/40">
               <div className="relative z-10">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">Վաճառքների աճ</h3>
                 <p className="text-slate-600 text-sm">
@@ -99,7 +99,7 @@ export function FeaturesSection() {
               </div>
             </div>
 
-            <div className="bg-orange-50 rounded-[2.5rem] p-6 sm:p-8 min-h-[300px] sm:min-h-[420px] flex flex-col relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-orange-100/50">
+            <div className="bg-gradient-to-br from-orange-200 to-orange-100 rounded-[2.5rem] p-6 sm:p-8 min-h-[300px] sm:min-h-[420px] flex flex-col relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-orange-300/40">
               <div className="relative z-10">
                 <h3 className="text-xl font-bold text-slate-900 mb-3">Կառավարման գործիքներ</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">

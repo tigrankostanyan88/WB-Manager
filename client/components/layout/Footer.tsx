@@ -8,9 +8,9 @@ export function Footer() {
   const { settings } = useSettings()
 
   return (
-    <footer className="bg-slate-950 border-t border-slate-800 mt-20 py-10">
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-violet-950/20 to-slate-950/0 pointer-events-none" />
+    <footer className="relative bg-slate-950 border-t border-slate-800 mt-20 py-10 overflow-hidden">
+      {/* Gradient overlay - contained to footer only */}
+      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-violet-950/10 to-transparent pointer-events-none" />
       
       <div className="container relative z-10 py-16 px-4 md:px-6">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10">

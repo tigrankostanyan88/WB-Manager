@@ -70,7 +70,7 @@ export function CommentsTab({
           </div>
           {myReview ? (
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-lg w-fit">
+              <div className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-600 px-2.5 py-1 rounded-lg w-fit">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span className="text-[10px] font-black uppercase tracking-widest">Գրված է</span>
               </div>

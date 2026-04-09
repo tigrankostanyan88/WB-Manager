@@ -7,6 +7,7 @@ import { NotificationContainer } from '@/components/features/admin'
 import { useDashboardSimple as useDashboard } from '../hooks/useDashboardSimple'
 import { useSuspendedUsers } from '@/app/(dashboard)/dashboard/hooks/useSuspendedUsers'
 import { useInstructorTab } from '@/app/(dashboard)/dashboard/hooks/useInstructorTab'
+import useSettings from '@/hooks/admin/useSettings'
 import useCrop from '@/hooks/admin/useCrop'
 import { useContactMessages } from '@/hooks/admin/useContactMessages'
 import { useCourseRegistrations } from '@/hooks/admin/useCourseRegistrations'
@@ -29,10 +30,13 @@ export function DashboardController() {
     removeNotification
   } = useDashboard()
 
+  // Settings for logo crop
+  const { siteSettings, setSiteSettings, workingHoursSchedule, setWorkingHoursSchedule, isSettingsLoading, saveSettings } = useSettings({ activeTab, allowed, showToast })
+
   // Get data for sidebar badges and modals
   const suspended = useSuspendedUsers(showToast)
   const instructor = useInstructorTab({ activeTab, allowed, showToast })
-  const crop = useCrop({ setSiteSettings: () => {} })
+  const crop = useCrop({ setSiteSettings })
   const contactMessages = useContactMessages({ activeTab, allowed })
   const registrations = useCourseRegistrations({ activeTab, allowed })
 
@@ -70,6 +74,13 @@ export function DashboardController() {
               showToast={showToast}
               editingUser={editingUser}
               setEditingUser={setEditingUser}
+              onLogoFileSelect={crop.onLogoFileSelect}
+              siteSettings={siteSettings}
+              setSiteSettings={setSiteSettings}
+              workingHoursSchedule={workingHoursSchedule}
+              setWorkingHoursSchedule={setWorkingHoursSchedule}
+              isSettingsLoading={isSettingsLoading}
+              saveSettings={saveSettings}
             />
           </div>
         </div>

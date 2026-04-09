@@ -29,10 +29,10 @@ export function PersonalDataTab({
 
   // Determine level based on points
   const getLevel = (p: number) => {
-    if (p >= 80) return { label: 'Մասնագետ', color: 'text-purple-600', bg: 'bg-purple-100' }
-    if (p >= 50) return { label: 'Փորձառու', color: 'text-blue-600', bg: 'bg-blue-100' }
-    if (p >= 20) return { label: 'Սովորող', color: 'text-emerald-600', bg: 'bg-emerald-100' }
-    return { label: 'Սկսնակ', color: 'text-slate-600', bg: 'bg-slate-100' }
+    if (p >= 80) return { label: 'Մասնագետ', color: 'text-slate-600', bg: 'bg-white border border-slate-200' }
+    if (p >= 50) return { label: 'Փորձառու', color: 'text-slate-600', bg: 'bg-white border border-slate-200' }
+    if (p >= 20) return { label: 'Սովորող', color: 'text-slate-600', bg: 'bg-white border border-slate-200' }
+    return { label: 'Սկսնակ', color: 'text-slate-600', bg: 'bg-white border border-slate-200' }
   }
 
   const level = getLevel(points)
@@ -59,26 +59,26 @@ export function PersonalDataTab({
       className="space-y-6"
     >
       {/* Points Card */}
-      <div className="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl shadow-lg p-6 text-white">
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-lg p-6 text-slate-900">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
-            <Award className="w-7 h-7" />
+          <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
+            <Award className="w-7 h-7 text-slate-600" />
           </div>
           <div>
-            <h2 className="text-2xl font-black">{points} միավոր</h2>
-            <p className="text-white/70 text-sm">Ձեր առաջադիմության մակարդակը</p>
+            <h2 className="text-2xl font-black text-slate-900">{points} միավոր</h2>
+            <p className="text-slate-500 text-sm">Ձեր առաջադիմության մակարդակը</p>
           </div>
         </div>
 
         {/* Progress Bar */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-white/70">Առաջադիմություն</span>
-            <span className="font-bold">{points}%</span>
+            <span className="text-slate-500">Առաջադիմություն</span>
+            <span className="font-bold text-slate-900">{points}%</span>
           </div>
-          <div className="h-3 bg-white/20 rounded-full overflow-hidden">
+          <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-white rounded-full transition-all duration-1000"
+              className="h-full bg-slate-600 rounded-full transition-all duration-1000"
               style={{ width: `${points}%` }}
             />
           </div>
@@ -86,8 +86,8 @@ export function PersonalDataTab({
 
         {/* Level Badge */}
         <div className="mt-6 flex items-center gap-3">
-          <span className="text-white/70 text-sm">Մակարդակ:</span>
-          <span className={`px-3 py-1 rounded-full text-sm font-bold ${level.bg} ${level.color}`}>
+          <span className="text-slate-500 text-sm">Մակարդակ:</span>
+          <span className={`px-3 py-1 rounded-full text-sm font-bold border ${level.bg} ${level.color}`}>
             {level.label}
           </span>
         </div>
@@ -98,8 +98,8 @@ export function PersonalDataTab({
         {/* Enrolled Courses */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
-              <BookOpen className="w-6 h-6 text-emerald-600" />
+            <div className="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center">
+              <BookOpen className="w-6 h-6 text-slate-600" />
             </div>
             <div>
               <p className="text-2xl font-black text-slate-900">{myCoursesCount}</p>
@@ -111,8 +111,8 @@ export function PersonalDataTab({
         {/* Total Courses */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center">
+              <TrendingUp className="w-6 h-6 text-slate-600" />
             </div>
             <div>
               <p className="text-2xl font-black text-slate-900">{totalCoursesCount}</p>
@@ -124,17 +124,17 @@ export function PersonalDataTab({
         {/* Percentage */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:col-span-2">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center">
-              <Percent className="w-6 h-6 text-violet-600" />
+            <div className="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center">
+              <Percent className="w-6 h-6 text-slate-600" />
             </div>
             <div className="flex-1">
               <div className="flex justify-between items-center mb-2">
                 <p className="text-sm text-slate-500">Դասընթացների ծածկույթ</p>
-                <p className="text-xl font-black text-violet-600">{points}%</p>
+                <p className="text-xl font-black text-slate-900">{points}%</p>
               </div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-violet-600 rounded-full transition-all duration-1000"
+                  className="h-full bg-slate-600 rounded-full transition-all duration-1000"
                   style={{ width: `${points}%` }}
                 />
               </div>
