@@ -31,14 +31,9 @@ export function BankCardDisplay({
     <Card
       className={`bg-gradient-to-br ${getBankGradient(card.bank_name)} text-white rounded-3xl overflow-hidden relative group hover:scale-[1.02] transition-all duration-500 shadow-2xl shadow-slate-900/30`}
     >
-      {/* Background effects */}
-      <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 blur-[100px] -mr-40 -mt-40 rounded-full"></div>
-      <div className="absolute bottom-0 left-0 w-60 h-60 bg-black/10 blur-[80px] -ml-30 -mb-30 rounded-full"></div>
-
-      {/* Subtle pattern overlay */}
-      <div className="absolute inset-0 opacity-10" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-      }}></div>
+      {/* Background effects - subtle dark overlays for depth */}
+      <div className="absolute top-0 right-0 w-60 h-60 bg-black/5 blur-[60px] -mr-20 -mt-20 rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-40 h-40 bg-black/10 blur-[40px] -ml-10 -mb-10 rounded-full pointer-events-none"></div>
 
       <CardContent className="p-6 relative z-10 flex flex-col justify-between h-[320px]">
         {/* Top row: Bank info & Status */}

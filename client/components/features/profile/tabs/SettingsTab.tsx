@@ -90,23 +90,25 @@ export function SettingsTab({ user, isUpdating, onSubmit, onShowPasswordModal }:
                 <span className="text-xs text-slate-400">Թարմացրեք ձեր գաղտնաբառը</span>
               </div>
             </div>
-            <Button
+            <button
               type="submit"
               disabled={isUpdating}
-              className="w-full sm:w-auto rounded-xl bg-slate-900 hover:bg-slate-800 font-black px-12 h-14 text-white shadow-xl transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
+              className="w-full sm:w-auto flex items-center gap-3 px-8 h-14 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-black text-sm transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed shadow-lg shadow-violet-500/25"
             >
               {isUpdating ? (
-                <div className="flex items-center gap-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" />
                   <span>Պահպանվում է...</span>
-                </div>
+                </>
               ) : (
-                <div className="inline-flex items-center gap-2 text-white">
-                  <Save className="w-5 h-5" />
+                <>
+                  <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+                    <Save className="w-4 h-4 text-white" />
+                  </div>
                   <span>Պահպանել փոփոխությունները</span>
-                </div>
+                </>
               )}
-            </Button>
+            </button>
           </div>
         </form>
       </Card>

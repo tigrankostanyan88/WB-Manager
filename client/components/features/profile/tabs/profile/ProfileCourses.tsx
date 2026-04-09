@@ -71,15 +71,16 @@ export function ProfileCourses({ courses, isLoading, onViewAll }: ProfileCourses
             </Link>
           ))
         ) : (
-          <div className="col-span-2 py-20 text-center bg-gradient-to-b from-slate-50 to-white rounded-3xl border border-slate-100 flex flex-col items-center justify-center gap-5 group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-100 to-slate-100 flex items-center justify-center text-violet-400 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-violet-100/50">
+          <div className="col-span-2 py-20 text-center bg-gradient-to-br from-violet-50/80 via-slate-50/60 to-blue-50/80 rounded-3xl border border-violet-100/50 flex flex-col items-center justify-center gap-5 group hover:shadow-xl hover:shadow-violet-100/50 transition-all duration-500 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.08),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(59,130,246,0.06),transparent_50%)] pointer-events-none" />
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500 to-violet-600 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300 shadow-xl shadow-violet-200 relative z-10">
               <BookOpen className="w-10 h-10" />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 relative z-10">
               <p className="text-slate-900 font-bold text-lg tracking-tight">Դեռ չկան դասընթացներ</p>
-              <p className="text-slate-400 text-sm font-medium">Գտեք ձեզ համապատասխան դասընթացը հենց հիմա</p>
+              <p className="text-slate-500 text-sm font-medium">Գտեք ձեզ համապատասխան դասընթացը հենց հիմա</p>
             </div>
-            <Button className="mt-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl h-11 px-8 font-bold text-sm shadow-lg shadow-slate-900/20 hover:shadow-xl hover:shadow-slate-900/30 transition-all">Դիտել կատալոգը</Button>
+            <Button className="mt-3 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white rounded-xl h-11 px-8 font-bold text-sm shadow-lg shadow-violet-200 hover:shadow-xl hover:shadow-violet-300 transition-all relative z-10">Դիտել կատալոգը</Button>
           </div>
         )}
       </div>

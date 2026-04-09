@@ -144,7 +144,7 @@ export function ProfileSidebar({
                       <div className="w-9 h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center group-hover/link:bg-white group-hover/link:shadow-sm transition-all">
                         <link.icon className="w-4.5 h-4.5 text-slate-400 group-hover/link:text-violet-600" />
                       </div>
-                      {link.label}
+                      <span className="text-left">{link.label}</span>
                     </div>
                   </Link>
                 </motion.div>
@@ -168,7 +168,7 @@ export function ProfileSidebar({
                     >
                       <link.icon className={cn('w-4.5 h-4.5', activeTab === link.id ? 'text-white' : 'text-slate-400 group-hover/btn:text-violet-600')} />
                     </div>
-                    {link.label}
+                    <span className="text-left">{link.label}</span>
                   </div>
                   {link.count !== undefined && (
                     <span

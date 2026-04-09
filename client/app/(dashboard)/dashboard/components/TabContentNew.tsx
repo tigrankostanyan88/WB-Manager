@@ -23,16 +23,13 @@ const HeroContentTabWrapper = lazy(() => import('./tabs').then(m => ({ default: 
 const SettingsTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.SettingsTabWrapper })))
 const BankCardsTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.BankCardsTabWrapper })))
 
-// Simple fallback while tab is loading
+// Smooth loading fallback - subtle spinner instead of skeleton blocks
 function TabLoadingFallback() {
   return (
-    <div className="space-y-4 p-6">
-      <Skeleton className="h-8 w-1/3" />
-      <Skeleton className="h-4 w-1/2" />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-        <Skeleton className="h-32" />
-        <Skeleton className="h-32" />
-        <Skeleton className="h-32" />
+    <div className="flex items-center justify-center min-h-[400px] bg-white/50 backdrop-blur-sm rounded-xl">
+      <div className="flex flex-col items-center gap-3">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-200 border-t-violet-600" />
+        <span className="text-sm text-slate-500 font-medium">Բեռնվում է...</span>
       </div>
     </div>
   )

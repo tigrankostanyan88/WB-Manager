@@ -101,14 +101,14 @@ function CourseCard({ course, onEdit, onDelete, getCourseFirstVideoUrl }: Course
           <VideoThumbnail
             videoUrl={videoUrl}
             timestamp={thumbnailTime}
-            className="w-full h-full transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover"
           />
         ) : course.image ? (
           <Image
             src={course.image}
             alt={course.title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className="object-cover"
             sizes="(max-width: 768px) 50vw, 300px"
           />
         ) : (
