@@ -1,14 +1,13 @@
 // tabs/bankcards/BankCardDisplay.tsx - Credit card visual component
 
 import { Building2, Edit2, Trash2, Eye, EyeOff, Copy, Check } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
 import type { BankCard } from '@/hooks/admin/useBankCards'
 
 interface BankCardDisplayProps {
   card: BankCard
   isVisible: boolean
   isCopied: boolean
-  getBankGradient: (bankName: string) => string
+  getBankGradientStyle: (bankName: string) => { background: string }
   maskCardNumber: (number: string, visible: boolean) => string
   onToggleVisibility: () => void
   onCopy: () => void
@@ -20,22 +19,30 @@ export function BankCardDisplay({
   card,
   isVisible,
   isCopied,
-  getBankGradient,
+  getBankGradientStyle,
   maskCardNumber,
   onToggleVisibility,
   onCopy,
   onEdit,
   onDelete
 }: BankCardDisplayProps) {
-  return (
-    <Card
-      className={`bg-gradient-to-br ${getBankGradient(card.bank_name)} text-white rounded-3xl overflow-hidden relative group hover:scale-[1.02] transition-all duration-500 shadow-2xl shadow-slate-900/30`}
-    >
-      {/* Background effects - subtle dark overlays for depth */}
-      <div className="absolute top-0 right-0 w-60 h-60 bg-black/5 blur-[60px] -mr-20 -mt-20 rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-40 h-40 bg-black/10 blur-[40px] -ml-10 -mb-10 rounded-full pointer-events-none"></div>
+  // Hardcoded gradient classes for each bank
+  const getGradientClass = (bankName: string): string => {
+    const name = bankName.toLowerCase()
+    if (name.includes('ameria') || name.includes('ամերիա')) return 'bg-gradient-to-br from-amber-400 to-orange-500'
+    if (name.includes('ardshin') || name.includes('արդշին')) return 'bg-gradient-to-br from-red-500 to-red-700'
+    if (name.includes('acba') || name.includes('ակբա')) return 'bg-gradient-to-br from-emerald-500 to-green-700'
+    if (name.includes('converse') || name.includes('կոնվերս')) return 'bg-gradient-to-br from-blue-500 to-blue-700'
+    if (name.includes('ineco') || name.includes('ինեկո')) return 'bg-gradient-to-br from-violet-500 to-purple-700'
+    if (name.includes('hsbc')) return 'bg-gradient-to-br from-slate-600 to-slate-800'
+    return 'bg-gradient-to-br from-indigo-500 to-purple-600'
+  }
 
-      <CardContent className="p-6 relative z-10 flex flex-col justify-between h-[320px]">
+  return (
+    <div
+      className={`${getGradientClass(card.bank_name)} text-white rounded-3xl overflow-hidden relative group hover:scale-[1.02] transition-all duration-500 shadow-2xl shadow-slate-900/20`}
+    >
+      <div className="p-6 relative z-10 flex flex-col justify-between h-[320px]">
         {/* Top row: Bank info & Status */}
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
@@ -138,7 +145,7 @@ export function BankCardDisplay({
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

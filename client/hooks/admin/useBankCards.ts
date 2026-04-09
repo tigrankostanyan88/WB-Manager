@@ -25,21 +25,31 @@ function formatCardNumber(number: string): string {
   return clean.match(/.{1,4}/g)?.join(' ') || clean
 }
 
-function getBankGradient(bankName: string): string {
+// Bank color definitions with inline styles for guaranteed rendering
+const BANK_COLORS: Record<string, { from: string; to: string }> = {
+  ameria: { from: '#f59e0b', to: '#ea580c' },      // amber-500 to orange-600
+  ardshin: { from: '#ef4444', to: '#b91c1c' },      // red-500 to red-700
+  acba: { from: '#22c55e', to: '#059669' },         // green-500 to emerald-600
+  converse: { from: '#3b82f6', to: '#1d4ed8' },    // blue-500 to blue-700
+  ineco: { from: '#a855f7', to: '#7c3aed' },        // purple-500 to violet-600
+  hsbc: { from: '#475569', to: '#1e293b' },         // slate-600 to slate-800
+  default: { from: '#8b5cf6', to: '#9333ea' },     // violet-500 to purple-600
+}
+
+function getBankGradientStyle(bankName: string): { background: string } {
   const name = bankName.toLowerCase()
-  if (name.includes('ameria') || name.includes('америя'))
-    return 'from-amber-600 to-orange-700'
-  if (name.includes('ardshin') || name.includes('ардшин'))
-    return 'from-red-600 to-red-800'
-  if (name.includes('acba') || name.includes('акба'))
-    return 'from-green-600 to-emerald-700'
-  if (name.includes('converse') || name.includes('конверс'))
-    return 'from-blue-600 to-blue-800'
-  if (name.includes('ineco') || name.includes('инеко'))
-    return 'from-purple-600 to-violet-700'
-  if (name.includes('hsbc'))
-    return 'from-slate-700 to-slate-900'
-  return 'from-slate-900 to-slate-800'
+  let colors = BANK_COLORS.default
+  
+  for (const [key, value] of Object.entries(BANK_COLORS)) {
+    if (name.includes(key)) {
+      colors = value
+      break
+    }
+  }
+  
+  return {
+    background: `linear-gradient(135deg, ${colors.from} 0%, ${colors.to} 100%)`
+  }
 }
 
 function maskCardNumber(number: string, showFull: boolean): string {
@@ -211,6 +221,6 @@ export function useBankCards() {
     formatCardNumber,
     maskCardNumber,
     maskCardNumberInput,
-    getBankGradient
+    getBankGradientStyle
   }
 }

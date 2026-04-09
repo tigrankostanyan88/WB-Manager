@@ -64,7 +64,7 @@ export function CropModal({ open, cropImage, crop, zoom, setCrop, setZoom, onCro
             <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold">
               Չեղարկել
             </Button>
-            <Button onClick={onConfirm} className="rounded-xl bg-slate-900 hover:bg-slate-800 font-bold px-6">
+            <Button type="button" onClick={onConfirm} className="rounded-xl bg-slate-900 hover:bg-slate-800 font-bold px-6">
               Հաստատել
             </Button>
           </div>

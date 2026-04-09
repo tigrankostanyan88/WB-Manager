@@ -18,24 +18,19 @@ module.exports = {
     await repo.sync();
     
     let instructor = await repo.findOne({ includeFiles: true });
-    console.log('[addInstructor] found instructor:', instructor ? 'yes' : 'no');
     let wasCreated = false;
 
     if (!instructor) {
-      console.log('[addInstructor] creating new instructor');
       instructor = await repo.create(body);
       wasCreated = true;
     } else {
-      console.log('[addInstructor] updating existing instructor');
       await repo.update(instructor, body);
     }
 
     instructor = await repo.findOne({ includeFiles: true });
-    console.log('[addInstructor] instructor after save:', instructor ? `id=${instructor.id}` : 'null');
 
     // Handle avatar upload
     const filePayload = files?.avatar || files?.instructor_img || files?.image;
-    console.log('[addInstructor] filePayload:', filePayload ? `name=${filePayload.name}` : 'none');
 
     if (filePayload && filePayload.name && filePayload.mimetype) {
       const modelForFiles = {

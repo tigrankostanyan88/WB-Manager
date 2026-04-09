@@ -32,10 +32,15 @@ export function ProBanner({ user, myCourses = [], totalCoursesCount = 0, onShowP
   // If no courses at all (no course_ids)
   if (totalCourses === 0) {
     return (
-      <div className="rounded-2xl bg-slate-30 p-6 text-slate-900 shadow-xl">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white">
-            <Lock className="h-7 w-7 text-slate-600" />
+      <div className="rounded-2xl bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border border-amber-200/60 p-6 text-slate-900 shadow-xl relative overflow-hidden group">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-amber-100/40 via-orange-100/40 to-amber-100/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-300/20 rounded-full blur-2xl -mr-10 -mt-10" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-300/20 rounded-full blur-xl -ml-5 -mb-5" />
+        
+        <div className="relative flex items-center gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-lg shadow-amber-200 group-hover:scale-105 transition-transform duration-300">
+            <BookOpen className="h-7 w-7" />
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-bold text-slate-900">Դասընթացներ չկան</h3>

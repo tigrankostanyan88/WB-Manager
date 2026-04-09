@@ -35,6 +35,16 @@ export interface InstructorTabProps {
   onBadgeTextChange: (value: string) => void
   onStatValueChange: (index: number, value: string) => void
   onSubmit: (e: React.FormEvent) => void
+  // Crop modal props
+  cropModalOpen?: boolean
+  cropImage?: string | null
+  crop?: { x: number; y: number }
+  zoom?: number
+  setCrop?: (crop: { x: number; y: number }) => void
+  setZoom?: (zoom: number) => void
+  onCropComplete?: (croppedArea: any, croppedAreaPixels: any) => void
+  closeCropModal?: () => void
+  confirmCrop?: () => void
 }
 
 export const statConfig = [

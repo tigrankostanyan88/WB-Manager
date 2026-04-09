@@ -121,24 +121,25 @@ export function ContactForm() {
           </label>
         </div>
 
-        <div className="pt-2">
+        <div className="pt-3">
           <Button
             type="submit"
             disabled={isSubmitting || submitStatus === 'success'}
-            className="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90 text-white font-semibold text-sm sm:text-base shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 px-2 sm:px-4 whitespace-normal break-words disabled:opacity-50"
+            className="w-full h-14 rounded-2xl bg-gradient-to-r from-violet-600 via-purple-600 to-violet-700 hover:from-violet-500 hover:via-purple-500 hover:to-violet-600 text-white font-bold text-base sm:text-lg shadow-xl shadow-violet-500/30 hover:shadow-violet-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 px-6 disabled:opacity-60 disabled:cursor-not-allowed relative overflow-hidden group"
           >
+            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
             {isSubmitting ? (
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-3 relative z-10">
                 <Loader2 className="w-5 h-5 animate-spin" />
                 Ուղարկվում է...
               </span>
             ) : submitStatus === 'success' ? (
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-3 relative z-10">
                 <CheckCircle className="w-5 h-5" />
                 Ուղարկված է
               </span>
             ) : (
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-3 relative z-10">
                 <Send className="w-5 h-5" />
                 Ուղարկել հաղորդագրությունը
               </span>

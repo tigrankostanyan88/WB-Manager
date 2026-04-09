@@ -85,9 +85,12 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
               {instructor.profession && (
                 <p className="text-lg text-slate-500 mb-2">{instructor.profession}</p>
               )}
-              <p className="text-lg text-slate-600 leading-relaxed">
-                {instructor.description || DEFAULT_DESCRIPTION}
-              </p>
+              <div 
+                className="text-lg text-slate-600 leading-relaxed prose prose-slate max-w-none [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:font-semibold [&_strong]:text-slate-900"
+                dangerouslySetInnerHTML={{ 
+                  __html: instructor.description || DEFAULT_DESCRIPTION 
+                }}
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-3 sm:gap-4">

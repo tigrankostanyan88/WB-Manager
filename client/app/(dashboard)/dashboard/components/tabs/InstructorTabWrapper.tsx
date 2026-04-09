@@ -20,7 +20,7 @@ export function InstructorTabWrapper({ allowed, showToast }: InstructorTabWrappe
     <InstructorTab
       instructorForm={instructor.instructorForm}
       instructorErrors={instructor.instructorErrors}
-      isInstructorLoading={instructor.isInstructorLoading}
+      isInstructorLoading={instructor.isSaving}
       onAvatarFileSelect={instructor.onAvatarFile}
       onTitleChange={instructor.onTitleChange}
       onNameChange={instructor.onNameChange}
@@ -29,6 +29,16 @@ export function InstructorTabWrapper({ allowed, showToast }: InstructorTabWrappe
       onBadgeTextChange={instructor.onBadgeTextChange}
       onStatValueChange={instructor.onStatValueChange}
       onSubmit={instructor.saveInstructor}
+      // Crop modal props
+      cropModalOpen={instructor.cropModalOpen}
+      cropImage={instructor.cropImage}
+      crop={instructor.crop}
+      zoom={instructor.zoom}
+      setCrop={instructor.setCrop}
+      setZoom={instructor.setZoom}
+      onCropComplete={instructor.onCropComplete}
+      closeCropModal={instructor.closeCropModal}
+      confirmCrop={instructor.confirmCrop}
     />
   )
 }

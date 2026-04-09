@@ -46,7 +46,9 @@
     "stripe": "latest",
     "tailwind-merge": "^3.5.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "latest"
+    "zod": "latest",
+    "@tiptap/react": "^2.0.0",
+    "@tiptap/starter-kit": "^2.0.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.0",

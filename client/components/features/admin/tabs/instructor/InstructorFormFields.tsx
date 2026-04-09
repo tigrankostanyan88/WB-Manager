@@ -5,6 +5,7 @@
 import { Users, TrendingUp, Clock, HeadphonesIcon } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { RichTextEditor } from '@/components/ui/rich-text-editor'
 import type { InstructorForm, InstructorErrors } from './types'
 
 const statIcons = [Users, TrendingUp, Clock, HeadphonesIcon]
@@ -89,14 +90,12 @@ export function InstructorFormFields({
       {/* Description */}
       <div className="space-y-1.5">
         <Label className="text-xs text-slate-500">Նկարագրություն</Label>
-        <textarea
+        <RichTextEditor
           value={form.description}
-          onChange={(e) => onDescriptionChange(e.target.value)}
+          onChange={onDescriptionChange}
           placeholder="Մենթորի մասին..."
-          rows={3}
-          className={`w-full px-3 py-2 bg-white border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-violet-500/20 ${
-            errors.description ? 'border-red-300' : 'border-slate-200'
-          }`}
+          className={errors.description ? 'border-red-300' : ''}
+          minHeight={150}
         />
       </div>
 

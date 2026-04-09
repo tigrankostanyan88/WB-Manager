@@ -11,9 +11,9 @@ interface ProfilePaymentsProps {
 }
 
 const STATUS_CONFIG = {
-  success: { bg: 'bg-white', text: 'text-slate-600', dot: 'bg-slate-500', label: 'Հաստատված' },
-  pending: { bg: 'bg-white', text: 'text-slate-600', dot: 'bg-slate-400', label: 'Սպասում' },
-  failed: { bg: 'bg-white', text: 'text-slate-600', dot: 'bg-slate-600', label: 'Մերժված' },
+  success: { bg: 'bg-gradient-to-br from-emerald-500 to-emerald-600', text: 'text-white', dot: 'bg-emerald-400', label: 'Հաստատված' },
+  pending: { bg: 'bg-gradient-to-br from-amber-500 to-orange-500', text: 'text-white', dot: 'bg-amber-300', label: 'Սպասում' },
+  failed: { bg: 'bg-gradient-to-br from-red-500 to-rose-600', text: 'text-white', dot: 'bg-red-300', label: 'Մերժված' },
 }
 
 export function ProfilePayments({ payments, isLoading }: ProfilePaymentsProps) {
@@ -72,7 +72,12 @@ export function ProfilePayments({ payments, isLoading }: ProfilePaymentsProps) {
               )
             })
           ) : (
-            <div className="p-10 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">Վճարումներ չկան</div>
+            <div className="py-16 text-center bg-gradient-to-br from-slate-50/80 via-slate-100/60 to-slate-50/80 flex flex-col items-center justify-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-300 to-slate-400 flex items-center justify-center text-white shadow-lg shadow-slate-200">
+                <CreditCard className="w-8 h-8" />
+              </div>
+              <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Վճարումներ չկան</p>
+            </div>
           )}
         </CardContent>
       </Card>

@@ -14,7 +14,7 @@ interface BankCardsListProps {
   isEditing: boolean
   visibleNumbers: Set<number>
   copiedCards: Set<number>
-  getBankGradient: (bankName: string) => string
+  getBankGradientStyle: (bankName: string) => { background: string }
   maskCardNumber: (number: string, visible: boolean) => string
   maskCardNumberInput: (value: string) => string
   onEditFormChange: (data: { bank_name: string; card_number: string; is_active: boolean }) => void
@@ -34,7 +34,7 @@ export function BankCardsList({
   isEditing,
   visibleNumbers,
   copiedCards,
-  getBankGradient,
+  getBankGradientStyle,
   maskCardNumber,
   maskCardNumberInput,
   onEditFormChange,
@@ -80,7 +80,7 @@ export function BankCardsList({
               card={card}
               isVisible={visibleNumbers.has(card.id)}
               isCopied={copiedCards.has(card.id)}
-              getBankGradient={getBankGradient}
+              getBankGradientStyle={getBankGradientStyle}
               maskCardNumber={maskCardNumber}
               onToggleVisibility={() => onToggleVisibility(card.id)}
               onCopy={() => onCopy(card.card_number, card.id)}

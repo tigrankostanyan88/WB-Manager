@@ -71,16 +71,37 @@ export function ProfileCourses({ courses, isLoading, onViewAll }: ProfileCourses
             </Link>
           ))
         ) : (
-          <div className="col-span-2 py-20 text-center bg-gradient-to-br from-violet-50/80 via-slate-50/60 to-blue-50/80 rounded-3xl border border-violet-100/50 flex flex-col items-center justify-center gap-5 group hover:shadow-xl hover:shadow-violet-100/50 transition-all duration-500 relative overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.08),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(59,130,246,0.06),transparent_50%)] pointer-events-none" />
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500 to-violet-600 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300 shadow-xl shadow-violet-200 relative z-10">
-              <BookOpen className="w-10 h-10" />
+          <div className="col-span-2 py-24 text-center bg-gradient-to-br from-violet-100/60 via-white to-blue-100/60 rounded-3xl border border-violet-200/60 flex flex-col items-center justify-center gap-6 group hover:shadow-2xl hover:shadow-violet-200/40 transition-all duration-500 relative overflow-hidden">
+            {/* Animated background blobs */}
+            <div className="absolute top-0 left-0 w-72 h-72 bg-violet-300/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 animate-pulse pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-72 h-72 bg-blue-300/30 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 animate-pulse pointer-events-none" style={{ animationDelay: '1s' }} />
+            
+            {/* Floating particles effect */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-violet-400/40 rounded-full animate-bounce" style={{ animationDuration: '3s' }} />
+              <div className="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-blue-400/40 rounded-full animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }} />
+              <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-violet-300/50 rounded-full animate-bounce" style={{ animationDuration: '5s', animationDelay: '0.5s' }} />
             </div>
-            <div className="space-y-2 relative z-10">
-              <p className="text-slate-900 font-bold text-lg tracking-tight">Դեռ չկան դասընթացներ</p>
-              <p className="text-slate-500 text-sm font-medium">Գտեք ձեզ համապատասխան դասընթացը հենց հիմա</p>
+
+            {/* Main icon with glow */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-violet-500/30 rounded-3xl blur-xl scale-150 animate-pulse pointer-events-none" />
+              <div className="relative w-24 h-24 rounded-3xl bg-gradient-to-br from-violet-500 via-violet-600 to-indigo-600 flex items-center justify-center text-white group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-2xl shadow-violet-300/50">
+                <BookOpen className="w-12 h-12" />
+              </div>
             </div>
-            <Button className="mt-3 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white rounded-xl h-11 px-8 font-bold text-sm shadow-lg shadow-violet-200 hover:shadow-xl hover:shadow-violet-300 transition-all relative z-10">Դիտել կատալոգը</Button>
+
+            {/* Text content */}
+            <div className="space-y-3 relative z-10">
+              <p className="text-slate-900 font-bold text-xl tracking-tight">Դեռ չկան դասընթացներ</p>
+              <p className="text-slate-500 text-sm font-medium max-w-xs mx-auto">Սկսեք ձեր ուսումնառությունը՝ ընտրելով համապատասխան դասընթացը</p>
+            </div>
+
+            {/* CTA Button */}
+            <Button className="mt-2 bg-gradient-to-r from-violet-600 via-violet-700 to-indigo-700 hover:from-violet-700 hover:via-violet-800 hover:to-indigo-800 text-white rounded-xl h-12 px-10 font-bold text-sm shadow-xl shadow-violet-300/50 hover:shadow-2xl hover:shadow-violet-400/40 transition-all relative z-10 group/btn">
+              <span className="mr-2">Դիտել կատալոգը</span>
+              <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+            </Button>
           </div>
         )}
       </div>

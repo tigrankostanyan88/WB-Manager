@@ -46,6 +46,7 @@ export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructo
   
   const [cropModalOpen, setCropModalOpen] = useState(false)
   const [cropImage, setCropImage] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
 
   // Populate form from instructor data
   useEffect(() => {
@@ -87,10 +88,21 @@ export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructo
   }
 
   const onStatValueChange = (index: number, value: string) => {
-    // Handle stat value changes
+    const statLabels = ['Հաջողակ ուսանողներ', 'Շրջանառություն', 'Փորձ', 'Աջակցություն']
+    setInstructorForm(prev => {
+      const newStats = [...(prev.stats || [])]
+      newStats[index] = {
+        ...newStats[index],
+        value,
+        label: statLabels[index]
+      }
+      return { ...prev, stats: newStats }
+    })
   }
 
-  const saveInstructor = useCallback(async () => {
+  const saveInstructor = useCallback(async (e?: React.FormEvent) => {
+    e?.preventDefault()
+    setIsSaving(true)
     try {
       const formData = new FormData()
       formData.append('title', instructorForm.title)
@@ -98,15 +110,18 @@ export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructo
       formData.append('profession', instructorForm.profession)
       formData.append('description', instructorForm.description)
       formData.append('badgeText', instructorForm.badgeText)
+      formData.append('stats_json', JSON.stringify(instructorForm.stats.length > 0 ? instructorForm.stats : []))
       if (avatarFile) {
         formData.append('avatar', avatarFile)
       }
-      
+
       await api.post('/api/v1/instructor', formData)
-      
+
       showToast('Դասընթացավարը պահպանված է', 'success')
     } catch {
       showToast('Սխալ պահպանելիս', 'error')
+    } finally {
+      setIsSaving(false)
     }
   }, [instructorForm, avatarFile, showToast])
 
@@ -122,6 +137,7 @@ export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructo
     instructorForm,
     instructorErrors,
     isInstructorLoading,
+    isSaving,
     onAvatarFile,
     onTitleChange,
     onNameChange,

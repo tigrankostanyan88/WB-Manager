@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useCallback } from 'react'
 import { Header, Footer } from '@/components/layout'
 import { DashboardSidebar } from '@/components/features/admin'
 import { CropModal } from '@/components/features/admin'
@@ -14,6 +15,7 @@ import { useCourseRegistrations } from '@/hooks/admin/useCourseRegistrations'
 import { LoadingState } from './LoadingState'
 import { UnauthorizedState } from './UnauthorizedState'
 import { TabContent } from './TabContentNew'
+import type { DashboardTabId } from '@/components/features/admin/types'
 
 export function DashboardController() {
   const {
@@ -30,6 +32,9 @@ export function DashboardController() {
     removeNotification
   } = useDashboard()
 
+  // Track visited tabs to reset badges
+  const [visitedTabs, setVisitedTabs] = useState<Set<DashboardTabId>>(new Set())
+
   // Settings for logo crop
   const { siteSettings, setSiteSettings, workingHoursSchedule, setWorkingHoursSchedule, isSettingsLoading, saveSettings } = useSettings({ activeTab, allowed, showToast })
 
@@ -39,6 +44,12 @@ export function DashboardController() {
   const crop = useCrop({ setSiteSettings })
   const contactMessages = useContactMessages({ activeTab, allowed })
   const registrations = useCourseRegistrations({ activeTab, allowed })
+
+  // Handle tab change with visited tracking
+  const handleTabChange = useCallback((tabId: DashboardTabId) => {
+    setActiveTab(tabId)
+    setVisitedTabs(prev => new Set(prev).add(tabId))
+  }, [setActiveTab])
 
   if (isAuthLoading) {
     return <LoadingState />

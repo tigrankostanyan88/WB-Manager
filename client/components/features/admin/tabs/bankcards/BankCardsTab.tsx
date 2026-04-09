@@ -33,7 +33,7 @@ export function BankCardsTab() {
     copyCardNumber,
     maskCardNumber,
     maskCardNumberInput,
-    getBankGradient
+    getBankGradientStyle
   } = useBankCards()
 
   if (isLoading) {
@@ -86,7 +86,7 @@ export function BankCardsTab() {
         isEditing={isEditing}
         visibleNumbers={visibleNumbers}
         copiedCards={copiedCards}
-        getBankGradient={getBankGradient}
+        getBankGradientStyle={getBankGradientStyle}
         maskCardNumber={maskCardNumber}
         maskCardNumberInput={maskCardNumberInput}
         onEditFormChange={setEditForm}

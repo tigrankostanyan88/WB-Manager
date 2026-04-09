@@ -6,6 +6,7 @@ import { Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { InstructorPhoto } from './InstructorPhoto'
 import { InstructorFormFields } from './InstructorFormFields'
+import { CropModal } from '@/components/features/admin/CropModal'
 import type { InstructorTabProps } from './types'
 
 export function InstructorTab({
@@ -19,7 +20,17 @@ export function InstructorTab({
   onDescriptionChange,
   onBadgeTextChange,
   onStatValueChange,
-  onSubmit
+  onSubmit,
+  // Crop modal props
+  cropModalOpen = false,
+  cropImage = null,
+  crop = { x: 0, y: 0 },
+  zoom = 1,
+  setCrop = () => {},
+  setZoom = () => {},
+  onCropComplete = () => {},
+  closeCropModal = () => {},
+  confirmCrop = () => {}
 }: InstructorTabProps) {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
@@ -59,6 +70,19 @@ export function InstructorTab({
           />
         </div>
       </div>
+
+      {/* Crop Modal for Avatar */}
+      <CropModal
+        open={cropModalOpen}
+        cropImage={cropImage}
+        crop={crop}
+        zoom={zoom}
+        setCrop={setCrop}
+        setZoom={setZoom}
+        onCropComplete={onCropComplete}
+        onClose={closeCropModal}
+        onConfirm={confirmCrop}
+      />
     </form>
   )
 }
