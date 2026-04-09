@@ -11,7 +11,6 @@ export type DashboardTabId =
   | 'payments'
   | 'bank-cards'
   | 'enrollments'
-  | 'course-registrations'
   | 'contact-messages'
   | 'hero-content'
 

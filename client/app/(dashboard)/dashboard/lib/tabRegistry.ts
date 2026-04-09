@@ -39,11 +39,6 @@ export const tabRegistry: Record<DashboardTabId, TabConfig> = {
     description: 'Manage suspended user accounts'
   },
   enrollments: {
-    component: lazy(() => import('@/components/features/admin/tabs/enrollments/EnrollmentsTab').then(m => ({ default: m.EnrollmentsTab }))),
-    title: 'Enrollments',
-    description: 'Course enrollment management'
-  },
-  'course-registrations': {
     component: lazy(() => import('@/components/features/admin/tabs/course-registrations/CourseRegistrationsTab').then(m => ({ default: m.CourseRegistrationsTab }))),
     title: 'Course Registrations',
     description: 'Course registration management'
