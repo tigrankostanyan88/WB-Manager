@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { Header, Footer } from '@/components/layout'
+import { Footer } from '@/components/layout'
 import { DashboardSidebar } from '@/components/features/admin'
 import { CropModal } from '@/components/features/admin'
 import { NotificationContainer } from '@/components/features/admin'
@@ -60,10 +60,8 @@ export function DashboardController() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-
-      <main className="container max-w-[1400px] px-4 md:px-8 pt-24 pb-32">
+    <div className="min-h-screen bg-slate-50">
+      <main className="container mx-auto px-4 pt-4 pb-32">
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 mt-[120px] items-start">
           <div className="lg:sticky lg:top-24">
             <DashboardSidebar

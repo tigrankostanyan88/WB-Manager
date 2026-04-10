@@ -51,7 +51,7 @@ export function InstructorTab({
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-0">
+        <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-0">
           <InstructorPhoto
             avatarUrl={instructorForm.avatarUrl}
             name={instructorForm.name}

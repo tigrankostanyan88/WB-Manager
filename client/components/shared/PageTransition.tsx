@@ -1,7 +1,6 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { usePathname } from 'next/navigation'
 import { ReactNode, useEffect, useState } from 'react'
 
 interface PageTransitionProps {
@@ -9,16 +8,18 @@ interface PageTransitionProps {
 }
 
 export function PageTransition({ children }: PageTransitionProps) {
-  const pathname = usePathname()
   const [isFirstRender, setIsFirstRender] = useState(true)
   const [mounted, setMounted] = useState(false)
+  const [pathname, setPathname] = useState('')
 
   useEffect(() => {
     setMounted(true)
     setIsFirstRender(false)
+    // Safe to access window.location on client
+    setPathname(window.location.pathname)
   }, [])
 
-  // Prevent SSR issues with usePathname
+  // Prevent SSR issues
   if (!mounted) {
     return <div className="w-full bg-white">{children}</div>
   }

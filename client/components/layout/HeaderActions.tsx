@@ -128,9 +128,12 @@ export function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onM
   // Desktop view
   if (!isLoaded) {
     return (
-      <div className="flex items-center gap-4">
-        <div className="w-12 h-10 bg-slate-100 rounded-full animate-pulse"></div>
-        <div className="w-24 h-10 bg-slate-100 rounded-full animate-pulse"></div>
+      <div className="flex items-center gap-3 h-10">
+        <div className="w-10 h-10 bg-slate-100 rounded-xl animate-pulse"></div>
+        <div className="flex flex-col gap-1.5">
+          <div className="w-12 h-2.5 bg-slate-100 rounded animate-pulse"></div>
+          <div className="w-16 h-3 bg-slate-100 rounded animate-pulse"></div>
+        </div>
       </div>
     )
   }
@@ -175,20 +178,20 @@ export function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onM
   }
 
   return (
-    <>
+    <div className="flex items-center gap-4 h-10">
       <button
         onClick={onOpenLoginModal}
-        className="text-slate-600 hover:text-violet-600 font-semibold text-sm px-4 py-2 transition-colors"
+        className="text-slate-600 hover:text-violet-600 font-semibold text-sm px-4 py-2 transition-colors h-full flex items-center"
       >
         Մուտք
       </button>
 
       <Button
         onClick={onOpenCourseModal}
-        className="rounded-full bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all hover:scale-105 px-6"
+        className="rounded-full bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all hover:scale-105 px-6 h-10"
       >
         Գրանցվել
       </Button>
-    </>
+    </div>
   )
 }

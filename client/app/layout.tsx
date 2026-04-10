@@ -14,6 +14,7 @@ import { decodeJwt } from 'jose'
 import { prisma } from '@/lib/db'
 import { JwtPayloadSchema, DbUserSchema, SettingsSchema } from '@/lib/schemas'
 import { ToastProvider } from '@/components/providers/ToastProvider'
+import { HeaderWrapper } from '@/components/layout/HeaderWrapper'
 
 interface DbUser {
   id: string
@@ -151,12 +152,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         />
       </head>
-      <body>
+      <body className="pt-16">
         <LenisProvider>
           <QueryProvider>
             <AuthProvider initialUser={user as User | null}>
               <SettingsProvider initialSettings={settings}>
                 <ConfirmProvider>
+                  <HeaderWrapper />
                   <PageTransition>
                     {children}
                   </PageTransition>
