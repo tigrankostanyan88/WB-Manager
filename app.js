@@ -89,6 +89,9 @@ app.use('/admin', express.static(path.join(__dirname, 'public', 'admin'), static
 app.use(express.static(path.join(__dirname, 'public'), staticOptions));
 app.use('/api/images', express.static(path.join(__dirname, 'public', 'images'), staticOptions));
 app.use('/api/files', express.static(path.join(__dirname, 'public', 'files'), staticOptions));
+app.use('/files', express.static(path.join(__dirname, 'public', 'files'), staticOptions));
+app.use('/files/hero_content', express.static(path.join(__dirname, 'public', 'files', 'hero_content'), staticOptions));
+app.use('/files/modules', express.static(path.join(__dirname, 'public', 'files', 'modules'), staticOptions));
 
 
 // Body parsers with security limits to prevent DoS attacks

@@ -6,6 +6,12 @@ module.exports = {
   get: async () => {
     await repo.sync();
     const content = await repo.findOne({ includeFiles: true });
+    
+    // Construct video_url from file data if available
+    if (content && content.file) {
+      content.video_url = `/files/hero_content/${content.file.name}`;
+    }
+    
     return content;
   },
 

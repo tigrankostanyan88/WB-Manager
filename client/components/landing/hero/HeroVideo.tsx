@@ -1,7 +1,7 @@
 'use client'
 
 import { Play } from 'lucide-react'
-import { useCallback } from 'react'
+import { useCallback, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { VideoPlayerModal } from '@/components/shared'
 import type { HeroContentData } from './types'
@@ -23,6 +23,20 @@ export function HeroVideo({
   onPlay, 
   onClose 
 }: HeroVideoProps) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  
+  // Debug content
+  console.log('HeroVideo content:', content)
+  console.log('HeroVideo video_url:', content?.video_url)
+
+  // Force reload video immediately when component mounts
+  useLayoutEffect(() => {
+    const video = videoRef.current
+    if (video) {
+      video.load()
+    }
+  }, [])
+
   const handleVideoClick = useCallback(() => {
     const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300'
     const defaultUrl = `${apiBase.replace(/\/$/, '')}/files/hero.mp4`
@@ -54,6 +68,7 @@ export function HeroVideo({
           {/* Video Thumbnail - scales on hover */}
           <div className="h-full w-full transition-transform duration-700 group-hover:scale-[1.03]">
             <video
+              ref={videoRef}
               src={content?.video_url || '/files/hero.mp4'}
               className="h-full w-full object-cover scale-105 opacity-90 group-hover:opacity-100 transition-opacity"
               preload="metadata"
