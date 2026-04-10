@@ -24,18 +24,14 @@ export function HeroVideo({
   onClose 
 }: HeroVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
-  
-  // Debug content
-  console.log('HeroVideo content:', content)
-  console.log('HeroVideo video_url:', content?.video_url)
 
   // Force reload video immediately when component mounts
   useLayoutEffect(() => {
     const video = videoRef.current
-    if (video) {
+    if (video && content?.video_url) {
       video.load()
     }
-  }, [])
+  }, [content?.video_url])
 
   const handleVideoClick = useCallback(() => {
     const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300'
@@ -67,16 +63,20 @@ export function HeroVideo({
         <div className="aspect-[16/10] w-full max-w-full relative overflow-hidden bg-slate-100">
           {/* Video Thumbnail - scales on hover */}
           <div className="h-full w-full transition-transform duration-700 group-hover:scale-[1.03]">
-            <video
-              ref={videoRef}
-              src={content?.video_url || '/files/hero.mp4'}
-              className="h-full w-full object-cover scale-105 opacity-90 group-hover:opacity-100 transition-opacity"
-              preload="metadata"
-              muted
-              playsInline
-              onLoadedMetadata={handleThumbnailLoaded}
-              onError={onVideoError}
-            />
+            {content?.video_url ? (
+              <video
+                ref={videoRef}
+                src={content.video_url}
+                className="h-full w-full object-cover scale-105 opacity-90 group-hover:opacity-100 transition-opacity"
+                preload="metadata"
+                muted
+                playsInline
+                onLoadedMetadata={handleThumbnailLoaded}
+                onError={onVideoError}
+              />
+            ) : (
+              <div className="h-full w-full bg-slate-200 animate-pulse" />
+            )}
           </div>
 
           {/* Play Button Overlay */}
