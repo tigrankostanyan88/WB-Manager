@@ -98,9 +98,11 @@ export function AuthProvider({ children, initialUser = null }: { children: React
 
   useEffect(() => {
     const handler = (evt: Event) => {
+      console.log('[Auth] auth:updated event received:', (evt as CustomEvent).detail)
       const u = (evt as CustomEvent<{ user?: User }>).detail?.user
       if (u) {
         const userWithAvatar = { ...u, avatar: buildAvatar(u) }
+        console.log('[Auth] Updating user state:', userWithAvatar)
         setUserState(userWithAvatar)
         setIsLoaded(true)
       }

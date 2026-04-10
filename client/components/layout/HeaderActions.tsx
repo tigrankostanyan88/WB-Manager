@@ -176,14 +176,14 @@ export function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onM
 
   return (
     <>
-      <button 
+      <button
         onClick={onOpenLoginModal}
         className="text-slate-600 hover:text-violet-600 font-semibold text-sm px-4 py-2 transition-colors"
       >
         Մուտք
       </button>
-      
-      <Button  
+
+      <Button
         onClick={onOpenCourseModal}
         className="rounded-full bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all hover:scale-105 px-6"
       >

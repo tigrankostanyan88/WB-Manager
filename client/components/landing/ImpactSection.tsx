@@ -76,15 +76,14 @@ export function ImpactSection() {
                   Real Success Story
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-6 leading-tight">
-                  Ինչպես 200k-ից մինչև 4.2M ամսվա տակ
+                  Ամսական վաճառքների աճ՝ 200 հազարից մինչև 4.2 միլիոն ռուբլի
                 </h3>
                 <div className="relative pl-4 border-l-4 border-violet-100 py-2 mb-8">
                   <Quote className="absolute -top-2 -left-2 h-4 w-4 text-violet-300 fill-current transform -scale-x-100" />
                   <p className="text-gray-600 italic text-sm leading-relaxed">
-                    «Մոտ 6 ամիս պայքարում էի 200k-ից բարձր չանցնել։ Դասընթացի
-                    առաջին 4 մոդուլից հետո վերամշակեցի իմ մատակարար ցանցը և
-                    լիստինգի ռազմավարությունը։ Երկրորդ ամսում արդեն 2.1M,
-                    երրորդ ամսում՝ 4.2M։ Պարզապես անհավատալի»
+                    «6 ամիս Wildberries-ում վաճառում էի, բայց ամսական շրջանառությունը 200 հազար ռուբլի չէր անցնում։ 
+                    Այս դասընթացն անցնելուց հետո սովորեցի ճիշտ մատակարարներ գտնել և ապրանքների էջերը 
+                    պատշաճ ձևավորել։ Արդեն երկրորդ ամսվա վաճառքը 2.1 միլիոն էր, երրորդ ամսում հասա 4.2 միլիոնի»
                   </p>
                 </div>
               </div>
@@ -92,29 +91,29 @@ export function ImpactSection() {
               <div>
                 <div className="flex items-center gap-4 mb-6">
                   <div className="h-12 w-12 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 font-bold text-lg">
-                    ՀՄ
+                    ԱՄ
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900">Հաղարդ Ման</h4>
+                    <h4 className="font-bold text-gray-900">Աննա Մանուկյան</h4>
                     <p className="text-xs text-violet-600 font-medium">
-                      Home Decor Seller
+                      Տնային դեկորի վաճառող
                     </p>
                     <p className="text-[10px] text-gray-400">
-                      Join in 2024 - 2100% Growth
+                      Միացել է 2024-ին • Աճ 2100%
                     </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 bg-violet-100/50 rounded-xl p-3">
                   <div className="text-center">
-                    <p className="text-[10px] text-gray-400 mb-1">From</p>
+                    <p className="text-[10px] text-gray-400 mb-1">Նախ</p>
                     <p className="text-violet-600 font-bold">200k₽</p>
                   </div>
                   <div className="flex items-center justify-center">
                     <ChevronRight className="h-4 w-4 text-gray-300" />
                   </div>
                   <div className="text-center">
-                    <p className="text-[10px] text-gray-400 mb-1">To</p>
+                    <p className="text-[10px] text-gray-400 mb-1">Հետո</p>
                     <p className="text-violet-600 font-bold">4.2M₽</p>
                   </div>
                 </div>
@@ -122,33 +121,33 @@ export function ImpactSection() {
             </div>
 
             <div className="lg:col-span-2 grid grid-rows-2 gap-6">
-              <div className="bg-white rounded-3xl p-4 sm:p-8 text-slate-900 shadow-xl shadow-slate-100/50 border border-slate-100 flex flex-col justify-center flex-1">
-                <div className="inline-flex items-center gap-2 bg-emerald-100/50 px-3 py-1 rounded-full text-xs font-medium w-fit mb-2 sm:mb-4 shadow-sm ring-1 ring-emerald-100 text-emerald-700">
-                  <CheckCircle className="h-3 w-3" /> Ստուգված
+              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-3xl p-4 sm:p-8 text-slate-900 shadow-xl shadow-emerald-100/30 border border-emerald-100/50 flex flex-col justify-center flex-1">
+                <div className="inline-flex items-center gap-2 bg-white/70 px-3 py-1 rounded-full text-xs font-bold w-fit mb-2 sm:mb-4 shadow-sm ring-1 ring-emerald-200 text-emerald-700">
+                  <CheckCircle className="h-3 w-3" /> Մասնագիտական աջակցություն
                 </div>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 sm:mb-4">
-                  Տեղեկատվական աջակցություն
+                  Wildberries փորձագետի խորհրդատվություն
                 </h3>
                 <div className="flex items-end gap-2">
-                  <span className="text-2xl sm:text-4xl font-bold text-slate-900">48hrs</span>
+                  <span className="text-2xl sm:text-4xl font-bold text-emerald-700">48ժ</span>
                 </div>
                 <p className="text-sm text-slate-600 mt-1">
-                  Միջին պատասխանի ժամանակ
+                  Միջին պատասխանի ժամանակ՝ առցանց չատ և հեռախոսազանգ
                 </p>
               </div>
 
-              <div className="bg-white rounded-3xl p-4 sm:p-8 text-slate-900 shadow-xl shadow-slate-100/50 border border-slate-100 flex flex-col justify-center flex-1">
-                <div className="inline-flex items-center gap-2 bg-rose-100/50 px-3 py-1 rounded-full text-xs font-medium w-fit mb-4 shadow-sm ring-1 ring-rose-100 text-rose-700">
-                  <Video className="h-3 w-3" /> Live Updates
+              <div className="bg-gradient-to-br from-rose-50 to-rose-100/50 rounded-3xl p-4 sm:p-8 text-slate-900 shadow-xl shadow-rose-100/30 border border-rose-100/50 flex flex-col justify-center flex-1">
+                <div className="inline-flex items-center gap-2 bg-white/70 px-3 py-1 rounded-full text-xs font-bold w-fit mb-4 shadow-sm ring-1 ring-rose-200 text-rose-700">
+                  <Video className="h-3 w-3" /> Ուղիղ եթեր
                 </div>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 sm:mb-4">
-                  Համայնքի գործունեություն
+                  Վաճառքների աճի մարտավարություն
                 </h3>
                 <div className="flex items-end gap-2">
-                  <span className="text-2xl sm:text-4xl font-bold text-slate-900">200+</span>
+                  <span className="text-2xl sm:text-4xl font-bold text-rose-700">200+</span>
                 </div>
                 <p className="text-sm text-slate-600 mt-1">
-                  Օրական ակտիվ հաղորդակցություններ
+                  Օրական ակտիվ քննարկումներ վաճառողների փակ համայնքում
                 </p>
               </div>
             </div>

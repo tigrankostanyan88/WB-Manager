@@ -20,6 +20,7 @@ export function useEnrollmentsQuery() {
     queryKey: [ENROLLMENTS_QUERY_KEY],
     queryFn: async () => {
       const res = await api.get('/api/v1/student-courses')
+      console.log('[DEBUG] Enrollments API response:', res.data)
       return (res.data?.data || []) as Enrollment[]
     },
     staleTime: 1000 * 60 * 5,

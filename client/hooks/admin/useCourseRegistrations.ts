@@ -18,7 +18,7 @@ export function useCourseRegistrations({ activeTab, allowed }: { activeTab: stri
   const [isDeleting, setIsDeleting] = useState<number | null>(null)
 
   const fetchRegistrations = useCallback(async () => {
-    if (activeTab !== 'course-registrations' || !allowed) return
+    if (activeTab !== 'enrollments' || !allowed) return
     
     try {
       setIsLoading(true)

@@ -17,6 +17,8 @@ export function EnrollmentsTab({
   setSearchTerm,
   revokeAccess
 }: EnrollmentsTabProps) {
+  console.log('[DEBUG] EnrollmentsTab props:', { enrollmentsCount: enrollments?.length, coursesCount: courses?.length, enrollmentsByCourseCount: enrollmentsByCourse?.length, isLoading })
+  
   const [expandedCourse, setExpandedCourse] = useState<number | string | null>(null)
   const [revoking, setRevoking] = useState<{ userId: number; courseId: number } | null>(null)
 

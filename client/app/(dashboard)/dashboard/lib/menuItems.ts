@@ -5,7 +5,7 @@ export const menuItems: DashboardMenuItem[] = [
   { id: 'overview', label: 'Վահանակ', icon: LayoutDashboard },
   { id: 'users', label: 'Օգտվողներ', icon: Users },
   { id: 'suspended-users', label: 'Կասեցվածներ', icon: UserX },
-  { id: 'enrollments', label: 'Դասընթացների գրանցումներ', icon: BookOpen },
+  { id: 'enrollments', label: 'Գրանցումներ', icon: BookOpen },
   { id: 'contact-messages', label: 'Կոնտակտային հաղորդագրություններ', icon: Mail },
   { id: 'payments', label: 'Վճարումներ', icon: CreditCard },
   { id: 'bank-cards', label: 'Բանկային քարտեր', icon: Building2 },

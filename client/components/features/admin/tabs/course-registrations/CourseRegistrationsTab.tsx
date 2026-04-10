@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, BookOpen, Users, Trash2, GraduationCap, Phone, User } from 'lucide-react'
+import { Search, BookOpen, Users, Trash2, GraduationCap, Phone, User, X } from 'lucide-react'
 
 interface CourseRegistration {
   id: number
@@ -25,6 +25,11 @@ interface CourseRegistrationsTabProps {
 export function CourseRegistrationsTab(props: CourseRegistrationsTabProps) {
   const { registrations, isLoading, isDeleting, onDelete } = props
   const [searchTerm, setSearchTerm] = useState('')
+  const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null)
+
+  // DEBUG: Log registrations data
+  console.log('[DEBUG] CourseRegistrationsTab - registrations:', registrations)
+  console.log('[DEBUG] registrations.length:', registrations?.length)
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('hy-AM', {
@@ -53,7 +58,7 @@ export function CourseRegistrationsTab(props: CourseRegistrationsTabProps) {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-slate-900">Կուրսերի գրանցումներ</h2>
+        <h2 className="text-xl font-semibold text-slate-900">Գրանցումներ</h2>
         <div className="text-sm text-slate-500">
           Ընդհանուր: <span className="font-semibold text-violet-600">{registrations.length}</span> գրանցում
         </div>
@@ -123,7 +128,7 @@ export function CourseRegistrationsTab(props: CourseRegistrationsTabProps) {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button
-                      onClick={() => onDelete(reg.id)}
+                      onClick={() => setDeleteConfirm(reg.id)}
                       disabled={isDeleting === reg.id}
                       className="p-1.5 hover:bg-red-50 rounded-lg transition-colors text-slate-400 hover:text-red-500 disabled:opacity-50"
                       title="Ջնջել"
@@ -139,6 +144,44 @@ export function CourseRegistrationsTab(props: CourseRegistrationsTabProps) {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-slate-900">Հաստատեք ջնջումը</h3>
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
+            <p className="text-slate-600 mb-6">
+              Դուք համոզված եք, որ ցանկանում եք ջնջել այս գրանցումը?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="flex-1 px-4 py-2 border border-slate-200 rounded-xl text-slate-700 hover:bg-slate-50 transition-colors"
+              >
+                Չեղարկել
+              </button>
+              <button
+                onClick={() => {
+                  onDelete(deleteConfirm)
+                  setDeleteConfirm(null)
+                }}
+                disabled={isDeleting === deleteConfirm}
+                className="flex-1 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors disabled:opacity-50"
+              >
+                {isDeleting === deleteConfirm ? 'Ջնջում...' : 'Ջնջել'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

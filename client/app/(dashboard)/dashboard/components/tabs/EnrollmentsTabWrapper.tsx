@@ -1,7 +1,6 @@
 'use client'
 
-import { EnrollmentsTab } from '@/components/features/admin/tabs/enrollments/EnrollmentsTab'
-import { EnrollmentsTabSkeleton } from '@/components/features/admin/tabs/enrollments/EnrollmentsTabSkeleton'
+import { CourseRegistrationsTab } from '@/components/features/admin/tabs/course-registrations/CourseRegistrationsTab'
 import { useEnrollmentsTab } from '@/app/(dashboard)/dashboard/hooks'
 
 interface EnrollmentsTabWrapperProps {
@@ -9,23 +8,14 @@ interface EnrollmentsTabWrapperProps {
 }
 
 export function EnrollmentsTabWrapper({ allowed }: EnrollmentsTabWrapperProps) {
-  const enrollments = useEnrollmentsTab({ activeTab: 'enrollments', allowed })
-  
-  if (enrollments.isLoading) {
-    return <EnrollmentsTabSkeleton />
-  }
-  
+  const registrations = useEnrollmentsTab({ activeTab: 'enrollments', allowed })
+
   return (
-    <EnrollmentsTab
-      enrollments={enrollments.enrollments}
-      courses={enrollments.courses}
-      enrollmentsByCourse={enrollments.enrollmentsByCourse}
-      isLoading={enrollments.isLoading}
-      selectedCourse={enrollments.selectedCourse}
-      setSelectedCourse={enrollments.setSelectedCourse}
-      searchTerm={enrollments.searchTerm}
-      setSearchTerm={enrollments.setSearchTerm}
-      revokeAccess={enrollments.revokeAccess}
+    <CourseRegistrationsTab
+      registrations={registrations.registrations}
+      isLoading={registrations.isLoading}
+      isDeleting={registrations.isDeleting}
+      onDelete={registrations.deleteRegistration}
     />
   )
 }

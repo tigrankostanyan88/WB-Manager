@@ -40,6 +40,7 @@ export function useAuthForm(onSuccess: () => void) {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(formData)
       })
 
@@ -78,10 +79,16 @@ export function useAuthForm(onSuccess: () => void) {
         localStorage.setItem('user', JSON.stringify(responseData.user))
       }
 
-      setIsSuccess(true)
-      setTimeout(() => {
-        onSuccess()
-      }, 2000)
+      // Show toast notification
+      window.dispatchEvent(new CustomEvent('show-notification', { 
+        detail: { message: 'Մուտքը հաջողվեց', type: 'success' } 
+      }))
+
+      // Close modal immediately
+      onSuccess()
+
+      // Force page reload to update all components
+      setTimeout(() => window.location.href = '/', 500)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Գրանցման սխալ')
     } finally {

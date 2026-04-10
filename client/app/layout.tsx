@@ -13,6 +13,7 @@ import { cookies } from 'next/headers'
 import { decodeJwt } from 'jose'
 import { prisma } from '@/lib/db'
 import { JwtPayloadSchema, DbUserSchema, SettingsSchema } from '@/lib/schemas'
+import { ToastProvider } from '@/components/providers/ToastProvider'
 
 interface DbUser {
   id: string
@@ -160,6 +161,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                     {children}
                   </PageTransition>
                   <ScrollToTop />
+                  <ToastProvider />
                 </ConfirmProvider>
               </SettingsProvider>
             </AuthProvider>

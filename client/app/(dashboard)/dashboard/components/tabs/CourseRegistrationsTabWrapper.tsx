@@ -8,7 +8,7 @@ interface CourseRegistrationsTabWrapperProps {
 }
 
 export function CourseRegistrationsTabWrapper({ allowed }: CourseRegistrationsTabWrapperProps) {
-  const registrations = useCourseRegistrationsTab({ activeTab: 'course-registrations', allowed })
+  const registrations = useCourseRegistrationsTab({ activeTab: 'enrollments', allowed })
   return (
     <CourseRegistrationsTab
       registrations={registrations.registrations}

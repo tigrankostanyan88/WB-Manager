@@ -21,12 +21,7 @@ module.exports = {
   // Get all course registrations
   getCourseRegistrations: async () => {
     const registrations = await repo.findAll();
-    if (!registrations || registrations.length === 0) {
-      const error = new Error('No course registrations found!');
-      error.statusCode = 404;
-      throw error;
-    }
-    return registrations;
+    return registrations || [];
   },
 
   // Get single course registration by ID
