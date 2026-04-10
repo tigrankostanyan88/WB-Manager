@@ -225,7 +225,7 @@ module.exports = class File {
                     name: "user_img",
                     count: 3,
                     types: ["jpeg", "png", "gif", "webp", "svg"],
-                    dimensions: { large: [200, 200] },
+                    dimensions: { large: [500, 500] },
                 }],
             },
             {

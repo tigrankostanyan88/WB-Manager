@@ -40,14 +40,12 @@ export function Header({ forceWhiteBackground = false }: { forceWhiteBackground?
     <>
       <header 
         className={cn(
-          "fixed top-0 left-0 right-0 z-[100] bg-white transition-all duration-300 ease-in-out",
-          shouldBeSolid
-            ? "shadow-sm py-3"
-            : "py-5"
+          "fixed top-0 left-0 right-0 z-[100] bg-white h-16",
+          shouldBeSolid && "shadow-sm"
         )}
       >
-        <div className="container px-4 md:px-6">
-          <div className="flex items-center justify-between">
+        <div className="container px-4 md:px-6 h-full">
+          <div className="flex items-center justify-between h-full">
             {/* Logo */}
             <Link href="/" prefetch={true} className="flex items-center gap-2 relative z-50">
               {settings.logo ? (
