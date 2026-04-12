@@ -55,7 +55,7 @@ export function useCourseDetails(courseId: string): UseCourseDetailsResult {
   const [error, setError] = useState<string | null>(null)
   const [hasAccess, setHasAccess] = useState(false)
   const [checkingAccess, setCheckingAccess] = useState(true)
-  const [realRating, setRealRating] = useState<number>(4.9)
+  const [realRating, setRealRating] = useState<number>(0)
   const [realReviewsCount, setRealReviewsCount] = useState<number>(0)
 
   // Check access effect
@@ -123,7 +123,7 @@ export function useCourseDetails(courseId: string): UseCourseDetailsResult {
       setCourse(courseData)
 
       // Fetch reviews and calculate real rating
-      let calculatedRating = 4.9
+      let calculatedRating = 0
       let calculatedCount = 0
       try {
         const reviewsRes = await api.get('/api/v1/reviews')
@@ -135,11 +135,13 @@ export function useCourseDetails(courseId: string): UseCourseDetailsResult {
           const avgRating = totalRating / reviews.length
           calculatedRating = Number(avgRating.toFixed(1))
           calculatedCount = reviews.length
-          setRealRating(calculatedRating)
-          setRealReviewsCount(calculatedCount)
         }
+        setRealRating(calculatedRating)
+        setRealReviewsCount(calculatedCount)
       } catch {
-        // Keep default values if reviews fetch fails
+        // Reset to 0 if reviews fetch fails
+        setRealRating(0)
+        setRealReviewsCount(0)
       }
 
       // Fetch instructor data
@@ -177,7 +179,7 @@ export function useCourseDetails(courseId: string): UseCourseDetailsResult {
             role: typeof data.profession === 'string' ? data.profession : 'Գլխավոր մենթոր',
             desc: typeof data.description === 'string' ? data.description : 'Փորձառու մասնագետ WB ոլորտում',
             imageUrl: imageUrl || '',
-            ratingText: `${calculatedRating} վարկանիշ`,
+            ratingText: calculatedRating > 0 ? `${calculatedRating} վարկանիշ` : 'Դեռ չի գնահատվել',
             coursesText: '0 վիդեոդաս'
           })
         }
@@ -188,7 +190,7 @@ export function useCourseDetails(courseId: string): UseCourseDetailsResult {
           role: 'Գլխավոր մենթոր',
           desc: 'Փորձառու մասնագետ WB ոլորտում',
           imageUrl: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=400&auto=format&fit=crop',
-          ratingText: `${calculatedRating} վարկանիշ`,
+          ratingText: calculatedRating > 0 ? `${calculatedRating} վարկանիշ` : 'Դեռ չի գնահատվել',
           coursesText: '0 վիդեոդաս'
         })
       }
