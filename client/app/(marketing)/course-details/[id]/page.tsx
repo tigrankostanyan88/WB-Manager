@@ -1,6 +1,7 @@
 'use client'
 
 import { useParams } from 'next/navigation'
+import { useEffect } from 'react'
 import { CourseModulesList } from '@/components/features/course'
 import { CourseHero, type CourseHeroData } from '@/components/features/course'
 import { WhatYouLearn } from '@/components/features/course'

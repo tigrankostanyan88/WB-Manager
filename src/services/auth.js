@@ -50,9 +50,10 @@ const createSendToken = async (user, statusCode, req, res, target = false) => {
     res.cookie('jwt', token, {
         expires: new Date(Date.now() + jwtExpire * 24 * 60 * 60 * 1000),
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'none',
         path: '/',
-        secure: process.env.NODE_ENV === 'production'
+        secure: process.env.NODE_ENV === 'production',
+        domain: process.env.NODE_ENV === 'production' ? undefined : undefined
     });
     res.locals.token = token;
 

@@ -1,9 +1,23 @@
 node_modules
 public/files/*.mp4
+
+# Build
 .next/
 out/
 build/
+
+# Test artifacts
+coverage/
+playwright-report/
+test-results/
+
+# Environment
+.env
+.env.local
+.env.production
 .env*.local
+
+# Misc
 *.tsbuildinfo
 .clerk/
 .vercel

@@ -206,8 +206,8 @@ module.exports = class File {
                 files: [{
                     name: "instructor_img",
                     count: 10,
-                    types: ["jpeg", "png", "webp", "svg"],
-                    dimensions: { large: [800, 800] },
+                    types: ["jpeg", "png", "webp", "svg", "avif"],
+                    dimensions: { large: [500, 500] },
                 }],
             },
             {

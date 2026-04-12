@@ -81,8 +81,17 @@ export function ProfileSidebar({
   return (
     <aside className="lg:w-72 flex-shrink-0 self-start">
       <div className="sticky top-24 space-y-6">
-      <Card className="shadow-2xl shadow-slate-200/40 rounded-2xl overflow-hidden bg-white backdrop-blur-xl border border-white/60">
-        <CardContent className="p-6">
+      <div className="relative">
+        {/* Decorative background gradient blobs */}
+        <div className="absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-br from-violet-300/40 to-purple-300/30 rounded-full blur-2xl" />
+        <div className="absolute -bottom-4 -right-4 w-28 h-28 bg-gradient-to-tr from-emerald-300/30 to-teal-300/20 rounded-full blur-2xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-gradient-to-r from-amber-200/20 to-orange-200/20 rounded-full blur-3xl" />
+        
+        <Card className="relative shadow-2xl shadow-violet-200/30 rounded-2xl overflow-hidden bg-gradient-to-br from-white via-slate-50/80 to-violet-50/60 backdrop-blur-xl border border-white/80">
+          {/* Subtle pattern overlay */}
+          <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,#6366f1_1px,transparent_0)] bg-[length:20px_20px]" />
+          
+          <CardContent className="relative p-6">
           <div className="flex flex-col items-center text-center mb-8">
             <div className="relative group cursor-pointer">
               <div className="relative w-32 h-32 rounded-[2rem] bg-gradient-to-br from-violet-100 to-slate-100 p-1.5 shadow-lg shadow-slate-200/50 transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-violet-200/40">
@@ -129,7 +138,7 @@ export function ProfileSidebar({
             </div>
           </div>
 
-          <nav className="space-y-1">
+          <nav className="space-y-1 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)] rounded-xl p-2 bg-white/50">
             {sidebarLinks.map((link) =>
               link.href ? (
                 <motion.div key={link.id} whileHover={{ x: 4 }} whileTap={{ scale: 0.98 }}>
@@ -198,6 +207,7 @@ export function ProfileSidebar({
           </nav>
         </CardContent>
       </Card>
+      </div>
       </div>
     </aside>
   )

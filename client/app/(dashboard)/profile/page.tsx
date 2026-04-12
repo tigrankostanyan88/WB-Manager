@@ -60,11 +60,11 @@ export default function ProfilePage() {
   const { user, setUser, isLoadingData, myReview, setMyReview, myCourses, myPayments, stats } = useProfileData({ authUser: authUser as ProfileUser | null, isLoaded, logout })
 
   useEffect(() => {
-    // If we have a user (even optimistically), we stay on the page.
-    if (isLoaded && !isLoggedIn && !isLoadingData && !user) {
+    // Only redirect after everything is loaded and we confirm no user
+    if (isLoaded && !isLoadingData && !user && !authUser) {
       router.replace('/')
     }
-  }, [isLoaded, isLoggedIn, isLoadingData, user, router])
+  }, [isLoaded, isLoadingData, user, authUser, router])
 
   const [activeTab, setActiveTab] = useState('profile')
   const [showPasswordModal, setShowPasswordModal] = useState(false)
@@ -175,7 +175,7 @@ export default function ProfilePage() {
 
           <div className="space-y-6 min-h-[850px]">
             {currentUser?.role !== 'admin' && (
-              <ProBanner user={currentUser} myCourses={myCourses} totalCoursesCount={totalCoursesCount} onShowPaymentModal={() => setShowPaymentModal(true)} />
+              <ProBanner user={currentUser} myCourses={myCourses} totalCoursesCount={totalCoursesCount} onShowPaymentModal={() => setShowPaymentModal(true)} isLoading={isLoadingData} />
             )}
 
             <AnimatePresence mode="wait">

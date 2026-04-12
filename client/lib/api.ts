@@ -36,15 +36,11 @@ api.interceptors.response.use(
       
       switch (status) {
         case 401:
-          // Unauthorized - clear cookie, localStorage and redirect to login
-          document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-          // Clean up any legacy localStorage tokens (security fix)
+          // Unauthorized - clear localStorage tokens for security
+          // BUT don't redirect - let the auth context handle that via focus event
           if (typeof window !== 'undefined') {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-          }
-          if (typeof window !== 'undefined' && window.location.pathname !== '/') {
-            window.location.href = '/';
           }
           break;
           

@@ -86,7 +86,18 @@ export default function useCrop({ setSiteSettings, skipGlobalUpdate }: UseCropPa
     const url = URL.createObjectURL(file)
     setSiteSettings((prev) => ({ ...prev, logo: url, logoFile: file }))
     if (!skipGlobalUpdate) {
-      updateSettings({ logo: url }) // Update global context for footer/nav only for site logo
+      updateSettings({ logo: url })
+    }
+    setCropModalOpen(false)
+    setCropImage(null)
+  }
+
+  const skipCrop = () => {
+    if (!cropImage) return
+    // Use original image without cropping
+    setSiteSettings((prev) => ({ ...prev, logo: cropImage, logoFile: null }))
+    if (!skipGlobalUpdate) {
+      updateSettings({ logo: cropImage })
     }
     setCropModalOpen(false)
     setCropImage(null)
@@ -107,6 +118,7 @@ export default function useCrop({ setSiteSettings, skipGlobalUpdate }: UseCropPa
     onCropComplete,
     onLogoFileSelect,
     createCroppedImage,
+    skipCrop,
     closeCrop
   }
 }

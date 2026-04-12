@@ -16,7 +16,6 @@ export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructo
   const { instructor, loading: isInstructorLoading } = useInstructor()
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   
-  // Custom setSiteSettings that updates instructor avatar instead of site logo
   interface AvatarUpdaterState {
     logo?: string
     logoFile?: File
@@ -139,6 +138,10 @@ export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructo
     await crop.createCroppedImage()
   }
 
+  const skipCrop = () => {
+    crop.skipCrop()
+  }
+
   return {
     instructorForm,
     instructorErrors,
@@ -161,6 +164,7 @@ export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructo
     setZoom: crop.setZoom,
     onCropComplete: crop.onCropComplete,
     closeCropModal,
-    confirmCrop
+    confirmCrop,
+    skipCrop
   }
 }

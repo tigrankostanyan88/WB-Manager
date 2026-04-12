@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useCallback } from 'react'
 import Cropper from 'react-easy-crop'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -15,9 +16,13 @@ interface CropModalProps {
   onCropComplete: (croppedArea: Area, croppedAreaPixels: Area) => void
   onClose: () => void
   onConfirm: () => void
+  onSkipCrop?: () => void // Use full image without cropping
 }
 
-export function CropModal({ open, cropImage, crop, zoom, setCrop, setZoom, onCropComplete, onClose, onConfirm }: CropModalProps) {
+export function CropModal({ open, cropImage, crop, zoom, setCrop, setZoom, onCropComplete, onClose, onConfirm, onSkipCrop }: CropModalProps) {
+  const [cropWidth, setCropWidth] = useState(300)
+  const [cropHeight, setCropHeight] = useState(300)
+
   if (!open || !cropImage) return null
 
   return (
@@ -35,14 +40,44 @@ export function CropModal({ open, cropImage, crop, zoom, setCrop, setZoom, onCro
             image={cropImage}
             crop={crop}
             zoom={zoom}
-            aspect={1}
+            cropSize={{ width: cropWidth, height: cropHeight }}
+            objectFit="contain"
+            showGrid={true}
             onCropChange={setCrop}
             onCropComplete={onCropComplete}
             onZoomChange={setZoom}
           />
         </div>
 
-        <div className="p-6 space-y-6">
+        {/* Custom crop dimensions */}
+        <div className="px-6 pt-4 pb-2">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-bold text-slate-500">Լայնություն (px)</label>
+              <input
+                type="number"
+                value={cropWidth}
+                onChange={(e) => setCropWidth(Number(e.target.value))}
+                min={50}
+                max={800}
+                className="w-20 px-2 py-1 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-bold text-slate-500">Բարձրություն (px)</label>
+              <input
+                type="number"
+                value={cropHeight}
+                onChange={(e) => setCropHeight(Number(e.target.value))}
+                min={50}
+                max={800}
+                className="w-20 px-2 py-1 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="px-6 pb-6 space-y-4">
           <div className="space-y-2">
             <div className="flex justify-between text-xs font-bold text-slate-500">
               <span>Մոտեցնել</span>
@@ -61,6 +96,11 @@ export function CropModal({ open, cropImage, crop, zoom, setCrop, setZoom, onCro
           </div>
 
           <div className="flex gap-3 justify-end pt-2">
+            {onSkipCrop && (
+              <Button variant="ghost" onClick={onSkipCrop} className="rounded-xl font-bold text-slate-600 hover:text-slate-900">
+                Չկտրել
+              </Button>
+            )}
             <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold">
               Չեղարկել
             </Button>
