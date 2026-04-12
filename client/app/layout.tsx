@@ -1,5 +1,6 @@
 import './globals.css'
 import type { Metadata, Viewport } from 'next'
+import { Inter, Noto_Sans_Armenian } from 'next/font/google'
 import { ReactNode } from 'react'
 import { ConfirmProvider } from '@/components/providers/ConfirmProvider'
 import { QueryProvider } from '@/components/providers/QueryProvider'
@@ -15,6 +16,9 @@ import { prisma } from '@/lib/db'
 import { JwtPayloadSchema, DbUserSchema, SettingsSchema } from '@/lib/schemas'
 import { ToastProvider } from '@/components/providers/ToastProvider'
 import { HeaderWrapper } from '@/components/layout/HeaderWrapper'
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const notoArmenian = Noto_Sans_Armenian({ subsets: ['armenian'], variable: '--font-armenian', weight: ['400', '500', '600', '700'] })
 
 interface DbUser {
   id: string
@@ -139,20 +143,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const user = await getUser()
 
   return (
-    <html lang="hy" suppressHydrationWarning style={{ backgroundColor: '#ffffff' }}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        />
-      </head>
-      <body className="pt-16">
+    <html lang="hy" suppressHydrationWarning style={{ backgroundColor: '#ffffff' }} className={`${inter.variable} ${notoArmenian.variable}`}>
+      <body className={`${inter.variable} ${notoArmenian.variable} font-sans pt-16`}>
         <LenisProvider>
           <QueryProvider>
             <AuthProvider initialUser={user as User | null}>

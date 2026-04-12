@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import DOMPurify from 'dompurify'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { CheckCircle, Star, Users, TrendingUp, Clock, HeadphonesIcon, Award, Sparkles } from 'lucide-react'
@@ -111,7 +112,7 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
                   <div 
                     className="text-slate-600 leading-relaxed text-lg mb-8 prose prose-slate max-w-none"
                     dangerouslySetInnerHTML={{ 
-                      __html: safeInstructor.description || '<p>Սովորեք Wildberries-ում վաճառելու ճիշտ մոտեցումները փորձառու մենթորից։ Դասընթացը ներառում է բիզնեսի սկսելու, ապրանքների ընտրության, լիստինգի օպտիմալացման և վաճառքների աճի բոլոր հիմնական քայլերը։</p>' 
+                      __html: DOMPurify.sanitize(safeInstructor.description || '<p>Սովորեք Wildberries-ում վաճառելու ճիշտ մոտեցումները փորձառու մենթորից։ Դասընթացը ներառում է բիզնեսի սկսելու, ապրանքների ընտրության, լիստինգի օպտիմալացման և վաճառքների աճի բոլոր հիմնական քայլերը։</p>')
                     }}
                   />
                 </div>

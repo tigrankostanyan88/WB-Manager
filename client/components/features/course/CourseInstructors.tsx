@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import DOMPurify from 'dompurify'
 import { Card, CardContent } from '@/components/ui/card'
 import { Play, Star } from 'lucide-react'
 
@@ -54,7 +55,7 @@ export function CourseInstructors({ instructor }: CourseInstructorsProps) {
             
             <div 
               className="text-slate-600 leading-relaxed max-w-lg line-clamp-3 text-sm"
-              dangerouslySetInnerHTML={{ __html: instructor.desc }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(instructor.desc) }}
             />
             
             <div className="flex items-center justify-center md:justify-start gap-4 pt-2">

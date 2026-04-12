@@ -72,12 +72,7 @@ export function useAuthForm(onSuccess: () => void) {
       if (responseData.user) {
         window.dispatchEvent(new CustomEvent('auth:updated', { detail: { user: responseData.user } }))
       }
-      if (responseData.token) {
-        localStorage.setItem('token', responseData.token)
-      }
-      if (responseData.user) {
-        localStorage.setItem('user', JSON.stringify(responseData.user))
-      }
+      // Token is set by server as httpOnly cookie - never store in localStorage (XSS risk)
 
       // Show toast notification
       window.dispatchEvent(new CustomEvent('show-notification', { 

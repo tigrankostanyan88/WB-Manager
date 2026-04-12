@@ -57,8 +57,8 @@ app.set('views', path.join(__dirname, 'views'));
 // Compression middleware - gzip responses for faster transfer
 app.set('trust proxy', 1);
 app.use(compression({
-  level: config.COMPRESSION.LEVEL, // Balance between compression ratio and CPU usage
-  threshold: 0, // Compress all responses regardless of size
+  level: config.COMPRESSION.LEVEL, 
+  threshold: 0,
   filter: (req, res) => {
     if (req.headers['x-no-compression']) {
       return false;

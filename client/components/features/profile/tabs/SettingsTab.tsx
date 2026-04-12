@@ -5,7 +5,7 @@ import { Mail, MapPin, Phone, Shield, User as UserIcon, Save } from 'lucide-reac
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 interface SettingsUser {
   name: string

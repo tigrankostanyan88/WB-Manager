@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from 'react'
 import { userService } from '@/lib/api'
 
 export interface UserFile {
@@ -89,6 +89,12 @@ export function AuthProvider({ children, initialUser = null }: { children: React
   }, [])
 
   useEffect(() => {
+    // Clean up any legacy localStorage tokens (security fix)
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+    }
+    
     if (!initialUser) {
       fetchUser()
     } else {
@@ -114,6 +120,11 @@ export function AuthProvider({ children, initialUser = null }: { children: React
       await fetch('/api/v1/users/logout', { method: 'POST' })
     } catch { }
     document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+    // Clean up any legacy localStorage tokens (security fix)
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+    }
     setUserState(null)
     window.location.href = '/'
   }

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import { FormEvent, useEffect, useState } from 'react'
@@ -14,10 +13,12 @@ export function Chat({ toolId, systemPrompt }: { toolId: string, systemPrompt: s
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
+  // Reset chat when tool changes
   useEffect(() => {
     setMessages([])
     setInput('')
-  }, [toolId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toolId]) // Intentionally only resetting on toolId change, not systemPrompt
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()

@@ -36,8 +36,13 @@ api.interceptors.response.use(
       
       switch (status) {
         case 401:
-          // Unauthorized - clear cookie and redirect to login
+          // Unauthorized - clear cookie, localStorage and redirect to login
           document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          // Clean up any legacy localStorage tokens (security fix)
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+          }
           if (typeof window !== 'undefined' && window.location.pathname !== '/') {
             window.location.href = '/';
           }

@@ -9,6 +9,7 @@ interface LenisProviderProps {
 
 export function LenisProvider({ children }: LenisProviderProps) {
   const lenisRef = useRef<Lenis | null>(null)
+  const rafIdRef = useRef<number | null>(null)
 
   useEffect(() => {
     // Initialize Lenis smooth scrolling
@@ -27,13 +28,16 @@ export function LenisProvider({ children }: LenisProviderProps) {
     // Animation frame loop for Lenis
     function raf(time: number) {
       lenis.raf(time)
-      requestAnimationFrame(raf)
+      rafIdRef.current = requestAnimationFrame(raf)
     }
 
-    requestAnimationFrame(raf)
+    rafIdRef.current = requestAnimationFrame(raf)
 
     // Cleanup
     return () => {
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current)
+      }
       lenis.destroy()
       lenisRef.current = null
     }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import api, { userService } from '@/lib/api'
 import type { UserFile } from '@/components/features/admin/types'
 import type { ApiResponse, ApiData } from '@/types/api'
@@ -69,7 +69,7 @@ interface UseProfileDataParams {
 
 export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataParams) {
   const [user, setUser] = useState<ProfileUser | null>(authUser)
-  const [isLoadingData, setIsLoadingData] = useState(true)
+  const [isLoadingData, setIsLoadingData] = useState(false)
   const [myReview, setMyReview] = useState<ReviewData | null>(null)
   const [myCourses, setMyCourses] = useState<UserCourse[]>([])
   const [myPayments, setMyPayments] = useState<Payment[]>([])
@@ -116,8 +116,9 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
       let progress = 0
       const modules = c.modules
       if (modules && Array.isArray(modules) && modules.length > 0) {
-        const completedModules = modules.filter((m: ModuleWithProgress) => {
-          return m.isCompleted || m.completed
+        const completedModules = modules.filter((m) => {
+          const mod = m as ModuleWithProgress
+          return mod.isCompleted || mod.completed
         }).length
         progress = Math.round((completedModules / modules.length) * 100)
       }
@@ -171,7 +172,10 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
     return u
   }
 
-  const fetchProfileData = async () => {
+  const fetchProfileData = useCallback(async () => {
+    // Prevent multiple simultaneous fetches
+    if (isLoadingData) return
+    
     try {
       setIsLoadingData(true)
       
@@ -192,21 +196,25 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
       setUser(buildAvatar(nextUser))
       setMyReview(extractMyReview(reviewRes))
 
-      // Get user's course_ids and fetch courses directly
+      // Get user's course_ids and fetch courses in parallel (not sequentially)
       const courseIds = nextUser.course_ids || []
       
-      // Fetch courses by IDs from course_ids
-      const courses: any[] = []
-      for (const courseId of courseIds) {
+      // Fetch all courses in parallel using Promise.allSettled
+      const coursePromises = courseIds.map(async (courseId) => {
         try {
           const courseRes = await api.get(`/api/v1/courses/${courseId}`)
-          if (courseRes.data?.data || courseRes.data) {
-            courses.push(courseRes.data?.data || courseRes.data)
-          }
-        } catch (err) {
+          return courseRes.data?.data || courseRes.data || null
+        } catch {
           // Silently skip failed course fetches
+          return null
         }
-      }
+      })
+      
+      const courseResults = await Promise.allSettled(coursePromises)
+      const courses = courseResults
+        .filter((result): result is PromiseFulfilledResult<unknown> => result.status === 'fulfilled')
+        .map(result => result.value)
+        .filter((course): course is NonNullable<typeof course> => course !== null)
       
       const transformedCourses = transformCourses(courses as Course[])
       setMyCourses(transformedCourses)
@@ -242,7 +250,8 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
     } finally {
       setIsLoadingData(false)
     }
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser]) // Only re-fetch when authUser changes
 
   useEffect(() => {
     if (!isLoaded) return
@@ -251,9 +260,11 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
     if (authUser) {
       setUser(buildAvatar(authUser))
     }
+    
+    // Only fetch once when auth is loaded
     fetchProfileData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, authUser?.id])
+  }, [isLoaded, authUser?.id]) // Only re-run when authUser ID changes, not on every authUser object change
 
   return { user, setUser, isLoadingData, myReview, setMyReview, myCourses, myPayments, stats }
 }
