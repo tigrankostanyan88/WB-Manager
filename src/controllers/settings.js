@@ -2,7 +2,6 @@ const catchAsync = require('../utils/catchAsync');
 const service = require('../services/settings');
 
 module.exports = {
-  // GET SETTINGS
   getSettings: catchAsync(async (req, res, next) => {
     const result = await service.getSettings(req.time);
 
@@ -13,7 +12,6 @@ module.exports = {
     });
   }),
 
-  // UPDATE/CREATE SETTINGS
   updateSettings: catchAsync(async (req, res, next) => {
     const result = await service.updateSettings(req.body, req.files, req.time);
 

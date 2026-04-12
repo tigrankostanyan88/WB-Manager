@@ -1,4 +1,3 @@
-// Express app configuration with security and performance optimizations
 const path = require('path');
 process.env.UV_THREADPOOL_SIZE = 128;
 
@@ -12,10 +11,9 @@ const fileUpload = require('express-fileupload');
 const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 
-// Load environment variables in development
+// Load env vars
 if (process.env.NODE_ENV !== 'production') dotenv.config({ path: './.env' });
 
-// Server Configuration
 const Server = require('./src/utils/server');
 const Api = require('./src/utils/api');
 const ctrls = require('./src/controllers');
@@ -40,7 +38,6 @@ app.use(
         ] : [])
       ].filter(Boolean);
       
-      // Allow requests with no origin (mobile apps, curl, etc.)
       if (!origin || allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
@@ -50,11 +47,11 @@ app.use(
   })
 );
 
-// View engine configuration for server-side rendering
+// EJS view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Compression middleware - gzip responses for faster transfer
+// Gzip compression
 app.set('trust proxy', 1);
 app.use(compression({
   level: config.COMPRESSION.LEVEL, 
@@ -68,14 +65,14 @@ app.use(compression({
 }));
 
 
-// Security: Optimized static file serving with aggressive caching
+// Static files with caching
 const staticOptions = {
   etag: true,
-  maxAge: config.CACHE.STATIC_MAX_AGE, // 1 year cache for static assets
-  immutable: true, // Files won't change, safe to cache long-term
+  maxAge: config.CACHE.STATIC_MAX_AGE,
+  immutable: true,
   setHeaders: (res, path) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    // CORS headers for video files to allow seeking/range requests
+    // Video file CORS headers
     if (path.endsWith('.mp4') || path.endsWith('.webm') || path.endsWith('.mov')) {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD');
@@ -94,67 +91,63 @@ app.use('/files/hero_content', express.static(path.join(__dirname, 'public', 'fi
 app.use('/files/modules', express.static(path.join(__dirname, 'public', 'files', 'modules'), staticOptions));
 
 
-// Body parsers with security limits to prevent DoS attacks
+// Body parsers with limits
 app.use(express.json({ limit: config.UPLOAD.MAX_BODY_SIZE }));
 app.use(express.urlencoded({ extended: true, limit: config.UPLOAD.MAX_BODY_SIZE }));
 
-// Cookie parser with strong ETags for view caching
+// Cookie parser
 app.set('etag', 'strong'); 
 app.use(cookieParser());
 app.use(fileUpload({ limits: { fileSize: config.UPLOAD.MAX_FILE_SIZE }}));
 
-// Authentication middleware - sets res.locals.user for all routes
+// Auth middleware
 const authService = require('./src/services/auth');
 app.use(authService.isLoggedIn);
 
 
-// LOGGING
+// Logging
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
-// RATE LIMITING - Protect against brute force and DoS attacks
+// Rate limiting
 
-// General API rate limiter
 const limiter = rateLimit({
   max: config.RATE_LIMIT.GENERAL_MAX,
   windowMs: config.RATE_LIMIT.GENERAL_WINDOW_MS,
   message: 'Այս IP-ից չափազանց շատ հարցումներ են ուղարկվել, խնդրում ենք կրկին փորձել մեկ ժամից։'
 });
 
-// Auth rate limiter to prevent brute force attacks
 const authLimiter = rateLimit({
   max: config.RATE_LIMIT.AUTH_MAX,
   windowMs: config.RATE_LIMIT.AUTH_WINDOW_MS,
   message: { message: 'Այս IP-ից մուտք գործելու չափազանց շատ փորձեր կան, խնդրում ենք կրկին փորձել մեկ ժամից։' }
 });
 
-// Read rate limiter for heavy read endpoints
 const readLimiter = rateLimit({
   max: config.RATE_LIMIT.READ_MAX, 
   windowMs: config.RATE_LIMIT.READ_WINDOW_MS,
   message: { message: 'Չափազանց շատ ընթերցման հարցումներ կան, խնդրում ենք կրկին փորձել մեկ րոպեից։' }
 });
 
-// Apply rate limiters to specific routes
 app.use('/api/v1/users/signIn', authLimiter);
 app.use('/api/v1/tests', readLimiter); 
 app.use('/api', limiter);
 
-// Request timing middleware for performance monitoring
+// Request timing
 app.use((req, res, next) => {
   req.time = Date.now();
   next();
 });
 
-// API cache control - prevent caching of dynamic API responses
+// Disable API caching
 app.use((req, res, next) => {
   if (req.originalUrl.startsWith('/api')) res.set('Cache-Control', 'no-store');
   next();
 });
 
-// API ROUTES
+// Routes
 Api(app);
 
-// 404 handler - gracefully handle unknown routes with SEO-friendly error pages
+// 404 handler
 app.all('*', async (req, res, next) => {
   if (req.originalUrl.startsWith('/api')) {
     return next(new AppError(`Հնարավոր չէ գտնել ${req.originalUrl}-ը այս սերվերի վրա!`, 404));
@@ -174,8 +167,8 @@ app.all('*', async (req, res, next) => {
   });
 });
 
-// Global error handler - catches all errors and formats appropriate responses
+// Global error handler
 app.use(globalErrorHandler);
 
-// Start server
+// Start
 Server(app);

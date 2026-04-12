@@ -4,7 +4,7 @@ const AppError = require('../utils/appError');
 const authService = require('../services/auth.service');
 const repo = require('../repositories/auth.repository');
 
-// Centralized JWT secret management with validation
+// JWT secret validation
 const getJWTSecret = () => {
   const secret = process.env.JWT_SECRET;
   if (!secret || secret.trim().length < 32) {
@@ -15,12 +15,7 @@ const getJWTSecret = () => {
 
 const JWT_SECRET = getJWTSecret();
 
-/**
- * Authentication Controller
- * Handles user authentication flows: signup, login, logout, password reset
- * All methods follow the pattern: validate -> process -> respond
- */
-
+// Auth controller: signup, login, logout
 const googleAuth = catchAsync(async (req, res, next) => {
   const result = await authService.googleAuth(req, res, next);
   
@@ -72,7 +67,7 @@ const signUpByAdmin = catchAsync(async (req, res, next) => {
 const logOut = catchAsync(async (req, res, next) => {
   const result = await authService.logOut(req, res);
   
-  // Check if HTML request for server-side redirect
+  // HTML request: redirect instead of JSON
   if (req.headers.accept && req.headers.accept.includes('text/html')) {
     return res.redirect('/');
   }

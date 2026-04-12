@@ -8,7 +8,7 @@ const repo = require('../repositories/auth');
 const DB = require('../models');
 const User = DB.models.User;
 
-// Centralized JWT secret with validation at startup - fails fast if misconfigured
+// JWT secret validation
 const JWT_SECRET = (() => {
     const secret = process.env.JWT_SECRET;
     if (!secret || secret.trim().length < 32) {
@@ -17,7 +17,7 @@ const JWT_SECRET = (() => {
     return secret.trim().replace(/^"|"$/g, '');
 })();
 
-// Fast direct SQL update for login token
+// Update login token
 const fastUpdateLoginToken = async (userId, loginToken) => {
     await DB.con.query(
         'UPDATE users SET login_token = ? WHERE id = ?', {
@@ -27,12 +27,12 @@ const fastUpdateLoginToken = async (userId, loginToken) => {
     );
 };
 
-// Create and send JWT token to client
+// Create JWT cookie
 const createSendToken = async (user, statusCode, req, res, target = false) => {
     const loginToken = crypto.randomBytes(32).toString('hex');
     await fastUpdateLoginToken(user.id, loginToken);
 
-    // Use remember me option or default expiration
+    // Remember me option
     const jwtExpire = req.body && req.body.remember === 'on' 
         ? config.JWT.EXPIRES_IN_DAYS_REMEMBER 
         : config.JWT.EXPIRES_IN_DAYS_DEFAULT;
@@ -66,7 +66,7 @@ const createSendToken = async (user, statusCode, req, res, target = false) => {
     }
 };
 
-// Clear JWT cookie (logout)
+// Logout: clear cookie
 const logoutUser = (res) => {
     res.cookie('jwt', 'loggedout', {
         expires: new Date(Date.now() + 2 * 1000),
@@ -74,7 +74,7 @@ const logoutUser = (res) => {
     });
 };
 
-// Map user data with avatar for frontend response
+// Format user response
 const mapUserWithAvatar = (user) => {
     const userData = user.toJSON ? user.toJSON() : user;
     userData.password = undefined;
