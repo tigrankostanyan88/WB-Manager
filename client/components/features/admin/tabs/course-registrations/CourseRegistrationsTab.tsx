@@ -27,10 +27,6 @@ export function CourseRegistrationsTab(props: CourseRegistrationsTabProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null)
 
-  // DEBUG: Log registrations data
-  console.log('[DEBUG] CourseRegistrationsTab - registrations:', registrations)
-  console.log('[DEBUG] registrations.length:', registrations?.length)
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('hy-AM', {
       year: 'numeric',

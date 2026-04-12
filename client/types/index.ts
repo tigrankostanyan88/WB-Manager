@@ -1,51 +1,22 @@
 /**
- * Shared types for API responses and data structures
- * Used across the application to ensure type consistency
+ * Centralized type exports
+ * All domain and API types are re-exported from here
  */
 
-// Re-export all domain entity types
+// Re-export all domain entity types (User, Course, Instructor, etc.)
 export * from './domain'
 
-// Re-export API types
+// Re-export API response types and utilities
 export * from './api'
 
-// API Response wrapper types
-export interface ApiResponse<T> {
-  status: string
-  data: T
-  message?: string
-}
-
-export interface ApiListResponse<T> {
-  status: string
-  data: {
-    items?: T[]
-    list?: T[]
-    data?: T[]
-    courses?: T[]
-    users?: T[]
-    instructors?: T[]
-    reviews?: T[]
-    payments?: T[]
-  }
-  message?: string
-}
-
-// Generic API error response
-export interface ApiErrorResponse {
-  status: string
-  code: string
-  message: string
-}
-
-// Common entity fields
+// Shared base interface for entities with common fields
 export interface BaseEntity {
   id: string | number
   createdAt?: string
   updatedAt?: string
 }
 
-// File attachment type
+// File attachment type (unified across all features)
 export interface FileData {
   id?: string | number
   name: string
@@ -58,20 +29,24 @@ export interface FileData {
   path_small?: string
 }
 
-// Tab identifiers for admin dashboard
+// Admin dashboard tab identifiers
 export type AdminTab =
   | 'hero-content'
   | 'courses'
   | 'modules'
   | 'users'
+  | 'suspended-users'
   | 'instructor'
   | 'reviews'
+  | 'comments'
   | 'payments'
+  | 'enrollments'
+  | 'course-registrations'
   | 'settings'
-  | 'messages'
-  | 'contact'
+  | 'contact-messages'
   | 'faq'
   | 'bank-cards'
+  | 'overview'
 
 // Toast notification types
 export type ToastType = 'success' | 'error' | 'info'

@@ -1,20 +1,8 @@
 'use client'
 
-// client/hooks/useHeroContent.ts
-
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import api from '@/lib/api'
-
-interface HeroContent {
-  id: number
-  title: string
-  name: string
-  text: string
-  video_url?: string
-  thumbnail_time?: number
-  created_at?: string
-  updated_at?: string
-}
+import type { HeroContent } from '@/types/domain'
 
 interface HeroContentResponse {
   status: string
@@ -28,15 +16,9 @@ interface UseHeroContentReturn {
   error: Error | null
 }
 
-// Prevent re-fetch on Fast Refresh
-const isFirstRender = { current: true }
-
-function withOrigin(path?: string): string | undefined {
+function normalizeVideoUrl(path?: string): string | undefined {
   if (!path || typeof path !== 'string') return path
-  if (path.startsWith('/files/')) {
-    // Return path without /api prefix
-    return path
-  }
+  if (path.startsWith('/files/')) return path
   return path
 }
 
@@ -58,7 +40,7 @@ export function useHeroContent(): UseHeroContentReturn {
           if (data) {
             setContent({
               ...data,
-              video_url: withOrigin(data.video_url)
+              video_url: normalizeVideoUrl(data.video_url)
             })
           } else {
             setContent(null)

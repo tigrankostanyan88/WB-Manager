@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { CheckCircle, Star, Users, TrendingUp, Clock, HeadphonesIcon, Award, Sparkles } from 'lucide-react'
-import type { Instructor, InstructorStat } from '@/types/instructor'
+import type { Instructor, InstructorStat } from '@/types/domain'
 
 interface InstructorSectionProps {
   instructor: Instructor

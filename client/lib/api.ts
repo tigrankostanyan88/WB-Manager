@@ -45,12 +45,10 @@ api.interceptors.response.use(
           
         case 403:
           // Forbidden - user doesn't have permission
-          console.error('Access forbidden:', error.response.data?.message || 'You do not have permission');
           break;
           
         case 500:
-          // Server error - log for debugging
-          console.error('Server error:', error.response.data?.message || 'Internal server error');
+          // Server error - handled by components
           break;
           
         default:

@@ -20,8 +20,9 @@ export interface User {
 }
 
 export interface UserFile {
-  name_used?: string
+  id?: string | number
   name?: string
+  name_used?: string
   ext?: string
   table_name?: string
 }
@@ -84,13 +85,14 @@ export interface Review {
 
 // Instructor entity
 export interface Instructor {
-  id: string | number
+  id?: string | number
   title?: string
   name?: string
   profession?: string
   description?: string
   badgeText?: string
   avatarUrl?: string
+  avatar?: string
   stats?: InstructorStat[]
 }
 

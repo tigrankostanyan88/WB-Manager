@@ -1,10 +1,8 @@
 'use client'
 
-// client/hooks/useInstructor.ts
-
 import { useState, useEffect, useRef } from 'react'
 import api from '@/lib/api'
-import type { Instructor, InstructorStat, InstructorApiResponse } from '@/types/instructor'
+import type { Instructor, InstructorStat } from '@/types/domain'
 
 interface UseInstructorReturn {
   instructor: Instructor
@@ -12,8 +10,16 @@ interface UseInstructorReturn {
   error: Error | null
 }
 
-// Prevent re-fetch on Fast Refresh
-const isFirstRender = { current: true }
+interface InstructorApiResponse {
+  instructors?: Array<{
+    name?: string
+    title?: string
+    profession?: string
+    description?: string
+    avatar_url?: string
+    stats_json?: string
+  }>
+}
 
 function fixLargePath(path?: string): string | undefined {
   if (!path || typeof path !== 'string') return path
