@@ -61,7 +61,7 @@ export function AuthProvider({ children, initialUser = null }: { children: React
     } catch (err) {
       const axiosError = err as { response?: { status?: number } }
       if (axiosError.response?.status === 401) {
-        // Just clear user state, don't redirect - let pages handle auth checks individually
+        // Unauthorized - clear session
         setUserState(null)
       }
       if (process.env.NODE_ENV === 'development') {
@@ -110,33 +110,29 @@ export function AuthProvider({ children, initialUser = null }: { children: React
     return () => window.removeEventListener('auth:updated', handler)
   }, [])
 
-  // Security: Check session validity when window gets focus (e.g., after DevTools cookie deletion)
+  // Check session on focus (cookie tampering detection)
   useEffect(() => {
     if (typeof window === 'undefined') return
     
     const checkSession = async () => {
-      // Only check if we think user is logged in
       if (!user) return
       
       try {
         const res = await userService.getMe()
-        // If we get 401, the JWT cookie is invalid/missing
         if (res.data?.user) {
-          // Session still valid, update user data
           const u = res.data.user
           setUserState({ ...u, avatar: buildAvatar(u) })
         }
       } catch (err: unknown) {
         const axiosError = err as { response?: { status?: number } }
         if (axiosError.response?.status === 401) {
-          // JWT cookie was deleted or expired - logout immediately
+          // Session expired - logout
           setUserState(null)
           window.location.href = '/'
         }
       }
     }
     
-    // Check when user returns to tab (after potential DevTools manipulation)
     window.addEventListener('focus', checkSession)
     
     return () => {
@@ -149,7 +145,7 @@ export function AuthProvider({ children, initialUser = null }: { children: React
       await fetch('/api/v1/users/logout', { method: 'POST' })
     } catch { }
     document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
-    // Clean up any legacy localStorage tokens (security fix)
+    // Clear legacy tokens
     if (typeof window !== 'undefined') {
       localStorage.removeItem('token')
       localStorage.removeItem('user')

@@ -52,7 +52,7 @@ export function HeroSection({
   return (
     <section
       id="hero"
-      className="relative w-full min-h-screen pt-28 md:pt-32 lg:pt-36 pb-20 md:pb-28 overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-100/50 via-white to-slate-50"
+      className="relative w-full min-h-screen pt-16 md:pt-20 lg:pt-24 pb-20 md:pb-28 overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-100/50 via-white to-slate-50"
     >
       {/* Static gradient background */}
       <div className="absolute inset-0 overflow-hidden">

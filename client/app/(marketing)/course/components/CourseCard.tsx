@@ -22,7 +22,7 @@ export function CourseCard({ course, index }: CourseCardProps) {
     <div className="group relative bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-violet-300 h-full flex flex-col">
       <Link href={`/course-details/${course.id}`} prefetch={true} className="h-full flex flex-col">
         {/* Thumbnail Container */}
-        <div className="relative h-48 sm:h-56 md:h-60 lg:h-64 overflow-hidden bg-slate-100">
+        <div className="relative h-56 sm:h-64 md:h-72 lg:h-80 overflow-hidden bg-slate-100">
           {thumbnailLoading ? (
             <div className="w-full h-full bg-slate-200 animate-pulse" />
           ) : (

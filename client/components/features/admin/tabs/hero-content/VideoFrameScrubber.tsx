@@ -20,7 +20,7 @@ export function VideoFrameScrubber({
   const [isDragging, setIsDragging] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Update canvas when time changes
+  // Draw frame on time change
   useEffect(() => {
     const video = videoRef.current
     const canvas = canvasRef.current
@@ -43,7 +43,7 @@ export function VideoFrameScrubber({
     seekAndDraw()
   }, [thumbnailTime, duration])
 
-  // Handle video loaded
+  // Set duration on video load
   const handleLoadedMetadata = () => {
     const video = videoRef.current
     if (!video) return
@@ -51,7 +51,7 @@ export function VideoFrameScrubber({
     video.currentTime = thumbnailTime || Math.min(45, video.duration / 2)
   }
 
-  // Calculate time from mouse position
+  // Calculate time from click position
   const getTimeFromPosition = (clientX: number) => {
     const container = containerRef.current
     if (!container || !duration) return 0
@@ -62,7 +62,7 @@ export function VideoFrameScrubber({
     return percentage * duration
   }
 
-  // Handle mouse/touch events
+  // Start dragging
   const handleStart = (clientX: number) => {
     setIsDragging(true)
     const time = getTimeFromPosition(clientX)

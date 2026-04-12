@@ -59,8 +59,8 @@ export default function ProfilePage() {
 
   const { user, setUser, isLoadingData, myReview, setMyReview, myCourses, myPayments, stats } = useProfileData({ authUser: authUser as ProfileUser | null, isLoaded, logout })
 
+  // Redirect if not authenticated
   useEffect(() => {
-    // Only redirect after everything is loaded and we confirm no user
     if (isLoaded && !isLoadingData && !user && !authUser) {
       router.replace('/')
     }
@@ -76,7 +76,6 @@ export default function ProfilePage() {
   
   const [totalCoursesCount, setTotalCoursesCount] = useState(0)
   
-  // Data States - now fetched from useProfileData hook
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
@@ -122,7 +121,6 @@ export default function ProfilePage() {
     setActiveTab('courses')
   }
 
-  // We are "ready" if we have a user (either from auth or from profile data fetch)
   const currentUser = user || (authUser as ProfileUser | null);
   const isReady = isLoaded && currentUser;
 
@@ -143,7 +141,6 @@ export default function ProfilePage() {
     { id: 'settings', label: 'Կարգավորումներ', icon: Settings },
   ]
 
-  // Build sidebar links based on role
   const sidebarLinks: SidebarLink[] = currentUser?.role === 'admin' 
     ? [
         { id: 'profile', label: 'Պրոֆիլ', icon: UserIcon },

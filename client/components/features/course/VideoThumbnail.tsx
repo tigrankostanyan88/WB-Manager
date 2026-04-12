@@ -8,6 +8,7 @@ interface VideoThumbnailProps {
   className?: string
 }
 
+// Generate thumbnail from video at specified time
 export function generateVideoThumbnail(videoUrl: string, time?: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video')
@@ -32,18 +33,12 @@ export function generateVideoThumbnail(videoUrl: string, time?: number): Promise
     }
     
     const onLoadedData = () => {
-      // Cap seek time to video duration - thumbnail_time might exceed video length
       const maxTime = Math.max(0, video.duration - 1)
       const seekTime = time ? Math.min(time, maxTime) : Math.min(30, video.duration * 0.1 || 30)
-      // Use setTimeout to ensure the seek happens after loadeddata is fully processed
-      setTimeout(() => {
-        video.currentTime = seekTime
-      }, 0)
+      setTimeout(() => video.currentTime = seekTime, 0)
     }
     
-    const onLoadedMetadata = () => {
-      // Don't seek here - wait for loadeddata to have enough buffered data
-    }
+    const onLoadedMetadata = () => {}
     
     const onSeeked = () => {
       canvas.width = video.videoWidth || 320
@@ -66,7 +61,6 @@ export function generateVideoThumbnail(videoUrl: string, time?: number): Promise
     }
     
     const onCanPlay = () => {
-      // If we haven't seeked yet, do it now
       if (video.currentTime === 0 && video.duration > 0) {
         const maxTime = Math.max(0, video.duration - 1)
         const seekTime = time ? Math.min(time, maxTime) : Math.min(30, video.duration * 0.1 || 30)
@@ -74,9 +68,7 @@ export function generateVideoThumbnail(videoUrl: string, time?: number): Promise
       }
     }
     
-    const onCanPlayThrough = () => {
-      // Video fully buffered, no action needed
-    }
+    const onCanPlayThrough = () => {}
     
     video.addEventListener('loadeddata', onLoadedData)
     video.addEventListener('loadedmetadata', onLoadedMetadata)
@@ -95,8 +87,8 @@ export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnai
   const [loading, setLoading] = useState(true)
   const generatedRef = useRef(false)
   
+  // Generate thumbnail on URL change
   useEffect(() => {
-    // Reset when videoUrl changes
     generatedRef.current = false
     setThumbnail(null)
     setLoading(true)
@@ -108,7 +100,7 @@ export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnai
     
     generatedRef.current = true
     
-    // Generate thumbnail in background (non-blocking)
+    // Non-blocking thumbnail generation
     const timer = setTimeout(() => {
       generateVideoThumbnail(videoUrl, time)
         .then(url => {
@@ -130,7 +122,7 @@ export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnai
     }
   }, [videoUrl, time])
   
-  // Show gradient placeholder while loading (no spinner to avoid layout shift)
+  // Gradient placeholder while loading
   if (loading) {
     return (
       <div className={`bg-gradient-to-br from-violet-600 to-indigo-700 ${className}`}>
@@ -143,6 +135,7 @@ export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnai
     )
   }
   
+  // Generated thumbnail
   if (thumbnail) {
     return (
       <img 
@@ -154,7 +147,7 @@ export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnai
     )
   }
   
-  // Fallback gradient
+  // Default gradient fallback
   return (
     <div className={`bg-gradient-to-br from-violet-600 to-indigo-700 ${className}`}>
       <div className="w-full h-full flex items-center justify-center opacity-50">

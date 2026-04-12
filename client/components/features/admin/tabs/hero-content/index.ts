@@ -1,6 +1,6 @@
 'use client'
 
-// Hero Content Tab Components - Barrel Exports
+// Hero content tab exports
 export { VideoFrameScrubber } from './VideoFrameScrubber'
 export { VideoUploadSection } from './VideoUploadSection'
 export { TextFieldsSection } from './TextFieldsSection'

@@ -32,7 +32,7 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
   return (
     <section id="instructor" className="w-full py-16 md:py-24 bg-gradient-to-b from-white via-violet-50/30 to-white">
       <div className="container px-4 md:px-6">
-        {/* Section Header */}
+        {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -49,11 +49,11 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
           </h2>
         </motion.div>
 
-        {/* Main Content Card */}
+        {/* Card */}
         <div className="container mx-auto px-4 md:px-6">
           <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-violet-100/50 border border-slate-100 overflow-hidden w-full">
             <div className="flex flex-col lg:flex-row">
-              {/* Image Side */}
+              {/* Image */}
               <div className="w-full lg:w-2/5 relative lg:rounded-l-[2.5rem] overflow-hidden">
                 <div className="relative aspect-[4/5] lg:aspect-auto lg:h-full min-h-[400px] lg:min-h-[600px] rounded-t-[2.5rem] lg:rounded-t-none lg:rounded-l-[2.5rem] overflow-hidden">
                   {safeInstructor.avatarUrl ? (
@@ -71,10 +71,10 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
                     </div>
                   )}
                   
-                  {/* Gradient Overlay */}
+                  {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/20 to-transparent" />
                   
-                  {/* Info Card on Image */}
+                  {/* Info overlay */}
                   <div className="absolute bottom-6 left-6 right-6 z-10">
                     <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-white/50">
                       <div className="flex items-center gap-4">
@@ -99,16 +99,16 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
                 </div>
               </div>
 
-              {/* Content Side */}
+              {/* Content */}
               <div className="w-full lg:w-3/5 p-8 lg:p-12 flex flex-col justify-between">
                 <div>
-                  {/* Badge */}
+                  {/* Pro badge */}
                   <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 px-4 py-2 rounded-full text-sm font-bold mb-6">
                     <Sparkles className="w-4 h-4" />
                     Վերցրեք գիտելիքներ պրոֆեսիոնալից
                   </div>
 
-                  {/* Description */}
+                  {/* Bio */}
                   <div 
                     className="text-slate-600 leading-relaxed text-lg mb-8 prose prose-slate max-w-none"
                     dangerouslySetInnerHTML={{ 
@@ -117,7 +117,7 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
                   />
                 </div>
 
-                {/* Stats Grid */}
+                {/* Stats */}
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   {displayStats.length > 0 ? displayStats.map((stat, i) => {
                     const IconComponent = STAT_ICONS[i] || Users
@@ -145,7 +145,7 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
                       </div>
                     )
                   }) : (
-                    // Default stats if none provided
+                    // Fallback stats
                     <>
                       <div className="group bg-slate-50 rounded-2xl p-5 hover:bg-white hover:shadow-xl hover:shadow-violet-100/30 border border-slate-100 hover:border-violet-200 transition-all duration-300">
                         <div className="flex items-center gap-4">
@@ -195,7 +195,7 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
                   )}
                 </div>
 
-                {/* CTA Buttons */}
+                {/* Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link href="/course" prefetch={true} className="w-full sm:w-auto">
                     <Button

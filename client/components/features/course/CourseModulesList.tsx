@@ -34,14 +34,14 @@ export function CourseModulesList({ modules }: CourseModulesListProps) {
   const [playingVideo, setPlayingVideo] = useState<VideoItem | null>(null)
   const [openModule, setOpenModule] = useState<string | undefined>(undefined)
 
-  // Listen for START COURSE click - client-side only
+  // Listen for "Start Course" click
   useEffect(() => {
     if (typeof window === 'undefined') return
     
     const checkAndPlay = () => {
       const videoId = localStorage.getItem('playVideoId')
       if (videoId) {
-        // Find and play the video
+        // Find video by ID
         for (let i = 0; i < modules.length; i++) {
           const module = modules[i]
           const video = module.videos.find(v => String(v.id) === videoId && !v.isLocked && v.videoUrl)
@@ -55,11 +55,11 @@ export function CourseModulesList({ modules }: CourseModulesListProps) {
       }
     }
 
-    // Check immediately and also set up storage event listener
+    // Check on load and storage change
     checkAndPlay()
     window.addEventListener('storage', checkAndPlay)
     
-    // Custom event for same-tab communication
+    // Same-tab communication
     const handleCustomEvent = () => checkAndPlay()
     window.addEventListener('startCourse', handleCustomEvent)
     

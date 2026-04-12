@@ -13,7 +13,7 @@ interface VideoPlayerModalProps {
 }
 
 export function VideoPlayerModal({ isOpen, onClose, videoUrl, title, duration }: VideoPlayerModalProps) {
-  // Block body scroll when modal is open
+  // Lock body scroll when open
   useEffect(() => {
     if (!isOpen) return
     const originalOverflow = document.body.style.overflow

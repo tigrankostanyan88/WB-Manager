@@ -96,7 +96,7 @@ export function UsersTab({
                 return (
                 <tr key={user.id} className="hover:bg-slate-50">
                   <td className="px-4 py-4">
-                    <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center">
+                    <div className="relative w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center">
                       {avatarUrl ? (
                         <Image
                           src={avatarUrl}
