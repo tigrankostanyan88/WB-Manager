@@ -2,9 +2,12 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import api from '@/lib/api'
-import { useSettings as useGlobalSettings } from '@/context/SettingsContext' // moved from lib
+import { useSettings as useGlobalSettings } from '@/context/SettingsContext'
+import { createLogger } from '@/lib/logger'
 import type { DashboardTabId, DayKey, SiteSettings, WorkingHoursSchedule } from '@/components/features/admin/types'
 import { fixLarge, withOrigin } from '@/components/features/admin/_utils/image'
+
+const logger = createLogger('Settings')
 
 interface UseSettingsParams {
   activeTab: DashboardTabId
@@ -86,11 +89,14 @@ export default function useSettings({ activeTab, allowed, showToast }: UseSettin
             } else {
               setWorkingHoursSchedule(defaultSchedule)
             }
-          } catch {
+          } catch (err) {
+            logger.warn('Failed to parse working hours:', err)
             setWorkingHoursSchedule(defaultSchedule)
           }
         }
-      } catch {}
+      } catch (err) {
+        logger.error('Failed to load settings:', err)
+      }
     })()
     return () => {
       cancelled = true
@@ -137,7 +143,9 @@ export default function useSettings({ activeTab, allowed, showToast }: UseSettin
           const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
           setWorkingHoursSchedule({ ...defaultSchedule, ...parsed })
         }
-      } catch {}
+      } catch (err) {
+        logger.warn('Failed to parse working hours from settings:', err)
+      }
 
       updateSettings({
         siteName: typeof data.siteName === 'string' ? data.siteName : undefined,

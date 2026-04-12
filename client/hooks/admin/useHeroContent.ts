@@ -1,23 +1,8 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import api from '@/lib/api'
-
-export interface HeroContent {
-  id: number
-  title: string
-  name: string
-  text: string
-  thumbnail_time?: number
-  video_url?: string
-  file?: {
-    name: string
-    ext: string
-    type: string
-  }
-  created_at?: string
-  updated_at?: string
-}
+import { useHeroContentQuery, useUpdateHeroContentMutation, useDeleteHeroContentMutation } from '@/hooks/queries/useHeroContentQuery'
+import type { HeroContent } from '@/types/domain'
 
 export interface HeroContentForm {
   title: string
@@ -33,26 +18,25 @@ interface UseHeroContentProps {
 }
 
 export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContentProps) {
-  const [content, setContent] = useState<HeroContent | null>(null)
+  const isActive = allowed && activeTab === 'hero-content'
+  const { data: content, isLoading: isQueryLoading } = useHeroContentQuery(isActive)
+  const updateMutation = useUpdateHeroContentMutation()
+  const deleteMutation = useDeleteHeroContentMutation()
+  
   const [form, setForm] = useState<HeroContentForm>({
     title: '',
     name: '',
     text: '',
     thumbnail_time: 0
   })
-  const [isLoading, setIsLoading] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [videoPreview, setVideoPreview] = useState<string | null>(null)
-  const hasFetched = useRef(false)
-  const isMounted = useRef(true)
   const blobUrlRef = useRef<string | null>(null)
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      isMounted.current = false
-      // Revoke blob URL to prevent memory leak
       if (blobUrlRef.current) {
         URL.revokeObjectURL(blobUrlRef.current)
         blobUrlRef.current = null
@@ -60,50 +44,20 @@ export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContent
     }
   }, [])
 
-  // Reset hasFetched when tab changes away
+  // Sync form with query data
   useEffect(() => {
-    if (activeTab !== 'hero-content') {
-      hasFetched.current = false
+    if (!content || !isActive) return
+    
+    setForm({
+      title: content.title || '',
+      name: content.name || '',
+      text: content.text || '',
+      thumbnail_time: content.thumbnail_time || 0
+    })
+    if (content.video_url) {
+      setVideoPreview(content.video_url)
     }
-  }, [activeTab])
-
-  // Fetch hero content - only once when tab is active
-  useEffect(() => {
-    // Early return conditions
-    if (activeTab !== 'hero-content') return
-    if (!allowed) return
-    if (hasFetched.current) return
-
-    // Mark as fetched immediately to prevent duplicate requests
-    hasFetched.current = true
-    setIsLoading(true)
-
-    const fetchContent = async () => {
-      try {
-        const res = await api.get('/api/v1/hero-content')
-        const data = res.data?.data
-        
-        if (data) {
-          setContent(data)
-          setForm({
-            title: data.title || '',
-            name: data.name || '',
-            text: data.text || '',
-            thumbnail_time: data.thumbnail_time || 0
-          })
-          if (data.video_url) {
-            setVideoPreview(data.video_url)
-          }
-        }
-      } catch (err) {
-        // Log error for debugging
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchContent()
-  }, [activeTab, allowed])
+  }, [content, isActive])
 
   // Handle video file selection
   const handleVideoChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,19 +109,16 @@ export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContent
         formData.append('hero_video', videoFile)
       }
 
-      const res = await api.patch('/api/v1/hero-content', formData)
+      const result = await updateMutation.mutateAsync(formData)
       
-      if (res.data?.status === 'success') {
-        showToast(res.data?.message || 'Հերո բովանդակությունը պահպանված է', 'success')
+      if (result?.status === 'success') {
+        showToast(result?.message || 'Հերո բովանդակությունը պահպանված է', 'success')
         // Update local state with response
-        const newData = res.data?.data?.content
-        if (newData) {
-          setContent(newData)
-          if (newData.video_url) {
-            setVideoPreview(newData.video_url)
-          }
-          setVideoFile(null)
+        const newData = result?.data?.content as HeroContent | undefined
+        if (newData?.video_url) {
+          setVideoPreview(newData.video_url)
         }
+        setVideoFile(null)
       }
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } }; message?: string }
@@ -175,7 +126,7 @@ export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContent
     } finally {
       setIsSubmitting(false)
     }
-  }, [form, videoFile, showToast])
+  }, [form, videoFile, updateMutation, showToast])
 
   // Delete hero content
   const deleteContent = useCallback(async () => {
@@ -183,10 +134,9 @@ export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContent
     
     setIsSubmitting(true)
     try {
-      const res = await api.delete('/api/v1/hero-content')
-      if (res.data?.status === 'success') {
+      const result = await deleteMutation.mutateAsync()
+      if (result?.status === 'success') {
         showToast('Հերո բովանդակությունը ջնջված է', 'success')
-        setContent(null)
         setForm({ title: '', name: '', text: '', thumbnail_time: 0 })
         setVideoFile(null)
         setVideoPreview(null)
@@ -197,13 +147,15 @@ export function useHeroContent({ activeTab, allowed, showToast }: UseHeroContent
     } finally {
       setIsSubmitting(false)
     }
-  }, [showToast])
+  }, [deleteMutation, showToast])
+
+  const combinedLoading = isQueryLoading || isSubmitting || updateMutation.isPending || deleteMutation.isPending
 
   return {
     content,
     form,
     setForm,
-    isLoading,
+    isLoading: combinedLoading,
     isSubmitting,
     videoFile,
     videoPreview,

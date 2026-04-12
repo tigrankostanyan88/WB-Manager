@@ -2,6 +2,7 @@
 
 // client/components/landing/FaqSection.tsx
 
+import { motion } from 'framer-motion'
 import {
   Accordion,
   AccordionContent,
@@ -51,16 +52,28 @@ export function FaqSection() {
       </div>
 
       <div className="container relative z-10 max-w-4xl">
-        <div className="text-center space-y-4 mb-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center space-y-4 mb-16"
+        >
           <h2 className="text-4xl font-extrabold tracking-tight sm:text-5xl text-slate-900">
             Հաճախ տրվող <span className="text-violet-600">հարցեր</span>
           </h2>
           <p className="text-slate-500 text-lg md:text-xl max-w-2xl mx-auto">
             Մենք հավաքել ենք ամենակարևոր հարցերը, որոնք կօգնեն ձեզ կայացնել ճիշտ որոշում:
           </p>
-        </div>
+        </motion.div>
 
-        <div className="space-y-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="space-y-4"
+        >
           <Accordion type="single" collapsible className="space-y-4">
             {FAQ_ITEMS.map((item) => (
               <AccordionItem
@@ -77,7 +90,7 @@ export function FaqSection() {
               </AccordionItem>
             ))}
           </Accordion>
-        </div>
+        </motion.div>
       </div>
     </section>
   )

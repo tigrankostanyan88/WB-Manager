@@ -1,5 +1,6 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import {
   BarChart,
   CheckCircle,
@@ -14,16 +15,28 @@ export function ImpactSection() {
   return (
     <section id="impact" className="w-full py-20 md:py-32">
       <div className="container px-4 md:px-6">
-        <div className="flex flex-col items-center text-center space-y-4 mb-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col items-center text-center space-y-4 mb-16"
+        >
           <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
             Իրական արդյունքներ
           </h2>
           <p className="text-muted-foreground text-lg md:text-xl max-w-[800px]">
             Թվեր, որոնք խոսում են մեր մասին ավելի բարձր, քան բառերը:
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid gap-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="grid gap-6"
+        >
           <div className="grid md:grid-cols-3 gap-6">
             <div className="bg-gradient-to-br from-violet-100 to-violet-50 rounded-3xl p-4 sm:p-8 text-slate-900 shadow-xl shadow-violet-100/40 border border-violet-100/50 transition-transform hover:-translate-y-1">
               <div className="h-10 w-10 sm:h-12 sm:w-12 bg-violet-200/50 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-sm ring-1 ring-violet-100">
@@ -152,7 +165,7 @@ export function ImpactSection() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   )

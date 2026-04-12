@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
+import { queryKeys } from '@/lib/queryKeys'
 import type { Enrollment, Course } from '@/components/features/admin/types'
 
 interface UseEnrollmentsParams {
@@ -10,14 +11,10 @@ interface UseEnrollmentsParams {
   allowed: boolean
 }
 
-// Query Keys
-const ENROLLMENTS_QUERY_KEY = 'enrollments'
-const ENROLLMENT_COURSES_QUERY_KEY = 'enrollment-courses'
-
 // React Query Hooks
 export function useEnrollmentsQuery() {
   return useQuery({
-    queryKey: [ENROLLMENTS_QUERY_KEY],
+    queryKey: queryKeys.enrollments,
     queryFn: async () => {
       const res = await api.get('/api/v1/student-courses')
       return (res.data?.data || []) as Enrollment[]
@@ -28,7 +25,7 @@ export function useEnrollmentsQuery() {
 
 export function useEnrollmentCoursesQuery() {
   return useQuery({
-    queryKey: [ENROLLMENT_COURSES_QUERY_KEY],
+    queryKey: queryKeys.courses,
     queryFn: async () => {
       const res = await api.get('/api/v1/courses')
       const data = res.data?.data || []
@@ -47,7 +44,7 @@ export function useRevokeAccess() {
       return { userId, courseId }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [ENROLLMENTS_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.enrollments })
     },
   })
 }

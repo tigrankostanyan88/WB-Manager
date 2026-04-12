@@ -15,7 +15,7 @@ export interface ProfileUser {
   files?: UserFile[]
   isPaid?: boolean
   course_ids?: string[]
-  [key: string]: unknown  // Add index signature for compatibility
+  [key: string]: unknown 
 }
 
 export interface Payment {
@@ -39,6 +39,11 @@ export interface UserCourse {
   progress: number
   color?: string
   borderColor?: string
+}
+
+interface ModuleWithProgress {
+  isCompleted?: boolean
+  completed?: boolean
 }
 
 export interface UserStats {
@@ -79,9 +84,7 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
     const maybeData = (data as { data?: unknown }).data
     let maybeReview = (maybeData as { review?: unknown } | undefined)?.review ?? (data as { review?: unknown }).review
     
-    // Also try if review is directly in data or data is the review itself
     if (!maybeReview && data) {
-      // Check if data itself has id, rating, comment fields (meaning data IS the review)
       const d = data as Record<string, unknown>
       if (d.id && typeof d.rating === 'number' && typeof d.comment === 'string') {
         maybeReview = data
@@ -113,8 +116,8 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
       let progress = 0
       const modules = c.modules
       if (modules && Array.isArray(modules) && modules.length > 0) {
-        const completedModules = modules.filter((m: any) => {
-          return (m as any).isCompleted || (m as any).completed
+        const completedModules = modules.filter((m: ModuleWithProgress) => {
+          return m.isCompleted || m.completed
         }).length
         progress = Math.round((completedModules / modules.length) * 100)
       }
@@ -123,7 +126,7 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
         title: String(c.title || 'Անհայտ դասընթաց'),
         desc: String(c.description || ''),
         status: progress > 0 ? 'Ակտիվ' : 'Նոր',
-        lessons: modules?.length || Number((c as any).lessons_count) || Number((c as any).lessons) || 0,
+        lessons: modules?.length || Number((c as { lessons_count?: number; lessons?: number }).lessons_count) || Number((c as { lessons_count?: number; lessons?: number }).lessons) || 0,
         progress: progress,
         color: 'bg-violet-50 text-violet-600',
         borderColor: 'border-violet-100'
@@ -245,7 +248,6 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
     if (!isLoaded) return
 
     // Always fetch profile data when page loads and auth is loaded
-    // This ensures we get fresh data even if authUser is available
     if (authUser) {
       setUser(buildAvatar(authUser))
     }

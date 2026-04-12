@@ -2,8 +2,8 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
+import { queryKeys } from '@/lib/queryKeys'
 import type { ModuleForm } from './types'
-import { MODULES_QUERY_KEY } from './utils'
 
 export function useCreateModule() {
   const queryClient = useQueryClient()
@@ -18,7 +18,7 @@ export function useCreateModule() {
       return res.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [MODULES_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.modules })
     },
   })
 }
@@ -36,7 +36,7 @@ export function useUpdateModule() {
       return res.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [MODULES_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.modules })
     },
   })
 }
@@ -49,7 +49,7 @@ export function useDeleteModule() {
       await api.delete(`/api/v1/modules/${id}`)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [MODULES_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.modules })
     },
   })
 }
@@ -65,7 +65,7 @@ export function useUploadModuleVideo() {
       return res.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [MODULES_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.modules })
     },
   })
 }
@@ -78,7 +78,7 @@ export function useDeleteModuleVideo() {
       await api.delete(`/api/v1/files/${fileId}`)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [MODULES_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.modules })
     },
   })
 }
@@ -91,7 +91,7 @@ export function useUpdateVideoTitle() {
       await api.patch(`/api/v1/files/${fileId}`, { title })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [MODULES_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.modules })
     },
   })
 }

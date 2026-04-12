@@ -28,9 +28,9 @@ export function CourseCard({ course, index }: CourseCardProps) {
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
       <Link href={`/course-details/${course.id}`} prefetch={true}>
-        <div className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 hover:border-violet-200 h-full flex flex-col">
+        <div className="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 border border-slate-200 hover:border-violet-300 h-full flex flex-col transform hover:-translate-y-1">
           {/* Thumbnail Container */}
-          <div className="relative h-48 overflow-hidden bg-slate-900">
+          <div className="relative h-72 overflow-hidden bg-slate-900">
             {thumbnailLoading ? (
               <div className="w-full h-full bg-slate-800 animate-pulse" />
             ) : (
@@ -41,12 +41,12 @@ export function CourseCard({ course, index }: CourseCardProps) {
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
 
             {/* Category Badge */}
             {course.category && (
-              <div className="absolute top-4 left-4">
-                <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-slate-700 text-xs font-semibold rounded-full">
+              <div className="absolute top-3 left-3">
+                <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-slate-800 text-xs font-bold rounded-full shadow-sm">
                   {course.category}
                 </span>
               </div>
@@ -54,8 +54,8 @@ export function CourseCard({ course, index }: CourseCardProps) {
 
             {/* Discount Badge */}
             {discount > 0 && (
-              <div className="absolute top-4 right-4">
-                <span className="px-3 py-1 bg-rose-500 text-white text-xs font-bold rounded-full shadow-lg">
+              <div className="absolute top-3 right-3">
+                <span className="px-3 py-1.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white text-xs font-bold rounded-full shadow-lg">
                   -{discount}%
                 </span>
               </div>
@@ -70,64 +70,64 @@ export function CourseCard({ course, index }: CourseCardProps) {
           </div>
 
           {/* Content */}
-          <div className="p-5 flex flex-col flex-grow">
+          <div className="p-7 flex flex-col flex-grow">
             {/* Rating & Students */}
-            <div className="flex items-center gap-4 mb-3">
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                <span className="text-sm font-semibold text-slate-700">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-1.5">
+                <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
+                <span className="text-base font-semibold text-slate-700">
                   {course.rating?.toFixed(1) || '4.9'}
                 </span>
                 <span className="text-sm text-slate-400">
-                  ({course.reviewsCount || 0})
+                  ({course.reviewsCount || 0} կարծիք)
                 </span>
               </div>
-              <div className="flex items-center gap-1 text-slate-400">
-                <Users className="w-4 h-4" />
-                <span className="text-sm">{course.studentsCount || 0}</span>
+              <div className="flex items-center gap-1.5 text-slate-400">
+                <Users className="w-5 h-5" />
+                <span className="text-sm font-medium">{course.studentsCount || 0} ուսանող</span>
               </div>
             </div>
 
             {/* Title */}
-            <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-2 group-hover:text-violet-700 transition-colors">
+            <h3 className="text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-violet-700 transition-colors">
               {course.title}
             </h3>
 
             {/* Description */}
-            <p className="text-sm text-slate-500 mb-4 line-clamp-2 flex-grow">
+            <p className="text-base text-slate-500 mb-5 line-clamp-2 flex-grow leading-relaxed">
               {course.description}
             </p>
 
             {/* Meta Info */}
-            <div className="flex items-center gap-3 text-xs text-slate-400 mb-4">
-              <div className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" />
-                <span>{course.duration || '6 ժամ'}</span>
+            <div className="flex items-center gap-4 text-sm text-slate-500 mb-5">
+              <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg">
+                <Clock className="w-4 h-4" />
+                <span className="font-medium">{course.duration || '6 ժամ'}</span>
               </div>
-              <div className="flex items-center gap-1">
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>{course.language === 'ARM' ? 'Հայերեն' : course.language || 'Հայերեն'}</span>
+              <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg">
+                <BookOpen className="w-4 h-4" />
+                <span className="font-medium">{course.language === 'ARM' ? 'Հայերեն' : course.language || 'Հայերեն'}</span>
               </div>
             </div>
 
             {/* Price & CTA */}
-            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between pt-5 border-t border-slate-100">
               <div className="flex flex-col">
-                <span className="text-lg font-bold text-violet-600">
+                <span className="text-2xl font-bold text-violet-600">
                   {displayPrice}
                 </span>
                 {originalPrice && (
-                  <span className="text-sm text-slate-400 line-through">
+                  <span className="text-base text-slate-400 line-through">
                     {originalPrice}
                   </span>
                 )}
               </div>
               <Button
-                size="sm"
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                size="default"
+                className="bg-violet-600 hover:bg-violet-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
               >
-                Մանրամասն
-                <ArrowRight className="w-4 h-4 ml-1" />
+                Դիտել
+                <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </div>

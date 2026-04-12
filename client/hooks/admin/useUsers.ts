@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useConfirm } from '@/components/providers/ConfirmProvider'
 import api from '@/lib/api'
+import { queryKeys } from '@/lib/queryKeys'
 import { createLogger } from '@/lib/logger'
 import type { DashboardTabId, User, Payment } from '@/components/features/admin/types'
 
@@ -26,26 +27,27 @@ interface UseUsersParams {
   currentUser?: User | null
 }
 
-// Query Keys
-const USERS_QUERY_KEY = 'users'
-const PAYMENTS_QUERY_KEY = 'payments'
-
 // React Query Hooks
-export function useUsersQuery(currentUserId?: string) {
+interface UseUsersQueryOptions {
+  enabled?: boolean
+}
+
+export function useUsersQuery(currentUserId?: string, options?: UseUsersQueryOptions) {
   return useQuery({
-    queryKey: [USERS_QUERY_KEY],
+    queryKey: queryKeys.users,
     queryFn: async () => {
       const res = await api.get('/api/v1/users')
       const users = (res.data?.users || []) as User[]
       return users.filter((u) => String(u.id || u._id) !== currentUserId)
     },
     staleTime: 1000 * 60 * 5,
+    enabled: options?.enabled ?? true,
   })
 }
 
 export function usePaymentsQuery() {
   return useQuery({
-    queryKey: [PAYMENTS_QUERY_KEY],
+    queryKey: queryKeys.payments,
     queryFn: async () => {
       const res = await api.get('/api/v1/payments')
       return (res.data?.payments || res.data || []) as Payment[]
@@ -62,7 +64,7 @@ export function useDeleteUser() {
       await api.delete(`/api/v1/users/${id}`)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.users })
     },
   })
 }
@@ -75,7 +77,7 @@ export function useUpdateUser() {
       await api.patch(`/api/v1/users/${id}`, data)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.users })
     },
   })
 }
@@ -89,7 +91,7 @@ export function useToggleUserPaid() {
       return { userId, isPaid: !isPaid }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.users })
     },
   })
 }
@@ -109,14 +111,8 @@ export function useUsers({
 
   const currentUserId = String(currentUser?.id || currentUser?._id)
 
-  const { data: users = [], isLoading: isUsersLoading, refetch } = useQuery({
-    queryKey: [USERS_QUERY_KEY],
-    queryFn: async () => {
-      const res = await api.get('/api/v1/users')
-      return (res.data?.users || []) as User[]
-    },
-    staleTime: 1000 * 60 * 5,
-    enabled: activeTab === 'users' && allowed,
+  const { data: users = [], isLoading: isUsersLoading, refetch } = useUsersQuery(currentUserId, {
+    enabled: activeTab === 'users' && allowed
   })
 
   useEffect(() => {
@@ -176,7 +172,7 @@ export function useUsers({
       }
       await updateUser.mutateAsync({ id: editingUser.id, data: userData })
       // Invalidate users cache to refresh the list
-      queryClient.invalidateQueries({ queryKey: ['users'] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.users })
       setEditingUser(null)
       showToast?.('Օգտատերը հաջողությամբ թարմացվել է', 'success')
     } catch (err) {

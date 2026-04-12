@@ -17,8 +17,14 @@ export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructo
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   
   // Custom setSiteSettings that updates instructor avatar instead of site logo
-  const setInstructorAvatar = useCallback((updater: any) => {
-    const newState = typeof updater === 'function' ? updater({}) : updater
+  interface AvatarUpdaterState {
+    logo?: string
+    logoFile?: File
+  }
+  type AvatarUpdater = (prev: AvatarUpdaterState) => AvatarUpdaterState | AvatarUpdaterState
+
+  const setInstructorAvatar = useCallback((updater: AvatarUpdater | AvatarUpdaterState) => {
+    const newState = typeof updater === 'function' ? (updater as AvatarUpdater)({}) : updater
     if (newState.logo) {
       setInstructorForm(prev => ({ ...prev, avatarUrl: newState.logo }))
       setAvatarFile(newState.logoFile || null)

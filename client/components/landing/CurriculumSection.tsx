@@ -3,6 +3,7 @@
 // client/components/landing/CurriculumSection.tsx
 
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import CourseRegistrationModal from '@/components/modals/CourseRegistrationModal'
 import {
@@ -48,20 +49,22 @@ export function CurriculumSection() {
 
   return (
     <section id="curriculum" className="w-full py-24 bg-slate-950 text-slate-50 relative overflow-hidden">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-violet-600/20 rounded-full blur-[120px] opacity-40" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[120px] opacity-30" />
-      </div>
-
-      <div className="container relative z-10 px-4 md:px-6">
-        <div className="max-w-3xl mx-auto text-center mb-16 md:mb-24">
+      <div className="container mx-auto px-4">
+        {/* Section Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6">
             Դասընթացի <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">Ծրագիր</span>
           </h2>
           <p className="text-slate-400 text-lg md:text-xl leading-relaxed">
             Մենք կոտրում ենք կարծրատիպերը: Սա ուղղակի դասընթաց չէ, սա ձեր բիզնեսի մեկնարկն է:
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-3 gap-6 lg:gap-8 mb-16">
           {CURRICULUM_STEPS.map((step) => {

@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
+import { queryKeys } from '@/lib/queryKeys'
 import type { User, Payment, Course } from '@/components/features/admin/types'
 
 export interface PaymentFormData {
@@ -16,15 +17,10 @@ interface UsePaymentsParams {
   allowed: boolean
 }
 
-// Query Keys
-const PAYMENTS_QUERY_KEY = 'payments'
-const PAYMENT_USERS_QUERY_KEY = 'payment-users'
-const PAYMENT_COURSES_QUERY_KEY = 'payment-courses'
-
 // React Query Hooks
 export function usePaymentsQuery() {
   return useQuery({
-    queryKey: [PAYMENTS_QUERY_KEY],
+    queryKey: queryKeys.payments,
     queryFn: async () => {
       const res = await api.get('/api/v1/payments')
       return (res.data?.payments || []) as Payment[]
@@ -35,7 +31,7 @@ export function usePaymentsQuery() {
 
 export function usePaymentUsersQuery() {
   return useQuery({
-    queryKey: [PAYMENT_USERS_QUERY_KEY],
+    queryKey: queryKeys.users,
     queryFn: async () => {
       const res = await api.get('/api/v1/users')
       return (res.data?.users || []).filter((u: User) => u.role === 'user') as User[]
@@ -46,7 +42,7 @@ export function usePaymentUsersQuery() {
 
 export function usePaymentCoursesQuery() {
   return useQuery({
-    queryKey: [PAYMENT_COURSES_QUERY_KEY],
+    queryKey: queryKeys.courses,
     queryFn: async () => {
       const res = await api.get('/api/v1/courses')
       const coursesData = res.data?.data || res.data?.courses || []
@@ -70,7 +66,7 @@ export function useCreatePayment() {
       return response.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [PAYMENTS_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.payments })
     },
   })
 }
@@ -84,7 +80,7 @@ export function useVerifyPayment() {
       return response.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [PAYMENTS_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.payments })
     },
   })
 }
@@ -98,7 +94,7 @@ export function useUpdatePaymentStatus() {
       return response.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [PAYMENTS_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.payments })
     },
   })
 }

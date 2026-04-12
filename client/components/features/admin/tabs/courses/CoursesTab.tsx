@@ -6,10 +6,18 @@ import { useConfirm } from '@/components/providers/ConfirmProvider'
 import { CourseFormComponent } from './_components/CourseForm'
 import { CourseList } from './_components/CourseList'
 
+interface CourseForm {
+  title: string
+  description: string
+  price?: number
+  image?: string
+  [key: string]: unknown
+}
+
 interface CoursesTabProps {
   showCourseForm: boolean
-  courseForm: any
-  setCourseForm: React.Dispatch<React.SetStateAction<any>>
+  courseForm: CourseForm
+  setCourseForm: React.Dispatch<React.SetStateAction<CourseForm>>
   startNewCourse: () => void
   editCourse: (course: Course) => void
   deleteCourse: (courseId: string) => void

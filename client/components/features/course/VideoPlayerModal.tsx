@@ -73,11 +73,11 @@ export function VideoPlayerModal({ isOpen, onClose, videoUrl, title, duration }:
               )}
             </div>
 
-            {/* Video info */}
+            {/* Video info - below video to avoid overlap with controls */}
             {title && (
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-                <h3 className="text-white font-bold text-lg">{title}</h3>
-                {duration && <p className="text-slate-300 text-sm">Տևողություն՝ {duration}</p>}
+              <div className="bg-slate-900/90 px-6 py-3 border-t border-white/10">
+                <h3 className="text-white font-bold text-base">{title}</h3>
+                {duration && <p className="text-slate-400 text-sm">{duration}</p>}
               </div>
             )}
           </motion.div>

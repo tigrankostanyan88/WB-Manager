@@ -1,4 +1,5 @@
 // tabs/instructor/types.ts - Instructor tab types
+import type { Area } from 'react-easy-crop'
 
 export interface InstructorStat {
   value: string
@@ -42,7 +43,7 @@ export interface InstructorTabProps {
   zoom?: number
   setCrop?: (crop: { x: number; y: number }) => void
   setZoom?: (zoom: number) => void
-  onCropComplete?: (croppedArea: any, croppedAreaPixels: any) => void
+  onCropComplete?: (croppedArea: Area, croppedAreaPixels: Area) => void
   closeCropModal?: () => void
   confirmCrop?: () => void
 }

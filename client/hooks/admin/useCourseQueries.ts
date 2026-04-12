@@ -2,15 +2,14 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
+import { queryKeys } from '@/lib/queryKeys'
 import { buildVideoUrl } from '@/lib/videoUtils'
 import type { Course } from '@/components/features/admin/types'
 import type { ExtendedCourse } from './courseTypes'
 
-const COURSES_QUERY_KEY = 'courses'
-
 export function useCoursesQuery() {
   return useQuery({
-    queryKey: [COURSES_QUERY_KEY],
+    queryKey: queryKeys.courses,
     queryFn: async () => {
       const response = await api.get('/api/v1/courses')
       // Handle different API response structures
@@ -30,7 +29,7 @@ export function useCreateCourse() {
       return response.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [COURSES_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.courses })
     },
   })
 }
@@ -44,7 +43,7 @@ export function useUpdateCourse() {
       return response.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [COURSES_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.courses })
     },
   })
 }
@@ -57,7 +56,7 @@ export function useDeleteCourse() {
       await api.delete(`/api/v1/courses/${id}`)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [COURSES_QUERY_KEY] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.courses })
     },
   })
 }

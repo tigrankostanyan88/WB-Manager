@@ -1,29 +1,10 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import api from '@/lib/api'
 import type { Area, Point } from 'react-easy-crop'
 import { getCroppedImg } from '@/components/features/admin/_utils/image'
-
-interface InstructorStat {
-  value: string
-  label: string
-}
-
-interface InstructorData {
-  title?: string
-  name?: string
-  profession?: string
-  description?: string
-  badge_text?: string
-  avatar_url?: string
-  stats_json?: string
-  stats?: InstructorStat[]
-}
-
-interface InstructorApiResponse {
-  instructors?: InstructorData[]
-}
+import { useInstructorQuery, useSaveInstructorMutation } from '@/hooks/queries/useInstructorQuery'
+import type { InstructorStat } from '@/types/domain'
 
 interface InstructorForm {
   title: string
@@ -67,6 +48,10 @@ function extractErrorMessage(err: unknown): string | null {
 }
 
 export function useInstructor({ activeTab, allowed, showToast }: UseInstructorParams) {
+  const isActive = allowed && activeTab === 'instructor'
+  const { data: instructorData, isLoading: isQueryLoading } = useInstructorQuery(isActive)
+  const saveMutation = useSaveInstructorMutation()
+  
   const [isInstructorLoading, setIsInstructorLoading] = useState(false)
   const [instructorForm, setInstructorForm] = useState<InstructorForm>({
     title: 'Սովորեք Ուայլդբերիի Մասնագետից',
@@ -92,54 +77,29 @@ export function useInstructor({ activeTab, allowed, showToast }: UseInstructorPa
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
   const [pendingFile, setPendingFile] = useState<File | null>(null)
 
+  // Sync form with query data
   useEffect(() => {
-    if (!allowed || activeTab !== 'instructor') return
-    let cancelled = false
-    ;(async () => {
-      setIsInstructorLoading(true)
-      try {
-        const res = await api.get('/api/v1/instructor')
-        const payload = res.data as InstructorApiResponse
-        const list = payload.instructors || []
-        const first = list[0] || {}
+    if (!instructorData || !isActive) return
+    
+    const statsArr = instructorData.stats || []
+    const normalizedStats = statsArr.length
+      ? statsArr.map((s, i) => ({
+          value: String(s?.value ?? defaultStats[i]?.value ?? ''),
+          label: String(s?.label ?? defaultStats[i]?.label ?? '')
+        }))
+      : [...defaultStats]
 
-        let statsArr: InstructorStat[] = []
-        if (typeof first.stats_json === 'string' && first.stats_json) {
-          try {
-            const parsed = JSON.parse(first.stats_json) as InstructorStat[] | unknown
-            statsArr = Array.isArray(parsed) ? parsed : []
-          } catch {
-            statsArr = []
-          }
-        } else if (Array.isArray(first.stats)) {
-          statsArr = first.stats
-        }
-        
-        const normalizedStats = statsArr.length
-          ? statsArr.map((s, i) => ({
-              value: String(s?.value ?? defaultStats[i]?.value ?? ''),
-              label: String(s?.label ?? defaultStats[i]?.label ?? '')
-            }))
-          : [...defaultStats]
-
-        if (!cancelled) {
-          setInstructorForm({
-            title: first.title || 'Սովորեք Ուայլդբերիի Մասնագետից',
-            name: first.name || '',
-            profession: first.profession || '',
-            description: first.description || '',
-            badgeText: first.badge_text || 'Վերադարձված մենթորություն',
-            avatarUrl: first.avatar_url || '',
-            avatarFile: null,
-            stats: normalizedStats
-          })
-        }
-      } finally {
-        if (!cancelled) setIsInstructorLoading(false)
-      }
-    })()
-    return () => { cancelled = true }
-  }, [activeTab, allowed])
+    setInstructorForm({
+      title: instructorData.title || 'Սովորեք Ուայլդբերիի Մասնագետից',
+      name: instructorData.name || '',
+      profession: instructorData.profession || '',
+      description: instructorData.description || '',
+      badgeText: instructorData.badgeText || 'Վերադարձված մենթորություն',
+      avatarUrl: instructorData.avatarUrl || instructorData.avatar || '',
+      avatarFile: null,
+      stats: normalizedStats
+    })
+  }, [instructorData, isActive])
 
   const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPx: Area) => {
     setCroppedAreaPixels(croppedAreaPx)
@@ -231,7 +191,7 @@ export function useInstructor({ activeTab, allowed, showToast }: UseInstructorPa
       if (instructorForm.avatarFile) fd.append('avatar', instructorForm.avatarFile)
       else if (instructorForm.avatarUrl) fd.append('avatar_url', instructorForm.avatarUrl)
 
-      await api.post('/api/v1/instructor', fd)
+      await saveMutation.mutateAsync(fd)
       showToast('Մենթորի տվյալները պահպանվեցին', 'success')
     } catch (err: unknown) {
       showToast(extractErrorMessage(err) || 'Չհաջողվեց պահպանել', 'error')
@@ -240,8 +200,10 @@ export function useInstructor({ activeTab, allowed, showToast }: UseInstructorPa
     }
   }
 
+  const combinedLoading = isInstructorLoading || isQueryLoading || saveMutation.isPending
+
   return {
-    instructorForm, instructorErrors, isInstructorLoading,
+    instructorForm, instructorErrors, isInstructorLoading: combinedLoading,
     onAvatarFile, onTitleChange, onNameChange, onProfessionChange, onDescriptionChange,
     onBadgeTextChange, onStatValueChange, saveInstructor,
     cropModalOpen, cropImage, crop, zoom, setCrop, setZoom, onCropComplete, closeCropModal, confirmCrop

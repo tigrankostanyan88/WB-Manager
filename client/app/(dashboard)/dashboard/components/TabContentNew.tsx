@@ -1,26 +1,27 @@
 'use client'
 
-import { lazy, Suspense, useMemo } from 'react'
-import type { DashboardTabId } from '@/components/features/admin/types'
+import { lazy, Suspense, memo } from 'react'
+import type { DashboardTabId, SiteSettings, WorkingHoursSchedule } from '@/components/features/admin/types'
 import type { User } from '@/components/features/admin/types'
 import { TabErrorBoundary } from '@/components/error/TabErrorBoundary'
-import { Skeleton } from '@/components/ui/skeleton'
 
-// Lazy load all tab wrappers for code splitting
-const OverviewTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.OverviewTabWrapper })))
-const UsersTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.UsersTabWrapper })))
+// Eagerly import frequently used tabs (faster navigation)
+import { OverviewTabWrapper } from './tabs'
+import { UsersTabWrapper } from './tabs'
+import { CoursesTabWrapper } from './tabs'
+import { PaymentsTabWrapper } from './tabs'
+import { SettingsTabWrapper } from './tabs'
+
+// Lazy load less frequently used tabs
 const SuspendedUsersTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.SuspendedUsersTabWrapper })))
 const EnrollmentsTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.EnrollmentsTabWrapper })))
 const CourseRegistrationsTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.CourseRegistrationsTabWrapper })))
 const ContactMessagesTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.ContactMessagesTabWrapper })))
-const PaymentsTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.PaymentsTabWrapper })))
-const CoursesTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.CoursesTabWrapper })))
 const ModulesTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.ModulesTabWrapper })))
 const CommentsTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.CommentsTabWrapper })))
 const InstructorTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.InstructorTabWrapper })))
 const FaqTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.FaqTabWrapper })))
 const HeroContentTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.HeroContentTabWrapper })))
-const SettingsTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.SettingsTabWrapper })))
 const BankCardsTabWrapper = lazy(() => import('./tabs').then(m => ({ default: m.BankCardsTabWrapper })))
 
 // Smooth loading fallback - subtle spinner instead of skeleton blocks
@@ -43,166 +44,114 @@ interface TabContentProps {
   editingUser: (User & { __editScope?: 'users' }) | null
   setEditingUser: React.Dispatch<React.SetStateAction<(User & { __editScope?: 'users' }) | null>>
   onLogoFileSelect?: (e: React.ChangeEvent<HTMLInputElement>) => void
-  siteSettings?: any
-  setSiteSettings?: any
-  workingHoursSchedule?: any
-  setWorkingHoursSchedule?: any
+  siteSettings?: SiteSettings
+  setSiteSettings?: (settings: SiteSettings) => void
+  workingHoursSchedule?: WorkingHoursSchedule
+  setWorkingHoursSchedule?: (schedule: WorkingHoursSchedule) => void
   isSettingsLoading?: boolean
   saveSettings?: () => void
 }
 
-export function TabContent({ activeTab, allowed, currentUser, showToast, editingUser, setEditingUser, onLogoFileSelect, siteSettings, setSiteSettings, workingHoursSchedule, setWorkingHoursSchedule, isSettingsLoading, saveSettings }: TabContentProps) {
-  const content = useMemo(() => {
-    switch (activeTab) {
-      case 'overview':
-        return (
-          <TabErrorBoundary tabName="Overview">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <OverviewTabWrapper allowed={allowed} />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+const OverviewContent = memo(({ allowed }: { allowed: boolean }) => (
+  <TabErrorBoundary tabName="Overview">
+    <OverviewTabWrapper allowed={allowed} />
+  </TabErrorBoundary>
+))
 
-      case 'users':
-        return (
-          <TabErrorBoundary tabName="Users">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <UsersTabWrapper allowed={allowed} currentUser={currentUser} showToast={showToast} setEditingUser={setEditingUser} editingUser={editingUser} />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+const UsersContent = memo(({ allowed, currentUser, showToast, editingUser, setEditingUser }: { allowed: boolean; currentUser: User | null; showToast: (msg: string, type?: 'success' | 'error') => void; editingUser: (User & { __editScope?: 'users' }) | null; setEditingUser: React.Dispatch<React.SetStateAction<(User & { __editScope?: 'users' }) | null>> }) => (
+  <TabErrorBoundary tabName="Users">
+    <UsersTabWrapper allowed={allowed} currentUser={currentUser} showToast={showToast} setEditingUser={setEditingUser} editingUser={editingUser} />
+  </TabErrorBoundary>
+))
 
-      case 'suspended-users':
-        return (
-          <TabErrorBoundary tabName="Suspended Users">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <SuspendedUsersTabWrapper allowed={allowed} showToast={showToast} />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+const CoursesContent = memo(({ showToast }: { showToast: (msg: string, type?: 'success' | 'error') => void }) => (
+  <TabErrorBoundary tabName="Courses">
+    <CoursesTabWrapper showToast={showToast} />
+  </TabErrorBoundary>
+))
 
-      case 'enrollments':
-        return (
-          <TabErrorBoundary tabName="Enrollments">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <EnrollmentsTabWrapper allowed={allowed} />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+const PaymentsContent = memo(({ allowed }: { allowed: boolean }) => (
+  <TabErrorBoundary tabName="Payments">
+    <Suspense fallback={<TabLoadingFallback />}>
+      <PaymentsTabWrapper allowed={allowed} />
+    </Suspense>
+  </TabErrorBoundary>
+))
 
-      case 'course-registrations':
-        return (
-          <TabErrorBoundary tabName="Course Registrations">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <CourseRegistrationsTabWrapper allowed={allowed} />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+const SettingsContent = memo(({ allowed, showToast, onLogoFileSelect, siteSettings, setSiteSettings, workingHoursSchedule, setWorkingHoursSchedule, isSettingsLoading, saveSettings }: TabContentProps) => (
+  <TabErrorBoundary tabName="Settings">
+    <SettingsTabWrapper 
+      allowed={allowed} 
+      showToast={showToast} 
+      onLogoFileSelect={onLogoFileSelect || (() => {})}
+      siteSettings={siteSettings || {}}
+      setSiteSettings={setSiteSettings || (() => {})}
+      workingHoursSchedule={workingHoursSchedule || {}}
+      setWorkingHoursSchedule={setWorkingHoursSchedule || (() => {})}
+      isSettingsLoading={isSettingsLoading || false}
+      saveSettings={saveSettings || (() => {})}
+    />
+  </TabErrorBoundary>
+))
 
-      case 'contact-messages':
-        return (
-          <TabErrorBoundary tabName="Contact Messages">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <ContactMessagesTabWrapper allowed={allowed} />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+const LazyContent = memo(({ tabName, children }: { tabName: string; children: React.ReactNode }) => (
+  <TabErrorBoundary tabName={tabName}>
+    <Suspense fallback={<TabLoadingFallback />}>
+      {children}
+    </Suspense>
+  </TabErrorBoundary>
+))
 
-      case 'payments':
-        return (
-          <TabErrorBoundary tabName="Payments">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <PaymentsTabWrapper allowed={allowed} />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+export function TabContent(props: TabContentProps) {
+  const { activeTab, allowed, currentUser, showToast, editingUser, setEditingUser, onLogoFileSelect, siteSettings, setSiteSettings, workingHoursSchedule, setWorkingHoursSchedule, isSettingsLoading, saveSettings } = props
 
-      case 'bank-cards':
-        return (
-          <TabErrorBoundary tabName="Bank Cards">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <BankCardsTabWrapper />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+  switch (activeTab) {
+    case 'overview':
+      return <OverviewContent allowed={allowed} />
 
-      case 'courses':
-        return (
-          <TabErrorBoundary tabName="Courses">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <CoursesTabWrapper showToast={showToast} />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+    case 'users':
+      return <UsersContent allowed={allowed} currentUser={currentUser} showToast={showToast} editingUser={editingUser} setEditingUser={setEditingUser} />
 
-      case 'modules':
-        return (
-          <TabErrorBoundary tabName="Modules">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <ModulesTabWrapper showToast={showToast} />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+    case 'courses':
+      return <CoursesContent showToast={showToast} />
 
-      case 'comments':
-        return (
-          <TabErrorBoundary tabName="Comments">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <CommentsTabWrapper allowed={allowed} />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+    case 'payments':
+      return <PaymentsContent allowed={allowed} />
 
-      case 'instructor':
-        return (
-          <TabErrorBoundary tabName="Instructor">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <InstructorTabWrapper allowed={allowed} showToast={showToast} />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+    case 'settings':
+      return <SettingsContent {...props} />
 
-      case 'faq':
-        return (
-          <TabErrorBoundary tabName="FAQ">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <FaqTabWrapper allowed={allowed} showToast={showToast} />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+    case 'suspended-users':
+      return <LazyContent tabName="Suspended Users"><SuspendedUsersTabWrapper allowed={allowed} showToast={showToast} /></LazyContent>
 
-      case 'hero-content':
-        return (
-          <TabErrorBoundary tabName="Hero Content">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <HeroContentTabWrapper allowed={allowed} showToast={showToast} />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+    case 'enrollments':
+      return <LazyContent tabName="Enrollments"><EnrollmentsTabWrapper allowed={allowed} /></LazyContent>
 
-      case 'settings':
-        return (
-          <TabErrorBoundary tabName="Settings">
-            <Suspense fallback={<TabLoadingFallback />}>
-              <SettingsTabWrapper 
-                allowed={allowed} 
-                showToast={showToast} 
-                onLogoFileSelect={onLogoFileSelect || (() => {})}
-                siteSettings={siteSettings || {}}
-                setSiteSettings={setSiteSettings || (() => {})}
-                workingHoursSchedule={workingHoursSchedule || {}}
-                setWorkingHoursSchedule={setWorkingHoursSchedule || (() => {})}
-                isSettingsLoading={isSettingsLoading || false}
-                saveSettings={saveSettings || (() => {})}
-              />
-            </Suspense>
-          </TabErrorBoundary>
-        )
+    case 'course-registrations':
+      return <LazyContent tabName="Course Registrations"><CourseRegistrationsTabWrapper allowed={allowed} /></LazyContent>
 
-      default:
-        return null
-    }
-  }, [activeTab, allowed, currentUser, showToast, editingUser, setEditingUser, onLogoFileSelect, siteSettings, setSiteSettings, workingHoursSchedule, setWorkingHoursSchedule, isSettingsLoading, saveSettings])
+    case 'contact-messages':
+      return <LazyContent tabName="Contact Messages"><ContactMessagesTabWrapper allowed={allowed} /></LazyContent>
 
-  return content
+    case 'bank-cards':
+      return <LazyContent tabName="Bank Cards"><BankCardsTabWrapper /></LazyContent>
+
+    case 'modules':
+      return <LazyContent tabName="Modules"><ModulesTabWrapper showToast={showToast} /></LazyContent>
+
+    case 'comments':
+      return <LazyContent tabName="Comments"><CommentsTabWrapper allowed={allowed} /></LazyContent>
+
+    case 'instructor':
+      return <LazyContent tabName="Instructor"><InstructorTabWrapper allowed={allowed} showToast={showToast} /></LazyContent>
+
+    case 'faq':
+      return <LazyContent tabName="FAQ"><FaqTabWrapper allowed={allowed} showToast={showToast} /></LazyContent>
+
+    case 'hero-content':
+      return <LazyContent tabName="Hero Content"><HeroContentTabWrapper allowed={allowed} showToast={showToast} /></LazyContent>
+
+    default:
+      return null
+  }
 }

@@ -86,3 +86,14 @@ body, html, h1, h2, h3, h4, h5, h6 {
     padding: 0 20px;
   }
 }
+
+/* Gradient animation for hero text */
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  animation: gradient 4s ease infinite;
+}

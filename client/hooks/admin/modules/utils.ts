@@ -2,9 +2,6 @@
 
 import type { ModuleFile, ModuleItem } from './types'
 
-export const MODULES_QUERY_KEY = 'modules'
-export const COURSES_QUERY_KEY = 'courses'
-
 export const mapModule = (m: unknown): ModuleItem => {
   const mm = m as {
     id?: unknown

@@ -1,12 +1,42 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import { TrendingUp, Shield, Zap, BarChart3, Package, CreditCard } from 'lucide-react'
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  }
+}
 
 export function FeaturesSection() {
   return (
     <section id="features" className="w-full py-16 md:py-24 lg:py-32 bg-gradient-to-b from-white via-slate-50/50 to-white">
       <div className="container px-4 md:px-6">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center mb-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
+        >
           <div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 px-4 py-2 rounded-full text-sm font-bold mb-4">
             <Zap className="w-4 h-4" />
             Հնարավորություններ
@@ -17,9 +47,15 @@ export function FeaturesSection() {
           <p className="max-w-[900px] text-slate-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
             Հարթակ, որը տալիս է անսահմանափակ հնարավորություններ ձեր բիզնեսի աճի համար
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
           {/* Column 1 */}
           <div className="space-y-6">
             {/* Card 1 - Brand Recognition */}
@@ -156,7 +192,7 @@ export function FeaturesSection() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   )

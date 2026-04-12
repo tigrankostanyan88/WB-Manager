@@ -7,12 +7,10 @@
 import { lazy, ComponentType } from 'react'
 import type { DashboardTabId } from '@/components/features/admin/types'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TabComponent = ComponentType<any> | any
+export type TabComponent = ComponentType<Record<string, never>>
 
 export interface TabConfig {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  component: any
+  component: TabComponent
   title: string
   description?: string
 }

@@ -2,12 +2,13 @@
 
 import { useQuery } from '@tanstack/react-query'
 import api from '@/lib/api'
+import { queryKeys } from '@/lib/queryKeys'
 import type { CourseOption, ModuleItem } from './types'
-import { parseModules, MODULES_QUERY_KEY, COURSES_QUERY_KEY } from './utils'
+import { parseModules } from './utils'
 
 export function useModulesQuery() {
   return useQuery<ModuleItem[]>({
-    queryKey: [MODULES_QUERY_KEY],
+    queryKey: queryKeys.modules,
     queryFn: async () => {
       const res = await api.get('/api/v1/modules')
       const modulesData = Array.isArray(res.data?.data)
@@ -21,7 +22,7 @@ export function useModulesQuery() {
 
 export function useModuleCoursesQuery() {
   return useQuery<CourseOption[]>({
-    queryKey: [COURSES_QUERY_KEY, 'options'],
+    queryKey: [...queryKeys.courses, 'options'],
     queryFn: async () => {
       const res = await api.get('/api/v1/courses')
       const coursesData = Array.isArray(res.data?.data)
