@@ -110,96 +110,84 @@ export function useCourseDetails(courseId: string): UseCourseDetailsResult {
     checkAccess()
   }, [courseId, isLoggedIn, user])
 
-  // Fetch course data effect
+  // Fetch course data effect - OPTIMIZED for faster loading
   const fetchData = useCallback(async () => {
     if (!courseId) return
 
     try {
       setLoading(true)
 
-      // Fetch course data
+      // 1. Fetch course data FIRST (critical for page display)
       const courseRes = await api.get(`/api/v1/courses/${courseId}`)
       const courseData = courseRes.data?.data || courseRes.data?.course || courseRes.data
       setCourse(courseData)
+      
+      // Show page immediately after course loads (don't wait for reviews/instructor)
+      setLoading(false)
 
-      // Fetch reviews and calculate real rating
-      let calculatedRating = 0
-      let calculatedCount = 0
-      try {
-        const reviewsRes = await api.get('/api/v1/reviews')
-        const payload = reviewsRes.data as { data?: { reviews?: Array<{ rating?: number }> } }
-        const reviews = payload.data?.reviews || []
+      // 2. Fetch reviews and instructor in BACKGROUND (parallel)
+      Promise.all([
+        // Fetch reviews
+        api.get('/api/v1/reviews').then(reviewsRes => {
+          const payload = reviewsRes.data as { data?: { reviews?: Array<{ rating?: number }> } }
+          const reviews = payload.data?.reviews || []
+          if (reviews.length > 0) {
+            const totalRating = reviews.reduce((sum, r) => sum + (r.rating || 0), 0)
+            const avgRating = totalRating / reviews.length
+            setRealRating(Number(avgRating.toFixed(1)))
+            setRealReviewsCount(reviews.length)
+          }
+        }).catch(() => {
+          setRealRating(0)
+          setRealReviewsCount(0)
+        }),
+        
+        // Fetch instructor data
+        api.get('/api/v1/instructor').then(instructorRes => {
+          const payload = instructorRes.data?.data || instructorRes.data
+          const list = Array.isArray(payload?.instructors) ? payload.instructors : Array.isArray(payload) ? payload : []
+          const instructorData = list[0] || payload
 
-        if (reviews.length > 0) {
-          const totalRating = reviews.reduce((sum, r) => sum + (r.rating || 0), 0)
-          const avgRating = totalRating / reviews.length
-          calculatedRating = Number(avgRating.toFixed(1))
-          calculatedCount = reviews.length
-        }
-        setRealRating(calculatedRating)
-        setRealReviewsCount(calculatedCount)
-      } catch {
-        // Reset to 0 if reviews fetch fails
-        setRealRating(0)
-        setRealReviewsCount(0)
-      }
-
-      // Fetch instructor data
-      try {
-        const instructorRes = await api.get('/api/v1/instructor')
-        const payload = instructorRes.data?.data || instructorRes.data
-        const list = Array.isArray(payload?.instructors) ? payload.instructors : Array.isArray(payload) ? payload : []
-        const instructorData = list[0] || payload
-
-        if (instructorData && typeof instructorData === 'object') {
-          const data = instructorData as Record<string, unknown>
-
-          // Get avatar from files array
-          let imageUrl = ''
-          const files = data.files as Array<{ name_used?: string; name?: string; ext?: string }> | undefined
-          if (files && Array.isArray(files)) {
-            const avatarFile = files.find((f) =>
-              f.name_used === 'instructor_img' ||
-              f.name_used === 'avatar' ||
-              f.name_used === 'instructor_avatar'
-            )
-            if (avatarFile?.name && avatarFile?.ext) {
-              const ext = avatarFile.ext.startsWith('.') ? avatarFile.ext : `.${avatarFile.ext}`
-              imageUrl = `/images/instructors/large/${avatarFile.name}${ext}`
+          if (instructorData && typeof instructorData === 'object') {
+            const data = instructorData as Record<string, unknown>
+            let imageUrl = ''
+            const files = data.files as Array<{ name_used?: string; name?: string; ext?: string }> | undefined
+            if (files && Array.isArray(files)) {
+              const avatarFile = files.find((f) =>
+                f.name_used === 'instructor_img' || f.name_used === 'avatar' || f.name_used === 'instructor_avatar'
+              )
+              if (avatarFile?.name && avatarFile?.ext) {
+                const ext = avatarFile.ext.startsWith('.') ? avatarFile.ext : `.${avatarFile.ext}`
+                imageUrl = `/images/instructors/large/${avatarFile.name}${ext}`
+              }
             }
+            if (!imageUrl && typeof data.avatar_url === 'string') {
+              imageUrl = data.avatar_url
+            }
+            setInstructor({
+              name: typeof data.name === 'string' ? data.name : 'WB-Manager Team',
+              role: typeof data.profession === 'string' ? data.profession : 'Գլխավոր մենթոր',
+              desc: typeof data.description === 'string' ? data.description : 'Փորձառու մասնագետ WB ոլորտում',
+              imageUrl: imageUrl || '',
+              ratingText: realRating > 0 ? `${realRating} վարկանիշ` : 'Դեռ չի գնահատվել',
+              coursesText: '0 վիդեոդաս'
+            })
           }
-
-          // Fallback to avatar_url
-          if (!imageUrl && typeof data.avatar_url === 'string') {
-            imageUrl = data.avatar_url
-          }
-
+        }).catch(() => {
           setInstructor({
-            name: typeof data.name === 'string' ? data.name : 'WB-Manager Team',
-            role: typeof data.profession === 'string' ? data.profession : 'Գլխավոր մենթոր',
-            desc: typeof data.description === 'string' ? data.description : 'Փորձառու մասնագետ WB ոլորտում',
-            imageUrl: imageUrl || '',
-            ratingText: calculatedRating > 0 ? `${calculatedRating} վարկանիշ` : 'Դեռ չի գնահատվել',
+            name: 'WB-Manager Team',
+            role: 'Գլխավոր մենթոր',
+            desc: 'Փորձառու մասնագետ WB ոլորտում',
+            imageUrl: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=400&auto=format&fit=crop',
+            ratingText: realRating > 0 ? `${realRating} վարկանիշ` : 'Դեռ չի գնահատվել',
             coursesText: '0 վիդեոդաս'
           })
-        }
-      } catch {
-        // Fallback to default instructor if API fails
-        setInstructor({
-          name: 'WB-Manager Team',
-          role: 'Գլխավոր մենթոր',
-          desc: 'Փորձառու մասնագետ WB ոլորտում',
-          imageUrl: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=400&auto=format&fit=crop',
-          ratingText: calculatedRating > 0 ? `${calculatedRating} վարկանիշ` : 'Դեռ չի գնահատվել',
-          coursesText: '0 վիդեոդաս'
         })
-      }
+      ])
     } catch {
       setError('Դասընթացը չի գտնվել')
-    } finally {
-      setLoading(false)
     }
-  }, [courseId])
+  }, [courseId, realRating])
 
   useEffect(() => {
     fetchData()

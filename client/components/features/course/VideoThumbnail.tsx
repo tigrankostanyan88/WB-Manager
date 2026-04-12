@@ -93,7 +93,6 @@ export function generateVideoThumbnail(videoUrl: string, time?: number): Promise
 export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnailProps) {
   const [thumbnail, setThumbnail] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const generatedRef = useRef(false)
   
   useEffect(() => {
@@ -101,7 +100,6 @@ export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnai
     generatedRef.current = false
     setThumbnail(null)
     setLoading(true)
-    setError(null)
     
     if (!videoUrl) {
       setLoading(false)
@@ -110,22 +108,36 @@ export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnai
     
     generatedRef.current = true
     
-    generateVideoThumbnail(videoUrl, time)
-      .then(url => {
-        setThumbnail(url)
-        setLoading(false)
-      })
-      .catch((err) => {
-        setError(String(err))
-        setLoading(false)
-      })
+    // Generate thumbnail in background (non-blocking)
+    const timer = setTimeout(() => {
+      generateVideoThumbnail(videoUrl, time)
+        .then(url => {
+          if (generatedRef.current) {
+            setThumbnail(url)
+            setLoading(false)
+          }
+        })
+        .catch(() => {
+          if (generatedRef.current) {
+            setLoading(false)
+          }
+        })
+    }, 100) // Small delay to not block initial render
+    
+    return () => {
+      clearTimeout(timer)
+      generatedRef.current = false
+    }
   }, [videoUrl, time])
   
+  // Show gradient placeholder while loading (no spinner to avoid layout shift)
   if (loading) {
     return (
-      <div className={`bg-gradient-to-br from-violet-600/20 to-indigo-700/20 animate-pulse ${className}`}>
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-violet-600/30 border-t-violet-600 rounded-full animate-spin" />
+      <div className={`bg-gradient-to-br from-violet-600 to-indigo-700 ${className}`}>
+        <div className="w-full h-full flex items-center justify-center opacity-50">
+          <svg className="w-12 h-12 text-white/60" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" />
+          </svg>
         </div>
       </div>
     )
@@ -137,11 +149,19 @@ export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnai
         src={thumbnail} 
         alt="Video thumbnail"
         className={`w-full h-full object-cover ${className}`}
+        loading="eager"
       />
     )
   }
   
+  // Fallback gradient
   return (
-    <div className={`bg-gradient-to-br from-violet-600 to-indigo-700 ${className}`} />
+    <div className={`bg-gradient-to-br from-violet-600 to-indigo-700 ${className}`}>
+      <div className="w-full h-full flex items-center justify-center opacity-50">
+        <svg className="w-12 h-12 text-white/60" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" />
+        </svg>
+      </div>
+    </div>
   )
 }
