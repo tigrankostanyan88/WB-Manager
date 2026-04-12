@@ -1,3 +1,5 @@
+'use client'
+
 interface CourseRequirementsProps {
   requirements: string[]
 }

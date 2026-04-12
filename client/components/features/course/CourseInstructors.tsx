@@ -1,4 +1,7 @@
+'use client'
+
 import Image from 'next/image'
+import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Play, Star } from 'lucide-react'
 
@@ -23,21 +26,24 @@ export function CourseInstructors({ instructor }: CourseInstructorsProps) {
       <h2 className="text-2xl font-black text-slate-900">Դասավանդող</h2>
       <div className="bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 rounded-3xl p-8 border border-violet-100 shadow-lg shadow-violet-100/50">
         <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-          {/* Avatar */}
-          <div className="relative">
-            <div className="w-28 h-28 md:w-32 md:h-32 rounded-3xl overflow-hidden bg-white shadow-xl shadow-violet-200/50 ring-4 ring-white relative">
+          {/* Avatar - Clickable link to landing page mentor section */}
+          <Link href="/#instructor" className="relative group cursor-pointer">
+            <div className="w-28 h-28 md:w-32 md:h-32 rounded-3xl overflow-hidden bg-white shadow-xl shadow-violet-200/50 ring-4 ring-white relative group-hover:ring-violet-300 transition-all">
               <Image
                 src={instructor.imageUrl}
                 alt={instructor.name}
                 fill
-                className="object-cover"
+                className="object-cover group-hover:scale-105 transition-transform"
                 sizes="(max-width: 768px) 112px, 128px"
               />
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="bg-black/50 text-white text-xs px-2 py-1 rounded">Տեսնել մենթորին</span>
             </div>
             <div className="absolute -bottom-2 -right-2 bg-violet-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
               {instructor.ratingText}
             </div>
-          </div>
+          </Link>
           
           {/* Info */}
           <div className="flex-1 text-center md:text-left space-y-3">
@@ -46,7 +52,10 @@ export function CourseInstructors({ instructor }: CourseInstructorsProps) {
               <p className="text-violet-600 font-semibold text-sm mt-1">{instructor.role}</p>
             </div>
             
-            <p className="text-slate-600 leading-relaxed max-w-lg">{instructor.desc}</p>
+            <div 
+              className="text-slate-600 leading-relaxed max-w-lg line-clamp-3 text-sm"
+              dangerouslySetInnerHTML={{ __html: instructor.desc }}
+            />
             
             <div className="flex items-center justify-center md:justify-start gap-4 pt-2">
               <div className="flex items-center gap-1.5 text-sm text-slate-500">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import type { Course } from '../types'
 
 interface UseVideoThumbnailResult {
@@ -9,53 +9,92 @@ interface UseVideoThumbnailResult {
 }
 
 export function useVideoThumbnail(course: Course): UseVideoThumbnailResult {
-  const [thumbnail, setThumbnail] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [thumbnail, setThumbnail] = useState<string | null>(course.imageUrl || null)
+  const [loading, setLoading] = useState(!course.imageUrl)
 
   const apiBase = process.env.NEXT_PUBLIC_API_URL || ''
-  const origin = /^https?:\/\//i.test(apiBase) ? apiBase.replace(/\/api.*$/, '') : ''
-
-  const firstModule = course.modules?.[0]
-  const videoFiles = firstModule?.files?.filter((f: { name_used?: string }) => f.name_used === 'module_video') || []
-  const firstVideo = videoFiles[0]
-  const hasVideo = firstVideo?.name && firstVideo?.ext
+  const origin = useMemo(() => {
+    return /^https?:\/\//i.test(apiBase) ? apiBase.replace(/\/api.*$/, '') : ''
+  }, [apiBase])
 
   useEffect(() => {
-    if (!hasVideo) {
+    // If course has imageUrl, use it immediately
+    if (course.imageUrl) {
+      setThumbnail(course.imageUrl)
       setLoading(false)
       return
     }
 
+    // Find video file
+    const firstModule = course.modules?.[0]
+    const videoFiles = firstModule?.files?.filter((f) => f.name_used === 'module_video') || []
+    const firstVideo = videoFiles[0]
+    
+    if (!firstVideo?.name || !firstVideo?.ext) {
+      setLoading(false)
+      return
+    }
+
+    // Build video URL
     const videoPath = `/files/modules/${firstVideo.name}${firstVideo.ext}`
     const videoUrl = `${origin}${videoPath}`
 
+    // Quick approach: try to use video poster attribute or canvas capture
     const video = document.createElement('video')
     video.crossOrigin = 'anonymous'
     video.src = videoUrl
     video.preload = 'metadata'
+    video.muted = true
+    video.playsInline = true
+
+    let timeoutId: NodeJS.Timeout
+
+    const cleanup = () => {
+      clearTimeout(timeoutId)
+      video.onloadedmetadata = null
+      video.onseeked = null
+      video.onerror = null
+      video.pause()
+      video.src = ''
+    }
+
+    timeoutId = setTimeout(() => {
+      cleanup()
+      setLoading(false)
+    }, 5000) // 5 second timeout
 
     video.onloadedmetadata = () => {
-      const defaultTime = Math.min(30, video.duration / 2)
-      const seekTime = course.thumbnail_time ?? defaultTime
+      // Seek to thumbnail time or middle of video
+      const seekTime = course.thumbnail_time ?? Math.min(5, video.duration / 2)
       video.currentTime = seekTime
     }
 
     video.onseeked = () => {
-      const canvas = document.createElement('canvas')
-      canvas.width = video.videoWidth || 640
-      canvas.height = video.videoHeight || 360
-      const ctx = canvas.getContext('2d')
-      if (ctx) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-        setThumbnail(canvas.toDataURL('image/jpeg', 0.8))
+      try {
+        const canvas = document.createElement('canvas')
+        // Smaller canvas for better performance
+        canvas.width = 320
+        canvas.height = 180
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, 320, 180)
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.6)
+          setThumbnail(dataUrl)
+        }
+      } catch (e) {
+        // Ignore errors
       }
+      cleanup()
       setLoading(false)
     }
 
     video.onerror = () => {
+      cleanup()
       setLoading(false)
     }
-  }, [firstVideo, hasVideo, origin, course.thumbnail_time])
+
+    return () => cleanup()
+  }, [course.imageUrl, course.modules, course.thumbnail_time, origin])
 
   return { thumbnail, loading }
 }

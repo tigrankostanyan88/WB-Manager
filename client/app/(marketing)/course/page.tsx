@@ -9,7 +9,7 @@ import { CourseCard } from './components/CourseCard'
 import { LoadingCard } from './components/LoadingCard'
 
 export default function CoursesPage() {
-  const { courses, loading, error, refetch } = useCourses()
+  const { courses, loading, error, refetch, averageRating, totalReviews } = useCourses()
 
   return (
     <div className="min-h-screen bg-white">
@@ -110,7 +110,7 @@ export default function CoursesPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
-              className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white mb-4 sm:mb-6 leading-tight px-4"
             >
               Պրոֆեսիոնալ
               <br />
@@ -124,7 +124,7 @@ export default function CoursesPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-xl md:text-2xl text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed"
+              className="text-lg sm:text-xl md:text-2xl text-white/70 max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed px-4"
             >
               Սովորիր <span className="text-white font-semibold">Wildberries-ում</span> վաճառելու ամենաարդյունավետ մեթոդները մեր փորձառու մենթորներից
             </motion.p>
@@ -134,13 +134,13 @@ export default function CoursesPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
-              className="flex flex-wrap justify-center gap-4"
+              className="flex flex-wrap justify-center gap-2 sm:gap-4 px-4"
             >
               {[
                 { value: loading ? '...' : courses.length, label: 'Դասընթացներ', icon: '📚' },
-                { value: '1,500+', label: 'Ուսանողներ', icon: '👥' },
-                { value: '4.9', label: 'Վարկանիշ', icon: '⭐' },
-                { value: '98%', label: 'Հաջողություն', icon: '🎯' }
+                { value: loading ? '...' : courses.reduce((acc, c) => acc + (c.studentsCount || 0), 0), label: 'Ուսանողներ', icon: '👥' },
+                { value: loading ? '...' : averageRating.toFixed(1), label: 'Վարկանիշ', icon: '⭐' },
+                { value: loading ? '...' : totalReviews, label: 'Կարծիքներ', icon: '📝' }
               ].map((stat, index) => (
                 <motion.div
                   key={stat.label}
@@ -148,13 +148,13 @@ export default function CoursesPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.8 + index * 0.1, duration: 0.5 }}
                   whileHover={{ scale: 1.05, y: -3 }}
-                  className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-6 py-3 hover:bg-white/15 transition-all duration-300"
+                  className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-3 sm:px-6 py-2 sm:py-3 hover:bg-white/15 transition-all duration-300"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl">{stat.icon}</span>
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <span className="text-lg sm:text-xl">{stat.icon}</span>
                     <div className="text-left">
-                      <div className="text-xl font-black text-white leading-none">{stat.value}</div>
-                      <div className="text-white/60 text-xs font-medium">{stat.label}</div>
+                      <div className="text-lg sm:text-xl font-black text-white leading-none">{stat.value}</div>
+                      <div className="text-white/60 text-[10px] sm:text-xs font-medium">{stat.label}</div>
                     </div>
                   </div>
                 </motion.div>
@@ -175,11 +175,11 @@ export default function CoursesPage() {
       </section>
 
       {/* Courses Grid */}
-      <section className="py-12 md:py-16">
-        <div className="container mx-auto px-4">
+      <section className="py-8 sm:py-12 md:py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Loading State */}
           {loading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
               {[...Array(8)].map((_, i) => (
                 <LoadingCard key={i} />
               ))}
@@ -209,7 +209,7 @@ export default function CoursesPage() {
 
           {/* Courses Grid */}
           {!loading && !error && courses.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
               {courses.map((course, index) => (
                 <CourseCard key={course.id} course={course} index={index} />
               ))}
@@ -219,18 +219,18 @@ export default function CoursesPage() {
       </section>
 
       {/* Why Choose Us Section */}
-      <section className="py-16 bg-slate-50">
-        <div className="container mx-auto px-4">
+      <section className="py-12 sm:py-16 bg-slate-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4">
               Ինչու՞ ընտրել մեզ
             </h2>
-            <p className="text-slate-500 max-w-2xl mx-auto">
+            <p className="text-slate-500 max-w-2xl mx-auto text-sm sm:text-base">
               Մենք առաջարկում ենք որակյալ կրթություն, փորձառու մասնագետներ և անընդհատ աջակցություն
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {/* Feature 1 */}
             <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow">
               <div className="w-14 h-14 bg-violet-100 rounded-xl flex items-center justify-center mb-6">
