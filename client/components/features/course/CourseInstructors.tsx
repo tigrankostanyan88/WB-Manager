@@ -2,9 +2,22 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import DOMPurify from 'dompurify'
 import { Card, CardContent } from '@/components/ui/card'
 import { Play, Star } from 'lucide-react'
+
+// Safe HTML sanitizer that works on both client and server
+function sanitizeHtml(dirty: string): string {
+  // Server-side fallback - basic XSS protection
+  if (typeof window === 'undefined') {
+    return dirty
+      .replace(/<script[^>]*>.*?<\/script>/gi, '')
+      .replace(/javascript:/gi, '')
+      .replace(/on\w+\s*=/gi, '')
+  }
+  // Client-side use DOMPurify
+  const DOMPurify = require('dompurify')
+  return DOMPurify.sanitize(dirty)
+}
 
 export interface Instructor {
   name: string
@@ -55,7 +68,7 @@ export function CourseInstructors({ instructor }: CourseInstructorsProps) {
             
             <div 
               className="text-slate-600 leading-relaxed max-w-lg line-clamp-3 text-sm"
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(instructor.desc) }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(instructor.desc) }}
             />
             
             <div className="flex items-center justify-center md:justify-start gap-4 pt-2">

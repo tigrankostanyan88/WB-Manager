@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { useNotification } from '@/components/features/admin/Notification'
-import type { DashboardTabId } from '@/components/features/admin/types'
+import type { DashboardTabId, User } from '@/components/features/admin/types'
 
-type EditingUser = { id: string | number; name: string; email: string; __editScope?: 'users' } | null
+type EditingUser = (User & { __editScope?: 'users' }) | null
 
 export function useDashboardState() {
   const [activeTab, setActiveTab] = useState<DashboardTabId>('overview')

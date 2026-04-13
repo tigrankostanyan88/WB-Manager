@@ -6,7 +6,6 @@ import StarterKit from '@tiptap/starter-kit'
 import { 
   Bold, 
   Italic, 
-  Underline, 
   Strikethrough, 
   List, 
   ListOrdered, 
@@ -105,12 +104,6 @@ export function RichTextEditor({
             isActive={editor.isActive('italic')}
             icon={Italic}
             label="Italic"
-          />
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-            isActive={editor.isActive('underline')}
-            icon={Underline}
-            label="Underline"
           />
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleStrike().run()}

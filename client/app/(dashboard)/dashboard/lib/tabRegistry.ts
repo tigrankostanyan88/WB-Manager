@@ -7,7 +7,8 @@
 import { lazy, ComponentType } from 'react'
 import type { DashboardTabId } from '@/components/features/admin/types'
 
-export type TabComponent = ComponentType<Record<string, never>>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TabComponent = ComponentType<any>
 
 export interface TabConfig {
   component: TabComponent
@@ -17,8 +18,6 @@ export interface TabConfig {
 
 /**
  * Registry of all dashboard tabs with lazy loading
- * This pattern eliminates the God Object anti-pattern
- * and reduces initial bundle size significantly
  */
 export const tabRegistry: Record<DashboardTabId, TabConfig> = {
   overview: {
@@ -36,10 +35,15 @@ export const tabRegistry: Record<DashboardTabId, TabConfig> = {
     title: 'Suspended Users',
     description: 'Manage suspended user accounts'
   },
-  enrollments: {
+  'course-registrations': {
     component: lazy(() => import('@/components/features/admin/tabs/course-registrations/CourseRegistrationsTab').then(m => ({ default: m.CourseRegistrationsTab }))),
     title: 'Course Registrations',
     description: 'Course registration management'
+  },
+  enrollments: {
+    component: lazy(() => import('@/components/features/admin/tabs/enrollments/EnrollmentsTab').then(m => ({ default: m.EnrollmentsTab }))),
+    title: 'Enrollments',
+    description: 'Student enrollments'
   },
   'contact-messages': {
     component: lazy(() => import('@/components/features/admin/tabs/contact/ContactMessagesTab').then(m => ({ default: m.ContactMessagesTab }))),

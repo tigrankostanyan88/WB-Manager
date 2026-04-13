@@ -2,11 +2,24 @@
 
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import DOMPurify from 'dompurify'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { CheckCircle, Star, Users, TrendingUp, Clock, HeadphonesIcon, Award, Sparkles } from 'lucide-react'
 import type { Instructor, InstructorStat } from '@/types/domain'
+
+// Safe HTML sanitizer that works on both client and server
+function sanitizeHtml(dirty: string): string {
+  // Server-side fallback - basic XSS protection
+  if (typeof window === 'undefined') {
+    return dirty
+      .replace(/<script[^>]*>.*?<\/script>/gi, '')
+      .replace(/javascript:/gi, '')
+      .replace(/on\w+\s*=/gi, '')
+  }
+  // Client-side use DOMPurify
+  const DOMPurify = require('dompurify')
+  return DOMPurify.sanitize(dirty)
+}
 
 interface InstructorSectionProps {
   instructor: Instructor
@@ -112,7 +125,7 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
                   <div 
                     className="text-slate-600 leading-relaxed text-lg mb-8 prose prose-slate max-w-none"
                     dangerouslySetInnerHTML={{ 
-                      __html: DOMPurify.sanitize(safeInstructor.description || '<p>Սովորեք Wildberries-ում վաճառելու ճիշտ մոտեցումները փորձառու մենթորից։ Դասընթացը ներառում է բիզնեսի սկսելու, ապրանքների ընտրության, լիստինգի օպտիմալացման և վաճառքների աճի բոլոր հիմնական քայլերը։</p>')
+                      __html: sanitizeHtml(safeInstructor.description || '<p>Սովորեք Wildberries-ում վաճառելու ճիշտ մոտեցումները փորձառու մենթորից։ Դասընթացը ներառում է բիզնեսի սկսելու, ապրանքների ընտրության, լիստինգի օպտիմալացման և վաճառքների աճի բոլոր հիմնական քայլերը։</p>')
                     }}
                   />
                 </div>

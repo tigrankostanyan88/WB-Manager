@@ -1,7 +1,7 @@
 'use client'
 
-import { lazy, Suspense, memo } from 'react'
-import type { DashboardTabId, SiteSettings, WorkingHoursSchedule } from '@/components/features/admin/types'
+import { lazy, Suspense, memo, type Dispatch, type SetStateAction } from 'react'
+import type { DashboardTabId, SiteSettings, WorkingHoursSchedule, WorkingHoursDay } from '@/components/features/admin/types'
 import type { User } from '@/components/features/admin/types'
 import { TabErrorBoundary } from '@/components/error/TabErrorBoundary'
 
@@ -42,12 +42,12 @@ interface TabContentProps {
   currentUser: User | null
   showToast: (message: string, type?: 'success' | 'error') => void
   editingUser: (User & { __editScope?: 'users' }) | null
-  setEditingUser: React.Dispatch<React.SetStateAction<(User & { __editScope?: 'users' }) | null>>
+  setEditingUser: Dispatch<SetStateAction<(User & { __editScope?: 'users' }) | null>>
   onLogoFileSelect?: (e: React.ChangeEvent<HTMLInputElement>) => void
   siteSettings?: SiteSettings
-  setSiteSettings?: (settings: SiteSettings) => void
+  setSiteSettings?: Dispatch<SetStateAction<SiteSettings>>
   workingHoursSchedule?: WorkingHoursSchedule
-  setWorkingHoursSchedule?: (schedule: WorkingHoursSchedule) => void
+  setWorkingHoursSchedule?: Dispatch<SetStateAction<WorkingHoursSchedule>>
   isSettingsLoading?: boolean
   saveSettings?: () => void
 }
@@ -78,16 +78,48 @@ const PaymentsContent = memo(({ allowed }: { allowed: boolean }) => (
   </TabErrorBoundary>
 ))
 
+// Default values for SiteSettings
+const defaultSiteSettings: SiteSettings = {
+  siteName: '',
+  firstName: '',
+  lastName: '',
+  phone: '',
+  email: '',
+  address: '',
+  facebook: '',
+  instagram: '',
+  telegram: '',
+  whatsapp: '',
+  logo: '',
+  logoFile: null
+}
+
+// Default values for WorkingHoursSchedule
+const defaultWorkingHoursDay: WorkingHoursDay = { open: '09:00', close: '18:00', closed: false }
+const defaultWorkingHoursSchedule: WorkingHoursSchedule = {
+  mon: defaultWorkingHoursDay,
+  tue: defaultWorkingHoursDay,
+  wed: defaultWorkingHoursDay,
+  thu: defaultWorkingHoursDay,
+  fri: defaultWorkingHoursDay,
+  sat: { open: '09:00', close: '18:00', closed: true },
+  sun: { open: '09:00', close: '18:00', closed: true }
+}
+
+// No-op setters for defaults
+const noopSetSiteSettings: Dispatch<SetStateAction<SiteSettings>> = () => {}
+const noopSetWorkingHoursSchedule: Dispatch<SetStateAction<WorkingHoursSchedule>> = () => {}
+
 const SettingsContent = memo(({ allowed, showToast, onLogoFileSelect, siteSettings, setSiteSettings, workingHoursSchedule, setWorkingHoursSchedule, isSettingsLoading, saveSettings }: TabContentProps) => (
   <TabErrorBoundary tabName="Settings">
     <SettingsTabWrapper 
       allowed={allowed} 
       showToast={showToast} 
       onLogoFileSelect={onLogoFileSelect || (() => {})}
-      siteSettings={siteSettings || {}}
-      setSiteSettings={setSiteSettings || (() => {})}
-      workingHoursSchedule={workingHoursSchedule || {}}
-      setWorkingHoursSchedule={setWorkingHoursSchedule || (() => {})}
+      siteSettings={siteSettings || defaultSiteSettings}
+      setSiteSettings={setSiteSettings || noopSetSiteSettings}
+      workingHoursSchedule={workingHoursSchedule || defaultWorkingHoursSchedule}
+      setWorkingHoursSchedule={setWorkingHoursSchedule || noopSetWorkingHoursSchedule}
       isSettingsLoading={isSettingsLoading || false}
       saveSettings={saveSettings || (() => {})}
     />
