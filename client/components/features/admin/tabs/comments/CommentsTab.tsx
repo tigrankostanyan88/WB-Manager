@@ -37,7 +37,7 @@ export function CommentsTab({
                 <div className="flex items-start gap-4">
                   {/* Avatar Section */}
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center border-2 border-white shadow-sm">
+                    <div className="relative w-12 h-12 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center border-2 border-white shadow-sm">
                       {avatarUrl ? (
                         <Image
                           src={avatarUrl}
