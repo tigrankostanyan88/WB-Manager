@@ -62,7 +62,7 @@ export function DashboardController() {
   return (
     <div className="min-h-screen bg-slate-50">
       <main className="container mx-auto px-4 pt-4 pb-32">
-        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 mt-20 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 mt-5 items-start py-10">
           <div className="lg:sticky lg:top-24">
             <DashboardSidebar
               menuItems={menuItems}
