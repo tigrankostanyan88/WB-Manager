@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Award, Check, Clock, FileText, Infinity, Layers, Smartphone, Star } from 'lucide-react'
+import { Award, BookOpen, Check, Clock, FileText, Infinity, Layers, Smartphone, Star } from 'lucide-react'
 
 interface CourseSidebarProps {
   price: string
@@ -11,9 +11,10 @@ interface CourseSidebarProps {
   includes: string[]
   modules?: unknown[]
   isEnrolled?: boolean
+  onConsultationClick?: () => void
 }
 
-export function CourseSidebar({ price, originalPrice, discount, includes, modules, isEnrolled = false }: CourseSidebarProps) {
+export function CourseSidebar({ price, originalPrice, discount, includes, modules, isEnrolled = false, onConsultationClick }: CourseSidebarProps) {
   return (
     <div className="lg:w-1/3 relative">
       <div className="sticky top-24 space-y-4">
@@ -79,16 +80,20 @@ export function CourseSidebar({ price, originalPrice, discount, includes, module
           </CardContent>
         </Card>
 
-        {/* Team Training Card */}
-        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-5 text-white text-center space-y-3 shadow-lg">
-          <h4 className="font-bold text-base">Թիմային ուսուցում</h4>
-          <p className="text-slate-300 text-xs leading-relaxed">Հատուկ առաջարկներ կորպորատիվ հաճախորդների համար</p>
+        {/* Other Courses Card */}
+        <div className="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl p-5 text-white text-center space-y-3 shadow-lg shadow-violet-200">
+          <div className="w-12 h-12 mx-auto rounded-full bg-white/20 flex items-center justify-center">
+            <BookOpen className="w-6 h-6 text-white" />
+          </div>
+          <h4 className="font-bold text-base">Այլ դասընթացներ</h4>
+          <p className="text-violet-100 text-xs leading-relaxed">Տես մեր այլ դասընթացները և ընդլայնիր գիտելիքները</p>
           <Button 
             variant="outline" 
             size="sm"
             className="w-full border-white/30 bg-white/10 hover:bg-white/20 text-white hover:text-white text-xs h-9 font-medium"
+            onClick={onConsultationClick}
           >
-            Անվճար խորհրդատվություն
+            Դիտել բոլոր դասընթացները
           </Button>
         </div>
       </div>

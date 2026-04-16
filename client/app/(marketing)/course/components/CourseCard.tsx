@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Star, Clock, Users, ArrowRight, BookOpen, PlayCircle } from 'lucide-react'
+import { Clock, ArrowRight, BookOpen, PlayCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { Course } from '../types'
 import { useVideoThumbnail } from '../hooks/useVideoThumbnail'
@@ -24,14 +24,15 @@ export function CourseCard({ course, index }: CourseCardProps) {
         {/* Thumbnail Container */}
         <div className="relative h-56 sm:h-64 md:h-72 lg:h-80 overflow-hidden bg-slate-100">
           {thumbnailLoading ? (
-            <div className="w-full h-full bg-slate-200 animate-pulse" />
+            <div className="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300" />
           ) : (
             <Image
               src={imageSrc}
               alt={course.title}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"
-              loading={index < 3 ? 'eager' : 'lazy'}
+              loading={index < 2 ? 'eager' : 'lazy'}
+              priority={index < 2}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           )}
@@ -65,23 +66,6 @@ export function CourseCard({ course, index }: CourseCardProps) {
 
         {/* Content */}
         <div className="p-4 sm:p-5 lg:p-7 flex flex-col flex-grow">
-          {/* Rating & Students */}
-          <div className="flex items-center gap-2 sm:gap-4 mb-3 sm:mb-4">
-            <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 fill-amber-400" />
-              <span className="text-sm sm:text-base font-semibold text-slate-700">
-                {course.rating ? course.rating.toFixed(1) : '0.0'}
-              </span>
-              <span className="text-xs sm:text-sm text-slate-400">
-                ({course.reviewsCount || 0} կարծիք)
-              </span>
-            </div>
-            <div className="flex items-center gap-1 text-slate-400">
-              <Users className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="text-xs sm:text-sm font-medium">{course.studentsCount || 0} ուսանող</span>
-            </div>
-          </div>
-
           {/* Title */}
           <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-2 sm:mb-3 line-clamp-2 group-hover:text-violet-700 transition-colors">
             {course.title}

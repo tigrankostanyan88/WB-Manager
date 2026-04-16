@@ -1,7 +1,6 @@
 'use client'
 
-import { useParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
 import { CourseModulesList } from '@/components/features/course'
 import { CourseHero, type CourseHeroData } from '@/components/features/course'
 import { WhatYouLearn } from '@/components/features/course'
@@ -34,6 +33,11 @@ export default function CourseDetailsPage() {
   } = useCourseDetails(courseId)
 
   const { modulesSectionRef, handleStartCourse } = useStartCourse()
+  const router = useRouter()
+  
+  const handleOtherCoursesClick = () => {
+    router.push('/course')
+  }
 
   // Loading state
   if (loading) {
@@ -124,6 +128,7 @@ export default function CourseDetailsPage() {
             includes={includes}
             modules={course.modules}
             isEnrolled={hasAccess}
+            onConsultationClick={handleOtherCoursesClick}
           />
         </div>
       </main>

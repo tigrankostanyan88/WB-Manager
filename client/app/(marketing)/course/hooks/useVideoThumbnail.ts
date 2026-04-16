@@ -61,7 +61,7 @@ export function useVideoThumbnail(course: Course): UseVideoThumbnailResult {
     timeoutId = setTimeout(() => {
       cleanup()
       setLoading(false)
-    }, 5000) // 5 second timeout
+    }, 2000) // 2 second timeout for faster fallback
 
     video.onloadedmetadata = () => {
       // Seek to thumbnail time or middle of video
