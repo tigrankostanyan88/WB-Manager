@@ -33,20 +33,20 @@ export function HeroContent({ content, onOpenModal, onPlayVideo }: HeroContentPr
 
       {/* Title */}
       <div className="space-y-6 overflow-hidden">
-        <h1 className="text-3xl sm:text-5xl md:text-6xl xl:text-[4.5rem] font-black tracking-tight text-slate-900 break-words leading-[1.1]">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 mb-4 sm:mb-6 break-words leading-[1.1]">
           <span className="block">Սովորեք</span>
           <span className="block mt-2 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-blue-500 bg-clip-text text-transparent">
             Wildberries
           </span>
           <span className="block mt-2">Ակադեմիայում</span>
         </h1>
-        <p className="max-w-[550px] text-slate-500 text-base sm:text-lg md:text-xl leading-relaxed font-medium">
+        <p className="text-base sm:text-lg md:text-xl text-slate-600 mb-6 sm:mb-8 max-w-2xl leading-relaxed font-medium">
           {content?.text || 'Սովորեք քայլ առ քայլ՝ սկսած հաշվարկներից մինչև վաճառքի մասշտաբավորում՝ իրական փորձի հիման վրա։'}
         </p>
       </div>
 
       {/* CTA Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         {isLoggedIn ? (
           <Button
             className="rounded-full h-14 sm:h-16 px-8 sm:px-10 text-base sm:text-lg font-bold bg-gradient-to-r from-violet-600 via-fuchsia-600 to-violet-600 text-white hover:shadow-2xl hover:shadow-violet-400/40 transition-all w-full sm:w-auto group"

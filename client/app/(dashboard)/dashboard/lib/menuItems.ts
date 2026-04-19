@@ -1,4 +1,4 @@
-import { BookOpen, HelpCircle, Layers, LayoutDashboard, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard, Building2, GraduationCap, Mail, UserX, Sparkles, LucideIcon } from 'lucide-react'
+import { BookOpen, HelpCircle, Layers, LayoutDashboard, Mail, MessageSquare, Settings, Shield, UserCheck, Users, CreditCard, Building2, UserX, Sparkles, LucideIcon } from 'lucide-react'
 import type { DashboardMenuItem } from '@/components/features/admin/DashboardSidebar'
 
 export const menuItems: DashboardMenuItem[] = [

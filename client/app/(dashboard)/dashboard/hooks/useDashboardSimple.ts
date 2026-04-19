@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { useNotification } from '@/components/features/admin/Notification'
 import useAuth from '@/hooks/admin/useAuth'
 import type { User } from '@/components/features/admin/types'

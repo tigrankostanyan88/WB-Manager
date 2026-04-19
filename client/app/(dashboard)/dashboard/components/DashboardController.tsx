@@ -39,6 +39,7 @@ export function DashboardController() {
   const { siteSettings, setSiteSettings, workingHoursSchedule, setWorkingHoursSchedule, isSettingsLoading, saveSettings } = useSettings({ activeTab, allowed, showToast })
 
   // Get data for sidebar badges and modals
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const suspended = useSuspendedUsers(showToast)
   const instructor = useInstructorTab({ activeTab, allowed, showToast })
   const crop = useCrop({ setSiteSettings })

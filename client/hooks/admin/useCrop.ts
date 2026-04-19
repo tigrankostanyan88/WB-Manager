@@ -1,8 +1,14 @@
 import { useCallback, useState } from 'react'
 import type { Area, Point } from 'react-easy-crop'
-import type { SiteSettings } from '@/components/features/admin/types'
-import type { Dispatch, SetStateAction } from 'react'
 import { useSettings } from '@/context/SettingsContext'
+
+interface CropImageState {
+  logo?: string
+  logoFile?: File | null
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SetImageStateFn = (value: any) => void
 
 const createImage = (url: string) =>
   new Promise<HTMLImageElement>((resolve, reject) => {
@@ -55,7 +61,7 @@ const getCroppedImg = async (imageSrc: string, pixelCrop: Area, rotation = 0) =>
 }
 
 interface UseCropParams {
-  setSiteSettings: Dispatch<SetStateAction<SiteSettings>>
+  setSiteSettings: SetImageStateFn
   skipGlobalUpdate?: boolean
 }
 
@@ -84,7 +90,7 @@ export default function useCrop({ setSiteSettings, skipGlobalUpdate }: UseCropPa
     const blob = await getCroppedImg(cropImage, croppedAreaPixels, 0)
     const file = new File([blob], `logo_${Date.now()}.png`, { type: 'image/png' })
     const url = URL.createObjectURL(file)
-    setSiteSettings((prev) => ({ ...prev, logo: url, logoFile: file }))
+    setSiteSettings((prev: CropImageState) => ({ ...prev, logo: url, logoFile: file }))
     if (!skipGlobalUpdate) {
       updateSettings({ logo: url })
     }
@@ -95,7 +101,7 @@ export default function useCrop({ setSiteSettings, skipGlobalUpdate }: UseCropPa
   const skipCrop = () => {
     if (!cropImage) return
     // Use original image without cropping
-    setSiteSettings((prev) => ({ ...prev, logo: cropImage, logoFile: null }))
+    setSiteSettings((prev: CropImageState) => ({ ...prev, logo: cropImage, logoFile: null }))
     if (!skipGlobalUpdate) {
       updateSettings({ logo: cropImage })
     }

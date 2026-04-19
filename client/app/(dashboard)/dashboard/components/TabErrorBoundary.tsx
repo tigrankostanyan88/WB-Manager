@@ -1,16 +1,15 @@
 'use client'
 
-import { useEffect, ReactNode } from 'react'
+import { useEffect } from 'react'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 
 interface TabErrorBoundaryProps {
   error: Error & { digest?: string }
   reset: () => void
   tabName: string
-  children: ReactNode
 }
 
-export function TabErrorBoundary({ error, reset, tabName, children }: TabErrorBoundaryProps) {
+export function TabErrorBoundary({ error, reset, tabName }: TabErrorBoundaryProps) {
   useEffect(() => {
     // Log to error monitoring service in production
   }, [error, tabName])

@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import useAuth from '@/hooks/admin/useAuth'
 import useOverview from '@/hooks/admin/useOverview'
 import useReviews from '@/hooks/admin/useReviews'
 import useFaq from '@/hooks/admin/useFaq'

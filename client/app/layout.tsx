@@ -139,8 +139,33 @@ async function getUser() {
 }
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const settings = await getSettings()
-  const user = await getUser()
+  // Fetch settings and user in parallel with timeout and error handling
+  let settings = {}
+  let user = null
+  
+  try {
+    const [settingsResult, userResult] = await Promise.allSettled([
+      getSettings(),
+      getUser()
+    ])
+    
+    if (settingsResult.status === 'fulfilled') {
+      settings = settingsResult.value
+    } else {
+      console.error('[RootLayout] Failed to fetch settings:', settingsResult.reason)
+    }
+    
+    if (userResult.status === 'fulfilled') {
+      user = userResult.value
+    } else {
+      console.error('[RootLayout] Failed to fetch user:', userResult.reason)
+    }
+  } catch (err) {
+    // Fallback for any truly unhandled errors
+    console.error('[RootLayout] Critical error during data fetching:', err)
+    settings = {}
+    user = null
+  }
 
   return (
     <html lang="hy" suppressHydrationWarning style={{ backgroundColor: '#ffffff' }} className={`${inter.variable} ${notoArmenian.variable}`}>

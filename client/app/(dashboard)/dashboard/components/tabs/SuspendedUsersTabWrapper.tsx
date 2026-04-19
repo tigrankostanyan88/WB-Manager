@@ -19,7 +19,7 @@ export function SuspendedUsersTabWrapper({ allowed, showToast }: SuspendedUsersT
       hasLoaded.current = true
       suspended.loadSuspendedUsers(allowed)
     }
-  }, [allowed]) // Only depend on allowed, not suspended
+  }, [allowed, suspended]) // suspended added for ESLint, but the check with hasLoaded ensures it only runs once
 
   return (
     <SuspendedUsersTab

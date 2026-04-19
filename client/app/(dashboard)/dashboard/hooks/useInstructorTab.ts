@@ -7,16 +7,14 @@ import api from '@/lib/api'
 import type { InstructorForm, InstructorErrors } from '@/components/features/admin/tabs/instructor/types'
 
 interface UseInstructorTabParams {
-  activeTab: string
-  allowed: boolean
+  activeTab?: string
+  allowed?: boolean
   showToast: (message: string, type?: 'success' | 'error') => void
 }
 
-export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructorTabParams) {
+export function useInstructorTab({ showToast }: UseInstructorTabParams) {
   const { instructor, loading: isInstructorLoading } = useInstructor()
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
-  
-  // State must be defined before callbacks that use setters
   const [instructorForm, setInstructorForm] = useState<InstructorForm>({
     title: '',
     name: '',
@@ -26,26 +24,23 @@ export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructo
     avatarUrl: '',
     stats: []
   })
-  
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [instructorErrors, setInstructorErrors] = useState<InstructorErrors>({
     name: false,
     profession: false,
     description: false,
     stats: []
   })
-  
-  const [cropModalOpen, setCropModalOpen] = useState(false)
-  const [cropImage, setCropImage] = useState<string | null>(null)
+
   const [isSaving, setIsSaving] = useState(false)
 
-  // Types for crop callback
   interface AvatarUpdaterState {
     logo?: string
     logoFile?: File
   }
   type AvatarUpdater = (prev: AvatarUpdaterState) => AvatarUpdaterState | AvatarUpdaterState
 
-  // Callback to update avatar from crop
   const setInstructorAvatar = useCallback((updater: AvatarUpdater | AvatarUpdaterState) => {
     const newState = typeof updater === 'function' ? (updater as AvatarUpdater)({}) : updater
     if (newState.logo) {
@@ -54,10 +49,8 @@ export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructo
     }
   }, [])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const crop = useCrop({ setSiteSettings: setInstructorAvatar as any, skipGlobalUpdate: true })
+  const crop = useCrop({ setSiteSettings: setInstructorAvatar, skipGlobalUpdate: true })
 
-  // Populate form from instructor data
   useEffect(() => {
     if (instructor) {
       setInstructorForm({
@@ -159,7 +152,6 @@ export function useInstructorTab({ activeTab, allowed, showToast }: UseInstructo
     onBadgeTextChange,
     onStatValueChange,
     saveInstructor,
-    // Crop modal props
     cropModalOpen: crop.cropModalOpen,
     cropImage: crop.cropImage,
     crop: crop.crop,

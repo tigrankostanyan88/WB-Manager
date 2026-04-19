@@ -79,8 +79,8 @@ export function ProfileSidebar({
   const avatarUrl = avatarPreview || getAvatarFromUser(user)
 
   return (
-    <aside className="lg:w-72 flex-shrink-0 self-start">
-      <div className="sticky top-24 space-y-6">
+    <aside className="w-full lg:w-72 flex-shrink-0 self-start">
+      <div className="lg:sticky lg:top-24 space-y-4 lg:space-y-6">
       <div className="relative">
         {/* Decorative background gradient blobs */}
         <div className="absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-br from-violet-300/40 to-purple-300/30 rounded-full blur-2xl" />

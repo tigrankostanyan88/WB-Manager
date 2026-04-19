@@ -41,7 +41,7 @@ export function FeaturesSection() {
             <Zap className="w-4 h-4" />
             Հնարավորություններ
           </div>
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-slate-900">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tighter lg:text-5xl text-slate-900 px-4 sm:px-0">
             Ինչու՞ ստեղծել բիզնես <span className="text-violet-600">Wildberries</span>-ում
           </h2>
           <p className="max-w-[900px] text-slate-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">

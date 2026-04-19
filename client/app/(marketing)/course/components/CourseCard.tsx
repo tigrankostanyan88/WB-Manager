@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Clock, ArrowRight, BookOpen, PlayCircle } from 'lucide-react'
@@ -13,7 +14,7 @@ interface CourseCardProps {
   index: number
 }
 
-export function CourseCard({ course, index }: CourseCardProps) {
+export const CourseCard = memo(function CourseCard({ course, index }: CourseCardProps) {
   const { displayPrice, originalPrice, discount } = calculatePriceInfo(course.price, course.discount)
   const { thumbnail, loading: thumbnailLoading } = useVideoThumbnail(course)
   const imageSrc = thumbnail || '/images/no-image.png'
@@ -112,4 +113,4 @@ export function CourseCard({ course, index }: CourseCardProps) {
       </Link>
     </div>
   )
-}
+})

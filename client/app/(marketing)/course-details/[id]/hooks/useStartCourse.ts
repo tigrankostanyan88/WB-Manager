@@ -3,7 +3,7 @@
 import { useRef, useCallback } from 'react'
 
 interface UseStartCourseResult {
-  modulesSectionRef: React.RefObject<HTMLDivElement | null>
+  modulesSectionRef: React.RefObject<HTMLDivElement>
   handleStartCourse: (firstVideo: { id: string | number; videoUrl?: string } | null) => void
 }
 

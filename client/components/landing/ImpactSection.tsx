@@ -22,10 +22,10 @@ export function ImpactSection() {
           transition={{ duration: 0.6 }}
           className="flex flex-col items-center text-center space-y-4 mb-16"
         >
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tighter lg:text-5xl px-4 sm:px-0">
             Իրական արդյունքներ
           </h2>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-[800px]">
+          <p className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-[800px] px-4 sm:px-0">
             Թվեր, որոնք խոսում են մեր մասին ավելի բարձր, քան բառերը:
           </p>
         </motion.div>

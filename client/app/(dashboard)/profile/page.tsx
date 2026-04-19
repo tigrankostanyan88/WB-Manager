@@ -155,8 +155,8 @@ export default function ProfilePage() {
       <div className="min-h-screen">
         <PaymentModal open={showPaymentModal} onClose={() => setShowPaymentModal(false)} />
 
-        <main className="container max-w-[1400px] mx-auto px-4 md:px-8 pt-8 pb-32">
-          <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 mt-[120px] items-start">
+        <main className="container max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8 pb-16 sm:pb-32">
+          <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] lg:grid-cols-[300px_1fr] gap-4 sm:gap-6 lg:gap-8 mt-[100px] sm:mt-[120px] items-start">
             
             <ProfileSidebar
               user={currentUser}

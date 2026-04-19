@@ -57,18 +57,21 @@ const OverviewContent = memo(({ allowed }: { allowed: boolean }) => (
     <OverviewTabWrapper allowed={allowed} />
   </TabErrorBoundary>
 ))
+OverviewContent.displayName = 'OverviewContent'
 
 const UsersContent = memo(({ allowed, currentUser, showToast, editingUser, setEditingUser }: { allowed: boolean; currentUser: User | null; showToast: (msg: string, type?: 'success' | 'error') => void; editingUser: (User & { __editScope?: 'users' }) | null; setEditingUser: React.Dispatch<React.SetStateAction<(User & { __editScope?: 'users' }) | null>> }) => (
   <TabErrorBoundary tabName="Users">
     <UsersTabWrapper allowed={allowed} currentUser={currentUser} showToast={showToast} setEditingUser={setEditingUser} editingUser={editingUser} />
   </TabErrorBoundary>
 ))
+UsersContent.displayName = 'UsersContent'
 
 const CoursesContent = memo(({ showToast }: { showToast: (msg: string, type?: 'success' | 'error') => void }) => (
   <TabErrorBoundary tabName="Courses">
     <CoursesTabWrapper showToast={showToast} />
   </TabErrorBoundary>
 ))
+CoursesContent.displayName = 'CoursesContent'
 
 const PaymentsContent = memo(({ allowed }: { allowed: boolean }) => (
   <TabErrorBoundary tabName="Payments">
@@ -77,6 +80,7 @@ const PaymentsContent = memo(({ allowed }: { allowed: boolean }) => (
     </Suspense>
   </TabErrorBoundary>
 ))
+PaymentsContent.displayName = 'PaymentsContent'
 
 // Default values for SiteSettings
 const defaultSiteSettings: SiteSettings = {
@@ -125,6 +129,7 @@ const SettingsContent = memo(({ allowed, showToast, onLogoFileSelect, siteSettin
     />
   </TabErrorBoundary>
 ))
+SettingsContent.displayName = 'SettingsContent'
 
 const LazyContent = memo(({ tabName, children }: { tabName: string; children: React.ReactNode }) => (
   <TabErrorBoundary tabName={tabName}>
@@ -133,9 +138,10 @@ const LazyContent = memo(({ tabName, children }: { tabName: string; children: Re
     </Suspense>
   </TabErrorBoundary>
 ))
+LazyContent.displayName = 'LazyContent'
 
 export function TabContent(props: TabContentProps) {
-  const { activeTab, allowed, currentUser, showToast, editingUser, setEditingUser, onLogoFileSelect, siteSettings, setSiteSettings, workingHoursSchedule, setWorkingHoursSchedule, isSettingsLoading, saveSettings } = props
+  const { activeTab, allowed, currentUser, showToast, editingUser, setEditingUser } = props
 
   switch (activeTab) {
     case 'overview':

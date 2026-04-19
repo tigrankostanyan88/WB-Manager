@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useRef, type ReactNode, useCallback } from 'react'
 import { userService } from '@/lib/api'
 
 export interface UserFile {
@@ -110,12 +110,18 @@ export function AuthProvider({ children, initialUser = null }: { children: React
     return () => window.removeEventListener('auth:updated', handler)
   }, [])
 
+  // Ref to always access current user state without stale closure
+  const userRef = useRef(user)
+  useEffect(() => {
+    userRef.current = user
+  }, [user])
+
   // Check session on focus (cookie tampering detection)
   useEffect(() => {
     if (typeof window === 'undefined') return
     
     const checkSession = async () => {
-      if (!user) return
+      if (!userRef.current) return
       
       try {
         const res = await userService.getMe()
@@ -138,7 +144,7 @@ export function AuthProvider({ children, initialUser = null }: { children: React
     return () => {
       window.removeEventListener('focus', checkSession)
     }
-  }, [user])
+  }, [])
 
   const logout = async () => {
     try {

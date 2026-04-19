@@ -89,7 +89,7 @@ export function HeroSection({
       />
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 relative z-10">
-        <div className="grid gap-12 lg:gap-16 xl:gap-20 lg:grid-cols-2 items-center min-h-[calc(100vh-200px)]">
+        <div className="grid gap-8 lg:gap-16 xl:gap-20 lg:grid-cols-2 items-center min-h-[calc(100vh-150px)] lg:min-h-[calc(100vh-200px)]">
           <div className="min-w-0">
             <HeroContent 
               content={content} 

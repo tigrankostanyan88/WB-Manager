@@ -11,7 +11,7 @@ export async function createCheckoutSessionForCurrentUser() {
   if (!user) throw new Error('User not found')
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-    apiVersion: '2024-06-20' as const
+    apiVersion: '2025-02-24.acacia' as const
   })
   const customerId =
     user.stripeCustomerId ||
@@ -37,7 +37,7 @@ export async function createBillingPortalForCurrentUser() {
   const user = await prisma.user.findUnique({ where: { clerkId: userId } })
   if (!user || !user.stripeCustomerId) throw new Error('No customer')
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-    apiVersion: '2024-06-20' as const
+    apiVersion: '2025-02-24.acacia' as const
   })
   const portal = await stripe.billingPortal.sessions.create({
     customer: user.stripeCustomerId,

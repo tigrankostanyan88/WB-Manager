@@ -46,7 +46,7 @@ export const BankCardFormSchema = z.object({
     .min(4, 'Քարտի համարը պետք է լինի առնվազն 4 նիշ')
     .max(30, 'Քարտի համարը չպետք է գերազանցի 30 նիշը')
     .regex(/^[\d\s-]+$/, 'Քարտի համարը պետք է պարունակի միայն թվեր, բացատներ կամ գծիկներ'),
-  is_active: z.boolean().default(true)
+  is_active: z.boolean()
 })
 
 export type BankCardFormData = z.infer<typeof BankCardFormSchema>

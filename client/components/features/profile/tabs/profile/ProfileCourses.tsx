@@ -16,33 +16,33 @@ interface ProfileCoursesProps {
 export function ProfileCourses({ courses, isLoading, onViewAll }: ProfileCoursesProps) {
   return (
     <div className="space-y-5 bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-      <div className="flex items-center justify-between px-1">
-        <h3 className="text-2xl font-black text-slate-900 tracking-tight">Իմ դասընթացները</h3>
-        <button onClick={onViewAll} className="text-xs font-black text-violet-600 hover:text-violet-700 transition-colors flex items-center gap-1.5 group">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 px-1">
+        <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Իմ դասընթացները</h3>
+        <button onClick={onViewAll} className="text-xs font-black text-violet-600 hover:text-violet-700 transition-colors flex items-center gap-1.5 group self-start sm:self-auto">
           Դիտել բոլորը
           <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {isLoading ? (
           [1, 2].map((i) => <div key={i} className="h-56 bg-white rounded-2xl animate-pulse" />)
         ) : courses.length > 0 ? (
           courses.slice(0, 2).map((course) => (
-            <Link key={course.id} href={`/course-details/${course.id}`} prefetch={true} className="block group">
-              <Card className="shadow-xl shadow-slate-200/30 rounded-2xl bg-white overflow-hidden group hover:shadow-2xl transition-all duration-500 border border-slate-100/50">
-                <CardContent className="p-0">
-                  <div className="p-7">
-                    <div className="flex justify-between items-start mb-5">
-                      <span className={cn('px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border shadow-sm', course.color, course.borderColor)}>
+            <Link key={course.id} href={`/course-details/${course.id}`} prefetch={true} className="block group min-w-0">
+              <Card className="shadow-xl shadow-slate-200/30 rounded-2xl bg-white overflow-hidden group hover:shadow-2xl transition-all duration-500 border border-slate-100/50 h-full">
+                <CardContent className="p-0 flex flex-col h-full">
+                  <div className="p-4 sm:p-7 flex-1">
+                    <div className="flex flex-wrap justify-between items-start mb-4 sm:mb-5 gap-2">
+                      <span className={cn('px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border shadow-sm shrink-0', course.color, course.borderColor)}>
                         {course.status}
                       </span>
-                      <span className="text-slate-400 text-[10px] font-black flex items-center gap-1.5 bg-white border border-slate-100 px-2.5 py-1 rounded-lg">
-                        <Clock className="w-3 h-3" /> {course.lessons} դաս
+                      <span className="text-slate-400 text-[10px] font-black flex items-center gap-1.5 bg-white border border-slate-100 px-2.5 py-1 rounded-lg shrink-0">
+                        <Clock className="w-3 h-3 shrink-0" /> {course.lessons} դաս
                       </span>
                     </div>
-                    <h4 className="text-xl font-black text-slate-900 mb-2 leading-tight group-hover:text-violet-600 transition-colors tracking-tight">{course.title}</h4>
-                    <p className="text-[13px] font-medium text-slate-500 line-clamp-2 mb-6 leading-relaxed">{course.desc}</p>
+                    <h4 className="text-base sm:text-lg lg:text-xl font-black text-slate-900 mb-2 leading-tight group-hover:text-violet-600 transition-colors tracking-tight line-clamp-2">{course.title}</h4>
+                    <p className="text-[13px] font-medium text-slate-500 line-clamp-2 mb-4 sm:mb-6 leading-relaxed break-words">{course.desc}</p>
                     <div className="space-y-2.5">
                       <div className="flex justify-between text-[9px] font-black mb-0.5">
                         <span className="text-slate-400 uppercase tracking-widest">ԱՌԱՋԸՆԹԱՑ</span>
@@ -59,11 +59,11 @@ export function ProfileCourses({ courses, isLoading, onViewAll }: ProfileCourses
                       </div>
                     </div>
                   </div>
-                  <div className="px-7 py-5 bg-white border-t border-slate-100 flex justify-center">
-                    <Button className="w-full bg-white text-slate-900 hover:bg-slate-900 hover:text-white border border-slate-200 rounded-xl h-12 text-[13px] font-black transition-all duration-500 flex items-center gap-2 group/btn shadow-sm hover:shadow-xl">
-                      <PlayCircle className="w-5 h-5 transition-transform group-hover/btn:scale-110" />
-                      Շարունակել դիտել
-                      <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5" />
+                  <div className="px-4 sm:px-7 py-4 sm:py-5 bg-white border-t border-slate-100 flex justify-center shrink-0">
+                    <Button className="w-full bg-white text-slate-900 hover:bg-slate-900 hover:text-white border border-slate-200 rounded-xl h-11 sm:h-12 text-[13px] font-black transition-all duration-500 flex items-center justify-center gap-2 group/btn shadow-sm hover:shadow-xl">
+                      <PlayCircle className="w-5 h-5 transition-transform group-hover/btn:scale-110 shrink-0" />
+                      <span className="truncate">Շարունակել դիտել</span>
+                      <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 shrink-0" />
                     </Button>
                   </div>
                 </CardContent>
@@ -71,7 +71,7 @@ export function ProfileCourses({ courses, isLoading, onViewAll }: ProfileCourses
             </Link>
           ))
         ) : (
-          <div className="col-span-2 py-24 text-center bg-gradient-to-br from-violet-100/60 via-white to-blue-100/60 rounded-3xl border border-violet-200/60 flex flex-col items-center justify-center gap-6 group hover:shadow-2xl hover:shadow-violet-200/40 transition-all duration-500 relative overflow-hidden">
+          <div className="col-span-1 lg:col-span-2 py-16 sm:py-24 px-4 text-center bg-gradient-to-br from-violet-100/60 via-white to-blue-100/60 rounded-3xl border border-violet-200/60 flex flex-col items-center justify-center gap-6 group hover:shadow-2xl hover:shadow-violet-200/40 transition-all duration-500 relative overflow-hidden">
             {/* Animated background blobs */}
             <div className="absolute top-0 left-0 w-72 h-72 bg-violet-300/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 animate-pulse pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-72 h-72 bg-blue-300/30 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 animate-pulse pointer-events-none" style={{ animationDelay: '1s' }} />

@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import Image from 'next/image'
 import { RefreshCw, Trash2, User as UserIcon } from 'lucide-react'
 import type { User } from '@/components/features/admin/types'
@@ -13,7 +14,7 @@ interface UserRowProps {
   onDelete: (id: number | string) => void
 }
 
-export function UserRow({ user, isSelected, onToggle, onRestore, onDelete }: UserRowProps) {
+export const UserRow = memo(function UserRow({ user, isSelected, onToggle, onRestore, onDelete }: UserRowProps) {
   const avatarUrl = getUserAvatarUrl(user)
 
   return (
@@ -63,6 +64,7 @@ export function UserRow({ user, isSelected, onToggle, onRestore, onDelete }: Use
             onClick={() => onRestore(user.id)}
             className="p-2 hover:bg-emerald-50 rounded-lg transition-colors"
             title="Վերականգնել"
+            aria-label={`Վերականգնել ${user.name || 'user'}-ին`}
           >
             <RefreshCw className="w-4 h-4 text-emerald-500" />
           </button>
@@ -70,6 +72,7 @@ export function UserRow({ user, isSelected, onToggle, onRestore, onDelete }: Use
             onClick={() => onDelete(user.id)}
             className="p-2 hover:bg-red-50 rounded-lg transition-colors"
             title="Ջնջել ընդմիշտ"
+            aria-label={`Ջնջել ${user.name || 'user'}-ին ընդմիշտ`}
           >
             <Trash2 className="w-4 h-4 text-red-500" />
           </button>
@@ -77,4 +80,4 @@ export function UserRow({ user, isSelected, onToggle, onRestore, onDelete }: Use
       </td>
     </tr>
   )
-}
+})

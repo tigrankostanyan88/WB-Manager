@@ -2,21 +2,15 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Card, CardContent } from '@/components/ui/card'
 import { Play, Star } from 'lucide-react'
+import DOMPurify from 'isomorphic-dompurify'
 
 // Safe HTML sanitizer that works on both client and server
 function sanitizeHtml(dirty: string): string {
-  // Server-side fallback - basic XSS protection
-  if (typeof window === 'undefined') {
-    return dirty
-      .replace(/<script[^>]*>.*?<\/script>/gi, '')
-      .replace(/javascript:/gi, '')
-      .replace(/on\w+\s*=/gi, '')
-  }
-  // Client-side use DOMPurify
-  const DOMPurify = require('dompurify')
-  return DOMPurify.sanitize(dirty)
+  return DOMPurify.sanitize(dirty, {
+    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+    ALLOWED_ATTR: []
+  })
 }
 
 export interface Instructor {

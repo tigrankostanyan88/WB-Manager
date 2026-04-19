@@ -7,7 +7,10 @@ interface UnauthorizedStateProps {
   forceWhiteBackground?: boolean
 }
 
-export function UnauthorizedState({ forceWhiteBackground }: UnauthorizedStateProps) {
+export function UnauthorizedState({ 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  forceWhiteBackground 
+}: UnauthorizedStateProps) {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <main className="flex-1 flex items-center justify-center px-4 py-20 pt-24">

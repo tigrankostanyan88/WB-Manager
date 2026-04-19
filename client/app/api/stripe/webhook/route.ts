@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   const body = await req.text()
   if (!sig) return new Response('No signature', { status: 400 })
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2024-06-20' as const })
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2025-02-24.acacia' as const })
   let event: Stripe.Event
   try {
     event = stripe.webhooks.constructEvent(body, sig, secret)

@@ -17,7 +17,9 @@ interface SettingsTabWrapperProps {
 }
 
 export function SettingsTabWrapper({ 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   allowed, 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   showToast, 
   onLogoFileSelect,
   siteSettings,
