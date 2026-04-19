@@ -45,7 +45,7 @@ interface ContactInfoProps {
 
 export function ContactInfo({ settings }: ContactInfoProps) {
   return (
-    <div className="relative p-4 sm:p-8 rounded-[1.25rem] sm:rounded-[1.5rem] lg:rounded-[2rem] bg-gradient-to-br from-white to-slate-50 sm:from-white/60 sm:to-white/30 sm:backdrop-blur-xl shadow-xl shadow-violet-100/50 ring-1 ring-white/80">
+    <div className="relative w-full min-w-0 p-4 sm:p-8 rounded-[1.25rem] sm:rounded-[1.5rem] lg:rounded-[2rem] bg-gradient-to-br from-white to-slate-50 sm:from-white/60 sm:to-white/30 sm:backdrop-blur-xl shadow-xl shadow-violet-100/50 ring-1 ring-white/80">
       {/* Decorative element */}
       <div className="absolute -top-3 -right-3 w-20 h-20 bg-gradient-to-br from-violet-400/20 to-fuchsia-400/20 rounded-full blur-2xl" />
 

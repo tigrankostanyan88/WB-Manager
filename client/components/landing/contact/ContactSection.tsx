@@ -42,12 +42,12 @@ export function ContactSection({ settings }: ContactSectionProps) {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-start w-full max-w-6xl mx-auto">
-          <div className="w-full">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-stretch w-full max-w-6xl mx-auto">
+          <div className="w-full min-w-0">
             <ContactForm />
           </div>
 
-          <div className="space-y-4 sm:space-y-8 lg:pt-4 w-full">
+          <div className="space-y-4 sm:space-y-8 lg:pt-4 w-full min-w-0">
             <ContactInfo settings={settings} />
             <SocialLinks settings={settings} />
           </div>

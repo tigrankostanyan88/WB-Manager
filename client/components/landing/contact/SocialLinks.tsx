@@ -44,7 +44,7 @@ export function SocialLinks({ settings }: SocialLinksProps) {
   if (visibleLinks.length === 0) return null
 
   return (
-    <div className="relative p-4 sm:p-6 rounded-[1.25rem] sm:rounded-[1.5rem] bg-gradient-to-br from-white to-slate-50 sm:from-white/60 sm:to-white/30 sm:backdrop-blur-xl shadow-lg shadow-violet-100/50 ring-1 ring-slate-100 sm:ring-white/80">
+    <div className="relative w-full min-w-0 p-4 sm:p-6 rounded-[1.25rem] sm:rounded-[1.5rem] bg-gradient-to-br from-white to-slate-50 sm:from-white/60 sm:to-white/30 sm:backdrop-blur-xl shadow-lg shadow-violet-100/50 ring-1 ring-slate-100 sm:ring-white/80">
       <h3 className="font-semibold text-slate-900 mb-3 sm:mb-4 flex items-center gap-2 text-sm sm:text-base">
         <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
           <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />

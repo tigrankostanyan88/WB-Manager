@@ -17,7 +17,7 @@ export function ContactForm() {
   } = useContactForm()
 
   return (
-    <div className="relative p-4 sm:p-8 lg:p-10 rounded-[1.25rem] sm:rounded-[1.5rem] lg:rounded-[2rem] bg-white sm:bg-white/80 sm:backdrop-blur-xl shadow-2xl shadow-violet-200/30 ring-1 ring-white/50">
+    <div className="relative w-full min-w-0 p-4 sm:p-8 lg:p-10 rounded-[1.25rem] sm:rounded-[1.5rem] lg:rounded-[2rem] bg-white sm:bg-white/80 sm:backdrop-blur-xl shadow-2xl shadow-violet-200/30 ring-1 ring-white/50">
       {/* Decorative gradient glow - hidden on mobile to prevent overflow */}
       <div className="absolute -inset-1 bg-gradient-to-r from-violet-500/10 via-fuchsia-500/10 to-blue-500/10 rounded-[2.2rem] blur-xl -z-10 hidden sm:block" />
       

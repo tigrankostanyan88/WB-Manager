@@ -59,11 +59,11 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
 
         {/* Card */}
         <div className="container mx-auto px-4 md:px-6">
-          <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-violet-100/50 border border-slate-100 overflow-hidden w-full">
+          <div className="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] shadow-2xl shadow-violet-100/50 border border-slate-100 overflow-hidden w-full">
             <div className="flex flex-col lg:flex-row">
               {/* Image */}
               <div className="w-full lg:w-2/5 relative lg:rounded-l-[2.5rem] overflow-hidden">
-                <div className="relative aspect-[4/5] lg:aspect-auto lg:h-full min-h-[400px] lg:min-h-[600px] rounded-t-[2.5rem] lg:rounded-t-none lg:rounded-l-[2.5rem] overflow-hidden">
+                <div className="relative aspect-[4/5] lg:aspect-auto lg:h-full min-h-[280px] sm:min-h-[400px] lg:min-h-[600px] rounded-t-[1.5rem] sm:rounded-t-[2.5rem] lg:rounded-t-none lg:rounded-l-[2.5rem] overflow-hidden">
                   {safeInstructor.avatarUrl ? (
                     <Image
                       src={safeInstructor.avatarUrl}
@@ -83,24 +83,24 @@ export function InstructorSection({ instructor, onOpenModal }: InstructorSection
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/20 to-transparent" />
                   
                   {/* Info overlay */}
-                  <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 z-10">
-                    <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-3 sm:p-5 shadow-xl border border-white/50">
-                      <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-                          <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  <div className="absolute bottom-2 left-2 right-2 sm:bottom-6 sm:left-6 sm:right-6 z-10">
+                    <div className="bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-5 shadow-xl border border-white/50">
+                      <div className="flex items-center gap-2 sm:gap-4">
+                        <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                          <CheckCircle className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-lg sm:text-xl font-bold text-slate-900 truncate">
+                          <h3 className="text-base sm:text-xl font-bold text-slate-900 truncate">
                             {safeInstructor.name || 'Աննա Մանուկյան'}
                           </h3>
-                          <p className="text-violet-600 font-medium text-xs sm:text-sm truncate">
+                          <p className="text-violet-600 font-medium text-[10px] sm:text-sm truncate">
                             {safeInstructor.profession || 'Wildberries փորձագետ'}
                           </p>
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-2 mt-3 sm:mt-4">
-                        <span className="bg-violet-100 text-violet-700 text-xs font-bold px-3 py-1 rounded-full">Top Seller</span>
-                        <span className="bg-fuchsia-100 text-fuchsia-700 text-xs font-bold px-3 py-1 rounded-full">5+ տարի փորձ</span>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2 sm:mt-4">
+                        <span className="bg-violet-100 text-violet-700 text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-1 rounded-full">Top Seller</span>
+                        <span className="bg-fuchsia-100 text-fuchsia-700 text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-1 rounded-full">5+ տարի փորձ</span>
                       </div>
                     </div>
                   </div>
