@@ -83,3 +83,69 @@ export const UserEditFormSchema = z.object({
 })
 
 export type UserEditFormData = z.infer<typeof UserEditFormSchema>
+
+// Auth Form Validation - MOST CRITICAL
+export const SignInSchema = z.object({
+  email: z.string()
+    .min(1, 'Մուտքագրեք էլ. հասցեն')
+    .email('Սխալ էլ. հասցեի ձևաչափ'),
+  password: z.string()
+    .min(1, 'Մուտքագրեք գաղտնաբառը')
+    .min(6, 'Գաղտնաբառը պետք է լինի առնվազն 6 նիշ')
+})
+
+export type SignInData = z.infer<typeof SignInSchema>
+
+export const SignUpSchema = z.object({
+  name: z.string()
+    .min(2, 'Անունը պետք է լինի առնվազն 2 նիշ')
+    .max(50, 'Անունը չպետք է գերազանցի 50 նիշը'),
+  email: z.string()
+    .min(1, 'Մուտքագրեք էլ. հասցեն')
+    .email('Սխալ էլ. հասցեի ձևաչափ'),
+  phone: z.string()
+    .min(1, 'Մուտքագրեք հեռախոսահամարը')
+    .regex(/^0\d{8}$/, 'Հեռախոսահամարը պետք լինի 0-ով սկսվող 9 նիշ'),
+  address: z.string().max(200, 'Հասցեն չպետք է գերազանցի 200 նիշը').optional(),
+  password: z.string()
+    .min(1, 'Մուտքագրեք գաղտնաբառը')
+    .min(6, 'Գաղտնաբառը պետք է լինի առնվազն 6 նիշ')
+    .max(50, 'Գաղտնաբառը չպետք է գերազանցի 50 նիշը')
+})
+
+export type SignUpData = z.infer<typeof SignUpSchema>
+
+// Course Registration Form
+export const CourseRegistrationSchema = z.object({
+  course_id: z.number().min(1, 'Ընտրեք դասընթացը'),
+  name: z.string()
+    .min(2, 'Անունը պետք է լինի առնվազն 2 նիշ')
+    .max(50, 'Անունը չպետք է գերազանցի 50 նիշը'),
+  phone: z.string()
+    .min(1, 'Մուտքագրեք հեռախոսահամարը')
+    .regex(/^0\d{8}$/, 'Հեռախոսահամարը պետք լինի 0-ով սկսվող 9 նիշ')
+})
+
+export type CourseRegistrationData = z.infer<typeof CourseRegistrationSchema>
+
+// Contact Form
+export const ContactFormSchema = z.object({
+  name: z.string()
+    .min(2, 'Անունը պետք է լինի առնվազն 2 նիշ')
+    .max(50, 'Անունը չպետք է գերազանցի 50 նիշը'),
+  email: z.string()
+    .min(1, 'Մուտքագրեք էլ. հասցեն')
+    .email('Սխալ էլ. հասցեի ձևաչափ'),
+  phone: z.string()
+    .regex(/^0\d{8}$/, 'Հեռախոսահամարը պետք լինի 0-ով սկսվող 9 նիշ')
+    .optional()
+    .or(z.literal('')),
+  subject: z.string()
+    .min(5, 'Վերնագիրը պետք է լինի առնվազն 5 նիշ')
+    .max(100, 'Վերնագիրը չպետք է գերազանցի 100 նիշը'),
+  message: z.string()
+    .min(10, 'Հաղորդագրությունը պետք է լինի առնվազն 10 նիշ')
+    .max(2000, 'Հաղորդագրությունը չպետք է գերազանցի 2000 նիշը')
+})
+
+export type ContactFormData = z.infer<typeof ContactFormSchema>
