@@ -1,5 +1,4 @@
 node_modules
-public/files/*.mp4
 
 # Build
 .next/
@@ -22,3 +21,4 @@ test-results/
 .clerk/
 .vercel
 .turbo
+package-lock.json
