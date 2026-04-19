@@ -80,7 +80,7 @@ export function ProfileSidebar({
 
   return (
     <aside className="w-full lg:w-72 flex-shrink-0 self-start">
-      <div className="lg:sticky lg:top-24 space-y-4 lg:space-y-6">
+      <div className="lg:sticky lg:top-24 space-y-3 sm:space-y-4 lg:space-y-6">
       <div className="relative">
         {/* Decorative background gradient blobs */}
         <div className="absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-br from-violet-300/40 to-purple-300/30 rounded-full blur-2xl" />
@@ -91,8 +91,8 @@ export function ProfileSidebar({
           {/* Subtle pattern overlay */}
           <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,#6366f1_1px,transparent_0)] bg-[length:20px_20px]" />
           
-          <CardContent className="relative p-6">
-          <div className="flex flex-col items-center text-center mb-8">
+          <CardContent className="relative p-4 sm:p-6">
+          <div className="flex flex-col items-center text-center mb-6 sm:mb-8">
             <div className="relative group cursor-pointer">
               <div className="relative w-32 h-32 rounded-[2rem] bg-gradient-to-br from-violet-100 to-slate-100 p-1.5 shadow-lg shadow-slate-200/50 transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-violet-200/40">
                 <div className="w-full h-full rounded-[1.6rem] bg-white flex items-center justify-center overflow-hidden border-2 border-white relative shadow-inner">
@@ -138,22 +138,22 @@ export function ProfileSidebar({
             </div>
           </div>
 
-          <nav className="space-y-1 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)] rounded-xl p-2 bg-white/50">
+          <nav className="space-y-0.5 sm:space-y-1 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)] rounded-xl p-1.5 sm:p-2 bg-white/50">
             {sidebarLinks.map((link) =>
               link.href ? (
                 <motion.div key={link.id} whileHover={{ x: 4 }} whileTap={{ scale: 0.98 }}>
                   <Link
                     href={link.href}
                     className={cn(
-                      'w-full flex items-center justify-between px-4 py-3 rounded-xl text-[13px] font-black transition-all duration-300 group/link',
+                      'w-full flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-[13px] font-black transition-all duration-300 group/link',
                       'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                     )}
                   >
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-9 h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center group-hover/link:bg-white group-hover/link:shadow-sm transition-all">
+                    <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                      <div className="w-9 h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center group-hover/link:bg-white group-hover/link:shadow-sm transition-all flex-shrink-0">
                         <link.icon className="w-4.5 h-4.5 text-slate-400 group-hover/link:text-violet-600" />
                       </div>
-                      <span className="text-left">{link.label}</span>
+                      <span className="text-left truncate">{link.label}</span>
                     </div>
                   </Link>
                 </motion.div>
@@ -164,20 +164,20 @@ export function ProfileSidebar({
                   whileHover={{ x: 4 }}
                   whileTap={{ scale: 0.98 }}
                   className={cn(
-                    'w-full flex items-center justify-between px-4 py-3 rounded-xl text-[13px] font-black transition-all duration-300 group/btn',
+                    'w-full flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-[13px] font-black transition-all duration-300 group/btn',
                     activeTab === link.id ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                   )}
                 >
-                  <div className="flex items-center gap-3.5">
+                  <div className="flex items-center gap-3.5 min-w-0 flex-1">
                     <div
                       className={cn(
-                        'w-9 h-9 rounded-lg flex items-center justify-center transition-all',
+                        'w-9 h-9 rounded-lg flex items-center justify-center transition-all flex-shrink-0',
                         activeTab === link.id ? 'bg-white/10' : 'bg-white border border-slate-100 group-hover/btn:border-slate-200'
                       )}
                     >
                       <link.icon className={cn('w-4.5 h-4.5', activeTab === link.id ? 'text-white' : 'text-slate-400 group-hover/btn:text-violet-600')} />
                     </div>
-                    <span className="text-left">{link.label}</span>
+                    <span className="text-left truncate">{link.label}</span>
                   </div>
                   {link.count !== undefined && (
                     <span
@@ -193,15 +193,15 @@ export function ProfileSidebar({
               )
             )}
 
-            <div className="pt-3 mt-3 border-t border-slate-50">
+            <div className="pt-2 sm:pt-3 mt-2 sm:mt-3 border-t border-slate-50">
               <button
                 onClick={onLogout}
-                className="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-[13px] font-black text-red-500 hover:bg-red-50 transition-all duration-300 group/logout active:scale-95"
+                className="w-full flex items-center gap-3.5 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-[13px] font-black text-red-500 hover:bg-red-50 transition-all duration-300 group/logout active:scale-95"
               >
-                <div className="w-9 h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center group-hover/logout:bg-white group-hover/logout:shadow-sm transition-all">
+                <div className="w-9 h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center group-hover/logout:bg-white group-hover/logout:shadow-sm transition-all flex-shrink-0">
                   <LogOut className="w-4.5 h-4.5" />
                 </div>
-                Դուրս գալ
+                <span className="truncate">Դուրս գալ</span>
               </button>
             </div>
           </nav>

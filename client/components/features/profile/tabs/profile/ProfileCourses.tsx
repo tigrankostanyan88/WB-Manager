@@ -15,34 +15,34 @@ interface ProfileCoursesProps {
 
 export function ProfileCourses({ courses, isLoading, onViewAll }: ProfileCoursesProps) {
   return (
-    <div className="space-y-5 bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+    <div className="space-y-3 sm:space-y-5 bg-white rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-sm border border-slate-100">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 px-1">
-        <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Իմ դասընթացները</h3>
+        <h3 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight">Իմ դասընթացները</h3>
         <button onClick={onViewAll} className="text-xs font-black text-violet-600 hover:text-violet-700 transition-colors flex items-center gap-1.5 group self-start sm:self-auto">
           Դիտել բոլորը
           <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6">
         {isLoading ? (
           [1, 2].map((i) => <div key={i} className="h-56 bg-white rounded-2xl animate-pulse" />)
         ) : courses.length > 0 ? (
           courses.slice(0, 2).map((course) => (
-            <Link key={course.id} href={`/course-details/${course.id}`} prefetch={true} className="block group min-w-0">
-              <Card className="shadow-xl shadow-slate-200/30 rounded-2xl bg-white overflow-hidden group hover:shadow-2xl transition-all duration-500 border border-slate-100/50 h-full">
-                <CardContent className="p-0 flex flex-col h-full">
-                  <div className="p-4 sm:p-7 flex-1">
-                    <div className="flex flex-wrap justify-between items-start mb-4 sm:mb-5 gap-2">
-                      <span className={cn('px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border shadow-sm shrink-0', course.color, course.borderColor)}>
+            <Link key={course.id} href={`/course-details/${course.id}`} prefetch={true} className="block group min-w-0 w-full">
+              <Card className="shadow-lg sm:shadow-xl shadow-slate-200/30 rounded-xl sm:rounded-2xl bg-white overflow-hidden group hover:shadow-2xl transition-all duration-500 border border-slate-100/50 h-full w-full">
+                <CardContent className="p-0 flex flex-col h-full w-full">
+                  <div className="p-3 sm:p-7 flex-1 min-w-0">
+                    <div className="flex flex-wrap justify-between items-start mb-3 sm:mb-5 gap-1.5 sm:gap-2">
+                      <span className={cn('px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[8px] sm:text-[9px] font-black uppercase tracking-widest border shadow-sm shrink-0 max-w-[120px] sm:max-w-none truncate', course.color, course.borderColor)}>
                         {course.status}
                       </span>
-                      <span className="text-slate-400 text-[10px] font-black flex items-center gap-1.5 bg-white border border-slate-100 px-2.5 py-1 rounded-lg shrink-0">
-                        <Clock className="w-3 h-3 shrink-0" /> {course.lessons} դաս
+                      <span className="text-slate-400 text-[9px] sm:text-[10px] font-black flex items-center gap-1 bg-white border border-slate-100 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg shrink-0">
+                        <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" /> {course.lessons} դաս
                       </span>
                     </div>
-                    <h4 className="text-base sm:text-lg lg:text-xl font-black text-slate-900 mb-2 leading-tight group-hover:text-violet-600 transition-colors tracking-tight line-clamp-2">{course.title}</h4>
-                    <p className="text-[13px] font-medium text-slate-500 line-clamp-2 mb-4 sm:mb-6 leading-relaxed break-words">{course.desc}</p>
+                    <h4 className="text-sm sm:text-lg lg:text-xl font-black text-slate-900 mb-1.5 sm:mb-2 leading-snug group-hover:text-violet-600 transition-colors tracking-tight line-clamp-2">{course.title}</h4>
+                    <p className="text-xs sm:text-[13px] font-medium text-slate-500 mb-3 sm:mb-6 leading-relaxed line-clamp-2">{course.desc}</p>
                     <div className="space-y-2.5">
                       <div className="flex justify-between text-[9px] font-black mb-0.5">
                         <span className="text-slate-400 uppercase tracking-widest">ԱՌԱՋԸՆԹԱՑ</span>
@@ -59,11 +59,11 @@ export function ProfileCourses({ courses, isLoading, onViewAll }: ProfileCourses
                       </div>
                     </div>
                   </div>
-                  <div className="px-4 sm:px-7 py-4 sm:py-5 bg-white border-t border-slate-100 flex justify-center shrink-0">
-                    <Button className="w-full bg-white text-slate-900 hover:bg-slate-900 hover:text-white border border-slate-200 rounded-xl h-11 sm:h-12 text-[13px] font-black transition-all duration-500 flex items-center justify-center gap-2 group/btn shadow-sm hover:shadow-xl">
-                      <PlayCircle className="w-5 h-5 transition-transform group-hover/btn:scale-110 shrink-0" />
-                      <span className="truncate">Շարունակել դիտել</span>
-                      <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 shrink-0" />
+                  <div className="px-3 sm:px-7 py-3 sm:py-5 bg-white border-t border-slate-100 flex justify-center shrink-0">
+                    <Button className="w-full bg-white text-slate-900 hover:bg-slate-900 hover:text-white border border-slate-200 rounded-lg sm:rounded-xl h-10 sm:h-12 text-xs sm:text-[13px] font-black transition-all duration-500 flex items-center justify-center gap-1.5 sm:gap-2 group/btn shadow-sm hover:shadow-xl">
+                      <PlayCircle className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover/btn:scale-110 shrink-0" />
+                      <span className="truncate">Շարունակել</span>
+                      <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover/btn:translate-x-0.5 shrink-0" />
                     </Button>
                   </div>
                 </CardContent>

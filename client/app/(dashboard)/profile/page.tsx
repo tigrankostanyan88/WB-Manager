@@ -155,8 +155,8 @@ export default function ProfilePage() {
       <div className="min-h-screen">
         <PaymentModal open={showPaymentModal} onClose={() => setShowPaymentModal(false)} />
 
-        <main className="container max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8 pb-16 sm:pb-32">
-          <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] lg:grid-cols-[300px_1fr] gap-4 sm:gap-6 lg:gap-8 mt-[100px] sm:mt-[120px] items-start">
+        <main className="container max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-8 sm:pb-16">
+          <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] lg:grid-cols-[300px_1fr] gap-4 sm:gap-6 lg:gap-8 mt-[60px] sm:mt-[100px] items-start min-w-0">
             
             <ProfileSidebar
               user={currentUser}
@@ -170,7 +170,7 @@ export default function ProfilePage() {
               onLogout={logout}
             />
 
-          <div className="space-y-6 min-h-[850px]">
+          <div className="space-y-6 min-w-0 w-full">
             {currentUser?.role !== 'admin' && (
               <ProBanner user={currentUser} myCourses={myCourses} totalCoursesCount={totalCoursesCount} onShowPaymentModal={() => setShowPaymentModal(true)} isLoading={isLoadingData} />
             )}

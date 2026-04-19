@@ -95,20 +95,20 @@ export function PaymentsTab({ user }: PaymentsTabProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
-      className="space-y-8"
+      className="space-y-4 sm:space-y-8 min-w-0 w-full"
     >
-      <div className="flex items-center justify-between px-2">
-        <h3 className="text-4xl font-black text-slate-900 tracking-tight">Վճարումներ</h3>
+      <div className="flex items-center justify-between px-1 sm:px-2">
+        <h3 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">Վճարումներ</h3>
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
           {[1, 2].map((i) => (
-            <div key={i} className="h-[200px] bg-slate-200 rounded-2xl animate-pulse" />
+            <div key={i} className="h-[140px] sm:h-[200px] bg-slate-200 rounded-xl sm:rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : bankCards.length === 0 ? (
-        <Card className="shadow-xl shadow-slate-200/50 rounded-2xl bg-white overflow-hidden border border-slate-100/50 p-12 text-center">
+        <Card className="shadow-lg sm:shadow-xl shadow-slate-200/50 rounded-xl sm:rounded-2xl bg-white overflow-hidden border border-slate-100/50 p-6 sm:p-12 text-center">
           <div className="space-y-4">
             <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto">
               <CreditCard className="w-8 h-8 text-slate-400" />
@@ -117,7 +117,7 @@ export function PaymentsTab({ user }: PaymentsTabProps) {
           </div>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
           {bankCards.map((card, index) => (
             <motion.div
               key={card.id}
@@ -125,26 +125,26 @@ export function PaymentsTab({ user }: PaymentsTabProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <div 
-                className={`${getBankStyle(card.bank_name)} rounded-3xl overflow-hidden relative group hover:scale-[1.02] transition-all duration-500 shadow-2xl shadow-slate-900/20`}
+              <div
+                className={`${getBankStyle(card.bank_name)} rounded-2xl sm:rounded-3xl overflow-hidden relative group hover:scale-[1.02] transition-all duration-500 shadow-xl sm:shadow-2xl shadow-slate-900/20`}
               >
-                <div className="p-6 relative z-10 flex flex-col justify-between h-[320px]">
+                <div className="p-4 sm:p-6 relative z-10 flex flex-col justify-between h-[260px] sm:h-[320px]">
                   {/* Top row: Bank info & Status */}
                   <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20">
-                        <Building2 className="w-5 h-5" />
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                      <div className="w-9 h-9 sm:w-11 sm:h-11 bg-white/20 backdrop-blur-md rounded-lg sm:rounded-xl flex items-center justify-center border border-white/20 flex-shrink-0">
+                        <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
-                      <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Բանկ</p>
-                        <p className="font-bold text-base">{card.bank_name}</p>
+                      <div className="min-w-0">
+                        <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-white/60">Բանկ</p>
+                        <p className="font-bold text-sm sm:text-base truncate">{card.bank_name}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-shrink-0">
                       {card.is_active && (
-                        <div className="flex items-center gap-1.5 bg-emerald-500/20 px-2.5 py-1 rounded-lg border border-emerald-500/30">
+                        <div className="flex items-center gap-1 sm:gap-1.5 bg-emerald-500/20 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg border border-emerald-500/30">
                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
-                          <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400">Ակտիվ</span>
+                          <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-emerald-400">Ակտիվ</span>
                         </div>
                       )}
                     </div>
@@ -162,11 +162,11 @@ export function PaymentsTab({ user }: PaymentsTabProps) {
                     </div>
                     
                     {/* Card number with view/hide and copy */}
-                    <div 
-                      className="bg-white/10 backdrop-blur-sm px-4 py-3 rounded-xl border border-white/10 hover:bg-white/20 transition-colors group/card"
+                    <div
+                      className="bg-white/10 backdrop-blur-sm px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border border-white/10 hover:bg-white/20 transition-colors group/card"
                     >
-                      <div className="flex items-center justify-between">
-                        <p className="text-lg font-mono tracking-[0.12em] font-medium text-white">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm sm:text-lg font-mono tracking-[0.08em] sm:tracking-[0.12em] font-medium text-white truncate">
                           {visibleNumbers.has(card.id) ? formatCardNumber(card.card_number) : maskCardNumber(card.card_number)}
                         </p>
                         <div className="flex items-center gap-1">
@@ -200,13 +200,13 @@ export function PaymentsTab({ user }: PaymentsTabProps) {
                     
                     {/* Bottom row: ID & Mastercard logo */}
                     <div className="flex items-center justify-between">
-                      <p className="text-[10px] text-white/50 font-medium tracking-wide">ID: {card.id}</p>
-                      
+                      <p className="text-[9px] sm:text-[10px] text-white/50 font-medium tracking-wide">ID: {card.id}</p>
+
                       {/* Mastercard logo */}
                       <div className="flex items-center">
-                        <div className="w-7 h-7 rounded-full bg-[#EB001B]/90 -mr-3.5"></div>
-                        <div className="w-7 h-7 rounded-full bg-[#F79E1B]/90"></div>
-                        <span className="ml-2 text-[10px] font-bold text-white/70 tracking-wide">mastercard</span>
+                        <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-[#EB001B]/90 -mr-2.5 sm:-mr-3.5"></div>
+                        <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-[#F79E1B]/90"></div>
+                        <span className="ml-1.5 sm:ml-2 text-[9px] sm:text-[10px] font-bold text-white/70 tracking-wide">mastercard</span>
                       </div>
                     </div>
                   </div>

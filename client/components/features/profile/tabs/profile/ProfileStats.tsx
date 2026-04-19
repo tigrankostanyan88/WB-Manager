@@ -45,7 +45,7 @@ export function ProfileStats({ stats, coursesCount, isLoading }: ProfileStatsPro
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-6 sm:mb-8">
       {STAT_CONFIG.map((stat, i) => {
         const value = getValue(stat)
 
@@ -56,23 +56,23 @@ export function ProfileStats({ stats, coursesCount, isLoading }: ProfileStatsPro
             transition={{ duration: 0.25, ease: 'easeOut' }}
             className="group"
           >
-            <Card className={`bg-white ${stat.borderColor} border shadow-md rounded-2xl overflow-hidden group-hover:shadow-xl group-hover:shadow-${stat.bg.split('-')[1]}-200/50 transition-all duration-300 h-full`}>
+            <Card className={`bg-white ${stat.borderColor} border shadow-md rounded-xl sm:rounded-2xl overflow-hidden group-hover:shadow-xl group-hover:shadow-${stat.bg.split('-')[1]}-200/50 transition-all duration-300 h-full`}>
               {isLoading ? (
-                <CardContent className="p-6 flex items-center gap-4 animate-pulse">
-                  <div className="w-14 h-14 rounded-xl bg-slate-100" />
-                  <div className="space-y-2">
+                <CardContent className="p-3 sm:p-6 flex items-center gap-2 sm:gap-4 animate-pulse">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-slate-100" />
+                  <div className="space-y-2 min-w-0 flex-1">
                     <div className="h-2 w-16 bg-slate-100 rounded" />
                     <div className="h-4 w-12 bg-slate-100 rounded" />
                   </div>
                 </CardContent>
               ) : (
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className={`w-14 h-14 rounded-xl ${stat.bg} flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-sm`}>
-                    <stat.icon className={`w-7 h-7 ${stat.color}`} />
+                <CardContent className="p-3 sm:p-6 flex items-center gap-2 sm:gap-4">
+                  <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-xl ${stat.bg} flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-sm flex-shrink-0`}>
+                    <stat.icon className={`w-5 h-5 sm:w-7 sm:h-7 ${stat.color}`} />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">{stat.label}</p>
-                    <p className="text-2xl font-bold text-slate-900 tracking-tight whitespace-nowrap">{value}</p>
+                  <div className="flex-1 min-w-0 overflow-hidden">
+                    <p className="text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-0.5 sm:mb-1 truncate">{stat.label}</p>
+                    <p className="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight break-words leading-tight">{value}</p>
                   </div>
                 </CardContent>
               )}

@@ -21,7 +21,7 @@ export function ProfileTab({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
       transition={{ duration: 0.25 }}
-      className="space-y-6"
+      className="space-y-6 min-w-0 w-full"
     >
       <ProfileStats 
         stats={stats} 

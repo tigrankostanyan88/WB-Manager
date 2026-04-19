@@ -48,15 +48,16 @@ export function SettingsTab({ user, isUpdating, onSubmit, onShowPasswordModal }:
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
       transition={{ duration: 0.25 }}
+      className="min-w-0 w-full"
     >
-      <Card className="shadow-xl shadow-slate-200/50 rounded-3xl bg-white overflow-hidden border-0">
-        <div className="bg-slate-100 px-8 py-6 border-b border-slate-200">
-          <h2 className="text-2xl font-black text-slate-900">Անձնական տվյալներ</h2>
-          <p className="text-slate-500 text-sm mt-1">Թարմացրեք ձեր անձնական տեղեկությունները</p>
+      <Card className="shadow-xl shadow-slate-200/50 rounded-2xl sm:rounded-3xl bg-white overflow-hidden border-0 w-full min-w-0">
+        <div className="bg-slate-100 px-4 sm:px-8 py-4 sm:py-6 border-b border-slate-200">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900">Անձնական տվյալներ</h2>
+          <p className="text-slate-500 text-xs sm:text-sm mt-1">Թարմացրեք ձեր անձնական տեղեկությունները</p>
         </div>
-        
-        <form onSubmit={onSubmit} className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+        <form onSubmit={onSubmit} className="p-4 sm:p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8 w-full min-w-0">
             {fields.map((field) => (
               <div key={field.id}>
                 <label className="block text-sm font-bold text-slate-700 mb-2">{field.label}</label>
