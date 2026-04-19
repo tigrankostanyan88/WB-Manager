@@ -12,8 +12,7 @@ import { AuthProvider } from '@/lib/auth'
 import type { User } from '@/lib/auth'
 import { cookies } from 'next/headers'
 import { decodeJwt } from 'jose'
-import { prisma } from '@/lib/db'
-import { JwtPayloadSchema, DbUserSchema } from '@/lib/schemas'
+import { JwtPayloadSchema } from '@/lib/schemas'
 import { ToastProvider } from '@/components/providers/ToastProvider'
 import { HeaderWrapper } from '@/components/layout/HeaderWrapper'
 
@@ -91,28 +90,18 @@ async function getUser() {
     const userId = jwtResult.data.id || jwtResult.data.sub
     if (!userId) return null
 
-    if (!process.env.DATABASE_URL) return null
-
-    const dbUser = await prisma.user.findUnique({ where: { id: userId } })
-    if (!dbUser) return null
-    
-    const userResult = DbUserSchema.safeParse(dbUser)
-    if (!userResult.success) return null
-    
-    const fullUser = userResult.data
-    
-    return {
-      ...fullUser,
-      createdAt: fullUser.createdAt?.toISOString(),
-      updatedAt: fullUser.updatedAt?.toISOString(),
-      name: fullUser.name || '',
-      phone: fullUser.phone || '',
-      address: fullUser.address || '',
-      role: fullUser.role || 'user',
-      avatar: fullUser.avatar || '',
-      isPaid: fullUser.isPaid || false,
-      course_ids: fullUser.course_ids || [],
-      files: fullUser.files || []
+    // Fetch user from backend API instead of Prisma
+    try {
+      const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
+      const res = await fetch(`${apiBase}/api/v1/users/${userId}`, {
+        headers: { Cookie: `jwt=${token}` },
+        cache: 'no-store'
+      })
+      if (!res.ok) return null
+      const userData = await res.json()
+      return userData?.data || null
+    } catch {
+      return null
     }
   } catch {
     // Fail silently in production
