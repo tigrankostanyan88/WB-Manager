@@ -18,7 +18,6 @@ export interface StatsData {
 }
 
 export interface ProfileTabProps {
-  user: ProfileUser
   stats: StatsData | null
   isLoadingData: boolean
   myCourses: UserCourse[]

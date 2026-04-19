@@ -26,8 +26,6 @@ interface CourseHeroProps {
 }
 
 export function CourseHero({ course, onStartCourse }: CourseHeroProps) {
-  const hasVideo = !!course.previewVideoUrl
-  
   return (
     <div className="bg-slate-50 pt-8 pb-6">
       <div className="container max-w-[1400px] mx-auto px-4 md:px-6">

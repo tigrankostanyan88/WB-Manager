@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, BookOpen, Users, Trash2, GraduationCap, Phone, User, X } from 'lucide-react'
+import { Search, BookOpen, Trash2, GraduationCap, Phone, User, X, Eye } from 'lucide-react'
 
 interface CourseRegistration {
   id: number
@@ -9,6 +9,7 @@ interface CourseRegistration {
   name: string
   phone: string
   createdAt: string
+  viewed?: boolean
   course?: {
     id: number
     title: string
@@ -20,12 +21,27 @@ interface CourseRegistrationsTabProps {
   isLoading: boolean
   isDeleting: number | null
   onDelete: (id: number) => Promise<boolean>
+  onMarkViewed?: (id: number) => Promise<boolean>
 }
 
 export function CourseRegistrationsTab(props: CourseRegistrationsTabProps) {
-  const { registrations, isLoading, isDeleting, onDelete } = props
+  const { registrations, isLoading, isDeleting, onDelete, onMarkViewed } = props
   const [searchTerm, setSearchTerm] = useState('')
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null)
+  const [markingViewed, setMarkingViewed] = useState<number | null>(null)
+
+  // Debug: log first registration to check for duplicate data
+  console.log('First registration:', registrations[0])
+  if (registrations[0]) {
+    console.log('Course title:', JSON.stringify(registrations[0].course?.title))
+  }
+
+  const handleMarkViewed = async (id: number) => {
+    if (!onMarkViewed) return
+    setMarkingViewed(id)
+    await onMarkViewed(id)
+    setMarkingViewed(null)
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('hy-AM', {
@@ -88,12 +104,13 @@ export function CourseRegistrationsTab(props: CourseRegistrationsTabProps) {
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Հեռախոս</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Դասընթաց</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Ամսաթիվ</th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-slate-500 uppercase">Կարգավիճակ</th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">Գործողություն</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredRegistrations.map((reg) => (
-                <tr key={reg.id} className="hover:bg-slate-50">
+                <tr key={reg.id} className={`hover:bg-slate-50 ${!reg.viewed ? 'bg-violet-50/30' : ''}`}>
                   <td className="px-4 py-3 text-sm text-slate-500">#{reg.id}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
@@ -114,13 +131,36 @@ export function CourseRegistrationsTab(props: CourseRegistrationsTabProps) {
                       <div className="w-6 h-6 rounded-lg bg-violet-100 flex items-center justify-center">
                         <BookOpen className="w-3 h-3 text-violet-600" />
                       </div>
-                      <span className="text-sm font-medium text-slate-700">
-                        {reg.course?.title || `Դասընթաց #${reg.course_id}`}
+                      <span className="text-sm font-medium text-slate-700 whitespace-normal break-words">
+                        {(reg.course?.title || `Դասընթաց #${reg.course_id}`).split(' ').filter((w, i, arr) => w !== arr[i-1]).join(' ')}
                       </span>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-sm text-slate-500">
                     {formatDate(reg.createdAt)}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    {!reg.viewed ? (
+                      <button
+                        onClick={() => handleMarkViewed(reg.id)}
+                        disabled={markingViewed === reg.id || !onMarkViewed}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-100 text-violet-700 text-xs font-medium hover:bg-violet-200 transition-colors disabled:opacity-50"
+                        title="Նշել որպես դիտված"
+                      >
+                        {markingViewed === reg.id ? (
+                          <div className="w-3 h-3 border-2 border-violet-600 border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            <Eye className="w-3 h-3" />
+                            Նոր
+                          </>
+                        )}
+                      </button>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-xs text-slate-400">
+                        Դիտված
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button

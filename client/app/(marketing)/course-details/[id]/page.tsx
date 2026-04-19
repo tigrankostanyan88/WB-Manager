@@ -67,8 +67,8 @@ export default function CourseDetailsPage() {
 
   // Find first available video for "Start Course"
   const getFirstVideo = () => {
-    for (const module of courseModules) {
-      for (const video of module.videos) {
+    for (const mod of courseModules) {
+      for (const video of mod.videos) {
         if (!video.isLocked && video.videoUrl) {
           return video
         }
@@ -126,7 +126,6 @@ export default function CourseDetailsPage() {
             originalPrice={originalPrice}
             discount={discount}
             includes={includes}
-            modules={course.modules}
             isEnrolled={hasAccess}
             onConsultationClick={handleOtherCoursesClick}
           />

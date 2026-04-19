@@ -27,6 +27,7 @@ interface RichTextEditorProps {
 export function RichTextEditor({ 
   value, 
   onChange, 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   placeholder = 'Start typing...',
   className,
   minHeight = 150

@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { CheckCircle, Star, Users, TrendingUp, Clock, HeadphonesIcon, Award, Sparkles } from 'lucide-react'
+import { CheckCircle, Users, TrendingUp, Clock, HeadphonesIcon, Award, Sparkles } from 'lucide-react'
 import type { Instructor, InstructorStat } from '@/types/domain'
 import DOMPurify from 'isomorphic-dompurify'
 
@@ -18,7 +18,6 @@ function sanitizeHtml(dirty: string): string {
 
 interface InstructorSectionProps {
   instructor: Instructor
-  onOpenModal: () => void
 }
 
 const DEFAULT_STATS: InstructorStat[] = []
@@ -30,9 +29,7 @@ const STAT_ICONS = [
   HeadphonesIcon,
 ]
 
-const DEFAULT_DESCRIPTION = ''
-
-export function InstructorSection({ instructor, onOpenModal }: InstructorSectionProps) {
+export function InstructorSection({ instructor }: InstructorSectionProps) {
   const safeInstructor = instructor ?? { name: '', stats: [] }
   const stats = safeInstructor.stats?.length ? safeInstructor.stats : DEFAULT_STATS
   const displayStats = stats.slice(0, 4)

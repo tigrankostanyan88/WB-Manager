@@ -2,19 +2,18 @@
 
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Award, BookOpen, Check, Clock, FileText, Infinity, Layers, Smartphone, Star } from 'lucide-react'
+import { Award, BookOpen, Check, Clock, FileText, Infinity, Smartphone } from 'lucide-react'
 
 interface CourseSidebarProps {
   price: string
   originalPrice: string
   discount: string
   includes: string[]
-  modules?: unknown[]
   isEnrolled?: boolean
   onConsultationClick?: () => void
 }
 
-export function CourseSidebar({ price, originalPrice, discount, includes, modules, isEnrolled = false, onConsultationClick }: CourseSidebarProps) {
+export function CourseSidebar({ price, originalPrice, discount, includes, isEnrolled = false, onConsultationClick }: CourseSidebarProps) {
   return (
     <div className="lg:w-1/3 relative">
       <div className="sticky top-24 space-y-4">

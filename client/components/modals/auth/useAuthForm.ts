@@ -2,9 +2,10 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import type { ApiResponse } from '@/types/api'
 import type { AuthFormData, AuthMode, AuthResponse } from './types'
+import type { User } from '@/lib/auth'
 
 const emptyForm: AuthFormData = {
   name: '',
@@ -67,23 +68,19 @@ export function useAuthForm(onSuccess: () => void) {
         throw new Error(msg)
       }
 
-      const responseData = data as AuthResponse
+      const apiResponse = data as ApiResponse<AuthResponse>
+      const responseData = apiResponse?.data
       
-      if (responseData.user) {
+      if (responseData?.user) {
         window.dispatchEvent(new CustomEvent('auth:updated', { detail: { user: responseData.user } }))
       }
-      // Token is set by server as httpOnly cookie - never store in localStorage (XSS risk)
 
       // Show toast notification
       window.dispatchEvent(new CustomEvent('show-notification', { 
         detail: { message: 'Մուտքը հաջողվեց', type: 'success' } 
       }))
 
-      // Close modal immediately
       onSuccess()
-
-      // Force page reload to update all components
-      setTimeout(() => window.location.href = '/', 500)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Գրանցման սխալ')
     } finally {
@@ -96,12 +93,12 @@ export function useAuthForm(onSuccess: () => void) {
     setError(null)
   }
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData(emptyForm)
     setError(null)
     setIsSuccess(false)
     setIsLoading(false)
-  }
+  }, [])
 
   return {
     isLoading,

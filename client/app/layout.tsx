@@ -7,32 +7,18 @@ import { QueryProvider } from '@/components/providers/QueryProvider'
 import { LenisProvider } from '@/components/providers/LenisProvider'
 import { ScrollToTop } from '@/components/shared/ScrollToTop'
 import { PageTransition } from '@/components/shared/PageTransition'
-import { SettingsProvider, useSettings } from '@/context/SettingsContext'
+import { SettingsProvider } from '@/context/SettingsContext'
 import { AuthProvider } from '@/lib/auth'
 import type { User } from '@/lib/auth'
 import { cookies } from 'next/headers'
 import { decodeJwt } from 'jose'
 import { prisma } from '@/lib/db'
-import { JwtPayloadSchema, DbUserSchema, SettingsSchema } from '@/lib/schemas'
+import { JwtPayloadSchema, DbUserSchema } from '@/lib/schemas'
 import { ToastProvider } from '@/components/providers/ToastProvider'
 import { HeaderWrapper } from '@/components/layout/HeaderWrapper'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const notoArmenian = Noto_Sans_Armenian({ subsets: ['armenian'], variable: '--font-armenian', weight: ['400', '500', '600', '700'] })
-
-interface DbUser {
-  id: string
-  email: string
-  name?: string | null
-  phone?: string | null
-  address?: string | null
-  role?: string | null
-  avatar?: string | null
-  isPaid?: boolean | null
-  files?: { name_used?: string; name?: string; ext?: string; table_name?: string }[] | null
-  createdAt?: Date | null
-  updatedAt?: Date | null
-}
 
 export async function generateMetadata(): Promise<Metadata> {
   let title = 'AI Tools SaaS'
@@ -86,10 +72,8 @@ async function getSettings() {
         return s
       }
     }
-  } catch (err) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('[getSettings] Failed to fetch settings:', err)
-    }
+  } catch {
+    // Fail silently in production
   }
   return {}
 }
@@ -130,10 +114,8 @@ async function getUser() {
       course_ids: fullUser.course_ids || [],
       files: fullUser.files || []
     }
-  } catch (err) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('[getUser] Auth error:', err)
-    }
+  } catch {
+    // Fail silently in production
   }
   return null
 }
@@ -151,18 +133,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     
     if (settingsResult.status === 'fulfilled') {
       settings = settingsResult.value
-    } else {
-      console.error('[RootLayout] Failed to fetch settings:', settingsResult.reason)
     }
     
     if (userResult.status === 'fulfilled') {
       user = userResult.value
-    } else {
-      console.error('[RootLayout] Failed to fetch user:', userResult.reason)
     }
-  } catch (err) {
+  } catch {
     // Fallback for any truly unhandled errors
-    console.error('[RootLayout] Critical error during data fetching:', err)
     settings = {}
     user = null
   }

@@ -24,5 +24,12 @@ module.exports = {
 
     destroy: async (courseRegistration) => {
         return courseRegistration.destroy();
+    },
+
+    markAsViewed: async (id) => {
+        return CourseRegistration.update(
+            { viewed: true },
+            { where: { id } }
+        );
     }
 };

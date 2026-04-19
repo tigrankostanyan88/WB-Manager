@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 
-interface ApiHandlerOptions {
-  requireAuth?: boolean
-}
-
 export async function withAuth(
   req: NextRequest,
   handler: (token: string) => Promise<NextResponse>

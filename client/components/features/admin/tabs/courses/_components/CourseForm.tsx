@@ -1,10 +1,9 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import { Plus, X, Camera } from 'lucide-react'
 import type { CourseForm } from '@/hooks/admin/useCourses'
-import type { Course } from '@/components/features/admin/types'
 import { VideoFrameSelector } from '@/components/features/admin/components/VideoFrameSelector'
 
 interface CourseFormProps {
@@ -14,7 +13,6 @@ interface CourseFormProps {
   editingCourseVideoUrl: string | null
   onCancel: () => void
   onSubmit: (e: React.FormEvent) => Promise<void>
-  onImageFileSelect?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const categories = [
@@ -35,20 +33,10 @@ export function CourseFormComponent({
   isEditing,
   editingCourseVideoUrl,
   onCancel,
-  onSubmit,
-  onImageFileSelect
+  onSubmit
 }: CourseFormProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [videoFrameSelectorOpen, setVideoFrameSelectorOpen] = useState(false)
-
-  const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const url = URL.createObjectURL(file)
-      setImagePreview(url)
-      onImageFileSelect?.(e)
-    }
-  }, [onImageFileSelect])
 
   const handleFrameCapture = useCallback((imageDataUrl: string, timestamp: number) => {
     setImagePreview(imageDataUrl)

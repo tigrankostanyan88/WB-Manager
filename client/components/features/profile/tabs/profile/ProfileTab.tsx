@@ -7,7 +7,6 @@ import { ProfilePayments } from './ProfilePayments'
 import type { ProfileTabProps } from './utils'
 
 export function ProfileTab({
-  user,
   stats,
   isLoadingData,
   myCourses,

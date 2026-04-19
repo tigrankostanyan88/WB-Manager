@@ -7,7 +7,6 @@ interface BankCardDisplayProps {
   card: BankCard
   isVisible: boolean
   isCopied: boolean
-  getBankGradientStyle: (bankName: string) => { background: string }
   maskCardNumber: (number: string, visible: boolean) => string
   onToggleVisibility: () => void
   onCopy: () => void
@@ -19,7 +18,6 @@ export function BankCardDisplay({
   card,
   isVisible,
   isCopied,
-  getBankGradientStyle,
   maskCardNumber,
   onToggleVisibility,
   onCopy,

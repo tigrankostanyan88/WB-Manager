@@ -8,7 +8,6 @@ import { HeroWidgets } from './HeroWidgets'
 import type { HeroSectionProps, Review } from './types'
 
 export function HeroSection({
-  isPlaying,
   videoError,
   onPlayVideo,
   onVideoError,

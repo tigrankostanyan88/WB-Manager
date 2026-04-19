@@ -2,7 +2,6 @@
 
 'use client'
 
-import { useState } from 'react'
 import type { ModuleItem, ModuleFile, CourseOption } from '@/hooks/admin/modules/types'
 import { ModuleForm } from './ModuleForm'
 import { ModuleList } from './ModuleList'
@@ -33,6 +32,7 @@ interface ModulesTabProps {
 
 export function ModulesTab({
   showModuleForm,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setShowModuleForm,
   moduleForm,
   setModuleForm,
@@ -54,9 +54,6 @@ export function ModulesTab({
   uploadModuleVideo,
   getVideoUrl,
 }: ModulesTabProps) {
-  // Form component passes its own video state; we need to lift playingVideo state
-  const [formPlayingVideo, setFormPlayingVideo] = useState<string | null>(null)
-
   if (showModuleForm) {
     return (
       <ModuleForm

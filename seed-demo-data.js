@@ -9,7 +9,6 @@ async function seedDemoData() {
     // Check if we have any courses
     let courses = await Course.findAll();
     
-    // Create demo courses if none exist
     if (courses.length === 0) {
       console.log('Creating demo courses...');
       courses = await Course.bulkCreate([
@@ -111,4 +110,4 @@ async function seedDemoData() {
   }
 }
 
-seedDemoData();
+// seedDemoData();

@@ -14,18 +14,6 @@ const containerVariants = {
   }
 }
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut"
-    }
-  }
-}
-
 export function FeaturesSection() {
   return (
     <section id="features" className="w-full py-16 md:py-24 lg:py-32 bg-gradient-to-b from-white via-slate-50/50 to-white">

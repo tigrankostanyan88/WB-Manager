@@ -53,10 +53,7 @@ export default function MarketingLanding() {
       <ImpactSection />
       <FeaturesSection />
       <CurriculumSection />
-      <InstructorSection
-        instructor={instructor}
-        onOpenModal={handleOpenModal}
-      />
+      <InstructorSection instructor={instructor} />
       <ReviewsSection />
       <FaqSection />
       <Suspense fallback={<SectionLoader />}>

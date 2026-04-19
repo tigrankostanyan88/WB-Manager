@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import NextImage from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { User as UserIcon } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
+import { useState, useEffect } from 'react'
 
 interface HeaderActionsProps {
   onOpenLoginModal: () => void
@@ -43,10 +43,9 @@ function getAvatarUrl(user: UserWithAvatar | null): string {
 
 export function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onMobileLinkClick }: HeaderActionsProps) {
   const { user, isLoggedIn, isLoaded } = useAuth()
-  const [avatarOverride, setAvatarOverride] = useState<string>('')
+  const [avatarLoaded, setAvatarLoaded] = useState(false)
 
   const avatarUrl = (() => {
-    if (avatarOverride) return avatarOverride
     const typedUser = user as UserWithAvatar | null
     const path = getAvatarUrl(typedUser)
     if (!path) return ''
@@ -62,6 +61,11 @@ export function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onM
     }
     return withOrigin(path)
   })()
+
+  // Reset avatar loaded state when avatar URL changes
+  useEffect(() => {
+    setAvatarLoaded(false)
+  }, [avatarUrl])
 
   if (mobile) {
     if (!isLoaded) {
@@ -145,16 +149,19 @@ export function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onM
           <Link href="/profile" prefetch={true} title="Պրոֆիլ">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 p-[2px] shadow-lg shadow-violet-100 hover:scale-110 transition-transform active:scale-95">
               <div className="w-full h-full rounded-[10px] bg-white flex items-center justify-center overflow-hidden relative">
-                {avatarUrl ? (
+                {avatarUrl && (
                   <NextImage 
                     key={avatarUrl} 
                     src={avatarUrl} 
                     alt={user?.name || 'avatar'} 
                     fill
-                    className="object-cover"
+                    className={`object-cover transition-opacity duration-300 ${avatarLoaded ? 'opacity-100' : 'opacity-0'}`}
                     sizes="40px"
+                    onLoad={() => setAvatarLoaded(true)}
+                    priority
                   />
-                ) : (
+                )}
+                {(!avatarUrl || !avatarLoaded) && (
                   <UserIcon className="w-5 h-5 text-violet-600" />
                 )}
               </div>

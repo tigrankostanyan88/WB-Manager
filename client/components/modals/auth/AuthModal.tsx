@@ -2,6 +2,7 @@
 
 'use client'
 
+import { useCallback, useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SignInForm } from './SignInForm'
@@ -11,6 +12,12 @@ import { useAuthForm } from './useAuthForm'
 import type { AuthModalProps } from './types'
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
+  const hasResetRef = useRef(false)
+
+  const handleSuccess = useCallback(() => {
+    onClose()
+  }, [onClose])
+
   const {
     isLoading,
     isSuccess,
@@ -21,8 +28,27 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setRememberMe,
     handleInputChange,
     handleSubmit,
-    toggleMode
-  } = useAuthForm(onClose)
+    toggleMode,
+    resetForm
+  } = useAuthForm(handleSuccess)
+
+  // Reset form when modal is closed
+  const handleClose = useCallback(() => {
+    onClose()
+    resetForm()
+    hasResetRef.current = false
+  }, [onClose, resetForm])
+
+  // Reset form only once when modal first opens
+  useEffect(() => {
+    if (isOpen && !hasResetRef.current) {
+      resetForm()
+      hasResetRef.current = true
+    }
+    if (!isOpen) {
+      hasResetRef.current = false
+    }
+  }, [isOpen, resetForm])
 
   if (!isOpen) return null
 
@@ -34,7 +60,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity"
-          onClick={onClose}
+          onClick={handleClose}
         />
 
         <motion.div
@@ -49,7 +75,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           </div>
 
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute top-4 right-4 z-10 p-2.5 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all hover:rotate-90"
           >
             <X className="w-5 h-5" />
@@ -57,7 +83,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
           <div className="relative px-4 sm:px-8 pt-8 pb-8">
             {isSuccess ? (
-              <AuthSuccess mode={mode} />
+              <AuthSuccess />
             ) : (
               <>
                 {/* Logo */}

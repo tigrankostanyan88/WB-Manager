@@ -3,8 +3,6 @@
  * Prevents console output in production builds
  */
 
-type LogLevel = 'log' | 'warn' | 'error' | 'info' | 'debug'
-
 interface Logger {
   log: (...args: unknown[]) => void
   warn: (...args: unknown[]) => void

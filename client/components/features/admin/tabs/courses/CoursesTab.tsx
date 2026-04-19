@@ -18,7 +18,6 @@ interface CoursesTabProps {
   submitCourse: (e: React.FormEvent) => Promise<void>
   courses: Course[]
   isLoading: boolean
-  onImageFileSelect?: (e: React.ChangeEvent<HTMLInputElement>) => void
   getCourseFirstVideoUrl?: (course: Course) => string | null
   editingCourse?: Course | null
 }
@@ -34,7 +33,6 @@ export function CoursesTab({
   submitCourse,
   courses,
   isLoading,
-  onImageFileSelect,
   getCourseFirstVideoUrl,
   editingCourse
 }: CoursesTabProps) {
@@ -71,7 +69,6 @@ export function CoursesTab({
         editingCourseVideoUrl={editingCourseVideoUrl}
         onCancel={cancelNewCourse}
         onSubmit={submitCourse}
-        onImageFileSelect={onImageFileSelect}
       />
     )
   }

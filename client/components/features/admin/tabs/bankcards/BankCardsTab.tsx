@@ -2,7 +2,7 @@
 
 'use client'
 
-import { Plus, X, RefreshCw, CreditCard } from 'lucide-react'
+import { Plus, X, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { BankCardForm } from './BankCardForm'
 import { BankCardsList } from './BankCardsList'
@@ -15,7 +15,6 @@ export function BankCardsTab() {
     showForm,
     setShowForm,
     formData,
-    setFormData,
     isSubmitting,
     editingId,
     editForm,
@@ -32,8 +31,7 @@ export function BankCardsTab() {
     toggleCardNumberVisibility,
     copyCardNumber,
     maskCardNumber,
-    maskCardNumberInput,
-    getBankGradientStyle
+    maskCardNumberInput
   } = useBankCards()
 
   if (isLoading) {
@@ -86,7 +84,6 @@ export function BankCardsTab() {
         isEditing={isEditing}
         visibleNumbers={visibleNumbers}
         copiedCards={copiedCards}
-        getBankGradientStyle={getBankGradientStyle}
         maskCardNumber={maskCardNumber}
         maskCardNumberInput={maskCardNumberInput}
         onEditFormChange={setEditForm}

@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import api, { userService } from '@/lib/api'
 import type { UserFile } from '@/components/features/admin/types'
-import type { ApiResponse, ApiData } from '@/types/api'
 import type { Course } from '@/components/features/admin/types'
 
 export interface ProfileUser {
@@ -64,10 +63,9 @@ interface ReviewData {
 interface UseProfileDataParams {
   authUser: ProfileUser | null
   isLoaded: boolean
-  logout: () => void | Promise<void>
 }
 
-export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataParams) {
+export function useProfileData({ authUser, isLoaded }: UseProfileDataParams) {
   const [user, setUser] = useState<ProfileUser | null>(authUser)
   const [isLoadingData, setIsLoadingData] = useState(false)
   const [myReview, setMyReview] = useState<ReviewData | null>(null)
@@ -136,7 +134,6 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
   }
 
   const calculateStats = (courses: UserCourse[]): UserStats => {
-    const totalLessons = courses.reduce((sum, c) => sum + (c.lessons || 0), 0)
     const avgProgress = courses.length > 0
       ? Math.round(courses.reduce((sum, c) => sum + c.progress, 0) / courses.length)
       : 0
@@ -179,7 +176,7 @@ export function useProfileData({ authUser, isLoaded, logout }: UseProfileDataPar
     try {
       setIsLoadingData(true)
       
-      const [userRes, reviewRes, coursesRes, paymentsRes] = await Promise.all([
+      const [userRes, reviewRes,, paymentsRes] = await Promise.all([
         userService.getMe(),
         api.get('/api/v1/reviews/me').catch(() => {
           return { data: null }

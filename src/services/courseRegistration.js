@@ -60,5 +60,14 @@ module.exports = {
       throw error;
     }
     await repo.destroy(registration);
+  },
+
+  // Mark registration as viewed
+  markAsViewed: async (id) => {
+    const result = await repo.markAsViewed(id);
+    if (result[0] === 0) {
+      throw new AppError('Course registration not found!', 404);
+    }
+    return { message: 'Marked as viewed' };
   }
 };

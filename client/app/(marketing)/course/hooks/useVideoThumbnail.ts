@@ -47,10 +47,10 @@ export function useVideoThumbnail(course: Course): UseVideoThumbnailResult {
     video.muted = true
     video.playsInline = true
 
-    let timeoutId: NodeJS.Timeout
+    let timeoutId: NodeJS.Timeout | null = null
 
     const cleanup = () => {
-      clearTimeout(timeoutId)
+      if (timeoutId) clearTimeout(timeoutId)
       video.onloadedmetadata = null
       video.onseeked = null
       video.onerror = null
@@ -81,7 +81,7 @@ export function useVideoThumbnail(course: Course): UseVideoThumbnailResult {
           const dataUrl = canvas.toDataURL('image/jpeg', 0.6)
           setThumbnail(dataUrl)
         }
-      } catch (e) {
+      } catch {
         // Ignore errors
       }
       cleanup()

@@ -49,5 +49,14 @@ module.exports = {
       status: 'success',
       message: 'Course registration deleted successfully'
     });
+  }),
+
+  markAsViewed: catchAsync(async (req, res, next) => {
+    await service.markAsViewed(req.params.id);
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Marked as viewed'
+    });
   })
 };

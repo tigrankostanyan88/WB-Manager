@@ -25,7 +25,7 @@ export function ContactSection({ settings }: ContactSectionProps) {
         }}
       />
 
-      <div className="container relative z-10 px-4 sm:px-6 mx-auto">
+      <div className="container relative z-10 px-4 sm:px-6 lg:px-8 xl:px-12 mx-auto max-w-7xl">
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
           <div className="inline-flex items-center gap-2 rounded-full bg-violet-100 border border-violet-200 px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-semibold text-violet-700 mb-4 sm:mb-6">
             <span className="relative flex h-2 w-2">
@@ -42,7 +42,7 @@ export function ContactSection({ settings }: ContactSectionProps) {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-stretch w-full max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-stretch w-full">
           <div className="w-full min-w-0">
             <ContactForm />
           </div>

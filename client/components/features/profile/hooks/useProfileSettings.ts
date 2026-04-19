@@ -128,7 +128,7 @@ export function useProfileSettings({
         window.dispatchEvent(new CustomEvent('auth:updated', { detail: { user: updatedUser } }))
       } catch {}
       showToast('Նկարը հաջողությամբ թարմացվեց')
-    } catch (err: unknown) {
+    } catch {
       showToast('Սխալ նկարի թարմացման ժամանակ', 'error')
       // Clean up the blob URL on error too
       if (previewUrl) {

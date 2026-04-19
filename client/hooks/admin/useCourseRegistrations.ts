@@ -10,6 +10,11 @@ export interface CourseRegistration {
   phone: string
   createdAt: string
   updatedAt: string
+  viewed?: boolean
+  course?: {
+    id: number
+    title: string
+  }
 }
 
 export function useCourseRegistrations({ activeTab, allowed }: { activeTab: string; allowed: boolean }) {
@@ -18,7 +23,7 @@ export function useCourseRegistrations({ activeTab, allowed }: { activeTab: stri
   const [isDeleting, setIsDeleting] = useState<number | null>(null)
 
   const fetchRegistrations = useCallback(async () => {
-    if (activeTab !== 'enrollments' || !allowed) return
+    if (!allowed) return
     
     try {
       setIsLoading(true)
@@ -30,7 +35,7 @@ export function useCourseRegistrations({ activeTab, allowed }: { activeTab: stri
     } finally {
       setIsLoading(false)
     }
-  }, [activeTab, allowed])
+  }, [allowed])
 
   const deleteRegistration = useCallback(async (id: number) => {
     try {
@@ -45,15 +50,31 @@ export function useCourseRegistrations({ activeTab, allowed }: { activeTab: stri
     }
   }, [])
 
+  const markAsViewed = useCallback(async (id: number) => {
+    try {
+      await api.patch(`/api/v1/register-course/${id}/viewed`)
+      setRegistrations(prev => prev.map(r => 
+        r.id === id ? { ...r, viewed: true } : r
+      ))
+      return true
+    } catch (err) {
+      return false
+    }
+  }, [])
+
   useEffect(() => {
     fetchRegistrations()
   }, [fetchRegistrations])
+
+  const unviewedCount = registrations.filter(r => !r.viewed).length
 
   return {
     registrations,
     isLoading,
     isDeleting,
     deleteRegistration,
-    refresh: fetchRegistrations
+    markAsViewed,
+    refresh: fetchRegistrations,
+    unviewedCount
   }
 }

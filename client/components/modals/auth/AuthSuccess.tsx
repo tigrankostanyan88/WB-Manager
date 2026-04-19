@@ -3,11 +3,7 @@
 import { CheckCircle } from 'lucide-react'
 import { motion } from 'framer-motion'
 
-interface AuthSuccessProps {
-  mode: 'signin' | 'signup'
-}
-
-export function AuthSuccess({ mode }: AuthSuccessProps) {
+export function AuthSuccess() {
   return (
     <div className="text-center">
       <motion.div

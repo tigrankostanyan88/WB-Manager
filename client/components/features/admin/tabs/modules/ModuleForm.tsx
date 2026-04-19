@@ -4,7 +4,7 @@
 
 import { useState } from 'react'
 import { X, Upload, Check, Edit, Trash2 } from 'lucide-react'
-import type { ModuleItem, ModuleFile, CourseOption } from '@/hooks/admin/modules/types'
+import type { ModuleFile, CourseOption } from '@/hooks/admin/modules/types'
 import { ModuleVideoThumbnail } from '@/components/features/admin/components/ModuleVideoThumbnail'
 import { VideoPlayerModal } from '@/components/shared'
 

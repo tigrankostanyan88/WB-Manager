@@ -86,7 +86,7 @@ export function CommentsTab({
                     <div className="mt-3 relative">
                       <div className="absolute -left-2 top-0 bottom-0 w-0.5 bg-violet-100 rounded-full" />
                       <p className="text-slate-600 leading-relaxed pl-2 italic">
-                        "{review.comment}"
+                        &ldquo;{review.comment}&rdquo;
                       </p>
                     </div>
                   </div>

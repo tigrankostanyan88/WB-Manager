@@ -1,8 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight, Sparkles, Play, Star, Zap, TrendingUp, Award } from 'lucide-react'
-import { Header, Footer } from '@/components/layout'
+import { Sparkles, Star, Zap, TrendingUp, Award } from 'lucide-react'
+import { Header } from '@/components/layout'
 import { Button } from '@/components/ui/button'
 import { useCourses } from './hooks/useCourses'
 import { CourseCard } from './components/CourseCard'

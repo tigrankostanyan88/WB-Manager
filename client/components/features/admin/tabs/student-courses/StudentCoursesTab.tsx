@@ -2,10 +2,6 @@
 
 import { useEffect, useState } from 'react'
 
-interface StudentCoursesTabProps {
-  showToast: (message: string, type?: 'success' | 'error' | 'info') => void
-}
-
 interface Enrollment {
   _id: string
   userName: string
@@ -14,7 +10,7 @@ interface Enrollment {
   progress?: number
 }
 
-export function StudentCoursesTab({ showToast }: StudentCoursesTabProps) {
+export function StudentCoursesTab() {
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
   const [isLoading, setIsLoading] = useState(false)
 

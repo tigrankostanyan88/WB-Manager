@@ -43,8 +43,8 @@ export function CourseModulesList({ modules }: CourseModulesListProps) {
       if (videoId) {
         // Find video by ID
         for (let i = 0; i < modules.length; i++) {
-          const module = modules[i]
-          const video = module.videos.find(v => String(v.id) === videoId && !v.isLocked && v.videoUrl)
+          const mod = modules[i]
+          const video = mod.videos.find(v => String(v.id) === videoId && !v.isLocked && v.videoUrl)
           if (video) {
             setOpenModule(`module-${i}`)
             setPlayingVideo(video)

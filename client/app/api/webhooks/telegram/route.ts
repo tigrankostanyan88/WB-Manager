@@ -49,7 +49,7 @@ export async function POST(req: Request) {
 
     // Handle messages (including replies)
     if (body.message) {
-      const { message, message: { reply_to_message, text, from } } = body
+      const { reply_to_message, text, from } = body.message
 
       // If admin replies to a message in Telegram
       if (reply_to_message && text) {

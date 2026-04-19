@@ -55,7 +55,7 @@ export function generateVideoThumbnail(videoUrl: string, time?: number): Promise
       }
     }
     
-    const onError = (e: Event) => {
+    const onError = () => {
       cleanup()
       reject(new Error('Failed to load video'))
     }

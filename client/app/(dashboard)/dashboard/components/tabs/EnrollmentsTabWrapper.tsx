@@ -16,6 +16,7 @@ export function EnrollmentsTabWrapper({ allowed }: EnrollmentsTabWrapperProps) {
       isLoading={registrations.isLoading}
       isDeleting={registrations.isDeleting}
       onDelete={registrations.deleteRegistration}
+      onMarkViewed={registrations.markAsViewed}
     />
   )
 }

@@ -6,7 +6,7 @@ import { User as UserIcon, Settings, LayoutDashboard, Wallet, MessageSquare, Fil
  
 import { useState, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
-import { Header, Footer } from '@/components/layout'
+import { Footer } from '@/components/layout'
 import { ProfileSidebar, ProBanner, Toast } from '@/components/features/profile'
 import { PaymentModal, PasswordModal, TransactionModal } from '@/components/features/profile'
 import { ProfileTab, CoursesTab, PaymentsTab, SettingsTab, CommentsTab, PersonalDataTab } from '@/components/features/profile'
@@ -24,26 +24,6 @@ interface SidebarLink {
   href?: string
 }
 
-interface StatsData {
-  currentLessons?: string
-  progress?: number
-  points?: number
-  certificates?: string
-  [key: string]: unknown
-}
-
-interface CourseItem {
-  id: string
-  title: string
-  desc: string
-  status: string
-  lessons?: number
-  progress: number
-  color?: string
-  borderColor?: string
-  [key: string]: unknown
-}
-
 interface Transaction {
   id: string
   title: string
@@ -54,10 +34,10 @@ interface Transaction {
 }
 
 export default function ProfilePage() {
-  const { user: authUser, isLoaded, isLoggedIn, logout, setUser: setAuthUser } = useAuth()
+  const { user: authUser, isLoaded, logout, setUser: setAuthUser } = useAuth()
   const router = useRouter()
 
-  const { user, setUser, isLoadingData, myReview, setMyReview, myCourses, myPayments, stats } = useProfileData({ authUser: authUser as ProfileUser | null, isLoaded, logout })
+  const { user, setUser, isLoadingData, myReview, setMyReview, myCourses, myPayments, stats } = useProfileData({ authUser: authUser as ProfileUser | null, isLoaded })
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -117,10 +97,6 @@ export default function ProfilePage() {
     fetchTotalCourses()
   }, [])
 
-  const handleViewAllCourses = () => {
-    setActiveTab('courses')
-  }
-
   const currentUser = user || (authUser as ProfileUser | null);
   const isReady = isLoaded && currentUser;
 
@@ -166,24 +142,22 @@ export default function ProfilePage() {
               sidebarLinks={sidebarLinks}
               onTabChange={(t) => setActiveTab(t)}
               onAvatarUpload={handleAvatarUpload}
-              onShowPaymentModal={() => setShowPaymentModal(true)}
               onLogout={logout}
             />
 
           <div className="space-y-6 min-w-0 w-full">
             {currentUser?.role !== 'admin' && (
-              <ProBanner user={currentUser} myCourses={myCourses} totalCoursesCount={totalCoursesCount} onShowPaymentModal={() => setShowPaymentModal(true)} isLoading={isLoadingData} />
+              <ProBanner user={currentUser} myCourses={myCourses} isLoading={isLoadingData} />
             )}
 
             <AnimatePresence mode="wait">
               {activeTab === 'profile' && (
                 <ProfileTab
-                  user={currentUser}
                   stats={stats}
                   isLoadingData={isLoadingData}
                   myCourses={myCourses}
                   myPayments={myPayments}
-                  onViewAllCourses={handleViewAllCourses}
+                  onViewAllCourses={() => setActiveTab('courses')}
                 />
               )}
 
@@ -213,9 +187,7 @@ export default function ProfilePage() {
                 />
               )}
 
-              {activeTab === 'payments' && (
-                <PaymentsTab user={currentUser} />
-              )}
+              {activeTab === 'payments' && <PaymentsTab />}
 
               {activeTab === 'settings' && (
                 <SettingsTab user={currentUser} isUpdating={isUpdating} onSubmit={handleUpdateProfile} onShowPasswordModal={() => setShowPasswordModal(true)} />

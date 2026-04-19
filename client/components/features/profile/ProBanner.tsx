@@ -1,7 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { CheckCircle2, Clock, AlertCircle, Lock, Trophy, BookOpen } from 'lucide-react'
+import { Trophy, BookOpen } from 'lucide-react'
 
 interface UserCourse {
   id: string
@@ -22,12 +21,10 @@ interface ProBannerProps {
     courseIds?: (string | number)[]
   }
   myCourses?: UserCourse[]
-  totalCoursesCount?: number
-  onShowPaymentModal: () => void
   isLoading?: boolean
 }
 
-export function ProBanner({ user, myCourses, totalCoursesCount = 0, onShowPaymentModal, isLoading }: ProBannerProps) {
+export function ProBanner({ user, myCourses, isLoading }: ProBannerProps) {
   const courses = Array.isArray(myCourses) ? myCourses : []
   
   // User has courses?

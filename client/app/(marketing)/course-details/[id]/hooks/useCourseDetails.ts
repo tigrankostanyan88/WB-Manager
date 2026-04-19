@@ -100,7 +100,7 @@ export function useCourseDetails(courseId: string): UseCourseDetailsResult {
           const res = await api.get(`/api/v1/student-courses/access/${courseId}`)
           setHasAccess(res.data?.hasAccess || false)
         }
-      } catch (err) {
+      } catch {
         setHasAccess(false)
       } finally {
         setCheckingAccess(false)

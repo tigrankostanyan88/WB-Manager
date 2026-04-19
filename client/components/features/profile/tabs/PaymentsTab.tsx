@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Copy, CreditCard, Plus, Building2, Check, Eye, EyeOff } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Copy, CreditCard, Building2, Check, Eye, EyeOff } from 'lucide-react'
+import { Card } from '@/components/ui/card'
 import api from '@/lib/api'
 
 interface BankCard {
@@ -15,15 +14,7 @@ interface BankCard {
   created_at: string
 }
 
-interface PaymentsUser {
-  name: string
-}
-
-interface PaymentsTabProps {
-  user: PaymentsUser
-}
-
-export function PaymentsTab({ user }: PaymentsTabProps) {
+export function PaymentsTab() {
   const [bankCards, setBankCards] = useState<BankCard[]>([])
   const [loading, setLoading] = useState(true)
   const [copiedCards, setCopiedCards] = useState<Set<number>>(new Set())

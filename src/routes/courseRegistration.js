@@ -15,4 +15,8 @@ router
     .patch(ctrls.auth.protect, ctrls.auth.restrictTo('admin'), ctrls.courseRegistration.updateCourseRegistration)
     .delete(ctrls.auth.protect, ctrls.auth.restrictTo('admin'), ctrls.courseRegistration.deleteCourseRegistration);
 
+router
+    .route('/:id/viewed')
+    .patch(ctrls.auth.protect, ctrls.auth.restrictTo('admin'), ctrls.courseRegistration.markAsViewed);
+
 module.exports = router;

@@ -68,7 +68,7 @@ export default function CourseRegistrationModal({ isOpen, onClose }: CourseRegis
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  const handleCourseSelect = (courseId: string, courseTitle: string) => {
+  const handleCourseSelect = (courseId: string) => {
     setFormData({ ...formData, courseId })
     setIsDropdownOpen(false)
   }
@@ -198,7 +198,7 @@ export default function CourseRegistrationModal({ isOpen, onClose }: CourseRegis
                               <button
                                 key={course.id}
                                 type="button"
-                                onClick={() => handleCourseSelect(String(course.id), course.title)}
+                                onClick={() => handleCourseSelect(String(course.id))}
                                 className="w-full px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors truncate"
                                 title={course.title}
                               >

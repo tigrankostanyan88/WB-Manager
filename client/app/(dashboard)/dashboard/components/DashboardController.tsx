@@ -70,8 +70,8 @@ export function DashboardController() {
               activeTab={activeTab}
               onTabChange={handleTabChange}
               badges={{
-                'contact-messages': visitedTabs.has('contact-messages') ? 0 : (contactMessages.unreadCount || 0),
-                'enrollments': visitedTabs.has('enrollments') ? 0 : (registrations.registrations?.length || 0)
+                'contact-messages': (visitedTabs.has('contact-messages') || activeTab === 'contact-messages') ? 0 : (contactMessages.unreadCount || 0),
+                'enrollments': (visitedTabs.has('enrollments') || activeTab === 'enrollments') ? 0 : (registrations.unviewedCount || 0)
               }}
             />
           </div>

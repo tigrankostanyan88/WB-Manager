@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { Camera, LogOut, User as UserIcon, type LucideIcon } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { useState, useCallback } from 'react'
+import { useCallback } from 'react'
 
 interface SidebarLink {
   id: string
@@ -53,7 +53,6 @@ interface ProfileSidebarProps {
   sidebarLinks: SidebarLink[]
   onTabChange: (tab: string) => void
   onAvatarUpload: (file: File) => void
-  onShowPaymentModal: () => void
   onLogout: () => void
 }
 
@@ -65,7 +64,6 @@ export function ProfileSidebar({
   sidebarLinks,
   onTabChange,
   onAvatarUpload,
-  onShowPaymentModal,
   onLogout
 }: ProfileSidebarProps) {
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

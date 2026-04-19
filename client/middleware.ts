@@ -15,7 +15,6 @@ export function middleware(request: NextRequest) {
 
   // In development, completely skip auth checks due to cross-port cookie issues
   if (process.env.NODE_ENV === 'development') {
-    console.log(`[Middleware] DEV BYPASS: ${pathname}`)
     return NextResponse.next()
   }
 
