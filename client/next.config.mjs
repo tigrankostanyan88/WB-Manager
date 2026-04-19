@@ -24,10 +24,10 @@ const nextConfig = {
     styledComponents: false,
   },
   eslint: {
-    ignoreDuringBuilds: true,  // TEMP: Allow deployment despite lint errors
+    ignoreDuringBuilds: false,  // STRICT: Enforce lint rules
   },
   typescript: {
-    ignoreBuildErrors: true,     // TEMP: Allow deployment despite type errors
+    ignoreBuildErrors: false,     // STRICT: Enforce type checking
   },
   experimental: {
     typedRoutes: false,
