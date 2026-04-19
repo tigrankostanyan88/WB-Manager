@@ -22,6 +22,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     isLoading,
     isSuccess,
     error,
+    fieldErrors,
     mode,
     formData,
     rememberMe,
@@ -110,6 +111,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     rememberMe={rememberMe}
                     isLoading={isLoading}
                     error={error}
+                    fieldErrors={fieldErrors}
                     onInputChange={handleInputChange}
                     onRememberMeChange={setRememberMe}
                     onSubmit={handleSubmit}
@@ -120,6 +122,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     formData={formData}
                     isLoading={isLoading}
                     error={error}
+                    fieldErrors={fieldErrors}
                     onInputChange={handleInputChange}
                     onSubmit={handleSubmit}
                     onToggleMode={toggleMode}

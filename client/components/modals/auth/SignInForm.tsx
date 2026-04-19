@@ -10,6 +10,7 @@ interface SignInFormProps {
   rememberMe: boolean
   isLoading: boolean
   error: string | null
+  fieldErrors?: Record<string, string>
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onRememberMeChange: (checked: boolean) => void
   onSubmit: (e: React.FormEvent) => void
@@ -21,6 +22,7 @@ export function SignInForm({
   rememberMe,
   isLoading,
   error,
+  fieldErrors = {},
   onInputChange,
   onRememberMeChange,
   onSubmit,
@@ -35,14 +37,16 @@ export function SignInForm({
         <div className="relative">
           <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
-            required
             name="email"
             value={formData.email}
             onChange={onInputChange}
             type="email"
             placeholder="example@gmail.com"
-            className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
+            className={`w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border ${fieldErrors.email ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-violet-500 focus:ring-violet-500/10'} focus:ring-4 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium`}
           />
+          {fieldErrors.email && (
+            <p className="text-red-500 text-xs mt-1 ml-1">{fieldErrors.email}</p>
+          )}
         </div>
       </div>
 
@@ -53,14 +57,16 @@ export function SignInForm({
         <div className="relative">
           <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
-            required
             name="password"
             value={formData.password}
             onChange={onInputChange}
             type="password"
             placeholder="••••••••"
-            className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
+            className={`w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border ${fieldErrors.password ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-violet-500 focus:ring-violet-500/10'} focus:ring-4 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium`}
           />
+          {fieldErrors.password && (
+            <p className="text-red-500 text-xs mt-1 ml-1">{fieldErrors.password}</p>
+          )}
         </div>
       </div>
 

@@ -9,6 +9,7 @@ interface SignUpFormProps {
   formData: AuthFormData
   isLoading: boolean
   error: string | null
+  fieldErrors?: Record<string, string>
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onSubmit: (e: React.FormEvent) => void
   onToggleMode: () => void
@@ -18,6 +19,7 @@ export function SignUpForm({
   formData,
   isLoading,
   error,
+  fieldErrors = {},
   onInputChange,
   onSubmit,
   onToggleMode
@@ -38,8 +40,11 @@ export function SignUpForm({
               onChange={onInputChange}
               type="text"
               placeholder="Արմեն Արմենյան"
-              className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
+              className={`w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border ${fieldErrors.name ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-violet-500 focus:ring-violet-500/10'} focus:ring-4 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium`}
             />
+            {fieldErrors.name && (
+              <p className="text-red-500 text-xs mt-1 ml-1">{fieldErrors.name}</p>
+            )}
           </div>
         </div>
 
@@ -56,8 +61,11 @@ export function SignUpForm({
               onChange={onInputChange}
               type="tel"
               placeholder="099 99 99 99"
-              className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
+              className={`w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border ${fieldErrors.phone ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-violet-500 focus:ring-violet-500/10'} focus:ring-4 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium`}
             />
+            {fieldErrors.phone && (
+              <p className="text-red-500 text-xs mt-1 ml-1">{fieldErrors.phone}</p>
+            )}
           </div>
         </div>
       </div>
@@ -69,14 +77,16 @@ export function SignUpForm({
         <div className="relative">
           <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
-            required
             name="address"
             value={formData.address}
             onChange={onInputChange}
             type="text"
             placeholder="ք. Երևան, Աբովյան 1"
-            className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
+            className={`w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border ${fieldErrors.address ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-violet-500 focus:ring-violet-500/10'} focus:ring-4 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium`}
           />
+          {fieldErrors.address && (
+            <p className="text-red-500 text-xs mt-1 ml-1">{fieldErrors.address}</p>
+          )}
         </div>
       </div>
 
@@ -87,14 +97,16 @@ export function SignUpForm({
         <div className="relative">
           <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
-            required
             name="email"
             value={formData.email}
             onChange={onInputChange}
             type="email"
             placeholder="example@gmail.com"
-            className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
+            className={`w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border ${fieldErrors.email ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-violet-500 focus:ring-violet-500/10'} focus:ring-4 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium`}
           />
+          {fieldErrors.email && (
+            <p className="text-red-500 text-xs mt-1 ml-1">{fieldErrors.email}</p>
+          )}
         </div>
       </div>
 
@@ -105,14 +117,16 @@ export function SignUpForm({
         <div className="relative">
           <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
-            required
             name="password"
             value={formData.password}
             onChange={onInputChange}
             type="password"
             placeholder="••••••••"
-            className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium"
+            className={`w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border ${fieldErrors.password ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-violet-500 focus:ring-violet-500/10'} focus:ring-4 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium`}
           />
+          {fieldErrors.password && (
+            <p className="text-red-500 text-xs mt-1 ml-1">{fieldErrors.password}</p>
+          )}
         </div>
       </div>
 

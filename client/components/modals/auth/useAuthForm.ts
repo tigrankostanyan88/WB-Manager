@@ -3,6 +3,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { SignInSchema, SignUpSchema } from '@/lib/validation'
 import type { ApiResponse } from '@/types/api'
 import type { AuthFormData, AuthMode, AuthResponse } from './types'
 import type { User } from '@/lib/auth'
@@ -19,6 +20,7 @@ export function useAuthForm(onSuccess: () => void) {
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [mode, setMode] = useState<AuthMode>('signin')
   const [formData, setFormData] = useState<AuthFormData>(emptyForm)
   const [rememberMe, setRememberMe] = useState(false)
@@ -26,12 +28,42 @@ export function useAuthForm(onSuccess: () => void) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+    // Clear field error when user types
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({ ...prev, [name]: '' }))
+    }
+  }
+
+  const validateForm = () => {
+    const schema = mode === 'signup' ? SignUpSchema : SignInSchema
+    const result = schema.safeParse(formData)
+    
+    if (!result.success) {
+      const errors: Record<string, string> = {}
+      result.error.errors.forEach((err) => {
+        const field = err.path[0] as string
+        if (!errors[field]) {
+          errors[field] = err.message
+        }
+      })
+      setFieldErrors(errors)
+      return false
+    }
+    
+    setFieldErrors({})
+    return true
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
     setError(null)
+    
+    // Validate before API call
+    if (!validateForm()) {
+      return
+    }
+    
+    setIsLoading(true)
 
     try {
       const endpoint = mode === 'signup' 
@@ -91,11 +123,13 @@ export function useAuthForm(onSuccess: () => void) {
   const toggleMode = () => {
     setMode(prev => prev === 'signup' ? 'signin' : 'signup')
     setError(null)
+    setFieldErrors({})
   }
 
   const resetForm = useCallback(() => {
     setFormData(emptyForm)
     setError(null)
+    setFieldErrors({})
     setIsSuccess(false)
     setIsLoading(false)
   }, [])
@@ -104,6 +138,7 @@ export function useAuthForm(onSuccess: () => void) {
     isLoading,
     isSuccess,
     error,
+    fieldErrors,
     mode,
     formData,
     rememberMe,
