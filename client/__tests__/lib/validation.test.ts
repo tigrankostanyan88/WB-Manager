@@ -4,6 +4,9 @@ import {
   CourseFormSchema,
   BankCardFormSchema,
   FaqFormSchema,
+  SignInSchema,
+  SignUpSchema,
+  ContactFormSchema,
 } from '@/lib/validation'
 
 describe('Validation Schemas', () => {
@@ -149,6 +152,127 @@ describe('Validation Schemas', () => {
       }
 
       const result = FaqFormSchema.safeParse(invalidData)
+      expect(result.success).toBe(false)
+    })
+  })
+
+  describe('SignInSchema', () => {
+    it('validates correct signin data', () => {
+      const validData = {
+        email: 'test@example.com',
+        password: 'password123',
+      }
+
+      const result = SignInSchema.safeParse(validData)
+      expect(result.success).toBe(true)
+    })
+
+    it('fails on empty email', () => {
+      const invalidData = {
+        email: '',
+        password: 'password123',
+      }
+
+      const result = SignInSchema.safeParse(invalidData)
+      expect(result.success).toBe(false)
+    })
+
+    it('fails on invalid email format', () => {
+      const invalidData = {
+        email: 'invalid-email',
+        password: 'password123',
+      }
+
+      const result = SignInSchema.safeParse(invalidData)
+      expect(result.success).toBe(false)
+    })
+
+    it('fails on short password', () => {
+      const invalidData = {
+        email: 'test@example.com',
+        password: '12345',
+      }
+
+      const result = SignInSchema.safeParse(invalidData)
+      expect(result.success).toBe(false)
+    })
+  })
+
+  describe('SignUpSchema', () => {
+    it('validates correct signup data', () => {
+      const validData = {
+        name: 'Արմեն Արմենյան',
+        email: 'test@example.com',
+        phone: '091234567',
+        address: 'ք. Երևան',
+        password: 'password123',
+      }
+
+      const result = SignUpSchema.safeParse(validData)
+      expect(result.success).toBe(true)
+    })
+
+    it('fails on invalid phone format', () => {
+      const invalidData = {
+        name: 'Արմեն Արմենյան',
+        email: 'test@example.com',
+        phone: '12345',
+        address: 'ք. Երևան',
+        password: 'password123',
+      }
+
+      const result = SignUpSchema.safeParse(invalidData)
+      expect(result.success).toBe(false)
+    })
+
+    it('fails on short name', () => {
+      const invalidData = {
+        name: 'A',
+        email: 'test@example.com',
+        phone: '091234567',
+        address: 'ք. Երևան',
+        password: 'password123',
+      }
+
+      const result = SignUpSchema.safeParse(invalidData)
+      expect(result.success).toBe(false)
+    })
+  })
+
+  describe('ContactFormSchema', () => {
+    it('validates correct contact form data', () => {
+      const validData = {
+        name: 'Արմեն Արմենյան',
+        email: 'test@example.com',
+        subject: 'Հարց դասընթացի մասին',
+        message: 'Ողջույն, ունեմ հարց դասընթացի վերաբերյալ...',
+      }
+
+      const result = ContactFormSchema.safeParse(validData)
+      expect(result.success).toBe(true)
+    })
+
+    it('fails on short message', () => {
+      const invalidData = {
+        name: 'Արմեն Արմենյան',
+        email: 'test@example.com',
+        subject: 'Հարց',
+        message: 'Hi',
+      }
+
+      const result = ContactFormSchema.safeParse(invalidData)
+      expect(result.success).toBe(false)
+    })
+
+    it('fails on empty required fields', () => {
+      const invalidData = {
+        name: '',
+        email: '',
+        subject: '',
+        message: '',
+      }
+
+      const result = ContactFormSchema.safeParse(invalidData)
       expect(result.success).toBe(false)
     })
   })
