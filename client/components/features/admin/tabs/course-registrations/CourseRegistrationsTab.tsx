@@ -30,12 +30,6 @@ export function CourseRegistrationsTab(props: CourseRegistrationsTabProps) {
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null)
   const [markingViewed, setMarkingViewed] = useState<number | null>(null)
 
-  // Debug: log first registration to check for duplicate data
-  console.log('First registration:', registrations[0])
-  if (registrations[0]) {
-    console.log('Course title:', JSON.stringify(registrations[0].course?.title))
-  }
-
   const handleMarkViewed = async (id: number) => {
     if (!onMarkViewed) return
     setMarkingViewed(id)
