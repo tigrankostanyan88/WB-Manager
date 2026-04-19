@@ -15,6 +15,7 @@ export function CourseRegistrationsTabWrapper({ allowed }: CourseRegistrationsTa
       isLoading={registrations.isLoading}
       isDeleting={registrations.isDeleting}
       onDelete={registrations.deleteRegistration}
+      onMarkViewed={registrations.markAsViewed}
     />
   )
 }

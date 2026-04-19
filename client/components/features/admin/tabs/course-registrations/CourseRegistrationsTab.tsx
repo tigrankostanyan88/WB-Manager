@@ -20,8 +20,8 @@ interface CourseRegistrationsTabProps {
   registrations: CourseRegistration[]
   isLoading: boolean
   isDeleting: number | null
-  onDelete: (id: number) => Promise<boolean>
-  onMarkViewed?: (id: number) => Promise<boolean>
+  onDelete: (id: number) => Promise<unknown>
+  onMarkViewed?: (id: number) => Promise<unknown>
 }
 
 export function CourseRegistrationsTab(props: CourseRegistrationsTabProps) {

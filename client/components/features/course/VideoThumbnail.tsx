@@ -135,12 +135,13 @@ export function VideoThumbnail({ videoUrl, time, className = '' }: VideoThumbnai
     )
   }
   
-  // Generated thumbnail
+  // Generated thumbnail (using img because thumbnail is a data URL, not an external image)
+  // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
   if (thumbnail) {
     return (
       <img 
         src={thumbnail} 
-        alt="Video thumbnail"
+        alt="Video thumbnail preview"
         className={`w-full h-full object-cover ${className}`}
         loading="eager"
       />
