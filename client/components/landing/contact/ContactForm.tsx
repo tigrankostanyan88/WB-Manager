@@ -11,6 +11,7 @@ export function ContactForm() {
     isSubmitting,
     submitStatus,
     errorMessage,
+    fieldErrors,
     setPrivacyAccepted,
     handleInputChange,
     handleSubmit
@@ -61,9 +62,12 @@ export function ContactForm() {
               value={formData.name}
               onChange={handleInputChange}
               disabled={isSubmitting || submitStatus === 'success'}
-              className="flex h-12 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/20 focus-visible:border-violet-400 focus-visible:bg-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+              className={`flex h-12 w-full rounded-xl border ${fieldErrors.name ? 'border-red-400 focus-visible:ring-red-500/20 focus-visible:border-red-400' : 'border-slate-200 focus-visible:ring-violet-500/20 focus-visible:border-violet-400'} bg-slate-50/50 px-4 py-3 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:bg-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200`}
               placeholder="Ձեր անունը"
             />
+            {fieldErrors.name && (
+              <p className="text-red-500 text-xs mt-1">{fieldErrors.name}</p>
+            )}
           </div>
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
@@ -76,9 +80,12 @@ export function ContactForm() {
               value={formData.email}
               onChange={handleInputChange}
               disabled={isSubmitting || submitStatus === 'success'}
-              className="flex h-12 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/20 focus-visible:border-violet-400 focus-visible:bg-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+              className={`flex h-12 w-full rounded-xl border ${fieldErrors.email ? 'border-red-400 focus-visible:ring-red-500/20 focus-visible:border-red-400' : 'border-slate-200 focus-visible:ring-violet-500/20 focus-visible:border-violet-400'} bg-slate-50/50 px-4 py-3 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:bg-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200`}
               placeholder="Ձեր էլ. փոստը"
             />
+            {fieldErrors.email && (
+              <p className="text-red-500 text-xs mt-1">{fieldErrors.email}</p>
+            )}
           </div>
         </div>
 
@@ -93,9 +100,12 @@ export function ContactForm() {
             value={formData.subject}
             onChange={handleInputChange}
             disabled={isSubmitting || submitStatus === 'success'}
-            className="flex h-12 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/20 focus-visible:border-violet-400 focus-visible:bg-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+            className={`flex h-12 w-full rounded-xl border ${fieldErrors.subject ? 'border-red-400 focus-visible:ring-red-500/20 focus-visible:border-red-400' : 'border-slate-200 focus-visible:ring-violet-500/20 focus-visible:border-violet-400'} bg-slate-50/50 px-4 py-3 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:bg-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200`}
             placeholder="Հաղորդագրության թեման"
           />
+          {fieldErrors.subject && (
+            <p className="text-red-500 text-xs mt-1">{fieldErrors.subject}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -108,9 +118,12 @@ export function ContactForm() {
             value={formData.message}
             onChange={handleInputChange}
             disabled={isSubmitting || submitStatus === 'success'}
-            className="flex min-h-[120px] w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/20 focus-visible:border-violet-400 focus-visible:bg-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-y"
+            className={`flex min-h-[120px] w-full rounded-xl border ${fieldErrors.message ? 'border-red-400 focus-visible:ring-red-500/20 focus-visible:border-red-400' : 'border-slate-200 focus-visible:ring-violet-500/20 focus-visible:border-violet-400'} bg-slate-50/50 px-4 py-3 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:bg-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-y`}
             placeholder="Գրեք ձեր հաղորդագրությունը այստեղ..."
           />
+          {fieldErrors.message && (
+            <p className="text-red-500 text-xs mt-1">{fieldErrors.message}</p>
+          )}
         </div>
 
         <div className="flex items-start gap-2 sm:gap-3 pt-2">
@@ -120,20 +133,30 @@ export function ContactForm() {
               name="privacy"
               type="checkbox"
               checked={privacyAccepted}
-              onChange={(e) => setPrivacyAccepted(e.target.checked)}
+              onChange={(e) => {
+                setPrivacyAccepted(e.target.checked)
+                if (fieldErrors.privacy) {
+                  // Clear privacy error when checked
+                }
+              }}
               disabled={isSubmitting || submitStatus === 'success'}
-              className="h-4 w-4 sm:h-5 sm:w-5 rounded-lg border-slate-300 text-violet-600 focus:ring-violet-500/20 transition duration-150 ease-in-out cursor-pointer"
+              className={`h-4 w-4 sm:h-5 sm:w-5 rounded-lg ${fieldErrors.privacy ? 'border-red-400' : 'border-slate-300'} text-violet-600 focus:ring-violet-500/20 transition duration-150 ease-in-out cursor-pointer`}
             />
           </div>
-          <label
-            htmlFor="privacy"
-            className="text-xs sm:text-sm text-slate-600 cursor-pointer select-none break-words leading-relaxed"
-          >
-            Ես համաձայն եմ{' '}
-            <span className="text-violet-600 hover:underline font-semibold">
-              գաղտնիության քաղաքականությանը
-            </span>
-          </label>
+          <div className="flex-1">
+            <label
+              htmlFor="privacy"
+              className="text-xs sm:text-sm text-slate-600 cursor-pointer select-none break-words leading-relaxed"
+            >
+              Ես համաձայն եմ{' '}
+              <span className="text-violet-600 hover:underline font-semibold">
+                գաղտնիության քաղաքականությանը
+              </span>
+            </label>
+            {fieldErrors.privacy && (
+              <p className="text-red-500 text-xs mt-1">{fieldErrors.privacy}</p>
+            )}
+          </div>
         </div>
 
         <div className="pt-2 sm:pt-3">

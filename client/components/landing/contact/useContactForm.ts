@@ -3,6 +3,7 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
+import { ContactFormSchema } from '@/lib/validation'
 import type { ContactFormData } from './types'
 
 const emptyForm: ContactFormData = {
@@ -18,29 +19,48 @@ export function useContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target
     setFormData(prev => ({ ...prev, [id]: value }))
+    // Clear field error when user types
+    if (fieldErrors[id]) {
+      setFieldErrors(prev => ({ ...prev, [id]: '' }))
+    }
   }
 
-  const validateForm = (): string => {
-    if (!formData.name.trim()) return 'Խնդրում ենք մուտքագրել ձեր անունը'
-    if (!formData.email.trim()) return 'Խնդրում ենք մուտքագրել ձեր էլ. փոստը'
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return 'Էլ. փոստի ձևաչափը սխալ է'
-    if (!formData.subject.trim()) return 'Խնդրում ենք մուտքագրել թեման'
-    if (!formData.message.trim()) return 'Խնդրում ենք մուտքագրել հաղորդագրությունը'
-    if (!privacyAccepted) return 'Խնդրում ենք համաձայնվել գաղտնիության քաղաքականությանը'
-    return ''
+  const validateForm = (): boolean => {
+    const result = ContactFormSchema.safeParse(formData)
+    
+    if (!result.success) {
+      const errors: Record<string, string> = {}
+      result.error.errors.forEach((err) => {
+        const field = err.path[0] as string
+        if (!errors[field]) {
+          errors[field] = err.message
+        }
+      })
+      setFieldErrors(errors)
+      return false
+    }
+    
+    // Check privacy separately
+    if (!privacyAccepted) {
+      setFieldErrors({ privacy: 'Խնդրում ենք համաձայնվել գաղտնիության քաղաքականությանը' })
+      return false
+    }
+    
+    setFieldErrors({})
+    return true
   }
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault()
 
-    const validationError = validateForm()
-    if (validationError) {
+    if (!validateForm()) {
       setSubmitStatus('error')
-      setErrorMessage(validationError)
+      setErrorMessage('Խնդրում ենք ուղղել սխալները ձևում')
       return
     }
 
@@ -63,6 +83,7 @@ export function useContactForm() {
       setSubmitStatus('success')
       setFormData(emptyForm)
       setPrivacyAccepted(false)
+      setFieldErrors({})
     } catch (err) {
       setSubmitStatus('error')
       setErrorMessage(err instanceof Error ? err.message : 'Անհայտ սխալ է տեղի ունեցել')
@@ -76,6 +97,7 @@ export function useContactForm() {
     setPrivacyAccepted(false)
     setSubmitStatus('idle')
     setErrorMessage('')
+    setFieldErrors({})
   }
 
   return {
@@ -84,6 +106,7 @@ export function useContactForm() {
     isSubmitting,
     submitStatus,
     errorMessage,
+    fieldErrors,
     setPrivacyAccepted,
     handleInputChange,
     handleSubmit,
