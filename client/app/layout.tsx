@@ -1,6 +1,6 @@
 import './globals.css'
 import type { Metadata, Viewport } from 'next'
-import { Inter, Noto_Sans_Armenian } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import { ReactNode } from 'react'
 import { ConfirmProvider } from '@/components/providers/ConfirmProvider'
 import { QueryProvider } from '@/components/providers/QueryProvider'
@@ -17,7 +17,6 @@ import { ToastProvider } from '@/components/providers/ToastProvider'
 import { HeaderWrapper } from '@/components/layout/HeaderWrapper'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-const notoArmenian = Noto_Sans_Armenian({ subsets: ['armenian'], variable: '--font-armenian', weight: ['400', '500', '600', '700'] })
 
 export async function generateMetadata(): Promise<Metadata> {
   let title = 'AI Tools SaaS'
@@ -79,7 +78,7 @@ async function getSettings() {
 
 async function getUser() {
   try {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const token = cookieStore.get('jwt')?.value
     if (!token) return null
 
@@ -134,8 +133,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   }
 
   return (
-    <html lang="hy" suppressHydrationWarning style={{ backgroundColor: '#ffffff' }} className={`${inter.variable} ${notoArmenian.variable}`}>
-      <body className={`${inter.variable} ${notoArmenian.variable} font-sans pt-16`}>
+    <html lang="hy" suppressHydrationWarning style={{ backgroundColor: '#ffffff' }} className={`${inter.variable}`}>
+      <body className={`${inter.variable} font-sans pt-16`}>
         <LenisProvider>
           <QueryProvider>
             <AuthProvider initialUser={user as User | null}>

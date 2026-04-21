@@ -48,11 +48,24 @@ function buildAvatar(user: User | null): string {
   return ''
 }
 
+// Helper to check if JWT cookie exists
+function hasJwtCookie(): boolean {
+  if (typeof document === 'undefined') return false
+  return document.cookie.split(';').some(c => c.trim().startsWith('jwt='))
+}
+
 export function AuthProvider({ children, initialUser = null }: { children: ReactNode; initialUser?: User | null }) {
   const [user, setUserState] = useState<User | null>(initialUser)
   const [isLoaded, setIsLoaded] = useState(!!initialUser)
 
   const fetchUser = useCallback(async () => {
+    // Skip API call if no JWT cookie (prevents 401 console error)
+    if (!hasJwtCookie()) {
+      setUserState(null)
+      setIsLoaded(true)
+      return
+    }
+    
     try {
       const res = await userService.getMe()
       const u = res.data.user
@@ -61,11 +74,13 @@ export function AuthProvider({ children, initialUser = null }: { children: React
     } catch (err) {
       const axiosError = err as { response?: { status?: number } }
       if (axiosError.response?.status === 401) {
-        // Unauthorized - clear session
+        // Unauthorized - clear session (expected when logged out)
         setUserState(null)
-      }
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to fetch user:', err)
+      } else {
+        // Only log non-401 errors
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to fetch user:', err)
+        }
       }
     } finally {
       setIsLoaded(true)
@@ -121,7 +136,7 @@ export function AuthProvider({ children, initialUser = null }: { children: React
     if (typeof window === 'undefined') return
     
     const checkSession = async () => {
-      if (!userRef.current) return
+      if (!userRef.current || !hasJwtCookie()) return
       
       try {
         const res = await userService.getMe()

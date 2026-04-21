@@ -36,12 +36,8 @@ api.interceptors.response.use(
       
       switch (status) {
         case 401:
-          // Unauthorized - clear localStorage tokens for security
-          // BUT don't redirect - let the auth context handle that via focus event
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-          }
+          // Unauthorized - normal when logged out
+          // Let the auth context handle session state
           break;
           
         case 403:
