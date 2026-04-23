@@ -10,16 +10,31 @@ import {
   Users,
   Video,
 } from 'lucide-react'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 export function ImpactSection() {
+  const reduceMotion = useReducedMotion()
+
+  // Animation props - disabled on mobile
+  const fadeInUp = reduceMotion ? {} : {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.6 }
+  }
+
+  const fadeInUpDelayed = reduceMotion ? {} : {
+    initial: { opacity: 0, y: 30 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.6, delay: 0.2 }
+  }
+
   return (
     <section id="impact" className="w-full py-20 md:py-32">
       <div className="container px-4 md:px-6">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          {...fadeInUp}
           className="flex flex-col items-center text-center space-y-4 mb-16"
         >
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tighter lg:text-5xl px-4 sm:px-0">
@@ -31,10 +46,7 @@ export function ImpactSection() {
         </motion.div>
 
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          {...fadeInUpDelayed}
           className="grid gap-6"
         >
           <div className="grid md:grid-cols-3 gap-6">

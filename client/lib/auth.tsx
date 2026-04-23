@@ -21,7 +21,7 @@ export interface User {
   isPaid?: boolean
   files?: UserFile[]
   course_ids?: (string | number)[]
-  [key: string]: unknown // Allow additional fields for compatibility
+  [key: string]: unknown
 }
 
 interface AuthContextType {

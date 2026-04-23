@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { CheckCircle, Users, TrendingUp, Clock, HeadphonesIcon, Award, Sparkles } from 'lucide-react'
 import type { Instructor, InstructorStat } from '@/types/domain'
 import DOMPurify from 'isomorphic-dompurify'
@@ -33,16 +34,22 @@ export function InstructorSection({ instructor }: InstructorSectionProps) {
   const safeInstructor = instructor ?? { name: '', stats: [] }
   const stats = safeInstructor.stats?.length ? safeInstructor.stats : DEFAULT_STATS
   const displayStats = stats.slice(0, 4)
+  const reduceMotion = useReducedMotion()
+
+  // Animation props - disabled on mobile
+  const fadeInUp = reduceMotion ? {} : {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.6 }
+  }
 
   return (
     <section id="instructor" className="w-full py-16 md:py-24 bg-gradient-to-b from-white via-violet-50/30 to-white">
       <div className="container px-4 md:px-6">
         {/* Header */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          {...fadeInUp}
           className="text-center mb-12"
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-100 to-fuchsia-100 text-violet-700 px-5 py-2 rounded-full text-sm font-bold mb-4 shadow-sm">

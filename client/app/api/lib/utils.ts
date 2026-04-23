@@ -6,8 +6,8 @@ export async function withAuth(
   handler: (token: string) => Promise<NextResponse>
 ): Promise<NextResponse> {
   try {
-    const cookieStore = cookies()
-    const token = cookieStore.get('token')?.value
+    const cookieStore = await cookies()
+    const token = cookieStore.get('jwt')?.value
 
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
@@ -29,7 +29,7 @@ export async function forwardToBackend(
       ...options,
       headers: {
         ...options?.headers,
-        'Cookie': `token=${token}`
+        'Cookie': `jwt=${token}`
       }
     })
 

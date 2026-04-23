@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import CourseRegistrationModal from '@/components/modals/CourseRegistrationModal'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 import {
   FileSpreadsheet,
   ShoppingBag,
@@ -46,16 +47,22 @@ const FEATURES = [
 
 export function CurriculumSection() {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const reduceMotion = useReducedMotion()
+
+  // Animation props - disabled on mobile
+  const fadeInUp = reduceMotion ? {} : {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.6 }
+  }
 
   return (
     <section id="curriculum" className="w-full py-24 bg-slate-950 text-slate-50 relative overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          {...fadeInUp}
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6">

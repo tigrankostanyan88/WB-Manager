@@ -8,13 +8,30 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { useFaqQuery } from '@/hooks/queries/useFaqQuery'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 export function FaqSection() {
   const { data: faqs, isLoading } = useFaqQuery()
+  const reduceMotion = useReducedMotion()
 
   // Don't render if no FAQ data or still loading
   if (isLoading || !faqs || faqs.length === 0) {
     return null
+  }
+
+  // Animation props - disabled on mobile
+  const fadeInUp = reduceMotion ? {} : {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.6 }
+  }
+
+  const fadeInUpDelayed = reduceMotion ? {} : {
+    initial: { opacity: 0, y: 30 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.6, delay: 0.2 }
   }
 
   return (
@@ -26,10 +43,7 @@ export function FaqSection() {
 
       <div className="container relative z-10 max-w-4xl">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          {...fadeInUp}
           className="text-center space-y-4 mb-16"
         >
           <h2 className="text-4xl font-extrabold tracking-tight sm:text-5xl text-slate-900">
@@ -41,10 +55,7 @@ export function FaqSection() {
         </motion.div>
 
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          {...fadeInUpDelayed}
           className="space-y-4"
         >
           <Accordion type="single" collapsible className="space-y-4">

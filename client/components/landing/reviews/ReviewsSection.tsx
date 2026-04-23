@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import api from '@/lib/api'
 import { motion } from 'framer-motion'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { RatingOverview } from './RatingOverview'
 import { ReviewsSlider } from './ReviewsSlider'
 import type { Review, RatingCount } from './types'
@@ -50,6 +51,14 @@ export function ReviewsSection() {
   }, [])
 
   const { averageRating, ratingCounts } = useMemo(() => calculateStats(reviews), [reviews])
+  const reduceMotion = useReducedMotion()
+
+  // Animation props - disabled on mobile
+  const fadeInUp = reduceMotion ? {} : {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true }
+  }
 
   if (isLoading) {
     return (
@@ -84,9 +93,7 @@ export function ReviewsSection() {
 
       <div className="container relative z-10 px-4 md:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          {...fadeInUp}
           className="w-full"
         >
           {/* Header */}

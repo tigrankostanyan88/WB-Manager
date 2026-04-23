@@ -19,8 +19,11 @@ import { HeaderWrapper } from '@/components/layout/HeaderWrapper'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export async function generateMetadata(): Promise<Metadata> {
-  let title = 'AI Tools SaaS'
+  let title = 'Savaa - Արագ AI ծառայություններ հայերենով'
+  let description = 'Savaa - անհատական և բիզնես AI լուծումներ հայերենով։ Արհեստական բանականության գործիքներ, ավտոմատացում և թվային տրանսֆորմացիա։'
   let icons: Metadata['icons'] = undefined
+  let ogImage: string | null = null
+  
   try {
     const base = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
     const origin = /^https?:\/\//.test(base) ? base.replace(/\/api\/?$/, '') : base
@@ -34,15 +37,48 @@ export async function generateMetadata(): Promise<Metadata> {
             ? data.settings.logo 
             : `${origin}${data.settings.logo}`
           icons = { icon: url }
+          ogImage = url
         }
       }
     }
   } catch {}
 
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.savaa.am'
+  
   return {
-    title,
-    description: 'Production-ready AI Tools SaaS with Next.js 14',
+    title: {
+      default: title,
+      template: `%s | ${title}`
+    },
+    description,
     icons,
+    metadataBase: new URL(siteUrl),
+    openGraph: {
+      type: 'website',
+      locale: 'hy_AM',
+      url: siteUrl,
+      siteName: title,
+      title,
+      description,
+      images: ogImage ? [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: title,
+        }
+      ] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+    alternates: {
+      canonical: siteUrl,
+    },
+    keywords: ['AI', 'արագ', 'հայերեն', 'ավտոմատացում', 'Savaa', 'արհեստական բանականություն', 'թվային', 'ծառայություն'],
   }
 }
 

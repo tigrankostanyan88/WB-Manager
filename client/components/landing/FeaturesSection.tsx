@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { TrendingUp, Shield, Zap, BarChart3, Package, CreditCard } from 'lucide-react'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -15,14 +16,28 @@ const containerVariants = {
 }
 
 export function FeaturesSection() {
+  const reduceMotion = useReducedMotion()
+
+  // Animation props - disabled on mobile
+  const fadeInUp = reduceMotion ? {} : {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.6 }
+  }
+
+  const staggerContainer = reduceMotion ? {} : {
+    variants: containerVariants,
+    initial: "hidden",
+    whileInView: "visible",
+    viewport: { once: true }
+  }
+
   return (
     <section id="features" className="w-full py-16 md:py-24 lg:py-32 bg-gradient-to-b from-white via-slate-50/50 to-white">
       <div className="container px-4 md:px-6">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          {...fadeInUp}
           className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
         >
           <div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 px-4 py-2 rounded-full text-sm font-bold mb-4">
@@ -38,10 +53,7 @@ export function FeaturesSection() {
         </motion.div>
 
         <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
+          {...staggerContainer}
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
           {/* Column 1 */}

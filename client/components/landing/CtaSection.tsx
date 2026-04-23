@@ -3,16 +3,24 @@
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 export function CtaSection() {
+  const reduceMotion = useReducedMotion()
+
+  // Animation props - disabled on mobile
+  const fadeInUp = reduceMotion ? {} : {
+    initial: { opacity: 0, y: 30 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.7, ease: [0.4, 0, 0.2, 1] as const }
+  }
+
   return (
     <section id="cta" className="w-full py-12 sm:py-16 md:py-24 lg:py-32 bg-slate-50">
       <div className="container px-4 sm:px-6">
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          {...fadeInUp}
           className="relative overflow-hidden rounded-3xl sm:rounded-[2.5rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/30 ring-1 ring-slate-800 px-4 sm:px-6 py-10 sm:py-14 md:px-12 md:py-20 text-center"
         >
           {/* Animated gradient background */}
