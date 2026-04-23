@@ -42,7 +42,9 @@ function buildAvatar(user: User | null): string {
     const avatarFile = user.files.find((f) => f?.name_used === 'user_img') ?? user.files[0]
     if (avatarFile?.name && avatarFile?.ext) {
       const table = avatarFile.table_name || 'users'
-      return `/api/images/${table}/large/${avatarFile.name}.${avatarFile.ext}`
+      // ext already includes the leading dot from backend (e.g., '.jpg')
+      const extWithDot = avatarFile.ext.startsWith('.') ? avatarFile.ext : `.${avatarFile.ext}`
+      return `/images/${table}/large/${avatarFile.name}${extWithDot}`
     }
   }
   return ''

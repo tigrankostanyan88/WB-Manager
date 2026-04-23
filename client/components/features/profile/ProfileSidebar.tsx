@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { Camera, LogOut, User as UserIcon, type LucideIcon } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 interface SidebarLink {
   id: string
@@ -29,19 +29,30 @@ interface SidebarUser {
 }
 
 // Type guard for avatar/files access
-function getAvatarFromUser(user: SidebarUser | null): string {
+function getAvatarFromUser(user: SidebarUser | null, cacheBust?: number): string {
   if (!user) return ''
   
   if (typeof user.avatar === 'string' && user.avatar) {
+    // Add cache-busting if avatar doesn't already have it
+    if (cacheBust && !user.avatar.includes('?t=')) {
+      return `${user.avatar}?t=${cacheBust}`
+    }
     return user.avatar
   }
   
   const files = Array.isArray(user.files) ? user.files : []
   const fileObj =
     files.find((x) => x.name_used === 'user_img') || files[0]
-  if (!fileObj) return ''
+  if (!fileObj || !fileObj.name) return ''
   const table = fileObj.table_name || 'users'
-  const path = `/images/${table}/large/${fileObj.name}.${fileObj.ext}`
+  // ext already includes the leading dot from backend (e.g., '.jpg')
+  const ext = fileObj.ext || ''
+  const extWithDot = ext.startsWith('.') ? ext : `.${ext}`
+  let path = `/images/${table}/large/${fileObj.name}${extWithDot}`
+  // Add cache-busting to prevent stale cached images
+  if (cacheBust) {
+    path += `?t=${cacheBust}`
+  }
   return path
 }
 
@@ -74,7 +85,10 @@ export function ProfileSidebar({
     e.target.value = ''
   }, [onAvatarUpload])
 
-  const avatarUrl = avatarPreview || getAvatarFromUser(user)
+  // Generate cache-busting timestamp on mount to prevent stale images
+  const cacheBust = useMemo(() => Date.now(), [user?.files?.length])
+  
+  const avatarUrl = avatarPreview || getAvatarFromUser(user, cacheBust)
 
   return (
     <aside className="w-full lg:w-72 flex-shrink-0 self-start">

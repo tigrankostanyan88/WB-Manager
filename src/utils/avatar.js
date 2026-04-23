@@ -12,7 +12,9 @@ function buildAvatarUrl(userData) {
     
     if (avatarFile?.name && avatarFile?.ext) {
         const table = avatarFile.table_name || 'users';
-        return `/images/${table}/large/${avatarFile.name}.${avatarFile.ext}`;
+        // ext already includes the leading dot from backend (e.g., '.jpg')
+        const extWithDot = avatarFile.ext.startsWith('.') ? avatarFile.ext : `.${avatarFile.ext}`;
+        return `/images/${table}/large/${avatarFile.name}${extWithDot}`;
     }
     
     return '';
@@ -43,6 +45,13 @@ function sanitizeUser(user) {
     if (!user) return null;
     
     const userData = user.toJSON ? user.toJSON() : { ...user };
+    
+    // Include files from the original user object if not in toJSON result
+    if (user.files && !userData.files) {
+        userData.files = Array.isArray(user.files) 
+            ? user.files.map(f => f.toJSON ? f.toJSON() : f)
+            : user.files;
+    }
     
     // Remove sensitive fields
     delete userData.password;

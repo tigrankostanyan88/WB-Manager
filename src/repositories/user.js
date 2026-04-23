@@ -19,7 +19,11 @@ module.exports = {
   // File-related queries
   findAvatarFileForUser: async (userId) => File.findOne({ where: { row_id: userId, name_used: 'user_img' } }),
   
+  findAllFilesForUser: async (userId) => File.findAll({ where: { row_id: userId } }),
+  
   destroyFileById: async (id) => File.destroy({ where: { id }, individualHooks: true }),
+  
+  destroyAllFilesForUser: async (userId) => File.destroy({ where: { row_id: userId }, individualHooks: true }),
   
   // Find all users excluding certain roles
   findAllExcludingRoles: async (excludeRoles = []) => {

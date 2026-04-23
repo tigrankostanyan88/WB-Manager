@@ -1,7 +1,4 @@
 
-const redis = require('./redisClient');
-const AppError = require('./appError');
-
 // Simple in-memory metrics store (flushed to logs periodically or on request)
 const metrics = {
     cache: {

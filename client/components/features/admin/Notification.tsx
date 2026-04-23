@@ -47,7 +47,7 @@ export interface NotificationContainerProps {
 
 export function NotificationContainer({ notifications, onRemove }: NotificationContainerProps) {
   return (
-    <div className="fixed top-5 right-5 z-[200] flex flex-col gap-2">
+    <div className="fixed top-24 right-5 z-[9999] flex flex-col gap-2">
       <AnimatePresence mode="popLayout">
         {notifications.map((notification) => (
           <motion.div

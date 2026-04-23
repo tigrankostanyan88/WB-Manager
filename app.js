@@ -1,5 +1,5 @@
 const path = require('path');
-process.env.UV_THREADPOOL_SIZE = 128;
+process.env.UV_THREADPOOL_SIZE = 12;
 
 const dotenv = require('dotenv');
 const crypto = require('crypto');
@@ -9,52 +9,37 @@ const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const fileUpload = require('express-fileupload');
 const rateLimit = require('express-rate-limit');
-const cors = require('cors');
 
-// Load env vars
 if (process.env.NODE_ENV !== 'production') dotenv.config({ path: './.env' });
+
+// SECURITY MODULES
+const security = require('./src/security');
 
 const Server = require('./src/utils/server');
 const Api = require('./src/utils/api');
 const ctrls = require('./src/controllers');
 const globalErrorHandler = ctrls.error;
+const metrics = require('./src/utils/metrics');
 const AppError = require('./src/utils/appError');
 const DB = require('./src/models');
-const config = require('./src/config/app.config');
-const { Settings } = DB.models;
+const { Contact } = DB.models;
 
 const app = express();
-// Security:
 app.disable('x-powered-by');
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      const allowedOrigins = [
-        process.env.CLIENT_ORIGIN,
-        ...(process.env.NODE_ENV !== 'production' ? [
-          'http://localhost:3000',
-          'http://localhost:3001'
-        ] : [])
-      ].filter(Boolean);
-      
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error(`Origin ${origin} not allowed by CORS`));
-    },
-    credentials: true
-  })
-);
+// 0. TRUST PROXY (Secure Configuration)
+app.set('trust proxy', security.trustProxy());
 
-// EJS view engine
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+// 1. HELMET (Security Headers - Comprehensive)
+app.use(security.helmet);
 
-// Gzip compression
-app.set('trust proxy', 1);
+// 2. CORS (Cross-Origin Resource Sharing)
+app.use(security.cors);
+app.use(security.corsErrorHandler);
+
+// 3. COMPRESSION (gzip)
 app.use(compression({
-  level: config.COMPRESSION.LEVEL, 
+  level: 6, // Default level is better for TTFB (speed)
   threshold: 0,
   filter: (req, res) => {
     if (req.headers['x-no-compression']) {
@@ -64,96 +49,102 @@ app.use(compression({
   }
 }));
 
-
-// Static files with caching
+// 4. STATIC FILES
 const staticOptions = {
   etag: true,
-  maxAge: config.CACHE.STATIC_MAX_AGE,
+  maxAge: '1y',
   immutable: true,
-  setHeaders: (res, path) => {
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    // Video file CORS headers
-    if (path.endsWith('.mp4') || path.endsWith('.webm') || path.endsWith('.mov')) {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD');
-      res.setHeader('Access-Control-Allow-Headers', 'Range');
-      res.setHeader('Accept-Ranges', 'bytes');
-    }
-  }
+  setHeaders: res => res.setHeader('X-Content-Type-Options', 'nosniff')
 };
 
 app.use('/admin', express.static(path.join(__dirname, 'public', 'admin'), staticOptions));
 app.use(express.static(path.join(__dirname, 'public'), staticOptions));
-app.use('/api/images', express.static(path.join(__dirname, 'public', 'images'), staticOptions));
-app.use('/api/files', express.static(path.join(__dirname, 'public', 'files'), staticOptions));
-app.use('/files', express.static(path.join(__dirname, 'public', 'files'), staticOptions));
-app.use('/files/hero_content', express.static(path.join(__dirname, 'public', 'files', 'hero_content'), staticOptions));
-app.use('/files/modules', express.static(path.join(__dirname, 'public', 'files', 'modules'), staticOptions));
 
+// 5. METRICS
+app.use(metrics.middleware);
 
-// Body parsers with limits
-app.use(express.json({ limit: config.UPLOAD.MAX_BODY_SIZE }));
-app.use(express.urlencoded({ extended: true, limit: config.UPLOAD.MAX_BODY_SIZE }));
+// 6. BODY PARSERS
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
-// Cookie parser
-app.set('etag', 'strong'); 
+// 7. DATA SANITIZATION (NoSQL injection & XSS prevention)
+app.use(security.mongoSanitize);
+app.use(security.xss);
+app.use(security.hpp);
+app.use(security.sanitizeBody);
+app.use(security.preventPrototypePollution);
+
+// 8. Enable Etags for views
+app.set('etag', 'strong');
 app.use(cookieParser());
-app.use(fileUpload({ limits: { fileSize: config.UPLOAD.MAX_FILE_SIZE }}));
 
-// Auth middleware
-const authService = require('./src/services/auth');
-app.use(authService.isLoggedIn);
+// 8.5. METHOD OVERRIDE (for HTML forms to use PATCH/DELETE)
+app.use(require('method-override')('_method'));
 
+// 9. CSRF TOKEN GENERATION (After cookie parser, before routes)
+app.use(security.generateCsrfToken);
 
-// Logging
+app.use(fileUpload({ limits: { fileSize: 10 * 1024 * 1024 }}));
+
+// VIEW ENGINE
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// LOGGING
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
-// Rate limiting
-
+// RATE LIMIT (API ONLY)
 const limiter = rateLimit({
-  max: config.RATE_LIMIT.GENERAL_MAX,
-  windowMs: config.RATE_LIMIT.GENERAL_WINDOW_MS,
+  max: 5000,
+  windowMs: 60 * 60 * 1000,
   message: 'Այս IP-ից չափազանց շատ հարցումներ են ուղարկվել, խնդրում ենք կրկին փորձել մեկ ժամից։'
 });
 
 const authLimiter = rateLimit({
-  max: config.RATE_LIMIT.AUTH_MAX,
-  windowMs: config.RATE_LIMIT.AUTH_WINDOW_MS,
+  max: 100,
+  windowMs: 60 * 1000, // 1 minute
   message: { message: 'Այս IP-ից մուտք գործելու չափազանց շատ փորձեր կան, խնդրում ենք կրկին փորձել մեկ ժամից։' }
 });
 
 const readLimiter = rateLimit({
-  max: config.RATE_LIMIT.READ_MAX, 
-  windowMs: config.RATE_LIMIT.READ_WINDOW_MS,
-  message: { message: 'Չափազանց շատ ընթերցման հարցումներ կան, խնդրում ենք կրկին փորձել մեկ րոպեից։' }
+  max: 5000, 
+  windowMs: 60 * 1000,
+  message: { message: 'Չափազանց շատ ընթերցման հարցումներ կան, խնդրում ենք կրկին փորձել մեկ ժամից։' }
 });
 
-app.use('/api/v1/users/signIn', authLimiter);
+// Apply limiters
+app.use('/api/v1/users/login', authLimiter);
 app.use('/api/v1/tests', readLimiter); 
 app.use('/api', limiter);
 
-// Request timing
+// REQUEST TIME
 app.use((req, res, next) => {
   req.time = Date.now();
   next();
 });
 
-// Disable API caching
+// CACHE CONTROL
 app.use((req, res, next) => {
   if (req.originalUrl.startsWith('/api')) res.set('Cache-Control', 'no-store');
   next();
 });
 
-// Routes
+
+// 10. REQUEST TIMEOUT (Prevent Slowloris attacks)
+app.use(security.timeoutHandler);
+app.use(security.timeoutErrorHandler);
+
+// API ROUTES
 Api(app);
 
-// 404 handler
-app.all('*', async (req, res, next) => {
-  if (req.originalUrl.startsWith('/api')) {
-    return next(new AppError(`Հնարավոր չէ գտնել ${req.originalUrl}-ը այս սերվերի վրա!`, 404));
-  }
+// 11. CSRF ERROR HANDLER (Must be after routes)
+app.use(security.csrfErrorHandler);
 
-  const settings = await Settings.findOne();
+// 404 HANDLER
+app.all('*', async (req, res, next) => {
+  if (req.originalUrl.startsWith('/api')) return next(new AppError(`Հնարավոր չէ գտնել ${req.originalUrl}-ը այս սերվերի վրա!`, 404));
+
+  const contact = await Contact.findOne();
   const url = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
 
   res.status(404).render('./notFount/404', {
@@ -163,12 +154,12 @@ app.all('*', async (req, res, next) => {
     og_image: './images/404.jpg',
     nav_active: '404',
     page: req.path,
-    contact: settings
+    contact
   });
 });
 
-// Global error handler
+// GLOBAL ERROR HANDLER
 app.use(globalErrorHandler);
 
-// Start
-Server(app);
+// START SERVER
+Server(app); 

@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { USERS_ALL_KEY, USERS_TTL } = require('../constants/cache');
 const cache = require('../utils/cache');
 const AppError = require('../utils/appError');
@@ -60,8 +61,6 @@ async function updateUser(id, body, files) {
       }
   }
 
-  // Handle course_ids array - add or remove course IDs
-  // Support both snake_case (course_ids) and camelCase (courseIds) from frontend
   const courseIdsFromBody = body.course_ids !== undefined ? body.course_ids : body.courseIds;
   
   if (courseIdsFromBody !== undefined) {
@@ -156,7 +155,9 @@ async function updateMe(currentUserId, body, files) {
     await user.createFile(img.table);
   }
   
-  return repo.findById(user.id);
+  // Fetch fresh user with files included
+  const updatedUser = await repo.findById(user.id);
+  return updatedUser;
 }
 
 async function deleteUser(id) {
@@ -193,6 +194,34 @@ async function restoreUser(id) {
 async function permanentDeleteUser(id) {
   const user = await repo.findById(id);
   if (!user) throw new AppError('Օգտատերը չի գտնվել:', 404);
+  
+  // Get all user files first
+  const userFiles = await repo.findAllFilesForUser(id);
+  
+  // Delete physical files from filesystem
+  for (const file of userFiles) {
+    const media = file.type ? file.type.split("/")[0] : null;
+    try {
+      if (media === "image") {
+        const imageSizes = ["large", "small"];
+        const baseFilePath = `./public/images/users`;
+        for (const size of imageSizes) {
+          const filePath = `${baseFilePath}/${size}/${file.name}.${file.ext}`;
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+        }
+      } else {
+        const filePath = `./public/files/users/${file.name}${file.ext}`;
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      }
+    } catch (err) {
+      console.error(`Error deleting file ${file.name}:`, err);
+    }
+  }
+  
+  // Delete all file records from database
+  await repo.destroyAllFilesForUser(id);
   
   // Delete user's reviews first to avoid foreign key constraint errors
   const { Review } = DB.models;

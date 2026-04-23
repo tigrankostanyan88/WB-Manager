@@ -35,10 +35,12 @@ function getAvatarUrl(user: UserWithAvatar | null): string {
   
   const files = Array.isArray(user.files) ? user.files : []
   const fileObj = files.find((x) => x.name_used === 'user_img') || files[0]
-  if (!fileObj) return ''
+  if (!fileObj || !fileObj.name || !fileObj.ext) return ''
   
   const table = fileObj.table_name || 'users'
-  return `/images/${table}/large/${fileObj.name}.${fileObj.ext}`
+  // ext already includes the leading dot from backend (e.g., '.jpg')
+  const extWithDot = fileObj.ext.startsWith('.') ? fileObj.ext : `.${fileObj.ext}`
+  return `/images/${table}/large/${fileObj.name}${extWithDot}`
 }
 
 export function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onMobileLinkClick }: HeaderActionsProps) {

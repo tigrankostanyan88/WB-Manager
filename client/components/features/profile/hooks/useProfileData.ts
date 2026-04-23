@@ -153,7 +153,9 @@ export function useProfileData({ authUser, isLoaded }: UseProfileDataParams) {
     if (Array.isArray(u.files) && u.files.length) {
       const f = u.files.find((x: UserFile) => x.name_used === 'user_img') || u.files[0]
       if (f && f.name && f.ext) {
-        const path = `/images/${f.table_name || 'users'}/large/${f.name}.${f.ext}`
+        // ext already includes the leading dot from backend (e.g., '.jpg')
+        const extWithDot = f.ext.startsWith('.') ? f.ext : `.${f.ext}`
+        const path = `/images/${f.table_name || 'users'}/large/${f.name}${extWithDot}`
         const apiBase = process.env.NEXT_PUBLIC_API_URL || '/api'
         const withOrigin = (p: string) => {
           if (/^https?:\/\//i.test(apiBase)) {

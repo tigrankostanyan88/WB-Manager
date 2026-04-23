@@ -1,4 +1,5 @@
 import api, { userService } from '@/lib/api'
+import { withOrigin } from '@/lib/utils/avatar'
 import type { ChangeEvent, FormEvent } from 'react'
 import { useState } from 'react'
 import type { ProfileUser } from './useProfileData'
@@ -91,22 +92,14 @@ export function useProfileSettings({
       const u = ((res.data as { user?: unknown })?.user || {}) as ProfileUser
       let avatar = u.avatar
 
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || '/api'
-      const withOrigin = (path: string) => {
-        if (/^https?:\/\//i.test(apiBase)) {
-          const origin = apiBase.replace(/\/api.*$/, '')
-          return `${origin}${path}`
-        }
-        const prefix = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase
-        return `${prefix}${path}`
-      }
-
       if (typeof avatar === 'string' && avatar && /^\/[^/]/.test(avatar)) {
         avatar = `${withOrigin(avatar)}?t=${Date.now()}`
       } else if ((!avatar || typeof avatar !== 'string') && u.files && Array.isArray(u.files) && u.files.length) {
         const f = u.files.find((x) => x.name_used === 'user_img') || u.files[0]
         if (f && f.name && f.ext) {
-          const p = `/images/${f.table_name || 'users'}/large/${f.name}.${f.ext}`
+          // ext already includes the leading dot from backend (e.g., '.jpg')
+          const extWithDot = f.ext.startsWith('.') ? f.ext : `.${f.ext}`
+          const p = `/images/${f.table_name || 'users'}/large/${f.name}${extWithDot}`
           avatar = `${withOrigin(p)}?t=${Date.now()}`
         }
       }

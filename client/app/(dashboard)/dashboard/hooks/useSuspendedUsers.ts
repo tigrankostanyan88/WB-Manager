@@ -53,6 +53,8 @@ export function useSuspendedUsers(
   const handlePermanentDelete = useCallback(async (id: number | string) => {
     try {
       await userService.permanentDeleteUser(id)
+      // Remove user from local state immediately
+      setSuspendedUsers(prev => prev.filter(user => user.id !== id))
       showToast('Օգտատերը ընդմիշտ ջնջվեց', 'success')
     } catch {
       showToast('Ջնջումը ձախողվեց', 'error')
@@ -62,6 +64,8 @@ export function useSuspendedUsers(
   const handleBulkDelete = useCallback(async (ids: (number | string)[]) => {
     try {
       await Promise.all(ids.map(id => userService.permanentDeleteUser(id)))
+      // Remove deleted users from local state immediately
+      setSuspendedUsers(prev => prev.filter(user => !ids.includes(user.id)))
       showToast(`${ids.length} օգտատեր ընդմիշտ ջնջվեց`, 'success')
     } catch {
       showToast('Կապակցված ջնջումը ձախողվեց', 'error')
