@@ -1,6 +1,6 @@
 // modals/auth/SignUpForm.tsx - Sign up form component
 
-import { Mail, Lock, User as UserIcon, Phone, MapPin, Loader2 } from 'lucide-react'
+import { Mail, Lock, User as UserIcon, Phone, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import type { AuthFormData } from './types'
@@ -67,26 +67,6 @@ export function SignUpForm({
               <p className="text-red-500 text-xs mt-1 ml-1">{fieldErrors.phone}</p>
             )}
           </div>
-        </div>
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-          Հասցե
-        </label>
-        <div className="relative">
-          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
-            name="address"
-            value={formData.address}
-            onChange={onInputChange}
-            type="text"
-            placeholder="ք. Երևան, Աբովյան 1"
-            className={`w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border ${fieldErrors.address ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-violet-500 focus:ring-violet-500/10'} focus:ring-4 outline-none transition-all placeholder:text-slate-300 text-slate-700 font-medium`}
-          />
-          {fieldErrors.address && (
-            <p className="text-red-500 text-xs mt-1 ml-1">{fieldErrors.address}</p>
-          )}
         </div>
       </div>
 

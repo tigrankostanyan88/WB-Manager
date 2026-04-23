@@ -7,7 +7,8 @@ import { Menu, X } from 'lucide-react'
 import CourseRegistrationModal from '@/components/modals/CourseRegistrationModal'
 import { RegistrationModal } from '@/components/modals'
 import { cn } from '@/lib/utils'
-import { useSettings } from '@/context/SettingsContext' // moved from lib
+import { useSettings } from '@/context/SettingsContext'
+import { useAuth } from '@/lib/auth'
 import { HeaderActions } from './HeaderActions'
 
 export function Header({ forceWhiteBackground = false }: { forceWhiteBackground?: boolean }) {
@@ -16,6 +17,17 @@ export function Header({ forceWhiteBackground = false }: { forceWhiteBackground?
   const [isCourseModalOpen, setIsCourseModalOpen] = useState(false)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const { settings } = useSettings()
+  const { isLoggedIn, isLoaded } = useAuth()
+  
+  // Prevent opening login modal if user is already logged in
+  const handleOpenLoginModal = () => {
+    if (isLoaded && isLoggedIn) {
+      // User is logged in, redirect to profile instead
+      window.location.href = '/profile'
+      return
+    }
+    setIsLoginModalOpen(true)
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -86,7 +98,7 @@ export function Header({ forceWhiteBackground = false }: { forceWhiteBackground?
             {/* Actions */}
             <div className="hidden md:flex items-center gap-4">
               <HeaderActions 
-                onOpenLoginModal={() => setIsLoginModalOpen(true)} 
+                onOpenLoginModal={handleOpenLoginModal} 
                 onOpenCourseModal={() => setIsCourseModalOpen(true)} 
               />
             </div>
@@ -119,7 +131,7 @@ export function Header({ forceWhiteBackground = false }: { forceWhiteBackground?
                   <hr className="border-slate-50" />
                   <HeaderActions 
                     mobile 
-                    onOpenLoginModal={() => setIsLoginModalOpen(true)} 
+                    onOpenLoginModal={handleOpenLoginModal} 
                     onOpenCourseModal={() => setIsCourseModalOpen(true)} 
                     onMobileLinkClick={() => setIsMobileMenuOpen(false)}
                   />

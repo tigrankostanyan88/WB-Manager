@@ -116,30 +116,50 @@ async function getUser() {
   try {
     const cookieStore = await cookies()
     const token = cookieStore.get('jwt')?.value
-    if (!token) return null
+    if (!token) {
+      console.log('[Server] No JWT cookie found')
+      return null
+    }
 
     const decoded = decodeJwt(token)
     const jwtResult = JwtPayloadSchema.safeParse(decoded)
-    if (!jwtResult.success) return null
+    if (!jwtResult.success) {
+      console.log('[Server] JWT validation failed:', jwtResult.error)
+      return null
+    }
     
     const userId = jwtResult.data.id || jwtResult.data.sub
-    if (!userId) return null
+    if (!userId) {
+      console.log('[Server] No userId in JWT')
+      return null
+    }
 
-    // Fetch user from backend API instead of Prisma
+    // Fetch user from backend API using /me endpoint (same as client-side)
     try {
       const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
-      const res = await fetch(`${apiBase}/api/v1/users/${userId}`, {
+      const url = `${apiBase}/api/v1/users/me`
+      console.log('[Server] Fetching user from:', url)
+      
+      const res = await fetch(url, {
         headers: { Cookie: `jwt=${token}` },
         cache: 'no-store'
       })
-      if (!res.ok) return null
+      
+      if (!res.ok) {
+        console.log('[Server] User fetch failed:', res.status, res.statusText)
+        return null
+      }
+      
       const userData = await res.json()
-      return userData?.data || null
-    } catch {
+      console.log('[Server] User fetched successfully:', userData?.data?.user?.id || userData?.data?.id)
+      // Handle both {data: {user: {...}}} and {data: {...}} formats
+      return userData?.data?.user || userData?.data || null
+    } catch (err) {
+      console.log('[Server] Error fetching user:', err)
       return null
     }
-  } catch {
-    // Fail silently in production
+  } catch (err) {
+    console.log('[Server] Error in getUser:', err)
   }
   return null
 }

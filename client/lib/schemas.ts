@@ -1,9 +1,9 @@
 import { z } from 'zod'
 
-// JWT token payload schema
+// JWT token payload schema - id/sub can be string or number
 export const JwtPayloadSchema = z.object({
-  id: z.string().optional(),
-  sub: z.string().optional(),
+  id: z.union([z.string(), z.number()]).optional(),
+  sub: z.union([z.string(), z.number()]).optional(),
 }).refine((data) => data.id || data.sub, {
   message: 'JWT must contain either id or sub',
 })

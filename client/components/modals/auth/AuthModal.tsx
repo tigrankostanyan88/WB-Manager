@@ -68,33 +68,34 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden transform transition-all max-h-[90vh] overflow-y-auto no-scrollbar"
+          className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden transform transition-all max-h-[90vh] flex flex-col"
         >
-          {/* Decorative background */}
-          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-600">
+          {/* Fixed header with decorative background */}
+          <div className="relative h-20 bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-600 flex-shrink-0">
             <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_120%,rgba(255,255,255,0.8),transparent)]" />
+            
+            <button
+              onClick={handleClose}
+              className="absolute top-4 right-4 z-10 p-2.5 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all hover:rotate-90"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
-          <button
-            onClick={handleClose}
-            className="absolute top-4 right-4 z-10 p-2.5 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all hover:rotate-90"
-          >
-            <X className="w-5 h-5" />
-          </button>
-
-          <div className="relative px-4 sm:px-8 pt-8 pb-8">
+          {/* Scrollable content area */}
+          <div className="flex-1 overflow-y-auto px-4 sm:px-8 pt-10 pb-8">
             {isSuccess ? (
               <AuthSuccess />
             ) : (
               <>
-                {/* Logo */}
-                <div className="mx-auto w-24 h-24 bg-white rounded-2xl shadow-2xl flex items-center justify-center mb-6 relative z-10 border-4 border-slate-50">
+                {/* Logo - positioned to overlap header */}
+                <div className="mx-auto w-24 h-24 bg-white rounded-2xl shadow-2xl flex items-center justify-center -mt-14 mb-6 relative z-10 border-4 border-slate-50">
                   <div className="w-12 h-12 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-inner">
                     WB
                   </div>
                 </div>
 
-                <div className="text-center mb-10">
+                <div className="text-center mb-6">
                   <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">
                     {mode === 'signup' ? 'Սկսեք հիմա' : 'Բարի գալուստ'}
                   </h2>

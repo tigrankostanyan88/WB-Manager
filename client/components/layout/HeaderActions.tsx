@@ -129,7 +129,8 @@ export function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onM
     )
   }
 
-  // Desktop view
+  // Desktop view - show skeleton until auth state is confirmed
+  // This prevents showing "Login" button when user might actually be logged in
   if (!isLoaded) {
     return (
       <div className="flex items-center gap-3 h-10">
@@ -184,6 +185,7 @@ export function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onM
     )
   }
 
+  // Not logged in - show login and register buttons
   return (
     <div className="flex items-center gap-4 h-10">
       <button

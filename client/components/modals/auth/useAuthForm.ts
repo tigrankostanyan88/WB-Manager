@@ -12,7 +12,6 @@ const emptyForm: AuthFormData = {
   name: '',
   email: '',
   phone: '',
-  address: '',
   password: ''
 }
 
