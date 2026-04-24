@@ -1,5 +1,6 @@
 // hooks/modules/utils.ts - Module helper functions
 
+import { getApiOrigin } from '@/lib/apiUrl'
 import type { ModuleFile, ModuleItem } from './types'
 
 export const mapModule = (m: unknown): ModuleItem => {
@@ -89,7 +90,6 @@ export function formatMinutes(minutes: number): string {
 }
 
 export function getVideoUrl(file: ModuleFile): string {
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || ''
-  const origin = /^https?:\/\//i.test(apiBase) ? apiBase.replace(/\/api.*$/, '') : ''
+  const origin = getApiOrigin()
   return `${origin}/files/modules/${file.name}${file.ext}`
 }

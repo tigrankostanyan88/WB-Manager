@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { getApiOrigin } from '@/lib/apiUrl'
 import type { Course } from '../types'
 
 interface UseVideoThumbnailResult {
@@ -12,10 +13,7 @@ export function useVideoThumbnail(course: Course): UseVideoThumbnailResult {
   const [thumbnail, setThumbnail] = useState<string | null>(course.imageUrl || null)
   const [loading, setLoading] = useState(!course.imageUrl)
 
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || ''
-  const origin = useMemo(() => {
-    return /^https?:\/\//i.test(apiBase) ? apiBase.replace(/\/api.*$/, '') : ''
-  }, [apiBase])
+  const origin = useMemo(() => getApiOrigin(), [])
 
   useEffect(() => {
     // If course has imageUrl, use it immediately

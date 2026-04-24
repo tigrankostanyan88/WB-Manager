@@ -216,7 +216,7 @@ module.exports = class File {
                     name: "logo_img",
                     count: 1,
                     types: ["jpeg", "png", "webp", "svg"],
-                    dimensions: { large: [300, 300] },
+                    dimensions: { large: [100, 100] },
                 }],
             },
             {

@@ -1,6 +1,7 @@
 'use client'
 
 import type { Area } from 'react-easy-crop'
+import { buildFileUrl } from '@/lib/apiUrl'
 
 // Helper function to create image from URL
 const createImage = (url: string) =>
@@ -75,17 +76,8 @@ export const fixLarge = (p?: string) => {
   return p
 }
 
-export const withOrigin = (p?: string) => {
-  if (!p || typeof p !== 'string') return p
-  if (p.startsWith('/images/')) {
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || ''
-    if (!apiBase) return p
-    if (/^https?:\/\//i.test(apiBase)) {
-      const origin = apiBase.replace(/\/api.*$/, '')
-      return `${origin}${p}`
-    }
-    return p
-  }
-  return p
+export const withOrigin = (p?: string): string | undefined => {
+  if (!p) return p
+  return buildFileUrl(p)
 }
 

@@ -15,6 +15,7 @@ interface SignInFormProps {
   onRememberMeChange: (checked: boolean) => void
   onSubmit: (e: React.FormEvent) => void
   onToggleMode: () => void
+  onForgotPassword: () => void
 }
 
 export function SignInForm({
@@ -26,7 +27,8 @@ export function SignInForm({
   onInputChange,
   onRememberMeChange,
   onSubmit,
-  onToggleMode
+  onToggleMode,
+  onForgotPassword
 }: SignInFormProps) {
   return (
     <form onSubmit={onSubmit} className="space-y-4" aria-label="Մուտքի ձև">
@@ -92,18 +94,27 @@ export function SignInForm({
         </motion.p>
       )}
 
-      <div className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          id="rememberMe"
-          checked={rememberMe}
-          onChange={(e) => onRememberMeChange(e.target.checked)}
-          className="h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500 cursor-pointer"
-          aria-label="Հիշել ինձ"
-        />
-        <label htmlFor="rememberMe" className="text-sm text-slate-600 cursor-pointer select-none">
-          Հիշել ինձ
-        </label>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="rememberMe"
+            checked={rememberMe}
+            onChange={(e) => onRememberMeChange(e.target.checked)}
+            className="h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500 cursor-pointer"
+            aria-label="Հիշել ինձ"
+          />
+          <label htmlFor="rememberMe" className="text-sm text-slate-600 cursor-pointer select-none">
+            Հիշել ինձ
+          </label>
+        </div>
+        <button
+          type="button"
+          onClick={onForgotPassword}
+          className="text-sm text-violet-600 hover:text-violet-700 font-medium transition-colors"
+        >
+          Մոռացե՞լ եք գաղտնաբառը
+        </button>
       </div>
 
       <Button

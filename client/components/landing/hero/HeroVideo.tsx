@@ -4,6 +4,7 @@ import { Play } from 'lucide-react'
 import { useCallback, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { VideoPlayerModal } from '@/components/shared'
+import { getApiBaseUrl } from '@/lib/apiUrl'
 import type { HeroContentData } from './types'
 
 interface HeroVideoProps {
@@ -34,8 +35,8 @@ export function HeroVideo({
   }, [content?.video_url])
 
   const handleVideoClick = useCallback(() => {
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300'
-    const defaultUrl = `${apiBase.replace(/\/$/, '')}/files/hero.mp4`
+    const apiBase = getApiBaseUrl()
+    const defaultUrl = `${apiBase}/files/hero.mp4`
     const videoUrl = content?.video_url || defaultUrl
     onPlay(videoUrl)
   }, [content?.video_url, onPlay])

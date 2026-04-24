@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import api, { userService } from '@/lib/api'
+import { buildFileUrl } from '@/lib/apiUrl'
 import type { UserFile } from '@/components/features/admin/types'
 import type { Course } from '@/components/features/admin/types'
 
@@ -156,16 +157,7 @@ export function useProfileData({ authUser, isLoaded }: UseProfileDataParams) {
         // ext already includes the leading dot from backend (e.g., '.jpg')
         const extWithDot = f.ext.startsWith('.') ? f.ext : `.${f.ext}`
         const path = `/images/${f.table_name || 'users'}/large/${f.name}${extWithDot}`
-        const apiBase = process.env.NEXT_PUBLIC_API_URL || '/api'
-        const withOrigin = (p: string) => {
-          if (/^https?:\/\//i.test(apiBase)) {
-            const origin = apiBase.replace(/\/api.*$/, '')
-            return `${origin}${p}`
-          }
-          const prefix = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase
-          return `${prefix}${p}`
-        }
-        return { ...u, avatar: withOrigin(path) }
+        return { ...u, avatar: buildFileUrl(path) }
       }
     }
     return u

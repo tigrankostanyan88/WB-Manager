@@ -1,7 +1,8 @@
 // Centralized API configuration
 // Use this for all API-related constants
+import { getApiBaseUrl } from './apiUrl'
 
-export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
+export const API_BASE_URL = getApiBaseUrl()
 
 export const API_ENDPOINTS = {
   users: {

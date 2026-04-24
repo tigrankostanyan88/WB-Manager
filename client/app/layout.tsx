@@ -15,6 +15,7 @@ import { decodeJwt } from 'jose'
 import { JwtPayloadSchema } from '@/lib/schemas'
 import { ToastProvider } from '@/components/providers/ToastProvider'
 import { HeaderWrapper } from '@/components/layout/HeaderWrapper'
+import { getApiOrigin, getApiBaseUrl } from '@/lib/apiUrl'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
@@ -24,8 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
   let ogImage: string | null = null
 
   try {
-    const base = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
-    const origin = /^https?:\/\//.test(base) ? base.replace(/\/api\/?$/, '') : base
+    const origin = getApiOrigin()
     const res = await fetch(`${origin}/api/v1/settings`, { cache: 'no-store' })
     if (res.ok) {
       const data = await res.json()
@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
         if (data.settings.logo) {
           const url = data.settings.logo.startsWith('http')
             ? data.settings.logo
-            : `${origin}${data.settings.logo}`
+            : `${origin}${data.settings.logo.startsWith('/') ? '' : '/'}${data.settings.logo}`
           ogImage = url
         }
       }
@@ -87,18 +87,14 @@ export const viewport: Viewport = {
 
 async function getSettings() {
   try {
-    const base = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
-    const origin = /^https?:\/\//.test(base) ? base.replace(/\/api\/?$/, '') : base
+    const origin = getApiOrigin()
     const res = await fetch(`${origin}/api/v1/settings`, { cache: 'no-store' })
     if (res.ok) {
       const data = await res.json()
       if (data?.settings) {
         const s = data.settings
         if (s.logo && !s.logo.startsWith('http')) {
-           s.logo = `${origin}${s.logo}`
-           if (s.logo.startsWith('/images/')) {
-             s.logo = `${origin}${s.logo}`
-           }
+           s.logo = `${origin}${s.logo.startsWith('/') ? '' : '/'}${s.logo}`
         }
         return s
       }
@@ -113,52 +109,36 @@ async function getUser() {
   try {
     const cookieStore = await cookies()
     const token = cookieStore.get('jwt')?.value
-    if (!token) {
-      console.log('[Server] No JWT cookie found')
-      return null
-    }
+    if (!token) return null
 
     const decoded = decodeJwt(token)
     const jwtResult = JwtPayloadSchema.safeParse(decoded)
-    if (!jwtResult.success) {
-      console.log('[Server] JWT validation failed:', jwtResult.error)
-      return null
-    }
+    if (!jwtResult.success) return null
     
     const userId = jwtResult.data.id || jwtResult.data.sub
-    if (!userId) {
-      console.log('[Server] No userId in JWT')
-      return null
-    }
+    if (!userId) return null
 
-    // Fetch user from backend API using /me endpoint (same as client-side)
+    // Fetch user from backend API using /me endpoint
     try {
-      const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
+      const apiBase = getApiBaseUrl()
       const url = `${apiBase}/api/v1/users/me`
-      console.log('[Server] Fetching user from:', url)
       
       const res = await fetch(url, {
         headers: { Cookie: `jwt=${token}` },
         cache: 'no-store'
       })
       
-      if (!res.ok) {
-        console.log('[Server] User fetch failed:', res.status, res.statusText)
-        return null
-      }
+      if (!res.ok) return null
       
       const userData = await res.json()
-      console.log('[Server] User fetched successfully:', userData?.data?.user?.id || userData?.data?.id)
       // Handle both {data: {user: {...}}} and {data: {...}} formats
       return userData?.data?.user || userData?.data || null
-    } catch (err) {
-      console.log('[Server] Error fetching user:', err)
+    } catch {
       return null
     }
-  } catch (err) {
-    console.log('[Server] Error in getUser:', err)
+  } catch {
+    return null
   }
-  return null
 }
 
 export default async function RootLayout({ children }: { children: ReactNode }) {

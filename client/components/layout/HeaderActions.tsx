@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { User as UserIcon } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { useState, useEffect } from 'react'
+import { buildFileUrl } from '@/lib/apiUrl'
 
 interface HeaderActionsProps {
   onOpenLoginModal: () => void
@@ -51,17 +52,7 @@ export function HeaderActions({ onOpenLoginModal, onOpenCourseModal, mobile, onM
     const typedUser = user as UserWithAvatar | null
     const path = getAvatarUrl(typedUser)
     if (!path) return ''
-
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300'
-    const withOrigin = (p: string) => {
-      if (/^https?:\/\//i.test(apiBase)) {
-        const origin = apiBase.replace(/\/api.*$/, '')
-        return `${origin}${p}`
-      }
-      const prefix = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase
-      return `${prefix}${p}`
-    }
-    return withOrigin(path)
+    return buildFileUrl(path)
   })()
 
   // Reset avatar loaded state when avatar URL changes

@@ -7,6 +7,7 @@ import { X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SignInForm } from './SignInForm'
 import { SignUpForm } from './SignUpForm'
+import { ForgotPasswordForm } from './ForgotPasswordForm'
 import { AuthSuccess } from './AuthSuccess'
 import { useAuthForm } from './useAuthForm'
 import type { AuthModalProps } from './types'
@@ -21,6 +22,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const {
     isLoading,
     isSuccess,
+    forgotSuccess,
     error,
     fieldErrors,
     mode,
@@ -29,7 +31,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setRememberMe,
     handleInputChange,
     handleSubmit,
+    handleForgotSubmit,
     toggleMode,
+    setForgotMode,
+    setSigninMode,
     resetForm
   } = useAuthForm(handleSuccess)
 
@@ -97,11 +102,13 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
                 <div className="text-center mb-6">
                   <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">
-                    {mode === 'signup' ? 'Սկսեք հիմա' : 'Բարի գալուստ'}
+                    {mode === 'signup' ? 'Սկսեք հիմա' : mode === 'forgot' ? 'Վերականգնել գաղտնաբառը' : 'Բարի գալուստ'}
                   </h2>
                   <p className="text-slate-500 text-base max-w-[340px] mx-auto leading-relaxed">
                     {mode === 'signup'
                       ? 'Լրացրեք տվյալները՝ հաշիվ ստեղծելու համար'
+                      : mode === 'forgot'
+                      ? 'Մուտքագրեք ձեր էլ. հասցեն և մենք ձեզ կուղարկենք գաղտնաբառի վերականգնման հղում'
                       : 'Մուտք գործեք ձեր հաշիվ'}
                   </p>
                 </div>
@@ -117,6 +124,18 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     onRememberMeChange={setRememberMe}
                     onSubmit={handleSubmit}
                     onToggleMode={toggleMode}
+                    onForgotPassword={setForgotMode}
+                  />
+                ) : mode === 'forgot' ? (
+                  <ForgotPasswordForm
+                    email={formData.email}
+                    isLoading={isLoading}
+                    isSuccess={forgotSuccess}
+                    error={error}
+                    fieldErrors={fieldErrors}
+                    onInputChange={handleInputChange}
+                    onSubmit={handleForgotSubmit}
+                    onBackToSignIn={setSigninMode}
                   />
                 ) : (
                   <SignUpForm

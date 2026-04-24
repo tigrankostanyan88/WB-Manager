@@ -60,34 +60,26 @@ export function AuthProvider({ children, initialUser = null }: { children: React
 
   const fetchUser = useCallback(async () => {
     // Always try to fetch user - API will return 401 if no valid cookie
-    console.log('[Client] fetchUser: Starting API call to /api/v1/users/me...')
     try {
       const res = await userService.getMe()
-      console.log('[Client] fetchUser: API response received', res.data?.user?.id || res.data?.id)
       const u = res.data?.user || res.data
       if (u && u.id) {
         const userWithAvatar = { ...u, avatar: buildAvatar(u) }
         setUserState(userWithAvatar)
       } else {
-        console.log('[Client] fetchUser: No user in response')
         setUserState(null)
       }
     } catch (err) {
       const axiosError = err as { response?: { status?: number } }
       if (axiosError.response?.status === 401) {
         // Unauthorized - no valid session (expected when logged out)
-        console.log('[Client] fetchUser: 401 - no valid session')
         setUserState(null)
       } else {
-        console.log('[Client] fetchUser: API error', axiosError.response?.status, err)
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Failed to fetch user:', err)
-        }
+        // Silent error in production
         setUserState(null)
       }
     } finally {
       setIsLoaded(true)
-      console.log('[Client] fetchUser: Done, isLoaded = true, user:', user ? 'exists' : 'null')
     }
   }, [])
 
@@ -111,19 +103,14 @@ export function AuthProvider({ children, initialUser = null }: { children: React
       localStorage.removeItem('user')
     }
     
-    console.log('[Client] AuthProvider mounted, initialUser:', initialUser?.id || 'null')
-    
     // If server provided initialUser, use it
     if (initialUser) {
-      console.log('[Client] Using server-provided initialUser')
       setUserState(initialUser)
       setIsLoaded(true)
       return
     }
     
-    // Otherwise check for JWT cookie and fetch user client-side
-    console.log('[Client] No initialUser, trying to fetch user...')
-    // Always try to fetch - API will tell us if session exists
+    // Otherwise fetch user client-side
     fetchUser()
   }, [initialUser, fetchUser])
   
@@ -133,7 +120,6 @@ export function AuthProvider({ children, initialUser = null }: { children: React
     
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible' && !user) {
-        console.log('[Client] Page visible, no user - re-fetching...')
         fetchUser()
       }
     }

@@ -23,6 +23,7 @@ export function useAuthForm(onSuccess: () => void) {
   const [mode, setMode] = useState<AuthMode>('signin')
   const [formData, setFormData] = useState<AuthFormData>(emptyForm)
   const [rememberMe, setRememberMe] = useState(false)
+  const [forgotSuccess, setForgotSuccess] = useState(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -123,6 +124,57 @@ export function useAuthForm(onSuccess: () => void) {
     setMode(prev => prev === 'signup' ? 'signin' : 'signup')
     setError(null)
     setFieldErrors({})
+    setForgotSuccess(false)
+  }
+
+  const setForgotMode = () => {
+    setMode('forgot')
+    setError(null)
+    setFieldErrors({})
+    setForgotSuccess(false)
+  }
+
+  const setSigninMode = () => {
+    setMode('signin')
+    setError(null)
+    setFieldErrors({})
+    setForgotSuccess(false)
+  }
+
+  const handleForgotSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+
+    // Validate email
+    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setFieldErrors({ email: 'Մուտքագրեք վավեր էլ. հասցե' })
+      return
+    }
+
+    setFieldErrors({})
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('/api/v1/user/forgotPassword', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email: formData.email })
+      })
+
+      const data = await response.json().catch(() => null)
+
+      if (!response.ok) {
+        const msg = data?.message || 'Սխալ է տեղի ունեցել'
+        throw new Error(msg)
+      }
+
+      setForgotSuccess(true)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Սխալ է տեղի ունեցել')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const resetForm = useCallback(() => {
@@ -131,11 +183,14 @@ export function useAuthForm(onSuccess: () => void) {
     setFieldErrors({})
     setIsSuccess(false)
     setIsLoading(false)
+    setForgotSuccess(false)
+    setMode('signin')
   }, [])
 
   return {
     isLoading,
     isSuccess,
+    forgotSuccess,
     error,
     fieldErrors,
     mode,
@@ -144,7 +199,10 @@ export function useAuthForm(onSuccess: () => void) {
     setRememberMe,
     handleInputChange,
     handleSubmit,
+    handleForgotSubmit,
     toggleMode,
+    setForgotMode,
+    setSigninMode,
     resetForm
   }
 }

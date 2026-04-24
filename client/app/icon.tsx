@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og'
+import { getApiOrigin } from '@/lib/apiUrl'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -12,8 +13,7 @@ export const contentType = 'image/png'
 
 async function getSettings() {
   try {
-    const base = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
-    const origin = /^https?:\/\//.test(base) ? base.replace(/\/api\/?$/, '') : base
+    const origin = getApiOrigin()
     const res = await fetch(`${origin}/api/v1/settings`, { cache: 'no-store' })
     if (res.ok) {
       const data = await res.json()
@@ -39,11 +39,10 @@ export default async function Icon() {
   
   // Try to use custom logo if available
   if (settings.logo) {
-    const base = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
-    const origin = /^https?:\/\//.test(base) ? base.replace(/\/api\/?$/, '') : base
+    const origin = getApiOrigin()
     const logoUrl = settings.logo.startsWith('http') 
       ? settings.logo 
-      : `${origin}${settings.logo}`
+      : `${origin}${settings.logo.startsWith('/') ? '' : '/'}${settings.logo}`
     
     const logoBuffer = await fetchLogoAsBuffer(logoUrl)
     

@@ -1,7 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { Sparkles, Star, Zap, TrendingUp, Award } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import { Header } from '@/components/layout'
 import { Button } from '@/components/ui/button'
 import { useCourses } from './hooks/useCourses'
@@ -20,134 +19,52 @@ export default function CoursesPage() {
         {/* Animated Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-violet-900 via-purple-800 to-fuchsia-900" />
         
-        {/* Floating Decorative Elements */}
+        {/* Decorative Elements - Static */}
         <div className="absolute inset-0 overflow-hidden">
-          {/* Gradient Orbs */}
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3],
-              x: [0, 50, 0],
-              y: [0, -30, 0]
-            }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-20 -left-20 w-96 h-96 bg-violet-500/30 rounded-full blur-3xl" 
-          />
-          <motion.div 
-            animate={{ 
-              scale: [1.2, 1, 1.2],
-              opacity: [0.2, 0.4, 0.2],
-              x: [0, -30, 0],
-              y: [0, 50, 0]
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute bottom-20 -right-20 w-80 h-80 bg-fuchsia-500/30 rounded-full blur-3xl" 
-          />
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.3, 1],
-              opacity: [0.2, 0.3, 0.2]
-            }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/20 rounded-full blur-3xl" 
-          />
+          {/* Gradient Orbs - Static */}
+          <div className="absolute top-20 -left-20 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 -right-20 w-80 h-80 bg-fuchsia-500/20 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-3xl" />
           
           {/* Grid Pattern */}
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
-          
-          {/* Floating Icons - Smooth gentle floating */}
-          <motion.div
-            animate={{ y: [0, -15, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-32 left-[10%] text-white/20"
-          >
-            <Star className="w-8 h-8" />
-          </motion.div>
-          <motion.div
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="absolute top-48 right-[15%] text-white/20"
-          >
-            <Zap className="w-10 h-10" />
-          </motion.div>
-          <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute bottom-40 left-[20%] text-white/20"
-          >
-            <TrendingUp className="w-12 h-12" />
-          </motion.div>
-          <motion.div
-            animate={{ y: [0, 18, 0] }}
-            transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-            className="absolute bottom-32 right-[10%] text-white/20"
-          >
-            <Award className="w-8 h-8" />
-          </motion.div>
         </div>
 
         <div className="relative container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
+          <div>
             {/* Badge */}
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-            >
-              <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-400/20 to-orange-400/20 backdrop-blur-sm border border-amber-400/30 text-amber-300 text-sm font-semibold rounded-full mb-8">
+            <div className="mb-8">
+              <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-400/20 to-orange-400/20 backdrop-blur-sm border border-amber-400/30 text-amber-300 text-sm font-semibold rounded-full">
                 <Sparkles className="w-4 h-4" />
                 WB Մենթորի դասընթացները
                 <Sparkles className="w-4 h-4" />
               </span>
-            </motion.div>
+            </div>
 
             {/* Main Title with Gradient Text */}
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.8 }}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white mb-4 sm:mb-6 leading-tight px-4"
-            >
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white mb-4 sm:mb-6 leading-tight px-4">
               Պրոֆեսիոնալ
               <br />
               <span className="bg-gradient-to-r from-amber-300 via-yellow-300 to-amber-400 bg-clip-text text-transparent">
                 դասընթացներ
               </span>
-            </motion.h1>
+            </h1>
 
             {/* Subtitle */}
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-lg sm:text-xl md:text-2xl text-white/70 max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed px-4"
-            >
+            <p className="text-lg sm:text-xl md:text-2xl text-white/70 max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed px-4">
               Սովորիր <span className="text-white font-semibold">Wildberries-ում</span> վաճառելու ամենաարդյունավետ մեթոդները մեր փորձառու մենթորներից
-            </motion.p>
+            </p>
 
             {/* Compact Stats - Inside Hero */}
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="flex flex-wrap justify-center gap-2 sm:gap-4 px-4"
-            >
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-4 px-4">
               {[
                 { value: loading ? '...' : courses.length, label: 'Դասընթացներ', icon: '📚' },
                 { value: loading ? '...' : courses.reduce((acc, c) => acc + (c.studentsCount || 0), 0), label: 'Ուսանողներ', icon: '👥' },
                 { value: loading ? '...' : averageRating.toFixed(1), label: 'Վարկանիշ', icon: '⭐' },
                 { value: loading ? '...' : totalReviews, label: 'Կարծիքներ', icon: '📝' }
-              ].map((stat, index) => (
-                <motion.div
+              ].map((stat) => (
+                <div
                   key={stat.label}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.8 + index * 0.1, duration: 0.5 }}
-                  whileHover={{ scale: 1.05, y: -3 }}
                   className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-3 sm:px-6 py-2 sm:py-3 hover:bg-white/15 transition-all duration-300"
                 >
                   <div className="flex items-center gap-2 sm:gap-3">
@@ -157,10 +74,10 @@ export default function CoursesPage() {
                       <div className="text-white/60 text-[10px] sm:text-xs font-medium">{stat.label}</div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
         
         {/* Bottom Wave */}

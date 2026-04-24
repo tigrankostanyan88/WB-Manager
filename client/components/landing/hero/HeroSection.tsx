@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import api from '@/lib/api'
+import { getApiBaseUrl } from '@/lib/apiUrl'
 import { HeroContent } from './HeroContent'
 import { HeroVideo } from './HeroVideo'
 import { HeroWidgets } from './HeroWidgets'
@@ -38,8 +39,8 @@ export function HeroSection({
   }
 
   const handleHeroPlay = () => {
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300'
-    const defaultUrl = `${apiBase.replace(/\/$/, '')}/files/hero.mp4`
+    const apiBase = getApiBaseUrl()
+    const defaultUrl = `${apiBase}/files/hero.mp4`
     const videoUrl = content?.video_url || defaultUrl
     handlePlay(videoUrl)
   }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { getApiBaseUrl } from '@/lib/apiUrl'
 
 export async function withAuth(
   req: NextRequest,
@@ -46,6 +47,6 @@ export async function forwardToBackend(
 }
 
 export async function getBackendUrl(path: string): Promise<string> {
-  const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300'
-  return `${base.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`
+  const base = getApiBaseUrl()
+  return `${base}${path.startsWith('/') ? path : `/${path}`}`
 }

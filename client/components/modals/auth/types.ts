@@ -2,7 +2,7 @@
 
 import type { User } from '@/lib/auth'
 
-export type AuthMode = 'signin' | 'signup'
+export type AuthMode = 'signin' | 'signup' | 'forgot'
 
 export interface AuthFormData {
   name: string

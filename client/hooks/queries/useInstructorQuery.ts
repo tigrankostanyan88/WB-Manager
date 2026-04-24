@@ -3,6 +3,7 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import api from '@/lib/api'
 import { queryKeys } from '@/lib/queryKeys'
+import { buildFileUrl } from '@/lib/apiUrl'
 import type { Instructor, InstructorStat } from '@/types/domain'
 
 interface InstructorApiItem {
@@ -32,18 +33,8 @@ function fixLargePath(path?: string): string | undefined {
 }
 
 function withOrigin(path?: string): string | undefined {
-  if (!path || typeof path !== 'string') return path
-  if (path.startsWith('/images/')) {
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || '/api'
-    if (/^https?:\/\//i.test(apiBase)) {
-      const origin = apiBase.replace(/\/api.*$/, '')
-      return `${origin}${path}`
-    } else {
-      const prefix = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase
-      return `${prefix}${path}`
-    }
-  }
-  return path
+  if (!path) return path
+  return buildFileUrl(path)
 }
 
 function parseStats(statsJson?: string): InstructorStat[] {

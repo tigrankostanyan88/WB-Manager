@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getApiBaseUrl } from './apiUrl';
 import type { 
   User, 
   UpdateMeData, 
@@ -10,7 +11,7 @@ import type {
 } from './api-types';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300',
+  baseURL: getApiBaseUrl(),
   withCredentials: true
 });
 

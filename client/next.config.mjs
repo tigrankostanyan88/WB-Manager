@@ -1,38 +1,43 @@
 /** @type {import('next').NextConfig} */
-const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
+const isDev = process.env.NODE_ENV === 'development'
+const apiBase = isDev 
+  ? 'http://localhost:3300'
+  : (process.env.NEXT_PUBLIC_API_URL || 'https://api.savaa.am').replace(/\/+$/, '')
 const apiOrigin = /^https?:\/\//.test(apiBase) ? apiBase.replace(/\/api\/?$/, '') : apiBase
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    remotePatterns: [
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3300',
-        pathname: '/images/**',
-      },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3300',
-        pathname: '/api/images/**',
-      },
-    ],
-    unoptimized: process.env.NODE_ENV === 'development',
+    remotePatterns: isDev 
+      ? [
+          {
+            protocol: 'http',
+            hostname: 'localhost',
+            port: '3300',
+            pathname: '/images/**',
+          },
+          {
+            protocol: 'http',
+            hostname: 'localhost',
+            port: '3300',
+            pathname: '/api/images/**',
+          },
+        ]
+      : [
+          {
+            protocol: 'https',
+            hostname: 'api.savaa.am',
+            pathname: '/**', 
+          },
+        ],
+    unoptimized: true, 
   },
   compiler: {
     styledComponents: false,
   },
-  eslint: {
-    ignoreDuringBuilds: true,  // TEMP: Allow console statements for deployment
-  },
   typescript: {
-    ignoreBuildErrors: false,     // STRICT: Enforce type checking
+    ignoreBuildErrors: false,
   },
-  experimental: {
-    typedRoutes: false,
-  },
-  // Optimize for faster navigation
   poweredByHeader: false,
   compress: true,
   async rewrites() {
