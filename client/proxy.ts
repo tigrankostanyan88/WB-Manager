@@ -10,7 +10,7 @@ const publicRoutes = [
   '/api/v1/users/signIn'
 ]
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // In development, completely skip auth checks due to cross-port cookie issues
