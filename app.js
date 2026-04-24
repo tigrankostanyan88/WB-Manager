@@ -144,7 +144,7 @@ app.use(security.csrfErrorHandler);
 app.all('*', async (req, res, next) => {
   if (req.originalUrl.startsWith('/api')) return next(new AppError(`Հնարավոր չէ գտնել ${req.originalUrl}-ը այս սերվերի վրա!`, 404));
 
-  const contact = await Contact.findOne();
+  // const contact = await Contact.findOne();
   const url = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
 
   res.status(404).render('./notFount/404', {
@@ -154,7 +154,7 @@ app.all('*', async (req, res, next) => {
     og_image: './images/404.jpg',
     nav_active: '404',
     page: req.path,
-    contact
+    // contact
   });
 });
 

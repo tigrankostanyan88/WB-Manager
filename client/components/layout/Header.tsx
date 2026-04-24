@@ -77,7 +77,7 @@ export function Header({ forceWhiteBackground = false }: { forceWhiteBackground?
                 </div>
               )}
               <span className="text-xl font-bold tracking-tight text-[#000000]">
-                {settings.siteName || 'WB Manager'}
+                {settings.siteName || 'Sava.'}
               </span>
             </Link>
 

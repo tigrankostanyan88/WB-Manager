@@ -19,9 +19,8 @@ import { HeaderWrapper } from '@/components/layout/HeaderWrapper'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export async function generateMetadata(): Promise<Metadata> {
-  let title = 'Savaa - Արագ AI ծառայություններ հայերենով'
-  let description = 'Savaa - անհատական և բիզնես AI լուծումներ հայերենով։ Արհեստական բանականության գործիքներ, ավտոմատացում և թվային տրանսֆորմացիա։'
-  let icons: Metadata['icons'] = undefined
+  let title = 'Sava - Արագ AI ծառայություններ հայերենով'
+  let description = 'Sava - անհատական և բիզնես AI լուծումներ հայերենով։ Արհեստական բանականության գործիքներ, ավտոմատացում և թվային տրանսֆորմացիա։'
   let ogImage: string | null = null
   
   try {
@@ -36,7 +35,6 @@ export async function generateMetadata(): Promise<Metadata> {
           const url = data.settings.logo.startsWith('http') 
             ? data.settings.logo 
             : `${origin}${data.settings.logo}`
-          icons = { icon: url }
           ogImage = url
         }
       }
@@ -51,7 +49,6 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${title}`
     },
     description,
-    icons,
     metadataBase: new URL(siteUrl),
     openGraph: {
       type: 'website',
@@ -78,7 +75,7 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       canonical: siteUrl,
     },
-    keywords: ['AI', 'արագ', 'հայերեն', 'ավտոմատացում', 'Savaa', 'արհեստական բանականություն', 'թվային', 'ծառայություն'],
+    keywords: ['AI', 'արագ', 'հայերեն', 'ավտոմատացում', 'Sava', 'արհեստական բանականություն', 'թվային', 'ծառայություն'],
   }
 }
 

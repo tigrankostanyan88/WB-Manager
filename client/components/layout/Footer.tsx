@@ -31,7 +31,7 @@ export function Footer() {
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6"><path d="M12 3v2.5l-3 3-3-3V3h6Z"/><path d="M18 3v2.5l-3 3-3-3V3h6Z"/><path d="M12 21v-2.5l3-3 3 3V21h-6Z"/><path d="M6 21v-2.5l3-3 3 3V21H6Z"/><path d="M12 8.5 9 12l3 3.5 3-3.5-3-3.5Z"/></svg>
                 </div>
               )}
-              <span className="text-xl font-bold tracking-tight text-white">{settings.siteName || 'WB Manager'}</span>
+              <span className="text-xl font-bold tracking-tight text-white">{settings.siteName || 'Sava.'}</span>
             </div>
             <p className="text-slate-400 text-sm max-w-xs leading-relaxed">
               Wildberries-ում հաջողության հասնելու լավագույն հարթակը: Ստեղծված է որակի և մասշտաբավորման համար:
@@ -67,7 +67,7 @@ export function Footer() {
         <div className="mt-12 pt-8 relative">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-500/30 to-transparent" />
           <p className="text-center text-sm text-slate-500">
-            &copy; {new Date().getFullYear()} WB Mastery. Բոլոր իրավունքները պաշտպանված են:
+            &copy; {new Date().getFullYear()} Sava. Բոլոր իրավունքները պաշտպանված են:
           </p>
         </div>
       </div>
