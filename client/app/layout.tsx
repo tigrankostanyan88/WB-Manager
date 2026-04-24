@@ -19,10 +19,10 @@ import { HeaderWrapper } from '@/components/layout/HeaderWrapper'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export async function generateMetadata(): Promise<Metadata> {
-  let title = 'Sava - Արագ AI ծառայություններ հայերենով'
-  let description = 'Sava - անհատական և բիզնես AI լուծումներ հայերենով։ Արհեստական բանականության գործիքներ, ավտոմատացում և թվային տրանսֆորմացիա։'
+  let title = 'WB Mastery - Wildberries դասընթացներ հայերենով'
+  let description = 'Սովորեք Wildberries վաճառք և մենեջմենթ՝ քայլ առ քայլ դասընթացներով։ Դարձեք պրոֆեսիոնալ մենեջեր, մասշտաբավորեք ձեր բիզնեսը և ստացեք կայուն եկամուտ։ 2500+ ուսանողներ, 1200+ հաջողված վաճառողներ։'
   let ogImage: string | null = null
-  
+
   try {
     const base = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300').replace(/\/+$/, '')
     const origin = /^https?:\/\//.test(base) ? base.replace(/\/api\/?$/, '') : base
@@ -32,8 +32,8 @@ export async function generateMetadata(): Promise<Metadata> {
       if (data?.settings) {
         if (data.settings.siteName) title = data.settings.siteName
         if (data.settings.logo) {
-          const url = data.settings.logo.startsWith('http') 
-            ? data.settings.logo 
+          const url = data.settings.logo.startsWith('http')
+            ? data.settings.logo
             : `${origin}${data.settings.logo}`
           ogImage = url
         }
@@ -42,7 +42,7 @@ export async function generateMetadata(): Promise<Metadata> {
   } catch {}
 
   const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.savaa.am'
-  
+
   return {
     title: {
       default: title,
@@ -75,7 +75,7 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       canonical: siteUrl,
     },
-    keywords: ['AI', 'արագ', 'հայերեն', 'ավտոմատացում', 'Sava', 'արհեստական բանականություն', 'թվային', 'ծառայություն'],
+    keywords: ['Wildberries', 'վաճառք', 'մենեջեր', 'դասընթացներ', 'մարկետպլեյս', 'հեռավար ուսուցում', 'e-commerce', 'օնլայն խանութ', 'Վայլդբերրիս', 'մասնագիտական դասընթաց', 'առևտուր', 'բիզնես', 'ռուսաստան', 'առցանց վաճառք'],
   }
 }
 
