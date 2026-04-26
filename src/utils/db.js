@@ -6,16 +6,37 @@ const dbPassword = process.env.DB_PASSWORD;
 const dbHost = process.env.DB_HOST;
 const dbPort = Number(process.env.DB_PORT); 
 
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+
 const dbConfig = {
     host: dbHost,
     port: dbPort, 
     dialect: 'mysql',
-    logging: false,
-    pool: {
-        max: 100,
-        min: 10,
-        acquire: 20000,
-        idle: 5000
+    logging: (msg) => {
+        // Log slow queries (> 100ms)
+        if (msg.includes('Executed')) {
+            const match = msg.match(/(\d+)ms/);
+            if (match && parseInt(match[1]) > 100) {
+                console.log('[SLOW QUERY]', msg);
+            }
+        }
+    },
+    pool: isServerless ? {
+        max: 5,
+        min: 0,
+        acquire: 5000,
+        idle: 1000,
+        evict: 5000
+    } : {
+        max: 100,  // Increased for load testing (was 10)
+        min: 5,
+        acquire: 10000,
+        idle: 30000
+    },
+    dialectOptions: {
+        connectTimeout: 10000,
+        dateStrings: true,
+        typeCast: true
     },
     define: {
         timestamp: true,

@@ -36,12 +36,12 @@ export function InstructorSection({ instructor }: InstructorSectionProps) {
   const displayStats = stats.slice(0, 4)
   const reduceMotion = useReducedMotion()
 
-  // Animation props - disabled on mobile
-  const fadeInUp = reduceMotion ? {} : {
-    initial: { opacity: 0, y: 20 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.6 }
+  // Animation props
+  const fadeInUp = {
+    initial: { opacity: 1, y: 0 },
+    whileInView: reduceMotion ? undefined : { opacity: 1, y: 0 },
+    viewport: reduceMotion ? undefined : { once: true, amount: 0.3 },
+    transition: reduceMotion ? undefined : { duration: 0.6 }
   }
 
   return (

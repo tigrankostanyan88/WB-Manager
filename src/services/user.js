@@ -10,12 +10,12 @@ const { User } = DB.models;
 
 async function getAll({ excludeRoles = [] } = {}) {
   const cacheKey = USERS_ALL_KEY;
-  const cached = await cache.get(cacheKey);
+  const cached = cache.get(cacheKey);
   if (cached) return { users: cached, fromCache: true };
   
   // Repository handles the Op.notIn logic
   const users = await repo.findAllExcludingRoles(excludeRoles);
-  await cache.set(cacheKey, users, USERS_TTL);
+  cache.set(cacheKey, users, USERS_TTL);
   return { users, fromCache: false };
 }
 
@@ -107,7 +107,7 @@ async function updateUser(id, body, files) {
     await user.createFile(img.table);
   }
   
-  await cache.del(USERS_ALL_KEY);
+  cache.del(USERS_ALL_KEY);
   return repo.findById(user.id);
 }
 
@@ -155,9 +155,9 @@ async function updateMe(currentUserId, body, files) {
     await user.createFile(img.table);
   }
   
-  // Fetch fresh user with files included
-  const updatedUser = await repo.findById(user.id);
-  return updatedUser;
+  // Reload user to get fresh data with files
+  await user.reload({ include: [{ model: DB.models.File, as: 'files' }] });
+  return user;
 }
 
 async function deleteUser(id) {
@@ -165,7 +165,7 @@ async function deleteUser(id) {
   if (!user) throw new AppError('Օգտատերը չի գտնվել:', 404);
   user.deleted = true;
   await repo.save(user);
-  await cache.del(USERS_ALL_KEY);
+  cache.del(USERS_ALL_KEY);
   return true;
 }
 
@@ -175,7 +175,7 @@ async function deleteAvatar(currentUserId) {
   const file = await repo.findAvatarFileForUser(user.id);
   if (!file) throw new AppError('Նկարը չի գտնվել:', 404);
   await repo.destroyFileById(file.id);
-  await cache.del(USERS_ALL_KEY);
+  cache.del(USERS_ALL_KEY);
   return user;
 }
 
@@ -187,7 +187,7 @@ async function restoreUser(id) {
   const user = await repo.findById(id);
   if (!user) throw new AppError('Օգտատերը չի գտնվել:', 404);
   await repo.restoreUser(id);
-  await cache.del(USERS_ALL_KEY);
+  cache.del(USERS_ALL_KEY);
   return true;
 }
 
@@ -231,7 +231,7 @@ async function permanentDeleteUser(id) {
   await User.destroy({ where: { id } });
   
   // Invalidate cache
-  await cache.del(USERS_ALL_KEY);
+  cache.del(USERS_ALL_KEY);
   return true;
 }
 
@@ -240,7 +240,7 @@ async function resetGroups(userId) {
   if (!user) throw new AppError('Օգտատերը չի գտնվել:', 404);
   user.groupResults = null;
   await repo.save(user);
-  await cache.del(USERS_ALL_KEY);
+  cache.del(USERS_ALL_KEY);
   return user;
 }
 

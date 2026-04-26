@@ -8,19 +8,39 @@ module.exports = {
   },
 
   // Find one instructor
-  findOne: async ({ includeFiles = false } = {}) => {
+  findOne: async ({ includeFiles = false, includeAvatarOnly = false } = {}) => {
     const options = {};
     if (includeFiles) {
-      options.include = [{ association: 'files' }];
+      if (includeAvatarOnly) {
+        // Only include avatar file for better performance
+        options.include = [{
+          model: File,
+          as: 'files',
+          where: { name_used: 'instructor_img' },
+          required: false
+        }];
+      } else {
+        options.include = [{ association: 'files' }];
+      }
     }
     return Instructor.findOne(options);
   },
 
   // Find all instructors
-  findAll: async ({ includeFiles = false } = {}) => {
+  findAll: async ({ includeFiles = false, includeAvatarOnly = false } = {}) => {
     const include = [];
     if (includeFiles) {
-      include.push({ model: File, as: 'files' });
+      if (includeAvatarOnly) {
+        // Only include avatar file for better performance
+        include.push({
+          model: File,
+          as: 'files',
+          where: { name_used: 'instructor_img' },
+          required: false
+        });
+      } else {
+        include.push({ model: File, as: 'files' });
+      }
     }
 
     return Instructor.findAll({
@@ -28,9 +48,7 @@ module.exports = {
         exclude: ['createdAt', 'updatedAt']
       },
       order: [['id', 'DESC']],
-      include,
-      raw: true,
-      nest: true
+      include
     });
   },
 

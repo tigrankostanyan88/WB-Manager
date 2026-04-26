@@ -127,8 +127,8 @@ const isLoggedIn = async (req, res, next) => {
   const secret = JWT_SECRET;
   const decoded = jwt.verify(req.cookies.jwt, secret);
 
-      // 2) Check if user still exists
-      const currentUser = await repo.findById(decoded.id, { includeFiles: true });
+      // 2) Check if user still exists (with avatar only for navigation)
+      const currentUser = await repo.findById(decoded.id, { includeFiles: true, includeAvatarOnly: true });
       if (!currentUser) {
         res.clearCookie('jwt');
         return next();
@@ -189,8 +189,8 @@ const protect = catchAsync(async (req, res, next) => {
     return next(new AppError('Խնդրում ենք կրկին մուտք գործել (Սխալ թոքեն)', 401));
   }
 
-  // 3) Check if user still exists
-  const currentUser = await repo.findById(decoded.id, { includeFiles: true });
+  // 3) Check if user still exists (without files for performance)
+  const currentUser = await repo.findById(decoded.id, { includeFiles: false });
   if (!currentUser) {
     return next(new AppError('Այս թոքենին պատկանող օգտատերը այլևս գոյություն չունի', 401));
   }

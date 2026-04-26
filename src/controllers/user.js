@@ -15,8 +15,11 @@ exports.getUsers = catchAsync(async (req, res) => {
 });
 
 exports.getMe = catchAsync(async (req, res, next) => {
-    const userData = sanitizeUser(req.user);
-    
+    // Fetch user with avatar only (optimized query)
+    const userRepo = require('../repositories/user');
+    const userWithFiles = await userRepo.findById(req.user.id, { includeFiles: true });
+    const userData = sanitizeUser(userWithFiles);
+
     res.status(200).json({
         status: 'success',
         user: userData

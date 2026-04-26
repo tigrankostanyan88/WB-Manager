@@ -87,7 +87,7 @@ module.exports = (sequelize, DataTypes) => {
             beforeUpdate: async (user) => {
                 if (user.changed('password')) {
                     user.password = await bcrypt.hash(user.password, config.PASSWORD.BCRYPT_ROUNDS);
-                    user.passwordChangedAt = Date.now() - 1000;
+                    user.passwordChangedAt = new Date(Date.now() - 1000);
                 }
             }
         }
@@ -109,7 +109,14 @@ module.exports = (sequelize, DataTypes) => {
 
     User.prototype.changedPasswordAfter = function(JWTTimestamp) {
         if (this.passwordChangedAt) {
-            const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+            let changedTimestamp;
+            if (this.passwordChangedAt instanceof Date) {
+                changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+            } else if (typeof this.passwordChangedAt === 'number') {
+                changedTimestamp = parseInt(this.passwordChangedAt / 1000, 10);
+            } else if (typeof this.passwordChangedAt === 'string') {
+                changedTimestamp = parseInt(new Date(this.passwordChangedAt).getTime() / 1000, 10);
+            }
             return JWTTimestamp < changedTimestamp;
         }
         // False means NOT changed

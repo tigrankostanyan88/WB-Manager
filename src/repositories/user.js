@@ -4,13 +4,38 @@ const { User, File } = DB.models;
 
 module.exports = {
   // Basic CRUD
-  findAll: async ({ where = {} } = {}) => User.findAll({ where, include: 'files' }),
+  findAll: async ({ where = {}, includeAvatarOnly = false } = {}) => {
+    const options = { where };
+    if (includeAvatarOnly) {
+      options.include = [{
+        model: File,
+        as: 'files',
+        where: { name_used: 'user_img' },
+        required: false
+      }];
+    } else {
+      options.include = 'files';
+    }
+    return User.findAll(options);
+  },
   
   findAndCountAll: async (options) => User.findAndCountAll(options),
   
   count: async (options) => User.count(options),
   
-  findById: async (id) => User.findByPk(id, { include: 'files' }),
+  findById: async (id, { includeFiles = true } = {}) => {
+    const options = {};
+    if (includeFiles) {
+      // Only include avatar file (user_img) for better performance
+      options.include = [{
+        model: File,
+        as: 'files',
+        where: { name_used: 'user_img' },
+        required: false
+      }];
+    }
+    return User.findByPk(id, options);
+  },
   
   findByEmail: async (email) => User.findOne({ where: { email } }),
   
@@ -26,12 +51,23 @@ module.exports = {
   destroyAllFilesForUser: async (userId) => File.destroy({ where: { row_id: userId }, individualHooks: true }),
   
   // Find all users excluding certain roles
-  findAllExcludingRoles: async (excludeRoles = []) => {
+  findAllExcludingRoles: async (excludeRoles = [], { includeAvatarOnly = true } = {}) => {
     const where = { deleted: false };
     if (excludeRoles.length) {
       where.role = { [Op.notIn]: excludeRoles };
     }
-    return User.findAll({ where, include: 'files' });
+    const options = { where };
+    if (includeAvatarOnly) {
+      options.include = [{
+        model: File,
+        as: 'files',
+        where: { name_used: 'user_img' },
+        required: false
+      }];
+    } else {
+      options.include = 'files';
+    }
+    return User.findAll(options);
   },
   
   // Find users with pagination, search, and filters

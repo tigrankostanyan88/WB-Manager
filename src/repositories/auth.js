@@ -5,10 +5,20 @@ const { User } = DB.models;
 
 module.exports = {
   // Find user by ID
-  findById: async (id, { includeFiles = false } = {}) => {
+  findById: async (id, { includeFiles = false, includeAvatarOnly = false } = {}) => {
     const options = {};
     if (includeFiles) {
-      options.include = [{ model: DB.models.File, as: 'files' }];
+      if (includeAvatarOnly) {
+        // Only include avatar file for better performance
+        options.include = [{
+          model: DB.models.File,
+          as: 'files',
+          where: { name_used: 'user_img' },
+          required: false
+        }];
+      } else {
+        options.include = [{ model: DB.models.File, as: 'files' }];
+      }
     }
     return User.findByPk(id, options);
   },

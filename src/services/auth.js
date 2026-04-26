@@ -47,14 +47,19 @@ const createSendToken = async (user, statusCode, req, res, target = false) => {
         }
     );
 
-    res.cookie('jwt', token, {
+    const cookieOptions = {
         expires: new Date(Date.now() + jwtExpire * 24 * 60 * 60 * 1000),
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'none',
+        sameSite: 'lax',
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NODE_ENV === 'production' ? undefined : undefined
-    });
+        
+    };
+    if (process.env.NODE_ENV === 'production') {
+        cookieOptions.domain = process.env.COOKIE_DOMAIN || 'localhost';
+    }
+
+    res.cookie('jwt', token, cookieOptions);
     res.locals.token = token;
 
     if (!target) {
@@ -69,10 +74,19 @@ const createSendToken = async (user, statusCode, req, res, target = false) => {
 
 // Logout: clear cookie
 const logoutUser = (res) => {
-    res.cookie('jwt', 'loggedout', {
+    const cookieOptions = {
         expires: new Date(Date.now() + 2 * 1000),
-        httpOnly: true
-    });
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/'
+    };
+
+    // Only add domain in production
+    if (process.env.NODE_ENV === 'production') {
+        cookieOptions.domain = process.env.COOKIE_DOMAIN || 'localhost';
+    }
+
+    res.cookie('jwt', 'loggedout', cookieOptions);
 };
 
 // Format user response
@@ -115,6 +129,8 @@ const handleValidationError = (err) => {
 };
 
 const signUp = async (req, res, next) => {
+    console.log('[signUp] START, body:', { ...req.body, password: '***' });
+
     // Validation
     const validator = new Validator(req.body);
     validator
@@ -136,8 +152,10 @@ const signUp = async (req, res, next) => {
             password: req.body.password,
             role: 'user'
         });
+        console.log('[signUp] User created:', user.id);
 
         await createSendToken(user, 201, req, res, true);
+        console.log('[signUp] Token sent successfully');
 
         return {
             token: res.locals.token,
@@ -145,6 +163,7 @@ const signUp = async (req, res, next) => {
             reload: true
         };
     } catch (err) {
+        console.error('[signUp] ERROR:', err.message, err.stack);
         const uniqueError = handleUniqueConstraintError(err);
         if (uniqueError) throw uniqueError;
 
@@ -368,8 +387,13 @@ const updatePassword = async (req, res, next) => {
         throw new AppError('Գաղտնաբառի թարմացման սխալ: ' + err.message, 400);
     }
 
-    // Log user in with new token
-    await createSendToken(user, 200, req, res);
+    // Log user in with new token (pass target=true to prevent auto-response)
+    await createSendToken(user, 200, req, res, true);
+
+    return {
+        token: res.locals.token,
+        user: mapUserWithAvatar(user)
+    };
 };
 
 module.exports = {

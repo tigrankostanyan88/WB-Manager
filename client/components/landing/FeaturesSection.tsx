@@ -18,19 +18,19 @@ const containerVariants = {
 export function FeaturesSection() {
   const reduceMotion = useReducedMotion()
 
-  // Animation props - disabled on mobile
-  const fadeInUp = reduceMotion ? {} : {
-    initial: { opacity: 0, y: 20 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.6 }
+  // Animation props
+  const fadeInUp = {
+    initial: { opacity: 1, y: 0 },
+    whileInView: reduceMotion ? undefined : { opacity: 1, y: 0 },
+    viewport: reduceMotion ? undefined : { once: true, amount: 0.3 },
+    transition: reduceMotion ? undefined : { duration: 0.6 }
   }
 
-  const staggerContainer = reduceMotion ? {} : {
+  const staggerContainer = {
+    initial: "visible",
     variants: containerVariants,
-    initial: "hidden",
-    whileInView: "visible",
-    viewport: { once: true }
+    whileInView: reduceMotion ? undefined : "visible",
+    viewport: reduceMotion ? undefined : { once: true, amount: 0.3 }
   }
 
   return (

@@ -2,59 +2,60 @@ const DB = require('../models');
 const { Review, User, File } = DB.models;
 
 module.exports = {
-  // Find review by ID
+  // Find review by ID - optimized with selective attributes
   findById: async (id) => {
-    return Review.findByPk(id, {
-      include: [
-        {
-          model: User,
-          as: 'user',
-          include: [
-            {
-              model: File,
-              as: 'files'
-            }
-          ]
-        }
-      ]
+    const review = await Review.findByPk(id, {
+      include: [{
+        model: User,
+        as: 'user',
+        attributes: ['id', 'name', 'email'],
+        include: [{
+          model: File,
+          as: 'files',
+          where: { name_used: 'user_img' },
+          required: false,
+          attributes: ['id', 'name', 'ext', 'table_name']
+        }]
+      }]
     });
+    return review;
   },
 
-  // Find review by user ID
+  // Find review by user ID - single query with limited fields
   findByUserId: async (userId) => {
     return Review.findOne({ 
       where: { user_id: userId },
-      include: [
-        {
-          model: User,
-          as: 'user',
-          include: [
-            {
-              model: File,
-              as: 'files'
-            }
-          ]
-        }
-      ]
+      include: [{
+        model: User,
+        as: 'user',
+        attributes: ['id', 'name', 'email'],
+        include: [{
+          model: File,
+          as: 'files',
+          where: { name_used: 'user_img' },
+          required: false,
+          attributes: ['id', 'name', 'ext']
+        }]
+      }]
     });
   },
 
-  // Find all reviews
+  // Find all reviews - optimized with raw query equivalent
   findAll: async () => {
-    return Review.findAll({ 
+    return Review.findAll({
       order: [['id', 'DESC']],
-      include: [
-        {
-          model: User,
-          as: 'user',
-          include: [
-            {
-              model: File,
-              as: 'files'
-            }
-          ]
-        }
-      ]
+      include: [{
+        model: User,
+        as: 'user',
+        attributes: ['id', 'name', 'email'],
+        include: [{
+          model: File,
+          as: 'files',
+          where: { name_used: 'user_img' },
+          required: false,
+          attributes: ['id', 'name', 'ext']
+        }]
+      }]
     });
   },
 

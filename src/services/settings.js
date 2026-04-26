@@ -25,8 +25,6 @@ const buildSafeBody = (body = {}) => {
 module.exports = {
   // Get settings
   getSettings: async (startTime) => {
-    await repo.sync();
-
     const settings = await repo.findOne({ includeFiles: true });
     if (!settings) throw new AppError('Կարգավորումները չեն գտնվել։', 404);
 
@@ -42,8 +40,6 @@ module.exports = {
 
   // Update or create settings
   updateSettings: async (body, files, startTime) => {
-    await repo.sync();
-
     const safeBody = buildSafeBody(body || {});
     const wasCreated = !(await repo.findOne());
 

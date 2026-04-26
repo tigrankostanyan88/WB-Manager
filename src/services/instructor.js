@@ -4,8 +4,7 @@ const repo = require('../repositories/instructor');
 
 module.exports = {
   getInstructor: async (startTime) => {
-    await repo.sync();
-    const instructors = await repo.findAll({ includeFiles: true });
+    const instructors = await repo.findAll({ includeFiles: true, includeAvatarOnly: true });
 
     return {
       instructors,
@@ -15,9 +14,8 @@ module.exports = {
 
   addInstructor: async (body, files, startTime) => {
     console.log('[addInstructor] START, files:', Object.keys(files || {}));
-    await repo.sync();
-    
-    let instructor = await repo.findOne({ includeFiles: true });
+
+    let instructor = await repo.findOne({ includeFiles: true, includeAvatarOnly: true });
     let wasCreated = false;
 
     if (!instructor) {
@@ -27,7 +25,7 @@ module.exports = {
       await repo.update(instructor, body);
     }
 
-    instructor = await repo.findOne({ includeFiles: true });
+    instructor = await repo.findOne({ includeFiles: true, includeAvatarOnly: true });
 
     // Handle avatar upload
     const filePayload = files?.avatar || files?.instructor_img || files?.image;
@@ -52,7 +50,7 @@ module.exports = {
       await repo.update(instructor, { avatar_url: avatarUrl });
     }
     
-    const finalInstructor = await repo.findOne({ includeFiles: true });
+    const finalInstructor = await repo.findOne({ includeFiles: true, includeAvatarOnly: true });
     
     return {
       instructor: finalInstructor,
@@ -62,9 +60,7 @@ module.exports = {
   },
 
   updateInstructor: async (body, files) => {
-    await repo.sync();
-    
-    let instructor = await repo.findOne({ includeFiles: true });
+    let instructor = await repo.findOne({ includeFiles: true, includeAvatarOnly: true });
     let wasCreated = false;
 
     if (!instructor) {
@@ -74,15 +70,15 @@ module.exports = {
 
       const existingAvatarUrl = instructor.avatar_url;
       const updateBody = { ...body };
-      
+
       if ((!updateBody.avatar_url && existingAvatarUrl) || updateBody.avatar_url === null || updateBody.avatar_url === undefined) {
         updateBody.avatar_url = existingAvatarUrl;
       }
-      
+
       await repo.update(instructor, updateBody);
     }
 
-    instructor = await repo.findOne({ includeFiles: true });
+    instructor = await repo.findOne({ includeFiles: true, includeAvatarOnly: true });
 
     const filePayload = files?.instructor_img || files?.image || files?.avatar;
 
@@ -106,11 +102,10 @@ module.exports = {
       const avatarUrl = `/images/instructors/large/${image.table.name}.${image.table.ext}`;
       await repo.update(instructor, { avatar_url: avatarUrl });
     }
-    return repo.findOne({ includeFiles: true });
+    return repo.findOne({ includeFiles: true, includeAvatarOnly: true });
   },
 
   deleteInstructor: async (id) => {
-    await repo.sync();
     const instructor = await repo.findById(id);
     if (!instructor) throw new AppError('Instructor not found', 404);
 
